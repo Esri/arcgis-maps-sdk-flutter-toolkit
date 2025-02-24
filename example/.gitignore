@@ -24,6 +24,7 @@ migrate_working_dir/
 #.vscode/
 
 # Flutter/Dart/Pub related
+pubspec.lock
 **/doc/api/
 **/ios/Flutter/.last_build_id
 .dart_tool/
@@ -43,3 +44,10 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+/ios/Podfile.lock
+
+env.json
+
+arcgis_maps_core
+*.so
