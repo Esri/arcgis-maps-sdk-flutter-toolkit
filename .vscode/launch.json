@@ -6,8 +6,28 @@
     "configurations": [
 
         {
-            "name": "example",
+            "name": "example (debug)",
             "type": "dart",
+            "request": "launch",
+            "templateFor": "example/lib/",
+            "toolArgs": [
+                "--dart-define-from-file=env.json"
+            ],
+        },
+        {
+            "name": "example (profile)",
+            "type": "dart",
+            "flutterMode": "profile",
+            "request": "launch",
+            "templateFor": "example/lib/",
+            "toolArgs": [
+                "--dart-define-from-file=env.json"
+            ],
+        },
+        {
+            "name": "example (release)",
+            "type": "dart",
+            "flutterMode": "release",
             "request": "launch",
             "templateFor": "example/lib/",
             "toolArgs": [
