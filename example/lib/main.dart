@@ -1,20 +1,33 @@
 import 'package:flutter/material.dart';
-import 'package:arcgis_maps_toolkit/arcgis_maps_toolkit.dart';
+
+import 'example_template_widget.dart';
 
 void main() {
-  runApp(MaterialApp(home: const MyHomePage()));
+  runApp(MaterialApp(home: const ExampleApp()));
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
+class ExampleApp extends StatelessWidget {
+  const ExampleApp({super.key});
 
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: Center(child: TemplateWidget()));
+    return Scaffold(
+      appBar: AppBar(title: Text('Toolkit Examples')),
+      body: Column(
+        children: [
+          ElevatedButton(
+            child: Text('TemplateWidget'),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ExampleTemplateWidget(),
+                ),
+              );
+            },
+          ),
+        ],
+      ),
+    );
   }
 }
