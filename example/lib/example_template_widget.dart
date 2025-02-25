@@ -24,11 +24,27 @@ class ExampleTemplateWidget extends StatefulWidget {
 }
 
 class _ExampleTemplateWidgetState extends State<ExampleTemplateWidget> {
+  final _mapViewController = ArcGISMapView.createController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('TemplateWidget')),
-      body: Center(child: TemplateWidget()),
+      body: Stack(
+        children: [
+          ArcGISMapView(
+            controllerProvider: () => _mapViewController,
+            onMapViewReady: onMapViewReady,
+          ),
+          Center(child: TemplateWidget()),
+        ],
+      ),
+    );
+  }
+
+  void onMapViewReady() {
+    _mapViewController.arcGISMap = ArcGISMap.withBasemapStyle(
+      BasemapStyle.arcGISTopographic,
     );
   }
 }
