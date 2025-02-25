@@ -1,8 +1,10 @@
 part of '../arcgis_maps_toolkit.dart';
 
-//fixme doc (here and constructor and properties)
-/// Compass
+/// A `Compass` (also known as a "north arrow") is a widget that visualizes the
+/// current rotation of the map and allows the user to reset the rotation to
+/// north by tapping on it.
 class Compass extends StatefulWidget {
+  /// Create a Compass widget.
   const Compass({
     required this.controllerProvider,
     super.key,
@@ -12,14 +14,35 @@ class Compass extends StatefulWidget {
     this.icon,
   });
 
+  /// A function that provides an [ArcGISMapViewController] to listen to and
+  /// control.
+  ///
+  /// This should return the same controller that is provided to the
+  /// corresponding [ArcGISMapView].
   final ArcGISMapViewController Function() controllerProvider;
 
+  /// Whether the compass should automatically hide when the map is oriented
+  /// north.
+  ///
+  /// Defaults to `true`. If set to `false`, the compass will always be visible.
   final bool automaticallyHides;
 
+  /// The alignment of the compass within the parent widget.
+  ///
+  /// Defaults to [Alignment.topRight]. The compass should generally be placed
+  /// in a [Stack] on top of the corresponding [ArcGISMapView].
   final Alignment alignment;
 
+  /// The padding around the compass.
+  ///
+  /// Defaults to 10 pixels on all sides.
   final EdgeInsets padding;
 
+  /// The icon to be used for the compass.
+  ///
+  /// If not provided, a default compass icon will be used. Provide any Widget
+  /// to customize the icon, though generally with a circular shape and fixed
+  /// size.
   final Widget? icon;
 
   @override
@@ -71,6 +94,7 @@ class _CompassState extends State<Compass> {
   @override
   void dispose() {
     _rotationSubscription.cancel();
+
     super.dispose();
   }
 
@@ -84,14 +108,14 @@ class _CompassState extends State<Compass> {
           padding: widget.padding,
           child: Transform.rotate(
             angle: _rotation * -math.pi / 180,
-            child: IconButton(
-              onPressed:
-                  () => _controller.setViewpointRotation(angleDegrees: 0),
-              icon: _icon,
-            ),
+            child: IconButton(onPressed: onPressed, icon: _icon),
           ),
         ),
       ),
     );
+  }
+
+  void onPressed() {
+    _controller.setViewpointRotation(angleDegrees: 0);
   }
 }
