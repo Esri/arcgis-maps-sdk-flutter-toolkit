@@ -6,6 +6,6 @@ class TemplateWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text('TemplateWidget');
+    return const Text('TemplateWidget');
   }
 }

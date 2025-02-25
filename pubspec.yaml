@@ -13,13 +13,11 @@ environment:
   flutter: '>=3.29.0'
 
 dependencies:
+  arcgis_maps: ^200.6.0+4426
   flutter:
     sdk: flutter
-  arcgis_maps: ^200.6.0+4426
 
 dev_dependencies:
+  flutter_lints: ^5.0.0
   flutter_test:
     sdk: flutter
-  flutter_lints: ^5.0.0
-
-flutter:
