@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:arcgis_maps/arcgis_maps.dart';
 
-import 'example_template_widget.dart';
+import 'example_compass.dart';
 
 void main() {
   // Supply your apiKey using the --dart-define-from-file command line argument.
@@ -27,13 +27,11 @@ class ExampleApp extends StatelessWidget {
       body: Column(
         children: [
           ElevatedButton(
-            child: Text('TemplateWidget'),
+            child: Text('Compass'),
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                  builder: (context) => ExampleTemplateWidget(),
-                ),
+                MaterialPageRoute(builder: (context) => ExampleCompass()),
               );
             },
           ),
