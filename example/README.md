@@ -1,16 +1,17 @@
 # arcgis_maps_toolkit_example
 
-A new Flutter project.
+Demonstrates how to use the ArcGIS Maps Toolkit.
 
-## Getting Started
+## Required steps before running the example
 
-This project is a starting point for a Flutter application.
+From the `example` directory, run:
 
-A few resources to get you started if this is your first Flutter project:
+```
+dart run arcgis_maps install
+```
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+See lib/main.dart for an example application.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+The example code uses ArcGIS Location Platform basemaps, which can be accessed with an API key access token. Set your access token in the `main()` method.
+
+For additional information including how to get an access token, see: https://developers.arcgis.com/flutter/
