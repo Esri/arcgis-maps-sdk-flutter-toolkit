@@ -13,10 +13,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final _added = Calculator().addOne(8);
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(body: Center(child: Text('$_added')));
+    return Scaffold(body: Center(child: TemplateWidget()));
   }
 }
