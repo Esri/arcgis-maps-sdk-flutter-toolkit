@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-part of '../arcgis_maps_toolkit.dart';
+part of '../../arcgis_maps_toolkit.dart';
 
 /// A `Compass` (also known as a "north arrow") is a widget that visualizes the
 /// current rotation of the map and allows the user to reset the rotation to
