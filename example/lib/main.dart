@@ -30,7 +30,7 @@ void main() {
     ArcGISEnvironment.apiKey = apiKey;
   }
 
-  runApp(MaterialApp(home: const ExampleApp()));
+  runApp(const MaterialApp(home: ExampleApp()));
 }
 
 class ExampleApp extends StatelessWidget {

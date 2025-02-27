@@ -70,7 +70,7 @@ class _CompassState extends State<Compass> {
 
   late StreamSubscription<double> _rotationSubscription;
 
-  double _rotation = 0;
+  var _rotation = 0.0;
 
   late Widget _icon;
 
@@ -84,27 +84,8 @@ class _CompassState extends State<Compass> {
     _rotationSubscription = _controller.onRotationChanged.listen((rotation) {
       setState(() => _rotation = rotation);
     });
-  }
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-
-    _icon =
-        widget.icon ??
-        Container(
-          width: 50,
-          height: 50,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: Colors.white.withValues(alpha: .5),
-            border: Border.all(
-              color: IconTheme.of(context).color ?? Colors.black,
-              width: 2,
-            ),
-          ),
-          child: const Icon(Icons.north, size: 30),
-        );
+    _icon = widget.icon ?? defaultIcon();
   }
 
   @override
@@ -131,7 +112,23 @@ class _CompassState extends State<Compass> {
     );
   }
 
-  void onPressed() {
-    _controller.setViewpointRotation(angleDegrees: 0);
+  void onPressed() => _controller.setViewpointRotation(angleDegrees: 0);
+
+  Widget defaultIcon() {
+    return CustomPaint(
+      foregroundPainter: NeedlePainter(),
+      child: Container(
+        width: 50,
+        height: 50,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: const Color.fromARGB(192, 228, 240, 244),
+          border: Border.all(
+            color: const Color.fromARGB(255, 127, 127, 127),
+            width: 1.25,
+          ),
+        ),
+      ),
+    );
   }
 }

@@ -29,7 +29,7 @@ void main() {
     ArcGISEnvironment.apiKey = apiKey;
   }
 
-  runApp(MaterialApp(home: const ExampleTemplateWidget()));
+  runApp(const MaterialApp(home: ExampleTemplateWidget()));
 }
 
 class ExampleTemplateWidget extends StatefulWidget {

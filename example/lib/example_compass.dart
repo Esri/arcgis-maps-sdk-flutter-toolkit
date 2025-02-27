@@ -29,7 +29,7 @@ void main() {
     ArcGISEnvironment.apiKey = apiKey;
   }
 
-  runApp(MaterialApp(home: const ExampleCompass()));
+  runApp(const MaterialApp(home: ExampleCompass()));
 }
 
 class ExampleCompass extends StatefulWidget {
@@ -69,7 +69,12 @@ class _ExampleCompassState extends State<ExampleCompass> {
 
   void onMapViewReady() {
     _mapViewController.arcGISMap = ArcGISMap.withBasemapStyle(
-      BasemapStyle.arcGISTopographic,
-    );
+        BasemapStyle.arcGISTopographic,
+      )
+      ..initialViewpoint = Viewpoint.fromCenter(
+        ArcGISPoint(x: 4, y: 51, spatialReference: SpatialReference.wgs84),
+        scale: 20000000,
+        rotation: -45,
+      );
   }
 }
