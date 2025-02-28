@@ -29,30 +29,39 @@ void main() {
     ArcGISEnvironment.apiKey = apiKey;
   }
 
-  runApp(const MaterialApp(home: ExampleTemplateWidget()));
+  runApp(const MaterialApp(home: ExampleCompass()));
 }
 
-class ExampleTemplateWidget extends StatefulWidget {
-  const ExampleTemplateWidget({super.key});
+class ExampleCompass extends StatefulWidget {
+  const ExampleCompass({super.key});
 
   @override
-  State<ExampleTemplateWidget> createState() => _ExampleTemplateWidgetState();
+  State<ExampleCompass> createState() => _ExampleCompassState();
 }
 
-class _ExampleTemplateWidgetState extends State<ExampleTemplateWidget> {
+class _ExampleCompassState extends State<ExampleCompass> {
   final _mapViewController = ArcGISMapView.createController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('TemplateWidget')),
+      appBar: AppBar(title: Text('Compass')),
       body: Stack(
         children: [
           ArcGISMapView(
             controllerProvider: () => _mapViewController,
             onMapViewReady: onMapViewReady,
           ),
-          Center(child: TemplateWidget()),
+          // Default Compass.
+          Compass(controllerProvider: () => _mapViewController),
+          // Compass with custom settings.
+          Compass(
+            controllerProvider: () => _mapViewController,
+            automaticallyHides: false,
+            alignment: Alignment.centerLeft,
+            padding: const EdgeInsets.all(40),
+            icon: Icon(Icons.arrow_circle_up, size: 80, color: Colors.purple),
+          ),
         ],
       ),
     );
@@ -60,7 +69,12 @@ class _ExampleTemplateWidgetState extends State<ExampleTemplateWidget> {
 
   void onMapViewReady() {
     _mapViewController.arcGISMap = ArcGISMap.withBasemapStyle(
-      BasemapStyle.arcGISTopographic,
-    );
+        BasemapStyle.arcGISTopographic,
+      )
+      ..initialViewpoint = Viewpoint.fromCenter(
+        ArcGISPoint(x: 4, y: 51, spatialReference: SpatialReference.wgs84),
+        scale: 20000000,
+        rotation: -45,
+      );
   }
 }
