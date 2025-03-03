@@ -92,7 +92,7 @@ class Authenticator implements ArcGISAuthenticationChallengeHandler {
     );
   }
 
-  Future<void> revokeOAuthTokens() async {
+  static Future<void> revokeOAuthTokens() async {
     await Future.wait(
       ArcGISEnvironment.authenticationManager.arcGISCredentialStore
           .getCredentials()
@@ -101,7 +101,7 @@ class Authenticator implements ArcGISAuthenticationChallengeHandler {
     );
   }
 
-  void clearCredentials() {
+  static void clearCredentials() {
     ArcGISEnvironment.authenticationManager.arcGISCredentialStore.removeAll();
   }
 

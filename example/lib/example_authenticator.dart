@@ -29,12 +29,12 @@ class ExampleAuthenticator extends StatefulWidget {
   State<ExampleAuthenticator> createState() => _ExampleAuthenticatorState();
 }
 
-enum _LoginState { loggedOut, oauth, token }
+enum _LoginState { none, oauth, token }
 
 class _ExampleAuthenticatorState extends State<ExampleAuthenticator> {
   final _mapViewController = ArcGISMapView.createController();
 
-  var _loginState = _LoginState.loggedOut;
+  var _loginState = _LoginState.none;
 
   //fixme comments
   Authenticator? _authenticator;
@@ -57,26 +57,22 @@ class _ExampleAuthenticatorState extends State<ExampleAuthenticator> {
             Expanded(
               child: ArcGISMapView(
                 controllerProvider: () => _mapViewController,
-                onMapViewReady: onMapViewReady,
               ),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 ElevatedButton(
-                  onPressed:
-                      _loginState == _LoginState.loggedOut ? oAuth : null,
+                  onPressed: _loginState == _LoginState.none ? oAuth : null,
                   child: Text('OAuth'),
                 ),
                 ElevatedButton(
-                  onPressed:
-                      _loginState == _LoginState.loggedOut ? token : null,
+                  onPressed: _loginState == _LoginState.none ? token : null,
                   child: Text('Token'),
                 ),
                 ElevatedButton(
-                  onPressed:
-                      _loginState != _LoginState.loggedOut ? logout : null,
-                  child: Text('Logout'),
+                  onPressed: _loginState != _LoginState.none ? unload : null,
+                  child: Text('Unload'),
                 ),
               ],
             ),
@@ -84,10 +80,6 @@ class _ExampleAuthenticatorState extends State<ExampleAuthenticator> {
         ),
       ),
     );
-  }
-
-  void onMapViewReady() {
-    _mapViewController.arcGISMap = ArcGISMap();
   }
 
   void oAuth() {
@@ -128,18 +120,17 @@ class _ExampleAuthenticatorState extends State<ExampleAuthenticator> {
     //fixme error handling if login fails??
   }
 
-  Future<void> logout() async {
+  Future<void> unload() async {
     _mapViewController.arcGISMap = ArcGISMap();
 
-    final oldAuthenticator = _authenticator!;
+    _authenticator?.dispose();
     _authenticator = null;
 
     if (_loginState == _LoginState.oauth) {
-      await oldAuthenticator.revokeOAuthTokens();
+      await Authenticator.revokeOAuthTokens();
     }
-    oldAuthenticator.clearCredentials();
-    oldAuthenticator.dispose();
+    Authenticator.clearCredentials();
 
-    setState(() => _loginState = _LoginState.loggedOut);
+    setState(() => _loginState = _LoginState.none);
   }
 }
