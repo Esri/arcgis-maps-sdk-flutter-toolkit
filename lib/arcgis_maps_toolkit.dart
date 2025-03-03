@@ -24,6 +24,7 @@ import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:flutter/material.dart';
 
 part 'src/authenticator/authenticator.dart';
+part 'src/authenticator/authenticator_login.dart';
 part 'src/compass/compass.dart';
 part 'src/compass/needle_painter.dart';
 part 'src/template_widget.dart';

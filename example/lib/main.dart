@@ -17,6 +17,7 @@
 import 'package:flutter/material.dart';
 import 'package:arcgis_maps/arcgis_maps.dart';
 
+import 'example_authenticator.dart';
 import 'example_compass.dart';
 
 void main() {
@@ -48,6 +49,15 @@ class ExampleApp extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) => ExampleCompass()),
+              );
+            },
+          ),
+          ElevatedButton(
+            child: Text('Authenticator'),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ExampleAuthenticator()),
               );
             },
           ),
