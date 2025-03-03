@@ -18,12 +18,15 @@ part of '../../arcgis_maps_toolkit.dart';
 
 //fixme doc
 //fixme dispose
+//fixme BuildContext -- login form only
 //fixme redirectUri in AndroidManifest.xml
 //fixme This document describes the steps to configure OAuth for your app:
 //fixme https://developers.arcgis.com/documentation/security-and-authentication/user-authentication/flows/authorization-code-with-pkce/
 class Authenticator implements ArcGISAuthenticationChallengeHandler {
+  //fixme persistent?? (w/ios options)
+
   Authenticator({
-    required BuildContext context,
+    BuildContext? context,
     List<OAuthUserConfiguration> oAuthUserConfigurations = const [],
   }) : _context = context,
        _oAuthUserConfigurations = oAuthUserConfigurations {
@@ -38,7 +41,8 @@ class Authenticator implements ArcGISAuthenticationChallengeHandler {
         .arcGISAuthenticationChallengeHandler = null;
   }
 
-  final BuildContext _context;
+  final BuildContext? _context;
+
   final List<OAuthUserConfiguration> _oAuthUserConfigurations;
 
   @override
@@ -87,7 +91,7 @@ class Authenticator implements ArcGISAuthenticationChallengeHandler {
 
   void _tokenLogin(ArcGISAuthenticationChallenge challenge) {
     showDialog(
-      context: _context,
+      context: _context!, //fixme throw exception sooner? better message?
       builder: (context) => _AuthenticatorLogin(challenge: challenge),
     );
   }
@@ -104,6 +108,4 @@ class Authenticator implements ArcGISAuthenticationChallengeHandler {
   static void clearCredentials() {
     ArcGISEnvironment.authenticationManager.arcGISCredentialStore.removeAll();
   }
-
-  //fixme persistent?? (w/ios options)
 }

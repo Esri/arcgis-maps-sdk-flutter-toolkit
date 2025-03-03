@@ -82,9 +82,9 @@ class _ExampleAuthenticatorState extends State<ExampleAuthenticator> {
     );
   }
 
+  // Attempt to load the map with an Authenticator configured to use OAuth.
   void oAuth() {
     _authenticator = Authenticator(
-      context: context,
       oAuthUserConfigurations: [
         OAuthUserConfiguration(
           portalUri: Uri.parse('https://www.arcgis.com'),
@@ -99,6 +99,7 @@ class _ExampleAuthenticatorState extends State<ExampleAuthenticator> {
     setState(() => _loginState = _LoginState.oauth);
   }
 
+  // Attempt to load the map with an Authenticator configured to use TokenCredential.
   void token() {
     _authenticator = Authenticator(context: context);
 
@@ -107,9 +108,9 @@ class _ExampleAuthenticatorState extends State<ExampleAuthenticator> {
     setState(() => _loginState = _LoginState.token);
   }
 
+  // Set a portal item map that has a secure layer (traffic). Loading the secure
+  // layer will trigger an authentication challenge.
   void loadSecureMap() {
-    // Set a portal item map that has a secure layer (traffic).
-    // Loading the secure layer will trigger an authentication challenge.
     final map = ArcGISMap.withItem(
       PortalItem.withPortalAndItemId(
         portal: Portal.arcGISOnline(connection: PortalConnection.authenticated),
