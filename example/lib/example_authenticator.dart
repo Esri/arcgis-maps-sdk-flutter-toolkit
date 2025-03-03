@@ -37,19 +37,11 @@ class _ExampleAuthenticatorState extends State<ExampleAuthenticator> {
   var _loginState = _LoginState.loggedOut;
 
   //fixme comments
-  final _authenticator = Authenticator(
-    oAuthUserConfigurations: [
-      OAuthUserConfiguration(
-        portalUri: Uri.parse('https://www.arcgis.com'),
-        clientId: 'T0A3SudETrIQndd2',
-        redirectUri: Uri.parse('my-ags-flutter-app://auth'),
-      ),
-    ],
-  );
+  Authenticator? _authenticator;
 
   @override
   void dispose() {
-    _authenticator.dispose();
+    _authenticator?.dispose();
     super.dispose();
   }
 
@@ -78,6 +70,11 @@ class _ExampleAuthenticatorState extends State<ExampleAuthenticator> {
                 ),
                 ElevatedButton(
                   onPressed:
+                      _loginState == _LoginState.loggedOut ? token : null,
+                  child: Text('Token'),
+                ),
+                ElevatedButton(
+                  onPressed:
                       _loginState != _LoginState.loggedOut ? logout : null,
                   child: Text('Logout'),
                 ),
@@ -94,6 +91,31 @@ class _ExampleAuthenticatorState extends State<ExampleAuthenticator> {
   }
 
   void oAuth() {
+    _authenticator = Authenticator(
+      context: context,
+      oAuthUserConfigurations: [
+        OAuthUserConfiguration(
+          portalUri: Uri.parse('https://www.arcgis.com'),
+          clientId: 'T0A3SudETrIQndd2',
+          redirectUri: Uri.parse('my-ags-flutter-app://auth'),
+        ),
+      ],
+    );
+
+    loadSecureMap();
+
+    setState(() => _loginState = _LoginState.oauth);
+  }
+
+  void token() {
+    _authenticator = Authenticator(context: context);
+
+    loadSecureMap();
+
+    setState(() => _loginState = _LoginState.token);
+  }
+
+  void loadSecureMap() {
     // Set a portal item map that has a secure layer (traffic).
     // Loading the secure layer will trigger an authentication challenge.
     final map = ArcGISMap.withItem(
@@ -102,20 +124,22 @@ class _ExampleAuthenticatorState extends State<ExampleAuthenticator> {
         itemId: 'e5039444ef3c48b8a8fdc9227f9be7c1',
       ),
     );
-    map.load().then((_) => setState(() => _loginState = _LoginState.oauth));
     _mapViewController.arcGISMap = map;
     //fixme error handling if login fails??
-  }
-
-  void token() {
-    //fixme
   }
 
   Future<void> logout() async {
     _mapViewController.arcGISMap = ArcGISMap();
 
-    _authenticator.clearCredentials();
-    await _authenticator.revokeOAuthTokens();
+    final oldAuthenticator = _authenticator!;
+    _authenticator = null;
+
+    if (_loginState == _LoginState.oauth) {
+      await oldAuthenticator.revokeOAuthTokens();
+    }
+    oldAuthenticator.clearCredentials();
+    oldAuthenticator.dispose();
+
     setState(() => _loginState = _LoginState.loggedOut);
   }
 }
