@@ -1,0 +1,121 @@
+//
+// Copyright 2025 Esri
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//   https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+
+import 'package:flutter/material.dart';
+import 'package:arcgis_maps/arcgis_maps.dart';
+import 'package:arcgis_maps_toolkit/arcgis_maps_toolkit.dart';
+
+void main() {
+  runApp(const MaterialApp(home: ExampleAuthenticator()));
+}
+
+class ExampleAuthenticator extends StatefulWidget {
+  const ExampleAuthenticator({super.key});
+
+  @override
+  State<ExampleAuthenticator> createState() => _ExampleAuthenticatorState();
+}
+
+enum _LoginState { loggedOut, oauth, token }
+
+class _ExampleAuthenticatorState extends State<ExampleAuthenticator> {
+  final _mapViewController = ArcGISMapView.createController();
+
+  var _loginState = _LoginState.loggedOut;
+
+  //fixme comments
+  final _authenticator = Authenticator(
+    oAuthUserConfigurations: [
+      OAuthUserConfiguration(
+        portalUri: Uri.parse('https://www.arcgis.com'),
+        clientId: 'T0A3SudETrIQndd2',
+        redirectUri: Uri.parse('my-ags-flutter-app://auth'),
+      ),
+    ],
+  );
+
+  @override
+  void dispose() {
+    _authenticator.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text('Authenticator')),
+      body: SafeArea(
+        left: false,
+        right: false,
+        child: Column(
+          children: [
+            Expanded(
+              child: ArcGISMapView(
+                controllerProvider: () => _mapViewController,
+                onMapViewReady: onMapViewReady,
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                ElevatedButton(
+                  onPressed:
+                      _loginState == _LoginState.loggedOut ? oAuth : null,
+                  child: Text('OAuth'),
+                ),
+                ElevatedButton(
+                  onPressed:
+                      _loginState != _LoginState.loggedOut ? logout : null,
+                  child: Text('Logout'),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void onMapViewReady() {
+    _mapViewController.arcGISMap = ArcGISMap();
+  }
+
+  void oAuth() {
+    // Set a portal item map that has a secure layer (traffic).
+    // Loading the secure layer will trigger an authentication challenge.
+    final map = ArcGISMap.withItem(
+      PortalItem.withPortalAndItemId(
+        portal: Portal.arcGISOnline(connection: PortalConnection.authenticated),
+        itemId: 'e5039444ef3c48b8a8fdc9227f9be7c1',
+      ),
+    );
+    map.load().then((_) => setState(() => _loginState = _LoginState.oauth));
+    _mapViewController.arcGISMap = map;
+    //fixme error handling if login fails??
+  }
+
+  void token() {
+    //fixme
+  }
+
+  Future<void> logout() async {
+    _mapViewController.arcGISMap = ArcGISMap();
+
+    _authenticator.clearCredentials();
+    await _authenticator.revokeOAuthTokens();
+    setState(() => _loginState = _LoginState.loggedOut);
+  }
+}
