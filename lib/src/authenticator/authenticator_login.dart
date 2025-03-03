@@ -16,16 +16,18 @@
 
 part of '../../arcgis_maps_toolkit.dart';
 
-class AuthenticatorLogin extends StatefulWidget {
-  const AuthenticatorLogin({required this.challenge, super.key});
+// A dialog that prompts the user to log in with a username and password and
+// answers the given challenge with a TokenCredential.
+class _AuthenticatorLogin extends StatefulWidget {
+  const _AuthenticatorLogin({required this.challenge});
 
   final ArcGISAuthenticationChallenge challenge;
 
   @override
-  State<AuthenticatorLogin> createState() => _AuthenticatorLoginState();
+  State<_AuthenticatorLogin> createState() => _AuthenticatorLoginState();
 }
 
-class _AuthenticatorLoginState extends State<AuthenticatorLogin> {
+class _AuthenticatorLoginState extends State<_AuthenticatorLogin> {
   // Controllers for the username and password text fields.
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -54,10 +56,14 @@ class _AuthenticatorLoginState extends State<AuthenticatorLogin> {
         child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            spacing: 10,
             children: [
               Text(
                 'Authentication Required',
-                style: Theme.of(context).textTheme.titleLarge,
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  color: Theme.of(context).colorScheme.primary,
+                ),
               ),
               // Show the server URL that is requiring authentication.
               Text(widget.challenge.requestUri.toString()),
@@ -65,28 +71,36 @@ class _AuthenticatorLoginState extends State<AuthenticatorLogin> {
               TextField(
                 controller: _usernameController,
                 autocorrect: false,
-                decoration: const InputDecoration(hintText: 'Username'),
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Username',
+                ),
               ),
               TextField(
                 controller: _passwordController,
                 autocorrect: false,
                 obscureText: true,
-                decoration: const InputDecoration(hintText: 'Password'),
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Password',
+                ),
               ),
-              const SizedBox(height: 10),
               // Buttons to cancel or log in.
               Row(
+                spacing: 10,
                 children: [
-                  ElevatedButton(
-                    onPressed: cancel,
-                    child: const Text('Cancel'),
+                  TextButton(onPressed: cancel, child: const Text('Cancel')),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: login,
+                      child: const Text('Login'),
+                    ),
                   ),
-                  const Spacer(),
-                  ElevatedButton(onPressed: login, child: const Text('Login')),
                 ],
               ),
               // Display an error message if there is one.
-              Text(_error ?? '', style: const TextStyle(color: Colors.red)),
+              if (_error != null)
+                Text(_error!, style: const TextStyle(color: Colors.red)),
             ],
           ),
         ),

@@ -88,7 +88,7 @@ class Authenticator implements ArcGISAuthenticationChallengeHandler {
   void _tokenLogin(ArcGISAuthenticationChallenge challenge) {
     showDialog(
       context: _context,
-      builder: (context) => AuthenticatorLogin(challenge: challenge),
+      builder: (context) => _AuthenticatorLogin(challenge: challenge),
     );
   }
 

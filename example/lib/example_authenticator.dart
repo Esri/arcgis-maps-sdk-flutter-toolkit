@@ -117,7 +117,6 @@ class _ExampleAuthenticatorState extends State<ExampleAuthenticator> {
       ),
     );
     _mapViewController.arcGISMap = map;
-    //fixme error handling if login fails??
   }
 
   Future<void> unload() async {
