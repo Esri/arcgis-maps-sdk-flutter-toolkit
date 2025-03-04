@@ -43,8 +43,8 @@ void main() {
   );
 }
 
-Widget compassBuilder() => ExampleCompass();
-Widget authenticatorBuilder() => ExampleAuthenticator();
+Widget authenticatorBuilder(BuildContext context) => ExampleAuthenticator();
+Widget compassBuilder(BuildContext context) => ExampleCompass();
 
 enum ComponentExample {
   authenticator(
@@ -59,9 +59,10 @@ enum ComponentExample {
   );
 
   const ComponentExample(this.title, this.subtitle, this.builder);
+
   final String title;
   final String subtitle;
-  final Widget Function() builder;
+  final Widget Function(BuildContext) builder;
 
   Card buildCard(BuildContext context) {
     return Card(
@@ -69,10 +70,7 @@ enum ComponentExample {
         title: Text(title),
         subtitle: Text(subtitle),
         onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => builder()),
-          );
+          Navigator.push(context, MaterialPageRoute(builder: builder));
         },
       ),
     );
