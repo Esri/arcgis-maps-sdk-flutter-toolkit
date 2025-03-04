@@ -29,21 +29,26 @@ class ExampleAuthenticator extends StatefulWidget {
   State<ExampleAuthenticator> createState() => _ExampleAuthenticatorState();
 }
 
-enum _LoginState { none, oauth, token }
+enum _AuthenticationType { oauth, token }
+
+enum _MapState { unloaded, loaded }
 
 class _ExampleAuthenticatorState extends State<ExampleAuthenticator> {
+  //fixme comments throughout
+
   final _mapViewController = ArcGISMapView.createController();
 
-  var _loginState = _LoginState.none;
+  var _authenticationType = _AuthenticationType.oauth;
 
-  //fixme comments
-  Authenticator? _authenticator;
+  var _mapState = _MapState.unloaded;
 
-  @override
-  void dispose() {
-    _authenticator?.dispose();
-    super.dispose();
-  }
+  final _oAuthUserConfigurations = [
+    OAuthUserConfiguration(
+      portalUri: Uri.parse('https://www.arcgis.com'),
+      clientId: 'T0A3SudETrIQndd2',
+      redirectUri: Uri.parse('my-ags-flutter-app://auth'),
+    ),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -55,24 +60,41 @@ class _ExampleAuthenticatorState extends State<ExampleAuthenticator> {
         child: Column(
           children: [
             Expanded(
-              child: ArcGISMapView(
-                controllerProvider: () => _mapViewController,
+              child: Authenticator(
+                oAuthUserConfigurations:
+                    _authenticationType == _AuthenticationType.oauth
+                        ? _oAuthUserConfigurations
+                        : [],
+                child: ArcGISMapView(
+                  controllerProvider: () => _mapViewController,
+                ),
               ),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                ElevatedButton(
-                  onPressed: _loginState == _LoginState.none ? oAuth : null,
-                  child: Text('OAuth'),
+                SegmentedButton(
+                  segments: [
+                    ButtonSegment(
+                      value: _AuthenticationType.oauth,
+                      label: Text('OAuth'),
+                    ),
+                    ButtonSegment(
+                      value: _AuthenticationType.token,
+                      label: Text('Token'),
+                    ),
+                  ],
+                  selected: {_authenticationType},
+                  onSelectionChanged: (selection) {
+                    setState(() => _authenticationType = selection.first);
+                  },
                 ),
                 ElevatedButton(
-                  onPressed: _loginState == _LoginState.none ? token : null,
-                  child: Text('Token'),
-                ),
-                ElevatedButton(
-                  onPressed: _loginState != _LoginState.none ? unload : null,
-                  child: Text('Unload'),
+                  onPressed: _mapState == _MapState.unloaded ? load : unload,
+                  child:
+                      _mapState == _MapState.unloaded
+                          ? Text('Load')
+                          : Text('Unload'),
                 ),
               ],
             ),
@@ -80,32 +102,6 @@ class _ExampleAuthenticatorState extends State<ExampleAuthenticator> {
         ),
       ),
     );
-  }
-
-  // Attempt to load the map with an Authenticator configured to use OAuth.
-  void oAuth() {
-    _authenticator = Authenticator(
-      oAuthUserConfigurations: [
-        OAuthUserConfiguration(
-          portalUri: Uri.parse('https://www.arcgis.com'),
-          clientId: 'T0A3SudETrIQndd2',
-          redirectUri: Uri.parse('my-ags-flutter-app://auth'),
-        ),
-      ],
-    );
-
-    loadSecureMap();
-
-    setState(() => _loginState = _LoginState.oauth);
-  }
-
-  // Attempt to load the map with an Authenticator configured to use TokenCredential.
-  void token() {
-    _authenticator = Authenticator(context: context);
-
-    loadSecureMap();
-
-    setState(() => _loginState = _LoginState.token);
   }
 
   // Set a portal item map that has a secure layer (traffic). Loading the secure
@@ -120,17 +116,23 @@ class _ExampleAuthenticatorState extends State<ExampleAuthenticator> {
     _mapViewController.arcGISMap = map;
   }
 
+  void load() {
+    if (_mapState == _MapState.loaded) return;
+
+    loadSecureMap();
+    setState(() => _mapState = _MapState.loaded);
+  }
+
   Future<void> unload() async {
+    if (_mapState == _MapState.unloaded) return;
+
     _mapViewController.arcGISMap = ArcGISMap();
 
-    _authenticator?.dispose();
-    _authenticator = null;
-
-    if (_loginState == _LoginState.oauth) {
+    if (_authenticationType == _AuthenticationType.oauth) {
       await Authenticator.revokeOAuthTokens();
     }
     Authenticator.clearCredentials();
 
-    setState(() => _loginState = _LoginState.none);
+    setState(() => _mapState = _MapState.unloaded);
   }
 }
