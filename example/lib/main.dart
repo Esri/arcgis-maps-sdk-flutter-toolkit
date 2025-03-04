@@ -31,7 +31,52 @@ void main() {
     ArcGISEnvironment.apiKey = apiKey;
   }
 
-  runApp(const MaterialApp(home: ExampleApp()));
+  final colorScheme = ColorScheme.fromSeed(seedColor: Colors.deepPurple);
+  runApp(
+    MaterialApp(
+      theme: ThemeData(
+        colorScheme: colorScheme,
+        appBarTheme: AppBarTheme(backgroundColor: colorScheme.inversePrimary),
+      ),
+      home: const ExampleApp(),
+    ),
+  );
+}
+
+Widget compassBuilder() => ExampleCompass();
+Widget authenticatorBuilder() => ExampleAuthenticator();
+
+enum ComponentExample {
+  authenticator(
+    'Authenticator',
+    'Authenticate with OAuth or Token',
+    authenticatorBuilder,
+  ),
+  compass(
+    'Compass',
+    'A "North Arrow" always pointing north on a map',
+    compassBuilder,
+  );
+
+  const ComponentExample(this.title, this.subtitle, this.builder);
+  final String title;
+  final String subtitle;
+  final Widget Function() builder;
+
+  Card buildCard(BuildContext context) {
+    return Card(
+      child: ListTile(
+        title: Text(title),
+        subtitle: Text(subtitle),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => builder()),
+          );
+        },
+      ),
+    );
+  }
 }
 
 class ExampleApp extends StatelessWidget {
@@ -41,27 +86,12 @@ class ExampleApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Toolkit Examples')),
-      body: Column(
-        children: [
-          ElevatedButton(
-            child: Text('Compass'),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => ExampleCompass()),
-              );
-            },
-          ),
-          ElevatedButton(
-            child: Text('Authenticator'),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => ExampleAuthenticator()),
-              );
-            },
-          ),
-        ],
+      body: ListView.builder(
+        padding: const EdgeInsets.all(10),
+        itemCount: ComponentExample.values.length,
+        itemBuilder:
+            (context, index) =>
+                ComponentExample.values[index].buildCard(context),
       ),
     );
   }
