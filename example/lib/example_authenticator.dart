@@ -29,19 +29,20 @@ class ExampleAuthenticator extends StatefulWidget {
   State<ExampleAuthenticator> createState() => _ExampleAuthenticatorState();
 }
 
+// Which authentication type to use.
 enum _AuthenticationType { oauth, token }
 
+// Whether the map is loaded or not.
 enum _MapState { unloaded, loaded }
 
 class _ExampleAuthenticatorState extends State<ExampleAuthenticator> {
-  //fixme comments throughout
-
   final _mapViewController = ArcGISMapView.createController();
 
   var _authenticationType = _AuthenticationType.oauth;
 
   var _mapState = _MapState.unloaded;
 
+  // Configurations to use when OAuth is requested.
   final _oAuthUserConfigurations = [
     OAuthUserConfiguration(
       portalUri: Uri.parse('https://www.arcgis.com'),
@@ -60,6 +61,7 @@ class _ExampleAuthenticatorState extends State<ExampleAuthenticator> {
         child: Column(
           children: [
             Expanded(
+              // Add an Authenticator widget to handle authentication challenges.
               child: Authenticator(
                 oAuthUserConfigurations:
                     _authenticationType == _AuthenticationType.oauth
@@ -73,6 +75,7 @@ class _ExampleAuthenticatorState extends State<ExampleAuthenticator> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
+                // Toggle between OAuth and Token authentication.
                 SegmentedButton(
                   segments: [
                     ButtonSegment(
@@ -89,6 +92,9 @@ class _ExampleAuthenticatorState extends State<ExampleAuthenticator> {
                     setState(() => _authenticationType = selection.first);
                   },
                 ),
+                // Load or unload the map. Loading the map will trigger an
+                // authentication challenge. Unloading the map will additionally
+                // revoke any OAuth tokens and remove all credentials.
                 ElevatedButton(
                   onPressed: _mapState == _MapState.unloaded ? load : unload,
                   child:
@@ -107,15 +113,15 @@ class _ExampleAuthenticatorState extends State<ExampleAuthenticator> {
   // Set a portal item map that has a secure layer (traffic). Loading the secure
   // layer will trigger an authentication challenge.
   void loadSecureMap() {
-    final map = ArcGISMap.withItem(
+    _mapViewController.arcGISMap = ArcGISMap.withItem(
       PortalItem.withPortalAndItemId(
         portal: Portal.arcGISOnline(connection: PortalConnection.authenticated),
         itemId: 'e5039444ef3c48b8a8fdc9227f9be7c1',
       ),
     );
-    _mapViewController.arcGISMap = map;
   }
 
+  // Load the secure map and set the map state to loaded.
   void load() {
     if (_mapState == _MapState.loaded) return;
 
@@ -123,14 +129,14 @@ class _ExampleAuthenticatorState extends State<ExampleAuthenticator> {
     setState(() => _mapState = _MapState.loaded);
   }
 
+  // Unload the map, revoke any OAuth tokens, remove all credentials, and set the
+  // map state to unloaded.
   Future<void> unload() async {
     if (_mapState == _MapState.unloaded) return;
 
     _mapViewController.arcGISMap = ArcGISMap();
 
-    if (_authenticationType == _AuthenticationType.oauth) {
-      await Authenticator.revokeOAuthTokens();
-    }
+    await Authenticator.revokeOAuthTokens();
     Authenticator.clearCredentials();
 
     setState(() => _mapState = _MapState.unloaded);
