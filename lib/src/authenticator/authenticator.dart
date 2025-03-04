@@ -56,9 +56,13 @@ class _AuthenticatorState extends State<Authenticator>
   void initState() {
     super.initState();
 
-    ArcGISEnvironment
-        .authenticationManager
-        .arcGISAuthenticationChallengeHandler = this;
+    final manager = ArcGISEnvironment.authenticationManager;
+
+    if (manager.arcGISAuthenticationChallengeHandler != null) {
+      throw Exception('An AuthenticationChallengeHandler is already set');
+    }
+
+    manager.arcGISAuthenticationChallengeHandler = this;
   }
 
   @override
