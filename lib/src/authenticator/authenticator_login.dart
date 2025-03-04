@@ -31,8 +31,10 @@ class _AuthenticatorLoginState extends State<_AuthenticatorLogin> {
   // Controllers for the username and password text fields.
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
+
   // An error message to display.
   String? _error;
+
   // The result: true if the user logged in, false if the user canceled.
   bool? _result;
 

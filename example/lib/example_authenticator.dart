@@ -54,6 +54,7 @@ class _ExampleAuthenticatorState extends State<ExampleAuthenticator> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(title: Text('Authenticator')),
       body: SafeArea(
         left: false,

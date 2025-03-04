@@ -16,23 +16,43 @@
 
 part of '../../arcgis_maps_toolkit.dart';
 
-//fixme doc
-//fixme redirectUri in AndroidManifest.xml
-//fixme This document describes the steps to configure OAuth for your app:
-//fixme https://developers.arcgis.com/documentation/security-and-authentication/user-authentication/flows/authorization-code-with-pkce/
+/// The [Authenticator] widget handles authentication challenges with either an
+/// OAuth workflow in a browser window, or a username and password dialog.
+///
+/// To use OAuth, provide one or more [OAuthUserConfiguration]s in the
+/// `oAuthUserConfigurations` parameter. Otherwise, the user will be prompted to
+/// sign in using a username and password to obtain a [TokenCredential].
+///
+/// To learn more about using OAuth with ArcGIS accounts, see this document:
+/// https://developers.arcgis.com/documentation/security-and-authentication/user-authentication/
+///
+/// To configure OAuth for use in your Maps SDK for Flutter app, see:
+/// https://developers.arcgis.com/flutter/install-and-set-up/#enabling-user-authentication
 class Authenticator extends StatefulWidget {
-  //fixme persistent?? (w/ios options) -- static method if anything
-
+  /// Creates an [Authenticator] widget with the optional child and optional
+  /// `oAuthUserConfigurations`.
   const Authenticator({
     super.key,
     this.child,
     this.oAuthUserConfigurations = const [],
   });
 
+  /// An optional child widget.
+  ///
+  /// The [Authenticator] can be placed anywhere in the widget tree, but it is
+  /// recommended to make it the parent widget of an [ArcGISMapView].
   final Widget? child;
 
+  /// The list of OAuth configurations to use for authentication.
+  ///
+  /// If a challenge is received that matches a configuration, the user will be
+  /// prompted to sign in using that OAuth configuration. Otherwise, the user
+  /// will be prompted to sign in using a username and password to obtain a
+  /// [TokenCredential].
   final List<OAuthUserConfiguration> oAuthUserConfigurations;
 
+  /// Revoke all OAuth tokens. The returned [Future] completes when all tokens
+  /// have been successfully revoked.
   static Future<void> revokeOAuthTokens() async {
     await Future.wait(
       ArcGISEnvironment.authenticationManager.arcGISCredentialStore
@@ -42,6 +62,7 @@ class Authenticator extends StatefulWidget {
     );
   }
 
+  /// Clear all credentials from the credential store.
   static void clearCredentials() {
     ArcGISEnvironment.authenticationManager.arcGISCredentialStore.removeAll();
   }
@@ -83,6 +104,7 @@ class _AuthenticatorState extends State<Authenticator>
   void handleArcGISAuthenticationChallenge(
     ArcGISAuthenticationChallenge challenge,
   ) {
+    // If an OAuth configuration matches, use it. Else use token login.
     final configuration =
         widget.oAuthUserConfigurations
             .where(
@@ -124,6 +146,7 @@ class _AuthenticatorState extends State<Authenticator>
   }
 
   void _tokenLogin(ArcGISAuthenticationChallenge challenge) {
+    // Show an _AuthenticatorLogin dialog, which will answer the challenge.
     showDialog(
       context: context,
       builder: (context) => _AuthenticatorLogin(challenge: challenge),
