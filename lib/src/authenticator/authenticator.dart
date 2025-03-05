@@ -73,6 +73,8 @@ class Authenticator extends StatefulWidget {
 
 class _AuthenticatorState extends State<Authenticator>
     implements ArcGISAuthenticationChallengeHandler {
+  var _errorMessage = '';
+
   @override
   void initState() {
     super.initState();
@@ -80,23 +82,30 @@ class _AuthenticatorState extends State<Authenticator>
     final manager = ArcGISEnvironment.authenticationManager;
 
     if (manager.arcGISAuthenticationChallengeHandler != null) {
-      throw Exception('An AuthenticationChallengeHandler is already set');
+      _errorMessage =
+          'Authenticator failed to load: another AuthenticationChallengeHandler has already been set, of type ${manager.arcGISAuthenticationChallengeHandler.runtimeType}';
+    } else {
+      manager.arcGISAuthenticationChallengeHandler = this;
     }
-
-    manager.arcGISAuthenticationChallengeHandler = this;
   }
 
   @override
   void dispose() {
-    ArcGISEnvironment
-        .authenticationManager
-        .arcGISAuthenticationChallengeHandler = null;
+    if (_errorMessage.isEmpty) {
+      ArcGISEnvironment
+          .authenticationManager
+          .arcGISAuthenticationChallengeHandler = null;
+    }
 
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    if (_errorMessage.isNotEmpty) {
+      return Center(child: Text(_errorMessage));
+    }
+
     return widget.child ?? const SizedBox.shrink();
   }
 
