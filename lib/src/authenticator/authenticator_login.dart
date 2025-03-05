@@ -33,15 +33,15 @@ class _AuthenticatorLoginState extends State<_AuthenticatorLogin> {
   final _passwordController = TextEditingController();
 
   // An error message to display.
-  String? _error;
+  String? _errorMessage;
 
   // The result: true if the user logged in, false if the user canceled.
-  bool? _result;
+  bool? _loginResult;
 
   @override
   void dispose() {
     // If the widget was dismissed without a result, the challenge should fail.
-    if (_result == null) widget.challenge.continueAndFail();
+    if (_loginResult == null) widget.challenge.continueAndFail();
 
     // Text editing controllers must be disposed.
     _usernameController.dispose();
@@ -101,8 +101,8 @@ class _AuthenticatorLoginState extends State<_AuthenticatorLogin> {
                 ],
               ),
               // Display an error message if there is one.
-              if (_error != null)
-                Text(_error!, style: const TextStyle(color: Colors.red)),
+              if (_errorMessage != null)
+                Text(_errorMessage!, style: const TextStyle(color: Colors.red)),
             ],
           ),
         ),
@@ -111,17 +111,17 @@ class _AuthenticatorLoginState extends State<_AuthenticatorLogin> {
   }
 
   Future<void> login() async {
-    setState(() => _error = null);
+    setState(() => _errorMessage = null);
 
     // Username and password are required.
     final username = _usernameController.text;
     if (username.isEmpty) {
-      setState(() => _error = 'Username is required.');
+      setState(() => _errorMessage = 'Username is required.');
       return;
     }
     final password = _passwordController.text;
     if (password.isEmpty) {
-      setState(() => _error = 'Password is required.');
+      setState(() => _errorMessage = 'Password is required.');
       return;
     }
 
@@ -136,16 +136,16 @@ class _AuthenticatorLoginState extends State<_AuthenticatorLogin> {
 
       // If successful, continue with the credential.
       widget.challenge.continueWithCredential(credential);
-      Navigator.of(context).pop(_result = true);
+      Navigator.of(context).pop(_loginResult = true);
     } on ArcGISException catch (e) {
       // If there was an error, display the error message.
-      setState(() => _error = e.message);
+      setState(() => _errorMessage = e.message);
     }
   }
 
   void cancel() {
     // If the user cancels, cancel the challenge and dismiss the dialog.
     widget.challenge.cancel();
-    Navigator.of(context).pop(_result = false);
+    Navigator.of(context).pop(_loginResult = false);
   }
 }
