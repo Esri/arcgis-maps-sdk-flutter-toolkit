@@ -38,6 +38,8 @@ enum _MapState { unloaded, loaded }
 class _ExampleAuthenticatorState extends State<ExampleAuthenticator> {
   final _mapViewController = ArcGISMapView.createController();
 
+  final _emptyMap = ArcGISMap(spatialReference: SpatialReference.wgs84);
+
   var _authenticationType = _AuthenticationType.oauth;
 
   var _mapState = _MapState.unloaded;
@@ -70,6 +72,8 @@ class _ExampleAuthenticatorState extends State<ExampleAuthenticator> {
                         : [],
                 child: ArcGISMapView(
                   controllerProvider: () => _mapViewController,
+                  onMapViewReady:
+                      () => _mapViewController.arcGISMap = _emptyMap,
                 ),
               ),
             ),
@@ -135,7 +139,7 @@ class _ExampleAuthenticatorState extends State<ExampleAuthenticator> {
   Future<void> unload() async {
     if (_mapState == _MapState.unloaded) return;
 
-    _mapViewController.arcGISMap = ArcGISMap();
+    _mapViewController.arcGISMap = _emptyMap;
 
     await Authenticator.revokeOAuthTokens();
     Authenticator.clearCredentials();
