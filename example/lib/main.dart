@@ -17,6 +17,7 @@
 import 'package:flutter/material.dart';
 import 'package:arcgis_maps/arcgis_maps.dart';
 
+import 'example_authenticator.dart';
 import 'example_compass.dart';
 
 void main() {
@@ -30,7 +31,50 @@ void main() {
     ArcGISEnvironment.apiKey = apiKey;
   }
 
-  runApp(const MaterialApp(home: ExampleApp()));
+  final colorScheme = ColorScheme.fromSeed(seedColor: Colors.deepPurple);
+  runApp(
+    MaterialApp(
+      theme: ThemeData(
+        colorScheme: colorScheme,
+        appBarTheme: AppBarTheme(backgroundColor: colorScheme.inversePrimary),
+      ),
+      home: const ExampleApp(),
+    ),
+  );
+}
+
+enum ComponentExample {
+  authenticator(
+    'Authenticator',
+    'Authenticate with OAuth or Token',
+    ExampleAuthenticator.new,
+  ),
+  compass(
+    'Compass',
+    'A "North Arrow" always pointing north on a map',
+    ExampleCompass.new,
+  );
+
+  const ComponentExample(this.title, this.subtitle, this.constructor);
+
+  final String title;
+  final String subtitle;
+  final Widget Function({Key? key}) constructor;
+
+  Card buildCard(BuildContext context) {
+    return Card(
+      child: ListTile(
+        title: Text(title),
+        subtitle: Text(subtitle),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => constructor()),
+          );
+        },
+      ),
+    );
+  }
 }
 
 class ExampleApp extends StatelessWidget {
@@ -40,18 +84,12 @@ class ExampleApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('Toolkit Examples')),
-      body: Column(
-        children: [
-          ElevatedButton(
-            child: Text('Compass'),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => ExampleCompass()),
-              );
-            },
-          ),
-        ],
+      body: ListView.builder(
+        padding: const EdgeInsets.all(10),
+        itemCount: ComponentExample.values.length,
+        itemBuilder:
+            (context, index) =>
+                ComponentExample.values[index].buildCard(context),
       ),
     );
   }
