@@ -17,9 +17,12 @@
 part of '../../arcgis_maps_toolkit.dart';
 
 /// A [CustomPainter] that paints a classic compass needle.
-class NeedlePainter extends CustomPainter {
-  /// Constructs a [NeedlePainter].
-  NeedlePainter();
+class CompassNeedlePainter extends CustomPainter {
+  /// Constructs a [CompassNeedlePainter] with the needle rotated by `angleRadians`.
+  CompassNeedlePainter(this.angleRadians);
+
+  /// The angle (in radians) at which the needle is rotated.
+  final double angleRadians;
 
   static final _bronzePaint =
       Paint()..color = const Color.fromARGB(255, 241, 169, 59);
@@ -41,6 +44,9 @@ class NeedlePainter extends CustomPainter {
     // Center and normalize the canvas as [-0.5, -0.5] to [0.5, 0.5].
     canvas.translate(size.width / 2, size.height / 2);
     canvas.scale(size.width, size.height);
+
+    // Rotate to the specified angle (in radians).
+    canvas.rotate(angleRadians);
 
     // Scale down the needle to 60% of the available space.
     canvas.scale(0.6);
@@ -80,5 +86,7 @@ class NeedlePainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+  bool shouldRepaint(covariant CustomPainter oldDelegate) {
+    return (oldDelegate as CompassNeedlePainter).angleRadians != angleRadians;
+  }
 }
