@@ -27,7 +27,7 @@ class Compass extends StatefulWidget {
     this.automaticallyHides = true,
     this.alignment = Alignment.topRight,
     this.padding = const EdgeInsets.all(10),
-    this.icon,
+    this.iconBuilder,
   });
 
   /// A function that provides an [ArcGISMapViewController] to listen to and
@@ -54,12 +54,12 @@ class Compass extends StatefulWidget {
   /// Defaults to 10 pixels on all sides.
   final EdgeInsets padding;
 
-  /// The icon to be used for the compass.
+  /// A function to build the compass icon.
   ///
-  /// If not provided, a default compass icon will be used. Provide any Widget
-  /// to customize the icon, though generally with a circular shape and fixed
-  /// size.
-  final Widget? icon;
+  /// If not provided, a default compass icon will be used. Provide a function
+  /// to customize the icon. The returned icon should be a [Widget] with some
+  /// element rotated to `angleRadians` to indicate north.
+  final Widget Function(BuildContext context, double angleRadians)? iconBuilder;
 
   @override
   State<Compass> createState() => _CompassState();
@@ -70,9 +70,11 @@ class _CompassState extends State<Compass> {
 
   late StreamSubscription<double> _rotationSubscription;
 
-  var _rotation = 0.0;
+  var _angleRadians = 0.0;
 
-  late Widget _icon;
+  late Widget Function(BuildContext context, double angleRadians) _iconBuilder;
+
+  static double rotationToAngle(double rotation) => rotation * -math.pi / 180;
 
   @override
   void initState() {
@@ -80,12 +82,12 @@ class _CompassState extends State<Compass> {
 
     _controller = widget.controllerProvider();
 
-    _rotation = _controller.rotation;
+    _angleRadians = rotationToAngle(_controller.rotation);
     _rotationSubscription = _controller.onRotationChanged.listen((rotation) {
-      setState(() => _rotation = rotation);
+      setState(() => _angleRadians = rotationToAngle(rotation));
     });
 
-    _icon = widget.icon ?? defaultIcon();
+    _iconBuilder = widget.iconBuilder ?? defaultIconBuilder;
   }
 
   @override
@@ -98,14 +100,14 @@ class _CompassState extends State<Compass> {
   @override
   Widget build(BuildContext context) {
     return Visibility(
-      visible: !widget.automaticallyHides || _rotation != 0,
+      visible: !widget.automaticallyHides || _angleRadians != 0,
       child: Align(
         alignment: widget.alignment,
         child: Padding(
           padding: widget.padding,
-          child: Transform.rotate(
-            angle: _rotation * -math.pi / 180,
-            child: IconButton(onPressed: onPressed, icon: _icon),
+          child: IconButton(
+            onPressed: onPressed,
+            icon: _iconBuilder(context, _angleRadians),
           ),
         ),
       ),
@@ -114,9 +116,9 @@ class _CompassState extends State<Compass> {
 
   void onPressed() => _controller.setViewpointRotation(angleDegrees: 0);
 
-  Widget defaultIcon() {
+  Widget defaultIconBuilder(BuildContext context, double angleRadians) {
     return CustomPaint(
-      foregroundPainter: NeedlePainter(),
+      foregroundPainter: CompassNeedlePainter(angleRadians),
       child: Container(
         width: 50,
         height: 50,

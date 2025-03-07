@@ -60,7 +60,15 @@ class _ExampleCompassState extends State<ExampleCompass> {
             automaticallyHides: false,
             alignment: Alignment.centerLeft,
             padding: const EdgeInsets.all(40),
-            icon: Icon(Icons.arrow_circle_up, size: 80, color: Colors.purple),
+            iconBuilder:
+                (context, angleRadians) => Transform.rotate(
+                  angle: angleRadians,
+                  child: Icon(
+                    Icons.arrow_circle_up,
+                    size: 80,
+                    color: Colors.purple,
+                  ),
+                ),
           ),
         ],
       ),
