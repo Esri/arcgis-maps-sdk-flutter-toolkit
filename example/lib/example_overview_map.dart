@@ -59,11 +59,13 @@ class _ExampleOverviewMapState extends State<ExampleOverviewMap> {
             controllerProvider: () => _mapViewController,
             alignment: Alignment.centerLeft,
             padding: EdgeInsets.zero,
+            scaleFactor: 10,
             extentSymbol: SimpleLineSymbol(
               color: Colors.green[700]!,
               width: 2,
               style: SimpleLineSymbolStyle.dot,
             ),
+            map: ArcGISMap.withBasemapStyle(BasemapStyle.arcGISLightGrayBase),
             containerBuilder:
                 (context, child) => Container(
                   width: 200,

@@ -24,9 +24,10 @@ class OverviewMap extends StatefulWidget {
     super.key,
     this.alignment = Alignment.topRight,
     this.padding = const EdgeInsets.all(10),
-    this.containerBuilder,
-    this.extentSymbol,
     this.scaleFactor = 25,
+    this.extentSymbol,
+    this.map,
+    this.containerBuilder,
   });
 
   /// A function that provides an [ArcGISMapViewController] to listen to and
@@ -48,13 +49,16 @@ class OverviewMap extends StatefulWidget {
   final EdgeInsets padding;
 
   ///
-  final Widget Function(BuildContext context, Widget child)? containerBuilder;
+  final double scaleFactor;
 
   ///
   final SimpleLineSymbol? extentSymbol;
 
   ///
-  final double scaleFactor;
+  final ArcGISMap? map;
+
+  ///
+  final Widget Function(BuildContext context, Widget child)? containerBuilder;
 
   @override
   State<OverviewMap> createState() => _OverviewMapState();
@@ -112,10 +116,9 @@ class _OverviewMapState extends State<OverviewMap> {
   }
 
   void onMapViewReady() {
-    //fixme map as an optional parameter
-    _overviewController.arcGISMap = ArcGISMap.withBasemapStyle(
-      BasemapStyle.arcGISTopographic,
-    );
+    _overviewController.arcGISMap =
+        widget.map ??
+        ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);
     _overviewController.isAttributionTextVisible = false;
     _overviewController.interactionOptions.enabled = false;
 
