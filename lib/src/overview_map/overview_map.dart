@@ -26,6 +26,7 @@ class OverviewMap extends StatefulWidget {
     this.padding = const EdgeInsets.all(10),
     this.containerBuilder,
     this.extentSymbol,
+    this.scaleFactor = 25,
   });
 
   /// A function that provides an [ArcGISMapViewController] to listen to and
@@ -51,6 +52,9 @@ class OverviewMap extends StatefulWidget {
 
   ///
   final SimpleLineSymbol? extentSymbol;
+
+  ///
+  final double scaleFactor;
 
   @override
   State<OverviewMap> createState() => _OverviewMapState();
@@ -108,25 +112,35 @@ class _OverviewMapState extends State<OverviewMap> {
   }
 
   void onMapViewReady() {
+    //fixme map as an optional parameter
     _overviewController.arcGISMap = ArcGISMap.withBasemapStyle(
       BasemapStyle.arcGISTopographic,
     );
     _overviewController.isAttributionTextVisible = false;
     _overviewController.interactionOptions.enabled = false;
 
+    onViewpointChanged(null);
     _viewpointChangedSubscription = _controller.onViewpointChanged.listen(
       onViewpointChanged,
     );
   }
 
   void onViewpointChanged(_) {
-    //fixme
-    final viewpoint = _controller.getCurrentViewpoint(
-      ViewpointType.boundingGeometry,
-    );
-    //fixme scale
-
     _extentGraphic.geometry = _controller.visibleArea;
+
+    final viewpoint = _controller.getCurrentViewpoint(
+      ViewpointType.centerAndScale,
+    );
+    if (viewpoint == null) return;
+    final center = viewpoint.targetGeometry as ArcGISPoint?;
+    if (center == null) return;
+
+    _overviewController.setViewpoint(
+      Viewpoint.fromCenter(
+        center,
+        scale: viewpoint.targetScale * widget.scaleFactor,
+      ),
+    );
   }
 
   Widget defaultContainerBuilder(BuildContext context, Widget child) {
