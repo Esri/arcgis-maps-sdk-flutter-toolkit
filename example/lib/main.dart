@@ -19,6 +19,7 @@ import 'package:arcgis_maps/arcgis_maps.dart';
 
 import 'example_authenticator.dart';
 import 'example_compass.dart';
+import 'example_overview_map.dart';
 
 void main() {
   // Supply your apiKey using the --dart-define-from-file command line argument.
@@ -53,6 +54,11 @@ enum ComponentExample {
     'Compass',
     'A "North Arrow" always pointing north on a map',
     ExampleCompass.new,
+  ),
+  overviewMap(
+    'Overview Map',
+    'A small map that shows the extent of a larger map',
+    ExampleOverviewMap.new,
   );
 
   const ComponentExample(this.title, this.subtitle, this.constructor);
