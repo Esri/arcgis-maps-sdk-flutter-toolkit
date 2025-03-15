@@ -61,7 +61,7 @@ class _ExampleOverviewMapState extends State<ExampleOverviewMap> {
             padding: EdgeInsets.zero,
             scaleFactor: 10,
             extentSymbol: SimpleLineSymbol(
-              color: Colors.green[700]!,
+              color: Colors.deepPurple,
               width: 2,
               style: SimpleLineSymbolStyle.dot,
             ),
@@ -71,10 +71,10 @@ class _ExampleOverviewMapState extends State<ExampleOverviewMap> {
                   width: 200,
                   height: 200,
                   decoration: BoxDecoration(
-                    border: Border.all(color: Colors.green, width: 3),
+                    border: Border.all(color: Colors.deepPurple, width: 3),
                     borderRadius: BorderRadius.circular(3),
                   ),
-                  child: child,
+                  child: Opacity(opacity: .8, child: child),
                 ),
           ),
         ],
