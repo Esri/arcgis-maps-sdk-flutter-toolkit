@@ -16,9 +16,11 @@
 
 part of '../../arcgis_maps_toolkit.dart';
 
-///
+/// A small "overview" (or "inset") map displaying a representation of the current
+/// viewpoint of the target map. The current viewpoint will be represented by a
+/// polygon displaying the visible area of the target map.
 class OverviewMap extends StatefulWidget {
-  ///
+  /// Create an OverviewMap widget.
   const OverviewMap({
     required this.controllerProvider,
     super.key,
@@ -30,8 +32,7 @@ class OverviewMap extends StatefulWidget {
     this.containerBuilder,
   });
 
-  /// A function that provides an [ArcGISMapViewController] to listen to and
-  /// control.
+  /// A function that provides the [ArcGISMapViewController] of the target map.
   ///
   /// This should return the same controller that is provided to the
   /// corresponding [ArcGISMapView].
@@ -48,16 +49,27 @@ class OverviewMap extends StatefulWidget {
   /// Defaults to 10 pixels on all sides.
   final EdgeInsets padding;
 
+  /// The amount to scale the overview map compared to the target map.
   ///
+  /// Defaults to 25.
   final double scaleFactor;
 
+  /// The symbol used to represent the current viewpoint.
   ///
+  /// Defaults to a 1 pixel red outline.
   final SimpleLineSymbol? extentSymbol;
 
+  /// The map to use as the overview map.
   ///
+  /// Defaults to a map with the ArcGIS Topographic basemap style.
   final ArcGISMap? map;
 
+  /// A function to build the container holding the overview map.
   ///
+  /// If not provided, the overview map will be 150x100 pixels with a 1 pixel
+  /// black border. Provide a function to return a customized container, such as
+  /// having the desired size, border, opacity, etc. The returned [Widget] must
+  /// include the provided `child`, which will be the overview map itself.
   final Widget Function(BuildContext context, Widget child)? containerBuilder;
 
   @override
@@ -135,12 +147,10 @@ class _OverviewMapState extends State<OverviewMap> {
       ViewpointType.centerAndScale,
     );
     if (viewpoint == null) return;
-    final center = viewpoint.targetGeometry as ArcGISPoint?;
-    if (center == null) return;
 
     _overviewController.setViewpoint(
       Viewpoint.fromCenter(
-        center,
+        viewpoint.targetGeometry as ArcGISPoint,
         scale: viewpoint.targetScale * widget.scaleFactor,
       ),
     );
