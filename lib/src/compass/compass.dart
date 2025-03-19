@@ -106,6 +106,7 @@ class _CompassState extends State<Compass> {
         child: Padding(
           padding: widget.padding,
           child: IconButton(
+            padding: EdgeInsets.zero,
             onPressed: onPressed,
             icon: _iconBuilder(context, _angleRadians),
           ),
