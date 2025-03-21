@@ -57,7 +57,7 @@ class OverviewMap extends StatefulWidget {
   /// The symbol used to represent the current viewpoint.
   ///
   /// Defaults to a 1 pixel red outline.
-  final SimpleLineSymbol? extentSymbol;
+  final SimpleFillSymbol? extentSymbol;
 
   /// The map to use as the overview map.
   ///
@@ -94,7 +94,11 @@ class _OverviewMapState extends State<OverviewMap> {
     _controller = widget.controllerProvider();
 
     _extentGraphic.symbol =
-        widget.extentSymbol ?? SimpleLineSymbol(color: Colors.red);
+        widget.extentSymbol ??
+        SimpleFillSymbol(
+          color: Colors.transparent,
+          outline: SimpleLineSymbol(color: Colors.red),
+        );
 
     _overviewController.graphicsOverlays.add(
       GraphicsOverlay()..graphics.add(_extentGraphic),

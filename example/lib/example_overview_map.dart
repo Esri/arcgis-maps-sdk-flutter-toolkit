@@ -60,10 +60,13 @@ class _ExampleOverviewMapState extends State<ExampleOverviewMap> {
             alignment: Alignment.centerLeft,
             padding: EdgeInsets.zero,
             scaleFactor: 10,
-            extentSymbol: SimpleLineSymbol(
-              color: Colors.deepPurple,
-              width: 2,
-              style: SimpleLineSymbolStyle.dot,
+            extentSymbol: SimpleFillSymbol(
+              color: Colors.transparent,
+              outline: SimpleLineSymbol(
+                color: Colors.deepPurple,
+                width: 2,
+                style: SimpleLineSymbolStyle.dot,
+              ),
             ),
             map: ArcGISMap.withBasemapStyle(BasemapStyle.arcGISLightGrayBase),
             containerBuilder:
