@@ -144,7 +144,7 @@ class _OverviewMapState extends State<OverviewMap> {
     );
   }
 
-  void onViewpointChanged(_) {
+  void onViewpointChanged(void _) {
     _extentGraphic.geometry = _controller.visibleArea;
 
     final viewpoint = _controller.getCurrentViewpoint(
