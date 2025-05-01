@@ -38,7 +38,7 @@ class ImageMediaView extends StatefulWidget {
 }
 
 class ImageMediaViewState extends State<ImageMediaView> {
-  // TODO: show detail view when clicked.
+  // TODO(3337): show detail view when clicked.
   bool isShowingDetailView = false;
 
   @override
