@@ -63,7 +63,7 @@ enum ComponentExample {
   ),
   popupView(
     'Popup View',
-    'A PopupView will display a popup for an individual GeoElement.',
+    'A PopupView renders the popup elements associated with a single GeoElement.',
     PopupExample.new,
   );
 
