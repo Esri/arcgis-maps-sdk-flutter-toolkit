@@ -16,7 +16,7 @@
 
 part of '../../../arcgis_maps_toolkit.dart';
 
-ThemeData popupViewThemeData = ThemeData(
+ThemeData popupViewTextTheme = ThemeData(
   textTheme: const TextTheme(
     titleMedium: TextStyle(
       fontSize: 20,

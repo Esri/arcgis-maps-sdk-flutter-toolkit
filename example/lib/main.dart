@@ -40,7 +40,7 @@ void main() {
       theme: ThemeData(
         colorScheme: colorScheme,
         appBarTheme: AppBarTheme(backgroundColor: colorScheme.inversePrimary),
-        textTheme: popupViewThemeData.textTheme
+        textTheme: popupViewTextTheme.textTheme
       ),
       home: const ExampleApp(),
     ),
