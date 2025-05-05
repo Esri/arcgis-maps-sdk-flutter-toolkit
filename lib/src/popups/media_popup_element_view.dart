@@ -108,7 +108,7 @@ class _PopupMediaView extends StatelessWidget {
   Widget _buildMediaContent(PopupMedia popupMedia, Size mediaSize) {
     switch (popupMedia.type) {
       case PopupMediaType.image:
-        return ImageMediaView(popupMedia: popupMedia, mediaSize: mediaSize);
+        return _ImageMediaView(popupMedia: popupMedia, mediaSize: mediaSize);
       case PopupMediaType.barChart:
       case PopupMediaType.columnChart:
       case PopupMediaType.lineChart:
