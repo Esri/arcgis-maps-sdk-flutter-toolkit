@@ -47,7 +47,7 @@ class _TextPopupElementViewState extends State<_TextPopupElementView> {
               onNavigationRequest: (NavigationRequest request) {
                 final url = request.url;
                 if (url.startsWith('http') || url.startsWith('https')) {
-                  _launchUri(url);
+                  _launchUri(context, url);
                   return NavigationDecision.prevent;
                 }
                 return NavigationDecision
@@ -120,7 +120,7 @@ class _TextPopupElementViewState extends State<_TextPopupElementView> {
       final result = await _controller.runJavaScriptReturningResult(
         'document.documentElement.scrollHeight;',
       );
-      return result.toDouble;
+      return result._toDouble;
     } on Exception {
       return null;
     }
@@ -138,8 +138,8 @@ class _TextPopupElementViewState extends State<_TextPopupElementView> {
   }
 }
 
-extension Utilities on Object {
-  double? get toDouble {
+extension on Object {
+  double? get _toDouble {
     if (this is String) {
       return double.parse(this as String);
     } else if (this is num) {
