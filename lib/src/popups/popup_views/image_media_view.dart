@@ -76,7 +76,9 @@ class ImageMediaViewState extends State<ImageMediaView> {
                   return Center(
                     child: Text(
                       'Image not available',
-                      style: Theme.of(context).textTheme.bodyText,
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: Colors.red,
+                      ),
                     ),
                   );
                 },

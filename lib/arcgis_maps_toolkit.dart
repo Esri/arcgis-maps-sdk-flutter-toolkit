@@ -22,7 +22,6 @@ import 'dart:developer';
 import 'dart:math' as math;
 
 import 'package:arcgis_maps/arcgis_maps.dart';
-import 'package:arcgis_maps_toolkit/src/popups/theme/theme_data.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -39,6 +38,6 @@ part 'src/popups/media_popup_element_view.dart';
 part 'src/popups/text_popup_element_view.dart';
 part 'src/popups/popup_views/image_media_view.dart';
 part 'src/popups/popup_views/popup_element_header.dart';
-
+part 'src/popups/theme/theme_data.dart';
 
 part 'src/template_widget.dart';

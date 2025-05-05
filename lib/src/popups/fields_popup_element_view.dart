@@ -84,7 +84,7 @@ class _FieldRow extends StatelessWidget {
             field.label,
             style: Theme.of(
               context,
-            ).textTheme.subtitle.copyWith(color: Colors.grey),
+            ).textTheme.titleSmall,
           ),
           _FormattedValueText(formattedValue: field.formattedValue),
           const Divider(color: Colors.grey, height: 1, thickness: 1),
@@ -115,7 +115,7 @@ class _FormattedValueText extends StatelessWidget {
         ),
       );
     } else {
-      return Text(formattedValue, style: Theme.of(context).textTheme.fieldValueText);
+      return Text(formattedValue, style: Theme.of(context).textTheme.labelMedium);
     }
   }
 

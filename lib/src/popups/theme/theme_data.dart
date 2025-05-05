@@ -14,52 +14,32 @@
 // limitations under the License.
 //
 
-import 'package:flutter/material.dart';
+part of '../../../arcgis_maps_toolkit.dart';
 
-extension CustomTextTheme on TextTheme {
-  TextStyle get popupTile => const TextStyle(
-    fontSize: 20,
-    fontWeight: FontWeight.bold,
-    color: Colors.grey,
-  );
+ThemeData popupViewThemeData = ThemeData(
+  textTheme: const TextTheme(
+    titleMedium: TextStyle(
+      fontSize: 20,
+      fontWeight: FontWeight.bold,
+      color: Colors.grey,
+    ),
 
-  TextStyle get subtitle => const TextStyle(
-    fontSize: 16,
-    fontWeight: FontWeight.w500,
-    color: Colors.black,
-  );
+    titleSmall: TextStyle(
+      fontSize: 16,
+      fontWeight: FontWeight.w500,
+      color: Colors.black,
+    ),
 
-  TextStyle get headline => const TextStyle(
-    fontSize: 16,
-    fontWeight: FontWeight.w500,
-    color: Colors.black, 
-  );
+    labelMedium: TextStyle(
+      fontSize: 16,
+      fontWeight: FontWeight.w400,
+      color: Colors.black,
+    ),
 
-  TextStyle get bodyText => const TextStyle(
-    fontSize: 14,
-    fontWeight: FontWeight.w400,
-    color: Colors.black,
-  );
-
-   TextStyle get fieldValueText => const TextStyle(
-    fontSize: 16,
-    fontWeight: FontWeight.w400,
-    color: Colors.black,
-  );
-
-  TextStyle get customLabelStyle => const TextStyle(
-    fontSize: 18,
-    fontWeight: FontWeight.bold,
-    color: Colors.white,
-  );
-
-  TextStyle get categoryCardLabelStyle => const TextStyle(
-    fontSize: 16,
-    fontWeight: FontWeight.bold,
-    color: Colors.white,
-  );
-
-  TextStyle get customErrorStyle => const TextStyle(color: Colors.red);
-
-  TextStyle get customWhiteStyle => const TextStyle(color: Colors.white);
-}
+    bodyMedium: TextStyle(
+      fontSize: 14,
+      fontWeight: FontWeight.w400,
+      color: Colors.black,
+    ),
+  ),
+);

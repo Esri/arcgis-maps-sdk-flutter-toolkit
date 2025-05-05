@@ -23,7 +23,6 @@ part of '../../arcgis_maps_toolkit.dart';
 /// The text element is passed as a parameter to the widget.
 /// parameters:
 /// - [textElement]: The text popup element to be displayed.
-/// - [onHeightChanged]: A optional callback function that is called when the height of the WebView changes.
 class _TextPopupElementView extends StatefulWidget {
   const _TextPopupElementView({
     required this.textElement,

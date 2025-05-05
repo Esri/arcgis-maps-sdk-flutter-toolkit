@@ -33,9 +33,9 @@ class _PopupElementHeader extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title, style: Theme.of(context).textTheme.headline),
+        Text(title, style: Theme.of(context).textTheme.titleSmall),
         if (description.isNotEmpty)
-          Text(description, style: Theme.of(context).textTheme.bodyText),
+          Text(description, style: Theme.of(context).textTheme.bodyMedium),
       ],
     );
   }

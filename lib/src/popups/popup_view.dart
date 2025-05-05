@@ -51,9 +51,9 @@ class _PopupViewState extends State<PopupView> {
               Expanded(
                 child: Text(
                   widget.popup.title,
-                  style: Theme.of(context).textTheme.popupTile,
+                  style: Theme.of(context).textTheme.titleMedium,
                   overflow: TextOverflow.ellipsis,
-                  maxLines: 1,
+                  maxLines: 2,
                 ),
               ),
               SizedBox(
