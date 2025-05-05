@@ -102,11 +102,17 @@ class _FormattedValueText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (formattedValue.toLowerCase().startsWith('http')) {
+      return _buildLinkText(context, formattedValue);
+    } else {
+      return _buildPlainText(context, formattedValue);
+    }
+  }
+
+  Widget _buildLinkText(BuildContext context, String value){
+    try {
+      final uri = Uri.parse(value);
       return GestureDetector(
-        onTap: () async {
-          final uri = Uri.parse(formattedValue);
-          await _launchUri(context, uri);
-        },
+        onTap: () async => _launchUri(context, uri),
         child: Text(
           'View',
           style: TextStyle(
@@ -115,12 +121,14 @@ class _FormattedValueText extends StatelessWidget {
           ),
         ),
       );
-    } else {
-      return Text(
-        formattedValue,
-        style: Theme.of(context).textTheme.labelMedium,
-      );
+    } on FormatException {
+      // Handle invalid URL
+      return _buildPlainText(context, value);
     }
+  }
+
+  Widget _buildPlainText(BuildContext context, String value) {
+    return Text(value, style: Theme.of(context).textTheme.labelMedium);
   }
 
   Future<void> _launchUri(BuildContext context, Uri uri) async {
