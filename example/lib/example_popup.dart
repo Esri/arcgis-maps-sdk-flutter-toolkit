@@ -41,7 +41,7 @@ class PopupExample extends StatefulWidget {
 
 class _PopupExampleState extends State<PopupExample> {
   final _mapViewController = ArcGISMapView.createController();
-  Widget? _popupView;
+  Popup? _popup;
 
   @override
   Widget build(BuildContext context) {
@@ -71,12 +71,16 @@ class _PopupExampleState extends State<PopupExample> {
   }
 
   Widget? getBottomSheet(BuildContext context) {
-    return _popupView != null
+    return _popup != null
         ? Padding(
           padding: const EdgeInsets.fromLTRB(10, 20, 10, 10),
           child: SizedBox(
             height: MediaQuery.of(context).size.height * 0.7,
-            child: _popupView,
+            child: PopupView(popup: _popup! , onClose: () {
+              setState(() {
+                _popup = null;
+              });
+            }),
           ),
         )
         : null;
@@ -96,14 +100,7 @@ class _PopupExampleState extends State<PopupExample> {
       await popup.evaluateExpressions();
 
       setState(() {
-        _popupView = PopupView(
-          popup: popup,
-          onClose: () {
-            setState(() {
-              _popupView = null;
-            });
-          },
-        );
+        _popup = popup;
       });
     } else if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -113,7 +110,7 @@ class _PopupExampleState extends State<PopupExample> {
         ),
       );
       setState(() {
-        _popupView = null;
+        _popup = null;
       });
     }
   }
