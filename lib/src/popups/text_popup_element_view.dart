@@ -24,20 +24,17 @@ part of '../../arcgis_maps_toolkit.dart';
 /// parameters:
 /// - [textElement]: The text popup element to be displayed.
 /// - [onHeightChanged]: A optional callback function that is called when the height of the WebView changes.
-class TextPopupElementView extends StatefulWidget {
-  const TextPopupElementView({
+class _TextPopupElementView extends StatefulWidget {
+  const _TextPopupElementView({
     required this.textElement,
-    this.onHeightChanged,
-    super.key,
   });
   final TextPopupElement textElement;
-  final ValueChanged<double>? onHeightChanged;
 
   @override
-  TextPopupElementViewState createState() => TextPopupElementViewState();
+  _TextPopupElementViewState createState() => _TextPopupElementViewState();
 }
 
-class TextPopupElementViewState extends State<TextPopupElementView> {
+class _TextPopupElementViewState extends State<_TextPopupElementView> {
   late final WebViewController _controller;
   double? _height = 100;
 
@@ -65,7 +62,6 @@ class TextPopupElementViewState extends State<TextPopupElementView> {
                   setState(() {
                     _height = height;
                   });
-                  widget.onHeightChanged?.call(height);
                 }
               },
             ),

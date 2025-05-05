@@ -14,16 +14,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 //
-import 'package:arcgis_maps_toolkit/src/popups/theme/theme_data.dart';
-import 'package:flutter/material.dart';
+
+part of '../../../arcgis_maps_toolkit.dart';
 
 /// A widget that displays a header for a popup element.
 /// It includes a title and an optional description.
-class PopupElementHeader extends StatelessWidget {
-  const PopupElementHeader({
+class _PopupElementHeader extends StatelessWidget {
+  const _PopupElementHeader({
     required this.title,
     required this.description,
-    super.key,
   });
 
   final String title;

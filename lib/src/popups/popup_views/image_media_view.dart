@@ -14,9 +14,7 @@
 // limitations under the License.
 //
 
-import 'package:arcgis_maps/arcgis_maps.dart';
-import 'package:arcgis_maps_toolkit/src/popups/theme/theme_data.dart';
-import 'package:flutter/material.dart';
+part of '../../../arcgis_maps_toolkit.dart';
 
 /// A widget that displays an image media view in a popup.
 /// It uses a stack to overlay the image with a footer and a border.

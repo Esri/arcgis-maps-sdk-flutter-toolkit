@@ -19,16 +19,16 @@ part of '../../arcgis_maps_toolkit.dart';
 /// It uses a horizontal list view to render the media content.
 /// parameters:
 /// - [mediaElement]: The media popup element to be displayed.
-class MediaPopupElementView extends StatefulWidget {
-  const MediaPopupElementView({required this.mediaElement, super.key});
+class _MediaPopupElementView extends StatefulWidget {
+  const _MediaPopupElementView({required this.mediaElement,});
 
   final MediaPopupElement mediaElement;
 
   @override
-  MediaPopupElementViewState createState() => MediaPopupElementViewState();
+  _MediaPopupElementViewState createState() => _MediaPopupElementViewState();
 }
 
-class MediaPopupElementViewState extends State<MediaPopupElementView> {
+class _MediaPopupElementViewState extends State<_MediaPopupElementView> {
   bool _isExpanded = true;
   int get displayableMediaCount => widget.mediaElement.media.length;
 
@@ -38,7 +38,7 @@ class MediaPopupElementViewState extends State<MediaPopupElementView> {
       return Card(
         margin: const EdgeInsets.all(8),
         child: ExpansionTile(
-          title: PopupElementHeader(
+          title: _PopupElementHeader(
             title: widget.mediaElement.title.isEmpty
                 ? 'Media'
                 : widget.mediaElement.title,

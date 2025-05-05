@@ -19,25 +19,25 @@ part of '../../arcgis_maps_toolkit.dart';
 /// It uses a list view to render the fields content.
 /// parameters:
 /// - [fieldsElement]: The fields popup element to be displayed.
-class FieldsPopupElementView extends StatefulWidget {
-  const FieldsPopupElementView({required this.fieldsElement, super.key});
+class _FieldsPopupElementView extends StatefulWidget {
+  const _FieldsPopupElementView({required this.fieldsElement});
 
   final FieldsPopupElement fieldsElement;
 
   @override
-  FieldsPopupElementViewState createState() => FieldsPopupElementViewState();
+  _FieldsPopupElementViewState createState() => _FieldsPopupElementViewState();
 }
 
-class FieldsPopupElementViewState extends State<FieldsPopupElementView> {
+class _FieldsPopupElementViewState extends State<_FieldsPopupElementView> {
   bool _isExpanded = true;
-  late final List<DisplayField> displayFields;
+  late final List<_DisplayField> displayFields;
 
   @override
   void initState() {
     super.initState();
     displayFields = List.generate(
       widget.fieldsElement.labels.length,
-      (index) => DisplayField(
+      (index) => _DisplayField(
         label: widget.fieldsElement.labels[index],
         formattedValue: widget.fieldsElement.formattedValues[index],
       ),
@@ -49,7 +49,7 @@ class FieldsPopupElementViewState extends State<FieldsPopupElementView> {
     return Card(
       margin: const EdgeInsets.all(8),
       child: ExpansionTile(
-        title: PopupElementHeader(
+        title: _PopupElementHeader(
           title:
               widget.fieldsElement.title.isEmpty
                   ? 'Fields'
@@ -63,15 +63,15 @@ class FieldsPopupElementViewState extends State<FieldsPopupElementView> {
           });
         },
         expandedCrossAxisAlignment: CrossAxisAlignment.start,
-        children: displayFields.map((field) => FieldRow(field: field)).toList(),
+        children: displayFields.map((field) => _FieldRow(field: field)).toList(),
       ),
     );
   }
 }
 
-class FieldRow extends StatelessWidget {
-  const FieldRow({required this.field, super.key});
-  final DisplayField field;
+class _FieldRow extends StatelessWidget {
+  const _FieldRow({required this.field,});
+  final _DisplayField field;
 
   @override
   Widget build(BuildContext context) {
@@ -86,7 +86,7 @@ class FieldRow extends StatelessWidget {
               context,
             ).textTheme.subtitle.copyWith(color: Colors.grey),
           ),
-          FormattedValueText(formattedValue: field.formattedValue),
+          _FormattedValueText(formattedValue: field.formattedValue),
           const Divider(color: Colors.grey, height: 1, thickness: 1),
         ],
       ),
@@ -94,8 +94,8 @@ class FieldRow extends StatelessWidget {
   }
 }
 
-class FormattedValueText extends StatelessWidget {
-  const FormattedValueText({required this.formattedValue, super.key});
+class _FormattedValueText extends StatelessWidget {
+  const _FormattedValueText({required this.formattedValue,});
   final String formattedValue;
 
   @override
@@ -126,8 +126,8 @@ class FormattedValueText extends StatelessWidget {
   }
 }
 
-class DisplayField {
-  DisplayField({required this.label, required this.formattedValue});
+class _DisplayField {
+  _DisplayField({required this.label, required this.formattedValue});
   final String label;
   final String formattedValue;
 }
