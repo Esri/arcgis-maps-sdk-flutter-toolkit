@@ -35,7 +35,7 @@ class _TextPopupElementView extends StatefulWidget {
 
 class _TextPopupElementViewState extends State<_TextPopupElementView> {
   late final WebViewController _controller;
-  double? _height = 100;
+  double _height = 100;
 
   @override
   void initState() {
@@ -44,7 +44,7 @@ class _TextPopupElementViewState extends State<_TextPopupElementView> {
           ..setJavaScriptMode(JavaScriptMode.unrestricted)
           ..setNavigationDelegate(
             NavigationDelegate(
-              onNavigationRequest: (NavigationRequest request) {
+              onNavigationRequest: (request) {
                 final url = request.url;
                 if (url.startsWith('http') || url.startsWith('https')) {
                   _launchUri(context, url);
@@ -54,8 +54,7 @@ class _TextPopupElementViewState extends State<_TextPopupElementView> {
                     .navigate; // Allow WebView to load the URL
               },
 
-              onPageFinished: (String url) async {
-                await Future.delayed(const Duration(milliseconds: 100));
+              onPageFinished: (url) async {
                 final height = await _calculateHeight();
                 if (height != null) {
                   setState(() {
