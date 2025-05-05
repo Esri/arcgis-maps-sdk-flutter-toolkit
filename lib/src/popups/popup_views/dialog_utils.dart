@@ -35,5 +35,4 @@ Future<void> _showErrorDialog(BuildContext context, String message) async {
         );
       },
     );
-  
 }
