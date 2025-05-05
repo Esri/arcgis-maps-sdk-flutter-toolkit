@@ -14,6 +14,7 @@
 // limitations under the License.
 //
 
+import 'package:arcgis_maps_toolkit/arcgis_maps_toolkit.dart';
 import 'package:flutter/material.dart';
 import 'package:arcgis_maps/arcgis_maps.dart';
 
@@ -39,6 +40,7 @@ void main() {
       theme: ThemeData(
         colorScheme: colorScheme,
         appBarTheme: AppBarTheme(backgroundColor: colorScheme.inversePrimary),
+        textTheme: popupViewThemeData.textTheme
       ),
       home: const ExampleApp(),
     ),

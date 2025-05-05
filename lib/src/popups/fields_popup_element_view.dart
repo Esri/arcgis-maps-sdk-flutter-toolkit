@@ -84,7 +84,7 @@ class _FieldRow extends StatelessWidget {
             field.label,
             style: Theme.of(
               context,
-            ).textTheme.titleSmall,
+            ).textTheme.titleSmall?.copyWith(color: Colors.grey),
           ),
           _FormattedValueText(formattedValue: field.formattedValue),
           const Divider(color: Colors.grey, height: 1, thickness: 1),
