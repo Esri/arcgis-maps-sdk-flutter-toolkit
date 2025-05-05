@@ -126,12 +126,14 @@ class _TextPopupElementViewState extends State<_TextPopupElementView> {
     }
   }
 
-  Future<void> _launchUri(String uri) async {
+  Future<void> _launchUri(BuildContext context, String uri) async {
     if (!await launchUrl(
       Uri.parse(uri),
       mode: LaunchMode.externalApplication,
     )) {
-      log('Could not launch $uri');
+      if(context.mounted) {
+        await _showErrorDialog(context, uri);
+      }
     }
   }
 }

@@ -63,14 +63,15 @@ class _FieldsPopupElementViewState extends State<_FieldsPopupElementView> {
           });
         },
         expandedCrossAxisAlignment: CrossAxisAlignment.start,
-        children: displayFields.map((field) => _FieldRow(field: field)).toList(),
+        children:
+            displayFields.map((field) => _FieldRow(field: field)).toList(),
       ),
     );
   }
 }
 
 class _FieldRow extends StatelessWidget {
-  const _FieldRow({required this.field,});
+  const _FieldRow({required this.field});
   final _DisplayField field;
 
   @override
@@ -95,7 +96,7 @@ class _FieldRow extends StatelessWidget {
 }
 
 class _FormattedValueText extends StatelessWidget {
-  const _FormattedValueText({required this.formattedValue,});
+  const _FormattedValueText({required this.formattedValue});
   final String formattedValue;
 
   @override
@@ -104,7 +105,7 @@ class _FormattedValueText extends StatelessWidget {
       return GestureDetector(
         onTap: () async {
           final uri = Uri.parse(formattedValue);
-          await _launchUri(uri);
+          await _launchUri(context, uri);
         },
         child: Text(
           'View',
@@ -115,13 +116,19 @@ class _FormattedValueText extends StatelessWidget {
         ),
       );
     } else {
-      return Text(formattedValue, style: Theme.of(context).textTheme.labelMedium);
+      return Text(
+        formattedValue,
+        style: Theme.of(context).textTheme.labelMedium,
+      );
     }
   }
 
-  Future<void> _launchUri(Uri uri) async {
+  Future<void> _launchUri(BuildContext context, Uri uri) async {
     if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
-      log('Could not launch $uri');
+      if (context.mounted) {
+        // Show an error dialog if the URL cannot be launched
+        await _showErrorDialog(context, uri.toString());
+      }
     }
   }
 }

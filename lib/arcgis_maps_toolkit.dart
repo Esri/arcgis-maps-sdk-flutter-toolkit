@@ -18,7 +18,6 @@
 library;
 
 import 'dart:async';
-import 'dart:developer';
 import 'dart:math' as math;
 
 import 'package:arcgis_maps/arcgis_maps.dart';
@@ -38,6 +37,7 @@ part 'src/popups/media_popup_element_view.dart';
 part 'src/popups/text_popup_element_view.dart';
 part 'src/popups/popup_views/image_media_view.dart';
 part 'src/popups/popup_views/popup_element_header.dart';
+part 'src/popups/popup_views/dialog_utils.dart';
 part 'src/popups/theme/theme_data.dart';
 
 part 'src/template_widget.dart';
