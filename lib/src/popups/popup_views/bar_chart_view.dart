@@ -20,18 +20,15 @@ class _BarChartView extends StatelessWidget {
   const _BarChartView({
     required this.chartData,
     required this.isColumnChart,
-    this.isShowingDetailView = false,
   });
 
   final List<_ChartData> chartData;
   final bool isColumnChart;
-  final bool isShowingDetailView;
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.all(8),
-      child: Column(
+    return 
+      Column(
         spacing: 8,
         children: [
           Text(
@@ -39,37 +36,34 @@ class _BarChartView extends StatelessWidget {
             style: Theme.of(context).textTheme.labelMedium,
           ),
 
-         
-          SizedBox(width: 400, height: 500, child: BarChart(barData)),
-          
+          Flexible(
+            child: BarChart(barData)),
 
-          Text('Detailed View', style: Theme.of(context).textTheme.labelMedium),
+          //Text('Detailed View', style: Theme.of(context).textTheme.labelMedium),
         ],
-      ),
-    );
+      );
+    
   }
 
   BarChartData get barData {
-    var index = 0;
     return BarChartData(
-      alignment: BarChartAlignment.spaceEvenly,
-      maxY: 15000,
-      barGroups:
-          chartData
-              .map(
-                (data) => BarChartGroupData(
-                  x: index++,
-                  barRods: [
-                    BarChartRodData(
-                      toY: data.value,
-                      color: isColumnChart ? Colors.blue : Colors.red,
-                      width: 100,
-                      borderRadius: BorderRadius.circular(0),
-                    ),
-                  ],
-                ),
-              )
-              .toList(),
+      rotationQuarterTurns: 0,
+      //maxY: 15000,
+      barGroups:List.generate(chartData.length, (index) {
+        final data = chartData[index];
+        return BarChartGroupData(
+          x: index,
+          barRods: [
+            BarChartRodData(
+              toY: data.value,
+              color: data.color,
+              width: 50,
+              borderRadius: BorderRadius.circular(0),
+            )
+          ],
+        );
+      }),
+          
       titlesData: FlTitlesData(
         rightTitles: AxisTitles(
           sideTitles: SideTitles(
@@ -81,18 +75,10 @@ class _BarChartView extends StatelessWidget {
         topTitles: const AxisTitles(),
         bottomTitles: AxisTitles(
           sideTitles: SideTitles(
-            showTitles: true,
+            showTitles: false,
             reservedSize: 38,
             getTitlesWidget: (value, meta) {
-              switch (value.toInt()) {
-                case 0:
-                  return const Text('Elevation (feet)');
-                case 1:
-                  return const Text('Prominence (feet)');
-
-                default:
-                  return const Text('');
-              }
+              return Text('B$value');
             },
           ),
         ),

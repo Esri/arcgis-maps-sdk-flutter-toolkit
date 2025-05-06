@@ -49,30 +49,30 @@ class _ChartMediaViewState extends State<_ChartMediaView> {
       },
       child: SizedBox(
         width: widget.mediaSize.width,
-        height: widget.mediaSize.height,
+        //height: widget.mediaSize.height,
         child: Stack(
           children: [
             // Chart View
             _ChartView(popupMedia: widget.popupMedia, data: chartData),
             // Footer Overlay
-            Positioned(
-              bottom: 0,
-              left: 0,
-              right: 0,
-              child: _PopupMediaFooter(
-                popupMedia: widget.popupMedia,
-                mediaSize: widget.mediaSize,
-              ),
-            ),
+            // Positioned(
+            //   bottom: 0,
+            //   left: 0,
+            //   right: 0,
+            //   child: _PopupMediaFooter(
+            //     popupMedia: widget.popupMedia,
+            //     mediaSize: widget.mediaSize,
+            //   ),
+            // ),
             // Border
-            Positioned.fill(
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.grey),
-                ),
-              ),
-            ),
+            // Positioned.fill(
+            //   child: Container(
+            //     decoration: BoxDecoration(
+            //       borderRadius: BorderRadius.circular(8),
+            //       border: Border.all(color: Colors.grey),
+            //     ),
+            //   ),
+            // ),
           ],
         ),
       ),
@@ -96,13 +96,11 @@ class _ChartView extends StatelessWidget {
         return _BarChartView(
           chartData: data,
           isColumnChart: false,
-          isShowingDetailView: true,
         );
       case PopupMediaType.columnChart:
         return _BarChartView(
           chartData: data,
           isColumnChart: true,
-          isShowingDetailView: true,
         );
       case PopupMediaType.pieChart:
         return const Text('not implemented yet');

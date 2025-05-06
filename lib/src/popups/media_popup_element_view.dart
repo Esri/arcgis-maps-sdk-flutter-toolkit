@@ -113,7 +113,7 @@ class _PopupMediaView extends StatelessWidget {
       case PopupMediaType.columnChart:
       case PopupMediaType.lineChart:
       case PopupMediaType.pieChart:
-        return const Text('Chart not implemented');
+        return _ChartMediaView(popupMedia: popupMedia, mediaSize: mediaSize);
       default:
         return const SizedBox.shrink(); // Empty view for unsupported media types
     }
