@@ -16,7 +16,21 @@
 
 part of '../../../arcgis_maps_toolkit.dart';
 
-ThemeData popupViewTextTheme = ThemeData(
+/// A [ThemeData] instance specifically designed for the [PopupView] widget.
+///
+/// This theme provides default text styles and other visual properties
+/// tailored for popups. Developers can use this theme by wrapping their
+/// [PopupView] widget in a [Theme] widget, like so:
+///
+/// ```dart
+/// Theme(
+///   data: popupViewThemeData,
+///   child: PopupView(popup: myPopup),
+/// )
+/// ```
+///
+/// Alternatively, developers can provide their own custom [ThemeData].
+ThemeData popupViewThemeData = ThemeData(
   textTheme: const TextTheme(
     titleMedium: TextStyle(
       fontSize: 20,
