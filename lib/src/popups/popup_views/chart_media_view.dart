@@ -19,11 +19,13 @@ part of '../../../arcgis_maps_toolkit.dart';
 class _ChartMediaView extends StatefulWidget {
   const _ChartMediaView({
     required this.popupMedia,
-    required this.mediaSize,
+    required this.mediaSize, 
+    required this.child,
   });
 
   final PopupMedia popupMedia;
   final Size mediaSize;
+  final Widget child;
 
   @override
   _ChartMediaViewState createState() => _ChartMediaViewState();
@@ -31,12 +33,10 @@ class _ChartMediaView extends StatefulWidget {
 
 class _ChartMediaViewState extends State<_ChartMediaView> {
   bool isShowingDetailView = false;
-  late final List<_ChartData> chartData;
 
   @override
   void initState() {
     super.initState();
-    chartData = _ChartData.getChartDataFromPopupMedia(widget.popupMedia);
   }
 
   @override
@@ -53,7 +53,8 @@ class _ChartMediaViewState extends State<_ChartMediaView> {
         child: Stack(
           children: [
             // Chart View
-            _ChartView(popupMedia: widget.popupMedia, data: chartData),
+            widget.child,
+            //_ChartView(popupMedia: widget.popupMedia, data: chartData),
             // Footer Overlay
             // Positioned(
             //   bottom: 0,
@@ -77,85 +78,5 @@ class _ChartMediaViewState extends State<_ChartMediaView> {
         ),
       ),
     );
-  }
-}
-
-class _ChartView extends StatelessWidget {
-  const _ChartView({
-    required this.popupMedia,
-    required this.data,
-  });
-
-  final PopupMedia popupMedia;
-  final List<_ChartData> data;
-
-  @override
-  Widget build(BuildContext context) {
-    switch (popupMedia.type) {
-      case PopupMediaType.barChart:
-        return _BarChartView(
-          chartData: data,
-          isColumnChart: false,
-        );
-      case PopupMediaType.columnChart:
-        return _BarChartView(
-          chartData: data,
-          isColumnChart: true,
-        );
-      case PopupMediaType.pieChart:
-        return const Text('not implemented yet');
-      // return PieChartView(
-      //   chartData: data,
-      //   isShowingDetailView: isShowingDetailView,
-      // );
-      case PopupMediaType.lineChart:
-        return const Text('not implemented yet');
-      // return LineChartView(
-      //   chartData: data,
-      //   isShowingDetailView: isShowingDetailView,
-      // );
-      default:
-        return const SizedBox.shrink(); // Empty view for unsupported chart types
-    }
-  }
-}
-
-
-
-class _ChartData {
-  _ChartData({required this.value, this.label = 'untitled', this.color = Colors.blue});
-
-  final String label;
-  final double value;
-  final Color color;
-
-  static List<_ChartData> getChartDataFromPopupMedia(PopupMedia popupMedia) {
-    final popupMediaValue = popupMedia.value;
-    final list = <_ChartData>[];
-    if (popupMediaValue != null) {
-      for (var i = 0; i < popupMediaValue.data.length; i++) {
-        final value = popupMediaValue.data[i]._toDouble!;
-
-        var label = 'untitled';
-        if (popupMediaValue.labels.isNotEmpty) {
-          label = popupMediaValue.labels[i];
-        } else if (popupMediaValue.fieldNames.isNotEmpty) {
-          label = popupMediaValue.fieldNames[i];
-        } 
-
-        Color color = Colors.blue;
-        if (popupMediaValue.chartColors.isNotEmpty) {
-          color = popupMediaValue.chartColors[i];
-        }
-        list.add(
-          _ChartData(
-            value: value,
-            label: label,
-            color: color
-          ),
-        );
-      }
-    }
-    return list;
   }
 }

@@ -110,12 +110,63 @@ class _PopupMediaView extends StatelessWidget {
       case PopupMediaType.image:
         return _ImageMediaView(popupMedia: popupMedia, mediaSize: mediaSize);
       case PopupMediaType.barChart:
+      return _ChartMediaView(
+          popupMedia: popupMedia, 
+          mediaSize: mediaSize, 
+          child: _PopupBarChart(chartData: popupMedia._getChartData(), isColumnChart: false),
+        );   
       case PopupMediaType.columnChart:
+        return _ChartMediaView(
+          popupMedia: popupMedia, 
+          mediaSize: mediaSize, 
+          child: _PopupBarChart(chartData: popupMedia._getChartData(), isColumnChart: true),
+        );      
       case PopupMediaType.lineChart:
       case PopupMediaType.pieChart:
-        return _ChartMediaView(popupMedia: popupMedia, mediaSize: mediaSize);
+        return const Text('No implemented');//_ChartMediaView(popupMedia: popupMedia, mediaSize: mediaSize);
       default:
         return const SizedBox.shrink(); // Empty view for unsupported media types
     }
   }
+}
+
+/// Converts the PopupMedia data into a list of _ChartData.
+extension on PopupMedia {
+  List<_ChartData> _getChartData() {
+    final popupMediaValue = value;
+    final list = <_ChartData>[];
+    if (popupMediaValue != null) {
+      for (var i = 0; i < popupMediaValue.data.length; i++) {
+        final value = popupMediaValue.data[i]._toDouble!;
+
+        var label = 'untitled';
+        if (popupMediaValue.labels.isNotEmpty) {
+          label = popupMediaValue.labels[i];
+        } else if (popupMediaValue.fieldNames.isNotEmpty) {
+          label = popupMediaValue.fieldNames[i];
+        }
+
+        Color color = Colors.blue;
+        if (popupMediaValue.chartColors.isNotEmpty) {
+          color = popupMediaValue.chartColors[i];
+        }
+        list.add(
+          _ChartData(
+            value: value,
+            label: label,
+            color: color,
+          ),
+        );
+      }
+    }
+    return list;
+  }
+}
+
+class _ChartData {
+  _ChartData({required this.value, this.label = 'untitled', this.color = Colors.blue});
+
+  final String label;
+  final double value;
+  final Color color;
 }
