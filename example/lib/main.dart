@@ -20,6 +20,7 @@ import 'package:arcgis_maps/arcgis_maps.dart';
 import 'example_authenticator.dart';
 import 'example_compass.dart';
 import 'example_overview_map.dart';
+import 'example_popup.dart';
 
 void main() {
   // Supply your apiKey using the --dart-define-from-file command line argument.
@@ -59,6 +60,11 @@ enum ComponentExample {
     'Overview Map',
     'A small map that shows the extent of a larger map',
     ExampleOverviewMap.new,
+  ),
+  popupView(
+    'Popup View',
+    'A PopupView renders the popup elements associated with a single GeoElement.',
+    PopupExample.new,
   );
 
   const ComponentExample(this.title, this.subtitle, this.constructor);

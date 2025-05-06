@@ -22,10 +22,22 @@ import 'dart:math' as math;
 
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 part 'src/authenticator/authenticator.dart';
 part 'src/authenticator/authenticator_login.dart';
 part 'src/compass/compass.dart';
 part 'src/compass/compass_needle_painter.dart';
 part 'src/overview_map/overview_map.dart';
+// Popup Widget
+part 'src/popups/popup_view.dart';
+part 'src/popups/fields_popup_element_view.dart';
+part 'src/popups/media_popup_element_view.dart';
+part 'src/popups/text_popup_element_view.dart';
+part 'src/popups/popup_views/image_media_view.dart';
+part 'src/popups/popup_views/popup_element_header.dart';
+part 'src/popups/popup_views/dialog_utils.dart';
+part 'src/popups/theme/theme_data.dart';
+
 part 'src/template_widget.dart';
