@@ -24,9 +24,7 @@ part of '../../arcgis_maps_toolkit.dart';
 /// parameters:
 /// - [textElement]: The text popup element to be displayed.
 class _TextPopupElementView extends StatefulWidget {
-  const _TextPopupElementView({
-    required this.textElement,
-  });
+  const _TextPopupElementView({required this.textElement});
   final TextPopupElement textElement;
 
   @override
@@ -130,7 +128,7 @@ class _TextPopupElementViewState extends State<_TextPopupElementView> {
       Uri.parse(uri),
       mode: LaunchMode.externalApplication,
     )) {
-      if(context.mounted) {
+      if (context.mounted) {
         await _showErrorDialog(context, uri);
       }
     }

@@ -34,11 +34,6 @@ class PopupView extends StatefulWidget {
 
 class _PopupViewState extends State<PopupView> {
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return ListView(
       children: [
@@ -94,7 +89,7 @@ class _PopupViewState extends State<PopupView> {
                       return const Text('Element not supported');
                     }
                   }).toList()
-                : [const Text('No popup elements available.')],
+                  : [const Text('No popup elements available.')],
         ),
       ],
     );

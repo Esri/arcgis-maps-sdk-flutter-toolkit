@@ -1,4 +1,3 @@
-
 //
 // Copyright 2025 Esri
 //
@@ -20,10 +19,7 @@ part of '../../../arcgis_maps_toolkit.dart';
 /// A widget that displays a header for a popup element.
 /// It includes a title and an optional description.
 class _PopupElementHeader extends StatelessWidget {
-  const _PopupElementHeader({
-    required this.title,
-    required this.description,
-  });
+  const _PopupElementHeader({required this.title, required this.description});
 
   final String title;
   final String description;
@@ -34,8 +30,10 @@ class _PopupElementHeader extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          title, 
-          style: Theme.of(context).textTheme.titleSmall?.copyWith(color: Colors.grey),
+          title,
+          style: Theme.of(
+            context,
+          ).textTheme.titleSmall?.copyWith(color: Colors.grey),
         ),
         if (description.isNotEmpty)
           Text(description, style: Theme.of(context).textTheme.bodyMedium),
