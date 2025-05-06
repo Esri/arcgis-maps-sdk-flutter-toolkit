@@ -108,7 +108,7 @@ class _FormattedValueText extends StatelessWidget {
     }
   }
 
-  Widget _buildLinkText(BuildContext context, String value){
+  Widget _buildLinkText(BuildContext context, String value) {
     try {
       final uri = Uri.parse(value);
       return GestureDetector(

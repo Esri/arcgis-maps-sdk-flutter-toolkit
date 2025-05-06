@@ -22,10 +22,7 @@ part of '../../../arcgis_maps_toolkit.dart';
 /// - [popupMedia]: The popup media to be displayed.
 /// - [mediaSize]: The size of the media view.
 class _ImageMediaView extends StatefulWidget {
-  const _ImageMediaView({
-    required this.popupMedia,
-    required this.mediaSize,
-  });
+  const _ImageMediaView({required this.popupMedia, required this.mediaSize});
 
   final PopupMedia popupMedia;
   final Size mediaSize;
@@ -75,9 +72,9 @@ class _ImageMediaViewState extends State<_ImageMediaView> {
                   return Center(
                     child: Text(
                       'Image not available',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Colors.red,
-                      ),
+                      style: Theme.of(
+                        context,
+                      ).textTheme.bodyMedium?.copyWith(color: Colors.red),
                     ),
                   );
                 },
@@ -114,10 +111,7 @@ class _ImageMediaViewState extends State<_ImageMediaView> {
 }
 
 class _PopupMediaFooter extends StatelessWidget {
-  const _PopupMediaFooter({
-    required this.popupMedia,
-    required this.mediaSize,
-  });
+  const _PopupMediaFooter({required this.popupMedia, required this.mediaSize});
 
   final PopupMedia popupMedia;
   final Size mediaSize;
@@ -129,9 +123,7 @@ class _PopupMediaFooter extends StatelessWidget {
       padding: const EdgeInsets.all(8),
       color: Colors.black.withValues(alpha: 0.5),
       child: Text(
-        popupMedia.title.isNotEmpty
-            ? popupMedia.title
-            : 'untitled',
+        popupMedia.title.isNotEmpty ? popupMedia.title : 'untitled',
         maxLines: 2,
         style: const TextStyle(color: Colors.white, fontSize: 14),
         overflow: TextOverflow.ellipsis,
@@ -141,10 +133,7 @@ class _PopupMediaFooter extends StatelessWidget {
 }
 
 class _MediaDetailView extends StatelessWidget {
-  const _MediaDetailView({
-    required this.popupMedia,
-    required this.onClose,
-  });
+  const _MediaDetailView({required this.popupMedia, required this.onClose});
 
   final PopupMedia popupMedia;
   final VoidCallback onClose;
@@ -161,7 +150,9 @@ class _MediaDetailView extends StatelessWidget {
           popupMedia.value?.linkUri.toString() ?? '',
           fit: BoxFit.contain,
           errorBuilder: (context, error, stackTrace) {
-            return const Center(child: Text('Image details not implemented yet'));
+            return const Center(
+              child: Text('Image details not implemented yet'),
+            );
           },
         ),
       ),

@@ -20,7 +20,7 @@ part of '../../arcgis_maps_toolkit.dart';
 /// parameters:
 /// - [mediaElement]: The media popup element to be displayed.
 class _MediaPopupElementView extends StatefulWidget {
-  const _MediaPopupElementView({required this.mediaElement,});
+  const _MediaPopupElementView({required this.mediaElement});
 
   final MediaPopupElement mediaElement;
 
@@ -39,9 +39,10 @@ class _MediaPopupElementViewState extends State<_MediaPopupElementView> {
         margin: const EdgeInsets.all(8),
         child: ExpansionTile(
           title: _PopupElementHeader(
-            title: widget.mediaElement.title.isEmpty
-                ? 'Media'
-                : widget.mediaElement.title,
+            title:
+                widget.mediaElement.title.isEmpty
+                    ? 'Media'
+                    : widget.mediaElement.title,
             description: widget.mediaElement.description,
           ),
           initiallyExpanded: _isExpanded,
