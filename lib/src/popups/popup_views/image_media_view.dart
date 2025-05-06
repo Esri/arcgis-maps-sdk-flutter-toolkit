@@ -132,30 +132,30 @@ class _PopupMediaFooter extends StatelessWidget {
   }
 }
 
-class _MediaDetailView extends StatelessWidget {
-  const _MediaDetailView({required this.popupMedia, required this.onClose});
+// class _MediaDetailView extends StatelessWidget {
+//   const _MediaDetailView({required this.popupMedia, required this.onClose});
 
-  final PopupMedia popupMedia;
-  final VoidCallback onClose;
+//   final PopupMedia popupMedia;
+//   final VoidCallback onClose;
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(popupMedia.title),
-        leading: IconButton(icon: const Icon(Icons.close), onPressed: onClose),
-      ),
-      body: Center(
-        child: Image.network(
-          popupMedia.value?.linkUri.toString() ?? '',
-          fit: BoxFit.contain,
-          errorBuilder: (context, error, stackTrace) {
-            return const Center(
-              child: Text('Image details not implemented yet'),
-            );
-          },
-        ),
-      ),
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
+//       appBar: AppBar(
+//         title: Text(popupMedia.title),
+//         leading: IconButton(icon: const Icon(Icons.close), onPressed: onClose),
+//       ),
+//       body: Center(
+//         child: Image.network(
+//           popupMedia.value?.linkUri.toString() ?? '',
+//           fit: BoxFit.contain,
+//           errorBuilder: (context, error, stackTrace) {
+//             return const Center(
+//               child: Text('Image details not implemented yet'),
+//             );
+//           },
+//         ),
+//       ),
+//     );
+//   }
+// }
