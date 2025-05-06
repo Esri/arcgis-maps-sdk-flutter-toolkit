@@ -74,13 +74,16 @@ class _PopupExampleState extends State<PopupExample> {
     return _popup != null
         ? Padding(
           padding: const EdgeInsets.fromLTRB(10, 20, 10, 10),
-          child: SizedBox(
-            height: MediaQuery.of(context).size.height * 0.7,
-            child: PopupView(popup:_popup! , onClose: () {
-              setState(() {
-                _popup = null;
-              });
-            }),
+          child: Theme(
+            data: popupViewThemeData,
+            child: SizedBox(
+              height: MediaQuery.of(context).size.height * 0.7,
+              child: PopupView(popup:_popup! , onClose: () {
+                setState(() {
+                  _popup = null;
+                });
+              }),
+            ),
           ),
         )
         : null;
