@@ -20,8 +20,7 @@ part of '../../arcgis_maps_toolkit.dart';
 /// parameters:
 /// - [mediaElement]: The media popup element to be displayed.
 class _MediaPopupElementView extends StatefulWidget {
-  const _MediaPopupElementView({required this.mediaElement,});
-
+  const _MediaPopupElementView({required this.mediaElement});
   final MediaPopupElement mediaElement;
 
   @override
@@ -39,9 +38,10 @@ class _MediaPopupElementViewState extends State<_MediaPopupElementView> {
         margin: const EdgeInsets.all(8),
         child: ExpansionTile(
           title: _PopupElementHeader(
-            title: widget.mediaElement.title.isEmpty
-                ? 'Media'
-                : widget.mediaElement.title,
+            title:
+                widget.mediaElement.title.isEmpty
+                    ? 'Media'
+                    : widget.mediaElement.title,
             description: widget.mediaElement.description,
           ),
           initiallyExpanded: _isExpanded,
@@ -83,25 +83,32 @@ class _PopupMediaView extends StatelessWidget {
 
     return SizedBox(
       height: mediaSize.height,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: popupMedia.length,
-        itemBuilder: (context, index) {
-          final media = popupMedia[index];
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: Container(
-              width: mediaSize.width,
-              height: mediaSize.height,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
-                color: Colors.grey.shade200,
-              ),
-              child: _buildMediaContent(media, mediaSize),
+      child:
+          (popupMedia.length > 1)
+              ? _getListViews(mediaSize)
+              : _buildMediaContent(popupMedia.first, mediaSize),
+    );
+  }
+
+  Widget _getListViews(Size mediaSize) {
+    return ListView.builder(
+      scrollDirection: Axis.horizontal,
+      itemCount: popupMedia.length,
+      itemBuilder: (context, index) {
+        final media = popupMedia[index];
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: Container(
+            width: mediaSize.width,
+            height: mediaSize.height,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              color: Colors.grey.shade200,
             ),
-          );
-        },
-      ),
+            child: _buildMediaContent(media, mediaSize),
+          ),
+        );
+      },
     );
   }
 
@@ -110,20 +117,13 @@ class _PopupMediaView extends StatelessWidget {
       case PopupMediaType.image:
         return _ImageMediaView(popupMedia: popupMedia, mediaSize: mediaSize);
       case PopupMediaType.barChart:
-      return _ChartMediaView(
-          popupMedia: popupMedia, 
-          mediaSize: mediaSize, 
-          child: _PopupBarChart(chartData: popupMedia._getChartData(), isColumnChart: false),
-        );   
+        return _PopupBarChart(popupMedia: popupMedia, isColumnChart: false);
       case PopupMediaType.columnChart:
-        return _ChartMediaView(
-          popupMedia: popupMedia, 
-          mediaSize: mediaSize, 
-          child: _PopupBarChart(chartData: popupMedia._getChartData(), isColumnChart: true),
-        );      
+        return _PopupBarChart(popupMedia: popupMedia, isColumnChart: true);
       case PopupMediaType.lineChart:
+        return _PopupLineChart(popupMedia: popupMedia);
       case PopupMediaType.pieChart:
-        return const Text('No implemented');//_ChartMediaView(popupMedia: popupMedia, mediaSize: mediaSize);
+        return _PopupPieChart(popupMedia: popupMedia);
       default:
         return const SizedBox.shrink(); // Empty view for unsupported media types
     }
@@ -150,13 +150,7 @@ extension on PopupMedia {
         if (popupMediaValue.chartColors.isNotEmpty) {
           color = popupMediaValue.chartColors[i];
         }
-        list.add(
-          _ChartData(
-            value: value,
-            label: label,
-            color: color,
-          ),
-        );
+        list.add(_ChartData(value: value, label: label, color: color));
       }
     }
     return list;
@@ -164,7 +158,11 @@ extension on PopupMedia {
 }
 
 class _ChartData {
-  _ChartData({required this.value, this.label = 'untitled', this.color = Colors.blue});
+  _ChartData({
+    required this.value,
+    this.label = 'untitled',
+    this.color = Colors.blue,
+  });
 
   final String label;
   final double value;

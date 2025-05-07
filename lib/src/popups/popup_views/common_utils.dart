@@ -36,3 +36,15 @@ Future<void> _showErrorDialog(BuildContext context, String message) async {
     },
   );
 }
+
+/// The maximum Y value for the chart is calculated based on the data.
+double _calculateMaximumYValue(List<_ChartData> chartData) {
+  if (chartData.isEmpty) {
+    return 0;
+  }
+  final maxY = chartData
+      .map((data) => data.value)
+      .fold<double>(0, (a, b) => a > b ? a : b)
+      .ceilToDouble();
+  return maxY + (maxY / 5).ceilToDouble();
+}

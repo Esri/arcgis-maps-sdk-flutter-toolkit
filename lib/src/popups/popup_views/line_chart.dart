@@ -16,47 +16,38 @@
 
 part of '../../../arcgis_maps_toolkit.dart';
 
-/// A bar chart widget that displays data in a bar chart format.
-/// The chart can be displayed as a column chart or a bar chart based on the
-/// `isColumnChart` parameter.
-class _PopupBarChart extends StatelessWidget {
-  _PopupBarChart({required this.popupMedia, required this.isColumnChart})
+/// A widget that displays a line chart for the given [popupMedia].
+class _PopupLineChart extends StatelessWidget {
+  _PopupLineChart({required this.popupMedia})
     : chartData = popupMedia._getChartData();
 
   final PopupMedia popupMedia;
   final List<_ChartData> chartData;
-  final bool isColumnChart;
 
   double get _maximumYValue => _calculateMaximumYValue(chartData);
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(8),
-      child: Expanded(child: BarChart(barData)),
+      padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+      child:  LineChart(lineData),
     );
   }
 
-  /// Returns the bar chart data.
-  BarChartData get barData {
-    return BarChartData(
-      rotationQuarterTurns: isColumnChart ? 0 : 1,
-      alignment: BarChartAlignment.spaceEvenly,
+  LineChartData get lineData {
+    return LineChartData(
       maxY: _maximumYValue,
-      barGroups: List.generate(chartData.length, (index) {
-        final data = chartData[index];
-        return BarChartGroupData(
-          x: index,
-          barRods: [
-            BarChartRodData(
-              toY: data.value,
-              color: data.color,
-              width: _barWidth,
-              borderRadius: BorderRadius.circular(0),
-            ),
-          ],
-        );
-      }),
+      lineBarsData: [
+         LineChartBarData(
+          color: Colors.blue,
+          barWidth: 2.5,
+          isStrokeCapRound: true,
+          dotData: const FlDotData(show: false),
+          spots: List.generate(chartData.length, (index) {
+            return FlSpot(index.toDouble(), chartData[index].value);
+          }),
+        )
+      ],
       titlesData: _titlesData,
       gridData: _gridData,
       borderData: FlBorderData(
@@ -65,23 +56,11 @@ class _PopupBarChart extends StatelessWidget {
           color: const Color.fromARGB(100, 100, 100, 100),
           width: 0.5,
         ),
-      )
+      ),
     );
   }
 
-  /// Returns the width of the bars in the chart.
-  double get _barWidth {
-    if (chartData.length > 10) {
-      return 5;
-    } else if (chartData.length > 5) {
-      return 20;
-    } else {
-      return 40;
-    }
-  }
-
   /// Returns the titles data for the chart.
-  /// The top and right titles are not shown.
   FlTitlesData get _titlesData {
     return FlTitlesData(
       topTitles: const AxisTitles(),
@@ -104,20 +83,14 @@ class _PopupBarChart extends StatelessWidget {
       ),
       leftTitles: const AxisTitles(),
       bottomTitles: AxisTitles(
-        sideTitles: SideTitles(
-          showTitles: true,
-          getTitlesWidget: (value, meta) {
-            return Padding(
-              padding: const EdgeInsets.all(2),
-              child: Text(
-                chartData[value.toInt()].label,
-                style: const TextStyle(fontSize: 12, color: Colors.grey),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-            );
-          },
-        ),
+        axisNameSize: 20,
+        axisNameWidget: 
+          Text(
+            chartData.map((data) => data.label).join(' '),
+            style: const TextStyle(fontSize: 14, color: Colors.grey),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+          ),
       ),
     );
   }

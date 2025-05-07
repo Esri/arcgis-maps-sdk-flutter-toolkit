@@ -37,10 +37,11 @@ part 'src/popups/fields_popup_element_view.dart';
 part 'src/popups/media_popup_element_view.dart';
 part 'src/popups/text_popup_element_view.dart';
 part 'src/popups/popup_views/bar_chart.dart';
-part 'src/popups/popup_views/chart_media_view.dart';
+part 'src/popups/popup_views/line_chart.dart';
+part 'src/popups/popup_views/pie_chart.dart';
 part 'src/popups/popup_views/image_media_view.dart';
 part 'src/popups/popup_views/popup_element_header.dart';
-part 'src/popups/popup_views/dialog_utils.dart';
+part 'src/popups/popup_views/common_utils.dart';
 part 'src/popups/theme/theme_data.dart';
 
 part 'src/template_widget.dart';
