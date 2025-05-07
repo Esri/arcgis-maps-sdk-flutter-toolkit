@@ -19,7 +19,7 @@ part of '../../../arcgis_maps_toolkit.dart';
 /// A widget that displays a pie chart for the given [popupMedia].
 /// The chart data is generated based on the data provided in the [popupMedia].
 class _PopupPieChart extends StatelessWidget {
-  _PopupPieChart({required this.popupMedia,})
+  _PopupPieChart({required this.popupMedia})
     : chartData = popupMedia._getChartData();
 
   final PopupMedia popupMedia;
@@ -43,17 +43,10 @@ class _PopupPieChart extends StatelessWidget {
           value: data.value,
           title: data.label,
           radius: 50,
-          titleStyle: const TextStyle(
-            fontSize: 14,
-            color: Colors.grey,
-          ),
+          titleStyle: const TextStyle(fontSize: 14, color: Colors.grey),
           badgeWidget: Text(
             '(${data.value})',
-            style: const TextStyle(
-              fontSize: 14,
-              color: Colors.black,
-            ),
-
+            style: const TextStyle(fontSize: 14, color: Colors.black),
           ),
           badgePositionPercentageOffset: 1,
         );
@@ -64,7 +57,7 @@ class _PopupPieChart extends StatelessWidget {
           color: const Color.fromARGB(100, 100, 100, 100),
           width: 0.5,
         ),
-      )
+      ),
     );
   }
 }

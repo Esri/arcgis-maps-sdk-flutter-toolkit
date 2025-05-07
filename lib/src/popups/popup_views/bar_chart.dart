@@ -65,7 +65,7 @@ class _PopupBarChart extends StatelessWidget {
           color: const Color.fromARGB(100, 100, 100, 100),
           width: 0.5,
         ),
-      )
+      ),
     );
   }
 

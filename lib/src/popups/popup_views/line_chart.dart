@@ -30,7 +30,7 @@ class _PopupLineChart extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
-      child:  LineChart(lineData),
+      child: LineChart(lineData),
     );
   }
 
@@ -38,7 +38,7 @@ class _PopupLineChart extends StatelessWidget {
     return LineChartData(
       maxY: _maximumYValue,
       lineBarsData: [
-         LineChartBarData(
+        LineChartBarData(
           color: Colors.blue,
           barWidth: 2.5,
           isStrokeCapRound: true,
@@ -46,7 +46,7 @@ class _PopupLineChart extends StatelessWidget {
           spots: List.generate(chartData.length, (index) {
             return FlSpot(index.toDouble(), chartData[index].value);
           }),
-        )
+        ),
       ],
       titlesData: _titlesData,
       gridData: _gridData,
@@ -84,13 +84,12 @@ class _PopupLineChart extends StatelessWidget {
       leftTitles: const AxisTitles(),
       bottomTitles: AxisTitles(
         axisNameSize: 20,
-        axisNameWidget: 
-          Text(
-            chartData.map((data) => data.label).join(' '),
-            style: const TextStyle(fontSize: 14, color: Colors.grey),
-            maxLines: 2,
-            overflow: TextOverflow.ellipsis,
-          ),
+        axisNameWidget: Text(
+          chartData.map((data) => data.label).join(' '),
+          style: const TextStyle(fontSize: 14, color: Colors.grey),
+          maxLines: 2,
+          overflow: TextOverflow.ellipsis,
+        ),
       ),
     );
   }

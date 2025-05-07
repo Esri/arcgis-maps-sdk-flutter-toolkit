@@ -42,9 +42,10 @@ double _calculateMaximumYValue(List<_ChartData> chartData) {
   if (chartData.isEmpty) {
     return 0;
   }
-  final maxY = chartData
-      .map((data) => data.value)
-      .fold<double>(0, (a, b) => a > b ? a : b)
-      .ceilToDouble();
+  final maxY =
+      chartData
+          .map((data) => data.value)
+          .fold<double>(0, (a, b) => a > b ? a : b)
+          .ceilToDouble();
   return maxY + (maxY / 5).ceilToDouble();
 }
