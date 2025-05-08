@@ -146,7 +146,7 @@ extension on PopupMedia {
           label = popupMediaValue.fieldNames[i];
         }
 
-        Color color = Colors.blue;
+        var color = Colors.blue as Color;
         if (popupMediaValue.chartColors.isNotEmpty) {
           color = popupMediaValue.chartColors[i];
         }
@@ -157,11 +157,12 @@ extension on PopupMedia {
   }
 }
 
+/// Representing the data for a chart.
 class _ChartData {
   _ChartData({
     required this.value,
-    this.label = 'untitled',
-    this.color = Colors.blue,
+    required this.label,
+    required this.color,
   });
 
   final String label;
