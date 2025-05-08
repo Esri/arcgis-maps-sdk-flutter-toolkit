@@ -46,12 +46,12 @@ class _PopupExampleState extends State<PopupExample> {
   final webmapIds = [
     'f4ea5041f73b40f5ac241035664eff7e',
     '66c1d496ae354fd79e174f8e3074c3f9',
-    '9f3a674e998f461580006e626611f9ad'
+    '9f3a674e998f461580006e626611f9ad' // keep this as the last one
   ];
   final webmapTitles = [
     'Fields Popup',
     'All Charts Popup',
-    'Design demo popup'
+    'Design demo popup' // keep this as the last one
   ];
   @override
   Widget build(BuildContext context) {
@@ -61,14 +61,12 @@ class _PopupExampleState extends State<PopupExample> {
         actions: [
           PopupMenuButton(
             itemBuilder: (context) {
-              return webmapIds.asMap().entries.map((entry) {
-                final index = entry.key;
-                final id = entry.value;
+              return List.generate(webmapIds.length, (index) {
                 return PopupMenuItem(
-                  value: id,
+                  value: webmapIds[index],
                   child: Text(webmapTitles[index]),
                 );
-              }).toList();
+              });
             },
             onSelected: (valueId) {
               reloadMap(valueId);
@@ -90,7 +88,7 @@ class _PopupExampleState extends State<PopupExample> {
   }
 
   void onMapViewReady() {
-    reloadMap(webmapIds[2]);
+    reloadMap(webmapIds.last);
   }
 
   Widget? getBottomSheet(BuildContext context) {
