@@ -121,26 +121,4 @@ class _PopupBarChart extends StatelessWidget {
       ),
     );
   }
-
-  /// Returns the grid data for the chart.
-  /// The grid lines are drawn with a light gray color and a stroke width of 0.5.
-  FlGridData get _gridData {
-    return FlGridData(
-      getDrawingVerticalLine: (value) {
-        return const FlLine(
-          color: Color.fromARGB(100, 100, 100, 100),
-          strokeWidth: 0.5,
-          dashArray: [1, 1],
-        );
-      },
-      drawVerticalLine: false,
-      getDrawingHorizontalLine: (value) {
-        return const FlLine(
-          color: Color.fromARGB(100, 100, 100, 100),
-          strokeWidth: 0.5,
-          dashArray: [5, 5],
-        );
-      },
-    );
-  }
 }
