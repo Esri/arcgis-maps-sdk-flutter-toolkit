@@ -82,7 +82,6 @@ class _PopupViewState extends State<PopupView> {
                       return const Text('Attachments not implemented');
                     } else if (element is MediaPopupElement) {
                       return _MediaPopupElementView(mediaElement: element);
-                      // TODO(3335): Implement MediaChartElementView
                     } else if (element is TextPopupElement) {
                       return _TextPopupElementView(textElement: element);
                     } else {
