@@ -71,3 +71,56 @@ FlGridData get _gridData {
     },
   );
 }
+
+/// Returns the titles data for the chart.
+/// The top and right titles are not shown.
+FlTitlesData _getFlTitlesData(List<_ChartData> chartData) {
+  return FlTitlesData(
+    topTitles: const AxisTitles(),
+    rightTitles: AxisTitles(
+      sideTitles: SideTitles(
+        showTitles: true,
+        reservedSize: 40,
+        getTitlesWidget: (value, meta) {
+          return Padding(
+            padding: const EdgeInsets.all(2),
+            child: Text(
+              value.toInt().toString(),
+              style: const TextStyle(fontSize: 12, color: Colors.grey),
+            ),
+          );
+        },
+        maxIncluded: false,
+        minIncluded: false,
+      ),
+    ),
+    leftTitles: const AxisTitles(),
+    bottomTitles: AxisTitles(
+      sideTitles: SideTitles(
+        showTitles: true,
+        getTitlesWidget: (value, meta) {
+          return Padding(
+            padding: const EdgeInsets.all(2),
+            child: Text(
+              chartData[value.toInt()].label,
+              style: const TextStyle(fontSize: 12, color: Colors.grey),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          );
+        },
+      ),
+    ),
+  );
+}
+
+// Returns the border data for the chart.
+FlBorderData get _flBorderData {
+  return FlBorderData(
+    show: true,
+    border: Border.all(
+      color: const Color.fromARGB(100, 100, 100, 100),
+      width: 0.5,
+    ),
+  );
+}

@@ -51,13 +51,7 @@ class _PopupPieChart extends StatelessWidget {
           badgePositionPercentageOffset: 1,
         );
       }),
-      borderData: FlBorderData(
-        show: true,
-        border: Border.all(
-          color: const Color.fromARGB(100, 100, 100, 100),
-          width: 0.5,
-        ),
-      ),
+      borderData: _flBorderData,
     );
   }
 }

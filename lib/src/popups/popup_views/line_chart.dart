@@ -48,71 +48,9 @@ class _PopupLineChart extends StatelessWidget {
           }),
         ),
       ],
-      titlesData: _titlesData,
+      titlesData: _getFlTitlesData(chartData),
       gridData: _gridData,
-      borderData: FlBorderData(
-        show: true,
-        border: Border.all(
-          color: const Color.fromARGB(100, 100, 100, 100),
-          width: 0.5,
-        ),
-      ),
-    );
-  }
-
-  /// Returns the titles data for the chart.
-  FlTitlesData get _titlesData {
-    return FlTitlesData(
-      topTitles: const AxisTitles(),
-      rightTitles: AxisTitles(
-        sideTitles: SideTitles(
-          showTitles: true,
-          reservedSize: 40,
-          getTitlesWidget: (value, meta) {
-            return Padding(
-              padding: const EdgeInsets.all(2),
-              child: Text(
-                value.toInt().toString(),
-                style: const TextStyle(fontSize: 12, color: Colors.grey),
-              ),
-            );
-          },
-          maxIncluded: false,
-          minIncluded: false,
-        ),
-      ),
-      leftTitles: const AxisTitles(),
-      bottomTitles: AxisTitles(
-        axisNameSize: 20,
-        axisNameWidget: Text(
-          chartData.map((data) => data.label).join(' '),
-          style: const TextStyle(fontSize: 14, color: Colors.grey),
-          maxLines: 2,
-          overflow: TextOverflow.ellipsis,
-        ),
-      ),
-    );
-  }
-
-  /// Returns the grid data for the chart.
-  /// The grid lines are drawn with a light gray color and a stroke width of 0.5.
-  FlGridData get _gridData {
-    return FlGridData(
-      getDrawingVerticalLine: (value) {
-        return const FlLine(
-          color: Color.fromARGB(100, 100, 100, 100),
-          strokeWidth: 0.5,
-          dashArray: [1, 1],
-        );
-      },
-      drawVerticalLine: false,
-      getDrawingHorizontalLine: (value) {
-        return const FlLine(
-          color: Color.fromARGB(100, 100, 100, 100),
-          strokeWidth: 0.5,
-          dashArray: [5, 5],
-        );
-      },
+      borderData: _flBorderData,
     );
   }
 }
