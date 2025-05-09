@@ -31,10 +31,7 @@ class _PopupBarChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8),
-      child: Expanded(child: BarChart(barData)),
-    );
+    return Padding(padding: const EdgeInsets.all(8), child: BarChart(barData));
   }
 
   /// Returns the bar chart data.
