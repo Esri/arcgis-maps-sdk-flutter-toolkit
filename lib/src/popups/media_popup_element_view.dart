@@ -85,12 +85,12 @@ class _PopupMediaView extends StatelessWidget {
       height: mediaSize.height,
       child:
           (popupMedia.length > 1)
-              ? _getListViews(mediaSize)
-              : _buildMediaContent(popupMedia.first, mediaSize),
+              ? _buildMediaListWidgets(mediaSize)
+              : _buildMediaWidget(popupMedia.first, mediaSize),
     );
   }
 
-  Widget _getListViews(Size mediaSize) {
+  Widget _buildMediaListWidgets(Size mediaSize) {
     return ListView.builder(
       scrollDirection: Axis.horizontal,
       itemCount: popupMedia.length,
@@ -105,14 +105,14 @@ class _PopupMediaView extends StatelessWidget {
               borderRadius: BorderRadius.circular(8),
               color: Colors.grey.shade200,
             ),
-            child: _buildMediaContent(media, mediaSize),
+            child: _buildMediaWidget(media, mediaSize),
           ),
         );
       },
     );
   }
 
-  Widget _buildMediaContent(PopupMedia popupMedia, Size mediaSize) {
+  Widget _buildMediaWidget(PopupMedia popupMedia, Size mediaSize) {
     switch (popupMedia.type) {
       case PopupMediaType.image:
         return _ImageMediaView(popupMedia: popupMedia, mediaSize: mediaSize);
