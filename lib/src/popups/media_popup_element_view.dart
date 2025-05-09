@@ -130,7 +130,7 @@ class _PopupMediaView extends StatelessWidget {
   }
 }
 
-/// Converts the PopupMedia data into a list of _ChartData.
+/// Converts the PopupMediaValue data into a list of _ChartData.
 extension on PopupMedia {
   List<_ChartData> _getChartData() {
     final popupMediaValue = value;
@@ -159,7 +159,7 @@ extension on PopupMedia {
 
 /// Representing the data for a chart.
 class _ChartData {
-  _ChartData({
+  const _ChartData({
     required this.value,
     required this.label,
     required this.color,
