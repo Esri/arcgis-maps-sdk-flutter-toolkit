@@ -43,10 +43,37 @@ class _PopupExampleState extends State<PopupExample> {
   final _mapViewController = ArcGISMapView.createController();
   Popup? _popup;
 
+  final webmapIds = [
+    'f4ea5041f73b40f5ac241035664eff7e',
+    '66c1d496ae354fd79e174f8e3074c3f9',
+    '9f3a674e998f461580006e626611f9ad' // keep this as the last one
+  ];
+  final webmapTitles = [
+    'Fields Popup',
+    'All Charts Popup',
+    'Design demo popup' // keep this as the last one
+  ];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Popup Example')),
+      appBar: AppBar(
+        title: Text('Popup Example'),
+        actions: [
+          PopupMenuButton(
+            itemBuilder: (context) {
+              return List.generate(webmapIds.length, (index) {
+                return PopupMenuItem(
+                  value: webmapIds[index],
+                  child: Text(webmapTitles[index]),
+                );
+              });
+            },
+            onSelected: (valueId) {
+              reloadMap(valueId);
+          },
+          ),
+        ],
+      ),
       body: Stack(
         children: [
           ArcGISMapView(
@@ -61,13 +88,7 @@ class _PopupExampleState extends State<PopupExample> {
   }
 
   void onMapViewReady() {
-    _mapViewController.arcGISMap = ArcGISMap.withItem(
-      PortalItem.withUri(
-        Uri.parse(
-          'https://www.arcgis.com/home/item.html?id=9f3a674e998f461580006e626611f9ad',
-        ),
-      )!,
-    );
+    reloadMap(webmapIds.last);
   }
 
   Widget? getBottomSheet(BuildContext context) {
@@ -78,11 +99,14 @@ class _PopupExampleState extends State<PopupExample> {
             data: popupViewThemeData,
             child: SizedBox(
               height: MediaQuery.of(context).size.height * 0.7,
-              child: PopupView(popup:_popup! , onClose: () {
-                setState(() {
-                  _popup = null;
-                });
-              }),
+              child: PopupView(
+                popup: _popup!,
+                onClose: () {
+                  setState(() {
+                    _popup = null;
+                  });
+                },
+              ),
             ),
           ),
         )
@@ -91,9 +115,11 @@ class _PopupExampleState extends State<PopupExample> {
 
   Future<void> identifyArcGISPopup(Offset localPosition) async {
     final map = _mapViewController.arcGISMap;
-    final californiaPeaks = map!.operationalLayers[0] as FeatureLayer;
+    final firstFeatureLayer =
+        map?.operationalLayers.firstWhere((layer) => layer is FeatureLayer)
+            as FeatureLayer;
     final result = await _mapViewController.identifyLayer(
-      californiaPeaks,
+      firstFeatureLayer,
       screenPoint: localPosition,
       tolerance: 42,
       returnPopupsOnly: true,
@@ -116,5 +142,15 @@ class _PopupExampleState extends State<PopupExample> {
         _popup = null;
       });
     }
+  }
+  
+  void reloadMap(String valueId) {
+     _mapViewController.arcGISMap = ArcGISMap.withItem(
+      PortalItem.withUri(
+        Uri.parse(
+          'https://www.arcgis.com/home/item.html?id=$valueId',
+        ),
+      )!,
+    );
   }
 }

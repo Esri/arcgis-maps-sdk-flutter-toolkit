@@ -88,7 +88,7 @@ class _FieldRow extends StatelessWidget {
             ).textTheme.titleSmall?.copyWith(color: Colors.grey),
           ),
           _FormattedValueText(formattedValue: field.formattedValue),
-          const Divider(color: Colors.grey, height: 1, thickness: 1),
+          const Divider(color: Colors.grey, height: 2, thickness: 1),
         ],
       ),
     );
@@ -113,11 +113,14 @@ class _FormattedValueText extends StatelessWidget {
       final uri = Uri.parse(value);
       return GestureDetector(
         onTap: () async => _launchUri(context, uri),
-        child: Text(
-          'View',
-          style: TextStyle(
-            color: Theme.of(context).primaryColor,
-            decoration: TextDecoration.underline,
+        child: Padding(
+          padding: const EdgeInsets.only(bottom: 4),
+          child: Text(
+            'View',
+            style: TextStyle(
+              color: Theme.of(context).primaryColor,
+              decoration: TextDecoration.underline,
+            ),
           ),
         ),
       );
@@ -128,7 +131,10 @@ class _FormattedValueText extends StatelessWidget {
   }
 
   Widget _buildPlainText(BuildContext context, String value) {
-    return Text(value, style: Theme.of(context).textTheme.labelMedium);
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 4),
+      child: Text(value, style: Theme.of(context).textTheme.labelMedium),
+    );
   }
 
   Future<void> _launchUri(BuildContext context, Uri uri) async {

@@ -14,6 +14,7 @@ environment:
 
 dependencies:
   arcgis_maps: ^200.7.0
+  fl_chart: ^0.71.0
   flutter:
     sdk: flutter
   url_launcher: ^6.3.1

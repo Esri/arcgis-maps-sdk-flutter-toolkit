@@ -21,7 +21,6 @@ part of '../../arcgis_maps_toolkit.dart';
 /// - [mediaElement]: The media popup element to be displayed.
 class _MediaPopupElementView extends StatefulWidget {
   const _MediaPopupElementView({required this.mediaElement});
-
   final MediaPopupElement mediaElement;
 
   @override
@@ -84,39 +83,89 @@ class _PopupMediaView extends StatelessWidget {
 
     return SizedBox(
       height: mediaSize.height,
-      child: ListView.builder(
-        scrollDirection: Axis.horizontal,
-        itemCount: popupMedia.length,
-        itemBuilder: (context, index) {
-          final media = popupMedia[index];
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: Container(
-              width: mediaSize.width,
-              height: mediaSize.height,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
-                color: Colors.grey.shade200,
-              ),
-              child: _buildMediaContent(media, mediaSize),
-            ),
-          );
-        },
-      ),
+      child:
+          (popupMedia.length > 1)
+              ? _buildMediaListWidgets(mediaSize)
+              : _buildMediaWidget(popupMedia.first, mediaSize),
     );
   }
 
-  Widget _buildMediaContent(PopupMedia popupMedia, Size mediaSize) {
+  Widget _buildMediaListWidgets(Size mediaSize) {
+    return ListView.builder(
+      scrollDirection: Axis.horizontal,
+      itemCount: popupMedia.length,
+      itemBuilder: (context, index) {
+        final media = popupMedia[index];
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 8),
+          child: Container(
+            width: mediaSize.width,
+            height: mediaSize.height,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              color: Colors.grey.shade200,
+            ),
+            child: _buildMediaWidget(media, mediaSize),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildMediaWidget(PopupMedia popupMedia, Size mediaSize) {
     switch (popupMedia.type) {
       case PopupMediaType.image:
         return _ImageMediaView(popupMedia: popupMedia, mediaSize: mediaSize);
       case PopupMediaType.barChart:
+        return _PopupBarChart(popupMedia: popupMedia, isColumnChart: false);
       case PopupMediaType.columnChart:
+        return _PopupBarChart(popupMedia: popupMedia, isColumnChart: true);
       case PopupMediaType.lineChart:
+        return _PopupLineChart(popupMedia: popupMedia);
       case PopupMediaType.pieChart:
-        return const Text('Chart not implemented');
+        return _PopupPieChart(popupMedia: popupMedia);
       default:
         return const SizedBox.shrink(); // Empty view for unsupported media types
     }
   }
+}
+
+/// Converts the PopupMediaValue data into a list of _ChartData.
+extension on PopupMedia {
+  List<_ChartData> _getChartData() {
+    final popupMediaValue = value;
+    final list = <_ChartData>[];
+    if (popupMediaValue != null) {
+      for (var i = 0; i < popupMediaValue.data.length; i++) {
+        final value = popupMediaValue.data[i]._toDouble!;
+
+        var label = 'untitled';
+        if (popupMediaValue.labels.isNotEmpty) {
+          label = popupMediaValue.labels[i];
+        } else if (popupMediaValue.fieldNames.isNotEmpty) {
+          label = popupMediaValue.fieldNames[i];
+        }
+
+        var color = Colors.blue as Color;
+        if (popupMediaValue.chartColors.isNotEmpty) {
+          color = popupMediaValue.chartColors[i];
+        }
+        list.add(_ChartData(value: value, label: label, color: color));
+      }
+    }
+    return list;
+  }
+}
+
+/// Representing the data for a chart.
+class _ChartData {
+  const _ChartData({
+    required this.value,
+    required this.label,
+    required this.color,
+  });
+
+  final String label;
+  final double value;
+  final Color color;
 }
