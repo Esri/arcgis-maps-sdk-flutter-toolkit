@@ -78,8 +78,8 @@ class _PopupViewState extends State<PopupView> {
                     if (element is FieldsPopupElement) {
                       return _FieldsPopupElementView(fieldsElement: element);
                     } else if (element is AttachmentsPopupElement) {
-                      // TODO(3336): Implement AttachmentsPopupElementView
-                      return const Text('Attachments not implemented');
+                      return _AttachmentsPopupElementView(
+                          attachmentsElement: element);
                     } else if (element is MediaPopupElement) {
                       return _MediaPopupElementView(mediaElement: element);
                     } else if (element is TextPopupElement) {

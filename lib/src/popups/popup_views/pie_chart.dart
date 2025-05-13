@@ -29,7 +29,7 @@ class _PopupPieChart extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(8),
-      child: Expanded(child: PieChart(pieData)),
+      child: PieChart(pieData),
     );
   }
 

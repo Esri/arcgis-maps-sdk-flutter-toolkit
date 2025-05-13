@@ -140,14 +140,16 @@ extension on PopupMedia {
         final value = popupMediaValue.data[i]._toDouble!;
 
         var label = 'untitled';
-        if (popupMediaValue.labels.isNotEmpty) {
+        if (popupMediaValue.labels.isNotEmpty  &&
+            popupMediaValue.labels.length > i) {
           label = popupMediaValue.labels[i];
         } else if (popupMediaValue.fieldNames.isNotEmpty) {
           label = popupMediaValue.fieldNames[i];
         }
 
         var color = Colors.blue as Color;
-        if (popupMediaValue.chartColors.isNotEmpty) {
+        if (popupMediaValue.chartColors.isNotEmpty &&
+            popupMediaValue.chartColors.length > i) {
           color = popupMediaValue.chartColors[i];
         }
         list.add(_ChartData(value: value, label: label, color: color));

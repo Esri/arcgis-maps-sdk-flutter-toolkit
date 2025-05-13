@@ -37,6 +37,37 @@ Future<void> _showErrorDialog(BuildContext context, String message) async {
   );
 }
 
+class _FullScreenImageDialog extends StatelessWidget {
+  const _FullScreenImageDialog({required this.filePath});
+  final String filePath;
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      backgroundColor: Colors.white,
+      insetPadding: EdgeInsets.zero,
+      child: Stack(
+        children: [
+          Center(
+            child: Image.file(
+              File(filePath),
+              fit: BoxFit.contain,
+            ),
+          ),
+          Positioned(
+            top: 24,
+            right: 24,
+            child: IconButton(
+              icon: const Icon(Icons.close, color: Colors.white, size: 24),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 /// The maximum Y value for the chart is calculated based on the data.
 double _calculateMaximumYValue(List<_ChartData> chartData) {
   if (chartData.isEmpty) {
