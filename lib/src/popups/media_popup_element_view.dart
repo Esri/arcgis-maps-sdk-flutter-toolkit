@@ -140,7 +140,7 @@ extension on PopupMedia {
         final value = popupMediaValue.data[i]._toDouble!;
 
         var label = 'untitled';
-        if (popupMediaValue.labels.isNotEmpty  &&
+        if (popupMediaValue.labels.isNotEmpty &&
             popupMediaValue.labels.length > i) {
           label = popupMediaValue.labels[i];
         } else if (popupMediaValue.fieldNames.isNotEmpty) {

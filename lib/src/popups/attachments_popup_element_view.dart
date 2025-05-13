@@ -125,11 +125,22 @@ class _PopupAttachmentView extends StatefulWidget {
 
 class _PopupAttachmentViewState extends State<_PopupAttachmentView> {
   final sizePreview = 35;
+  late final String _contentType;
   String? filePath;
   Future<void>? _downloadFuture;
+
   @override
   void initState() {
     super.initState();
+    _contentType = widget.popupAttachment.attachment!.contentType;
+    _loadFilePath();
+  }
+
+  Future<void> _loadFilePath() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      filePath = prefs.getString(widget.popupAttachment.name);
+    });
   }
 
   @override
@@ -144,14 +155,11 @@ class _PopupAttachmentViewState extends State<_PopupAttachmentView> {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const CircularProgressIndicator();
           } else if (snapshot.hasError) {
-            if (widget.popupAttachment.attachment!.contentType ==
-                'application/pdf') {
+            if (_contentType == 'application/pdf') {
               return Icon(Icons.picture_as_pdf, size: sizePreview.toDouble());
-            } else if (widget.popupAttachment.attachment!.contentType ==
-                'video/quicktime') {
+            } else if (_contentType == 'video/quicktime') {
               return Icon(Icons.videocam, size: sizePreview.toDouble());
-            } else if (widget.popupAttachment.attachment!.contentType ==
-                'application/octet-stream') {
+            } else if (_contentType == 'application/octet-stream') {
               return Icon(Icons.edit_document, size: sizePreview.toDouble());
             }
             return Icon(Icons.device_unknown, size: sizePreview.toDouble());
@@ -176,15 +184,24 @@ class _PopupAttachmentViewState extends State<_PopupAttachmentView> {
           filePath == null
               ? _buildDownloadButton()
               : const Icon(Icons.check, color: Colors.green),
-      onTap: () => {
-        print('filePath: $filePath'),
-        if (filePath != null) {
-          showDialog(
-            context: context,
-            builder: (context) => _FullScreenImageDialog(filePath: filePath!),
-          )
-        } 
-      }, //_openAttachment(attachment),
+      onTap:
+          () => {
+            if (filePath != null)
+              {
+                if (_contentType.startsWith('image'))
+                  {
+                    showDialog(
+                      context: context,
+                      builder:
+                          (context) =>
+                              _DetailsScreenImageDialog(filePath: filePath!),
+                    ),
+                  }
+                else
+                  {OpenFile.open(filePath, type: _contentType)},
+              },
+          },
+      //_openAttachment(attachment),
     );
   }
 
@@ -212,7 +229,9 @@ class _PopupAttachmentViewState extends State<_PopupAttachmentView> {
               if (filePath != null) {
                 showDialog(
                   context: context,
-                  builder: (context) => _FullScreenImageDialog(filePath: filePath!),
+                  builder:
+                      (context) =>
+                          _DetailsScreenImageDialog(filePath: filePath!),
                 );
               }
             },
@@ -240,6 +259,11 @@ class _PopupAttachmentViewState extends State<_PopupAttachmentView> {
     final filePath = '${directory.path}/${widget.popupAttachment.name}';
     final file = File(filePath);
     await file.writeAsBytes(data);
+
+    // Save the file path in SharedPreferences
+    // to persist it across app restarts
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(widget.popupAttachment.name, filePath);
     setState(() {
       this.filePath = filePath;
     });

@@ -37,8 +37,8 @@ Future<void> _showErrorDialog(BuildContext context, String message) async {
   );
 }
 
-class _FullScreenImageDialog extends StatelessWidget {
-  const _FullScreenImageDialog({required this.filePath});
+class _DetailsScreenImageDialog extends StatelessWidget {
+  const _DetailsScreenImageDialog({required this.filePath});
   final String filePath;
 
   @override
@@ -48,12 +48,7 @@ class _FullScreenImageDialog extends StatelessWidget {
       insetPadding: EdgeInsets.zero,
       child: Stack(
         children: [
-          Center(
-            child: Image.file(
-              File(filePath),
-              fit: BoxFit.contain,
-            ),
-          ),
+          Center(child: Image.file(File(filePath), fit: BoxFit.contain)),
           Positioned(
             top: 24,
             right: 24,

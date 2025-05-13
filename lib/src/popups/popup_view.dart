@@ -79,7 +79,8 @@ class _PopupViewState extends State<PopupView> {
                       return _FieldsPopupElementView(fieldsElement: element);
                     } else if (element is AttachmentsPopupElement) {
                       return _AttachmentsPopupElementView(
-                          attachmentsElement: element);
+                        attachmentsElement: element,
+                      );
                     } else if (element is MediaPopupElement) {
                       return _MediaPopupElementView(mediaElement: element);
                     } else if (element is TextPopupElement) {
