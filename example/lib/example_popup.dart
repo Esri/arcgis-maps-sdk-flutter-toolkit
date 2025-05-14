@@ -108,10 +108,21 @@ class _PopupExampleState extends State<PopupExample> {
     //     itemId: 'bfce95f294c341a580c608567956806d',
     //   ),
     // );
+
+    // QT sample
+    // _mapViewController.arcGISMap = ArcGISMap.withItem(
+    //   PortalItem.withUri(
+    //     Uri.parse(
+    //       'https://runtimecoretest.maps.arcgis.com/home/item.html?id=bfce95f294c341a580c608567956806d',
+    //     ),
+    //   )!,
+    // );
+
+    // android sample
     _mapViewController.arcGISMap = ArcGISMap.withItem(
       PortalItem.withUri(
         Uri.parse(
-          'https://runtimecoretest.maps.arcgis.com/home/item.html?id=bfce95f294c341a580c608567956806d',
+          'https://runtimecoretest.maps.arcgis.com/home/item.html?id=70abf39d396147c4bb958f0340e3ff54',
         ),
       )!,
     );
