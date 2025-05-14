@@ -9,9 +9,9 @@
             "name": "example (debug)",
             "type": "dart",
             "request": "launch",
-            "templateFor": "example/lib/main.dart",
+            "templateFor": "example/lib/",
             "toolArgs": [
-                "--dart-define-from-file=../flutter/arcgis_maps/test/env.json"
+                "--dart-define-from-file=env.json"
             ],
         },
         {
@@ -19,9 +19,9 @@
             "type": "dart",
             "flutterMode": "profile",
             "request": "launch",
-            "templateFor": "example/lib/main.dart",
+            "templateFor": "example/lib/",
             "toolArgs": [
-                "--dart-define-from-file=../flutter/arcgis_maps/test/env.json"
+                "--dart-define-from-file=env.json"
             ],
         },
         {
@@ -29,9 +29,9 @@
             "type": "dart",
             "flutterMode": "release",
             "request": "launch",
-            "templateFor": "example/lib/main.dart",
+            "templateFor": "example/lib/",
             "toolArgs": [
-                "--dart-define-from-file=../flutter/arcgis_maps/test/env.json"
+                "--dart-define-from-file=env.json"
             ],
         }
     ]

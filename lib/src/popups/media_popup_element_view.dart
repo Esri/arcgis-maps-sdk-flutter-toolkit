@@ -29,13 +29,13 @@ class _MediaPopupElementView extends StatefulWidget {
 }
 
 class _MediaPopupElementViewState extends State<_MediaPopupElementView> {
-  late bool _isExpanded;
+  late bool isExpanded;
   int get displayableMediaCount => widget.mediaElement.media.length;
 
   @override
   void initState() {
     super.initState();
-    _isExpanded = widget.isExpanded;
+    isExpanded = widget.isExpanded;
   }
 
   @override
@@ -51,10 +51,10 @@ class _MediaPopupElementViewState extends State<_MediaPopupElementView> {
                     : widget.mediaElement.title,
             description: widget.mediaElement.description,
           ),
-          initiallyExpanded: _isExpanded,
+          initiallyExpanded: isExpanded,
           onExpansionChanged: (expanded) {
             setState(() {
-              _isExpanded = expanded;
+              isExpanded = expanded;
             });
           },
           children: [
