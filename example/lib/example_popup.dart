@@ -54,12 +54,6 @@ class _PopupExampleState extends State<PopupExample> {
   ];
 
   @override
-  void initState() {
-    
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(

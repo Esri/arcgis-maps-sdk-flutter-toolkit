@@ -269,17 +269,6 @@ class _PopupAttachmentViewInListState
         } else if (snapshot.connectionState == ConnectionState.done) {
           // Download finished, show check icon
           return const Icon(Icons.check, color: Colors.green);
-            // onPressed: () {
-            //   if (filePath != null) {
-            //     showDialog(
-            //       context: context,
-            //       builder:
-            //           (context) =>
-            //               _DetailsScreenImageDialog(filePath: filePath!),
-            //     );
-            //   }
-          
-          
         }
         // Not downloading, show download icon
         return IconButton(
