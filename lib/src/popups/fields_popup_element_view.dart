@@ -30,13 +30,13 @@ class _FieldsPopupElementView extends StatefulWidget {
 }
 
 class _FieldsPopupElementViewState extends State<_FieldsPopupElementView> {
-  late bool _isExpanded;
+  late bool isExpanded;
   late final List<_DisplayField> displayFields;
 
   @override
   void initState() {
     super.initState();
-    _isExpanded = widget.isExpanded;
+    isExpanded = widget.isExpanded;
     displayFields = List.generate(
       widget.fieldsElement.labels.length,
       (index) => _DisplayField(
@@ -58,10 +58,10 @@ class _FieldsPopupElementViewState extends State<_FieldsPopupElementView> {
                   : widget.fieldsElement.title,
           description: widget.fieldsElement.description,
         ),
-        initiallyExpanded: _isExpanded,
+        initiallyExpanded: isExpanded,
         onExpansionChanged: (expanded) {
           setState(() {
-            _isExpanded = expanded;
+            isExpanded = expanded;
           });
         },
         expandedCrossAxisAlignment: CrossAxisAlignment.start,
