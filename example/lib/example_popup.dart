@@ -21,15 +21,15 @@ import 'package:flutter/material.dart';
 import 'package:arcgis_maps/arcgis_maps.dart';
 
 void main() {
-  // // Supply your apiKey using the --dart-define-from-file command line argument.
-  // const apiKey = String.fromEnvironment('API_KEY');
-  // // Alternatively, replace the above line with the following and hard-code your apiKey here:
-  // // const apiKey = ''; // Your API Key here.
-  // if (apiKey.isEmpty) {
-  //   throw Exception('apiKey undefined');
-  // } else {
-  //   ArcGISEnvironment.apiKey = apiKey;
-  // }
+  // Supply your apiKey using the --dart-define-from-file command line argument.
+  const apiKey = String.fromEnvironment('API_KEY');
+  // Alternatively, replace the above line with the following and hard-code your apiKey here:
+  // const apiKey = ''; // Your API Key here.
+  if (apiKey.isEmpty) {
+    throw Exception('apiKey undefined');
+  } else {
+    ArcGISEnvironment.apiKey = apiKey;
+  }
 
   runApp(const MaterialApp(home: PopupExample()));
 }
@@ -45,43 +45,56 @@ class _PopupExampleState extends State<PopupExample> {
   final _mapViewController = ArcGISMapView.createController();
   Popup? _popup;
 
-  final webmapIds = [
-    'f4ea5041f73b40f5ac241035664eff7e',
-    '66c1d496ae354fd79e174f8e3074c3f9',
-    '9f3a674e998f461580006e626611f9ad', // keep this as the last one
+  final webmaps = [
+    (id: 'f4ea5041f73b40f5ac241035664eff7e', title: 'Fields Popup', secured: false),
+    (id: '66c1d496ae354fd79e174f8e3074c3f9', title: 'All Charts Popup', secured: false),
+    (id: 'bfce95f294c341a580c608567956806d', title: 'Attachments1(Qt)', secured: true),
+    (id: '70abf39d396147c4bb958f0340e3ff54', title: 'Attachments2(Android)', secured: true),
+    (id: '9f3a674e998f461580006e626611f9ad', title: 'Design demo popup', secured: false), // keep this as the last one
   ];
-  final webmapTitles = [
-    'Fields Popup',
-    'All Charts Popup',
-    'Design demo popup', // keep this as the last one
-  ];
+
+  @override
+  void initState() {
+    
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Popup Example'),
+        title: Text('Popup Examples'),
         actions: [
           PopupMenuButton(
             itemBuilder: (context) {
-              return List.generate(webmapIds.length, (index) {
+              return List.generate(webmaps.length, (index) {
                 return PopupMenuItem(
-                  value: webmapIds[index],
-                  child: Text(webmapTitles[index]),
+                  value: webmaps[index].id,
+                  child: Text(webmaps[index].title),
                 );
               });
             },
             onSelected: (valueId) {
-              reloadMap(valueId);
+              final selectedWebmap = webmaps.firstWhere((webmap) => webmap.id == valueId);
+              if (selectedWebmap.secured) {
+                ArcGISEnvironment.apiKey ='';
+              }
+              reloadMap(
+                selectedWebmap.id,
+                secured: selectedWebmap.secured,
+              );
             },
           ),
         ],
       ),
       body: Stack(
         children: [
-          ArcGISMapView(
-            controllerProvider: () => _mapViewController,
-            onMapViewReady: onMapViewReady,
-            onTap: identifyArcGISPopup,
+          Authenticator(
+            child: ArcGISMapView(
+              controllerProvider: () => _mapViewController,
+              onMapViewReady: onMapViewReady,
+              onTap: identifyArcGISPopup,
+            ),
           ),
         ],
       ),
@@ -91,7 +104,6 @@ class _PopupExampleState extends State<PopupExample> {
 
   @override
   void dispose() {
-    
     ArcGISEnvironment.authenticationManager.arcGISCredentialStore.removeAll();
     ArcGISEnvironment
         .authenticationManager
@@ -100,40 +112,7 @@ class _PopupExampleState extends State<PopupExample> {
   }
 
   void onMapViewReady() {
-    //reloadMap('bfce95f294c341a580c608567956806d');
-
-    // _mapViewController.arcGISMap = ArcGISMap.withItem(
-    //   PortalItem.withPortalAndItemId(
-    //     portal: Portal.arcGISOnline(connection: PortalConnection.authenticated),
-    //     itemId: 'bfce95f294c341a580c608567956806d',
-    //   ),
-    // );
-
-    // QT sample
-    // _mapViewController.arcGISMap = ArcGISMap.withItem(
-    //   PortalItem.withUri(
-    //     Uri.parse(
-    //       'https://runtimecoretest.maps.arcgis.com/home/item.html?id=bfce95f294c341a580c608567956806d',
-    //     ),
-    //   )!,
-    // );
-
-    // android sample
-    _mapViewController.arcGISMap = ArcGISMap.withItem(
-      PortalItem.withUri(
-        Uri.parse(
-          'https://runtimecoretest.maps.arcgis.com/home/item.html?id=70abf39d396147c4bb958f0340e3ff54',
-        ),
-      )!,
-    );
-
-    final tokenChallengeHandler = TokenChallengeHandler(
-      'android_2',
-      'android@100',
-    );
-    ArcGISEnvironment
-        .authenticationManager
-        .arcGISAuthenticationChallengeHandler = tokenChallengeHandler;
+    reloadMap(webmaps.last.id, secured: webmaps.last.secured);
   }
 
   Widget? getBottomSheet(BuildContext context) {
@@ -189,41 +168,20 @@ class _PopupExampleState extends State<PopupExample> {
     }
   }
 
-  void reloadMap(String valueId) {
-    _mapViewController.arcGISMap = ArcGISMap.withItem(
-      PortalItem.withUri(
-        Uri.parse('https://www.arcgis.com/home/item.html?id=$valueId'),
-      )!,
-    );
-  }
-}
-
-class TokenChallengeHandler implements ArcGISAuthenticationChallengeHandler {
-  TokenChallengeHandler(
-    this.username,
-    this.password, {
-    this.rememberChallenges = true,
-  });
-
-  final String username;
-  final String password;
-  bool rememberChallenges;
-
-  final challenges = <ArcGISAuthenticationChallenge>[];
-
-  @override
-  Future<void> handleArcGISAuthenticationChallenge(
-    ArcGISAuthenticationChallenge challenge,
-  ) async {
-    print('TokenChallengeHandler.handleArcGISAuthenticationChallenge: '
-        'challenge: ${challenge.error}');
-    if (rememberChallenges) challenges.add(challenge);
-
-    final credential = await TokenCredential.createWithChallenge(
-      challenge,
-      username: username,
-      password: password,
-    );
-    challenge.continueWithCredential(credential);
+  void reloadMap(String valueId, {bool secured = false}) {
+    if (secured) {
+      _mapViewController.arcGISMap = ArcGISMap.withItem(
+        PortalItem.withPortalAndItemId(
+          portal: Portal.arcGISOnline(connection: PortalConnection.authenticated),
+          itemId: valueId,
+        ),
+      );
+    } else {
+      _mapViewController.arcGISMap = ArcGISMap.withItem(
+        PortalItem.withUri(
+          Uri.parse('https://www.arcgis.com/home/item.html?id=$valueId'),
+        )!,
+      );
+    }
   }
 }

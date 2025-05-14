@@ -15,11 +15,17 @@
 //
 part of '../../arcgis_maps_toolkit.dart';
 
+/// Displays a list of attachments in a popup.
+/// It fetches the attachments from the server and displays them in a grid
+/// or list view, depending on the display type.
 class _AttachmentsPopupElementView extends StatefulWidget {
-  const _AttachmentsPopupElementView({required this.attachmentsElement});
+  const _AttachmentsPopupElementView({
+    required this.attachmentsElement,
+    this.isExpanded = false,
+  });
 
   final AttachmentsPopupElement attachmentsElement;
-
+  final bool isExpanded;
   @override
   State<_AttachmentsPopupElementView> createState() =>
       _AttachmentsPopupElementViewState();
@@ -27,12 +33,11 @@ class _AttachmentsPopupElementView extends StatefulWidget {
 
 class _AttachmentsPopupElementViewState
     extends State<_AttachmentsPopupElementView> {
-  bool isExpanded = true;
-  late PopupAttachmentsDisplayType displayType;
+  late bool isExpanded = true;
   @override
   void initState() {
     super.initState();
-    displayType = widget.attachmentsElement.displayType;
+    isExpanded = widget.isExpanded;
   }
 
   @override
@@ -43,10 +48,16 @@ class _AttachmentsPopupElementViewState
         future: widget.attachmentsElement.fetchAttachments(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
+            return const SizedBox(
+              height: 200,
+              child: Center(child: CircularProgressIndicator()),
+            );
           } else if (snapshot.hasError) {
-            return Center(
-              child: Text('Failed to load attachments: ${snapshot.error}'),
+            return SizedBox(
+              height: 200,
+              child: Center(
+                child: Text('Failed to load attachments: ${snapshot.error}'),
+              ),
             );
           }
           return ExpansionTile(
@@ -68,7 +79,10 @@ class _AttachmentsPopupElementViewState
               SizedBox(
                 height: 200,
                 child:
-                    displayType == PopupAttachmentsDisplayType.preview
+                    widget.attachmentsElement.attachments.isEmpty
+                        ? const Center(child: Text('No attachments available'))
+                        : widget.attachmentsElement.displayType ==
+                            PopupAttachmentsDisplayType.preview
                         ? _buildGridView()
                         : _buildListView(),
               ),
@@ -80,9 +94,6 @@ class _AttachmentsPopupElementViewState
   }
 
   Widget _buildListView() {
-    if (widget.attachmentsElement.attachments.isEmpty) {
-      return const Center(child: Text('No attachments available'));
-    }
     return ListView.builder(
       itemCount: widget.attachmentsElement.attachments.length,
       itemBuilder: (context, index) {
@@ -93,17 +104,16 @@ class _AttachmentsPopupElementViewState
   }
 
   Widget _buildGridView() {
-    final attachments = widget.attachmentsElement.attachments;
     return GridView.builder(
       shrinkWrap: true,
-      itemCount: attachments.length,
+      itemCount: widget.attachmentsElement.attachments.length,
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 3,
         mainAxisSpacing: 8,
         crossAxisSpacing: 8,
       ),
       itemBuilder: (context, index) {
-        final attachment = attachments[index];
+        final attachment = widget.attachmentsElement.attachments[index];
         return _PopupAttachmentViewInGallery(popupAttachment: attachment);
       },
     );
@@ -122,17 +132,30 @@ class _PopupAttachmentViewInGallery extends StatefulWidget {
 
 class _PopupAttachmentViewInGalleryState
     extends State<_PopupAttachmentViewInGallery> {
+  String? filePath;
+
+  @override
+  void initState() {
+    super.initState();
+    loadFilePath();
+  }
+
+  Future<void> loadFilePath() async {
+    final cachePath = await _getCachedFilePath(widget.popupAttachment.name);
+    setState(() {
+      filePath = cachePath;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final attachment = widget.popupAttachment;
     return InkWell(
       onTap: () async {
-        final prefs = await SharedPreferences.getInstance();
-        var filePath = prefs.getString(attachment.name);
         filePath ??= await _downloadingAttachment(attachment);
         if (filePath != null) {
           if (attachment.contentType.startsWith('image') && mounted) {
-            await showDialog(
+             await showDialog(
               context: context,
               builder:
                   (context) => _DetailsScreenImageDialog(filePath: filePath!),
@@ -180,20 +203,18 @@ class _PopupAttachmentViewInList extends StatefulWidget {
 class _PopupAttachmentViewInListState
     extends State<_PopupAttachmentViewInList> {
   final double sizePreview = 35;
-  late final String contentType;
   String? filePath;
 
   @override
   void initState() {
     super.initState();
-    contentType = widget.popupAttachment.attachment!.contentType;
     loadFilePath();
   }
 
   Future<void> loadFilePath() async {
-    final prefs = await SharedPreferences.getInstance();
+    final cachePath = await _getCachedFilePath(widget.popupAttachment.name);
     setState(() {
-      filePath = prefs.getString(widget.popupAttachment.name);
+      filePath = cachePath;
     });
   }
 
@@ -216,7 +237,7 @@ class _PopupAttachmentViewInListState
           () => {
             if (filePath != null)
               {
-                if (contentType.startsWith('image'))
+                if (widget.popupAttachment.contentType.startsWith('image'))
                   {
                     showDialog(
                       context: context,
@@ -226,7 +247,7 @@ class _PopupAttachmentViewInListState
                     ),
                   }
                 else
-                  {OpenFile.open(filePath, type: contentType)},
+                  {OpenFile.open(filePath, type: widget.popupAttachment.contentType,)},
               },
           },
     );
@@ -247,19 +268,18 @@ class _PopupAttachmentViewInListState
           return const Icon(Icons.error, color: Colors.red);
         } else if (snapshot.connectionState == ConnectionState.done) {
           // Download finished, show check icon
-          return IconButton(
-            icon: const Icon(Icons.check, color: Colors.green),
-            onPressed: () {
-              if (filePath != null) {
-                showDialog(
-                  context: context,
-                  builder:
-                      (context) =>
-                          _DetailsScreenImageDialog(filePath: filePath!),
-                );
-              }
-            },
-          );
+          return const Icon(Icons.check, color: Colors.green);
+            // onPressed: () {
+            //   if (filePath != null) {
+            //     showDialog(
+            //       context: context,
+            //       builder:
+            //           (context) =>
+            //               _DetailsScreenImageDialog(filePath: filePath!),
+            //     );
+            //   }
+          
+          
         }
         // Not downloading, show download icon
         return IconButton(
@@ -311,12 +331,21 @@ Future<String?> _downloadingAttachment(PopupAttachment popupAttachment) async {
     await file.writeAsBytes(data);
     // Save the file path in SharedPreferences
     // to persist it across app restarts
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(popupAttachment.name, filePath);
+    await _setCachedFilePath(popupAttachment.name, filePath);
     return filePath;
   } else {
     return null;
   }
+}
+
+Future<String?> _getCachedFilePath(String name) async {
+  final sharedPreferences = await SharedPreferences.getInstance();
+  return sharedPreferences.getString(name);
+}
+
+Future<bool> _setCachedFilePath(String name, String filePath) async {
+  final sharedPreferences = await SharedPreferences.getInstance();
+  return sharedPreferences.setString(name, filePath);
 }
 
 Icon _getContentTypeIcon(String contentType, {double size = 35}) {
