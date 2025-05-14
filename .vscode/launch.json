@@ -4,22 +4,14 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-        {
-            "name": "example Popup (debug)",
-            "type": "dart",
-            "request": "launch",
-            "program": "example/lib/example_popup.dart",
-            "toolArgs": [
-                "--dart-define-from-file=../../flutter/arcgis_maps/test/env.json"
-            ],
-        },
+
         {
             "name": "example (debug)",
             "type": "dart",
             "request": "launch",
-            "program": "example/lib/main.dart",
+            "templateFor": "example/lib/main.dart",
             "toolArgs": [
-                "--dart-define-from-file=../../flutter/arcgis_maps/test/env.json"
+                "--dart-define-from-file=../flutter/arcgis_maps/test/env.json"
             ],
         },
         {
@@ -27,9 +19,9 @@
             "type": "dart",
             "flutterMode": "profile",
             "request": "launch",
-            "templateFor": "example/lib/",
+            "templateFor": "example/lib/main.dart",
             "toolArgs": [
-                "--dart-define-from-file=env.json"
+                "--dart-define-from-file=../flutter/arcgis_maps/test/env.json"
             ],
         },
         {
@@ -37,9 +29,9 @@
             "type": "dart",
             "flutterMode": "release",
             "request": "launch",
-            "templateFor": "example/lib/",
+            "templateFor": "example/lib/main.dart",
             "toolArgs": [
-                "--dart-define-from-file=env.json"
+                "--dart-define-from-file=../flutter/arcgis_maps/test/env.json"
             ],
         }
     ]
