@@ -132,8 +132,7 @@ FlTitlesData _getFlTitlesData(List<_ChartData> chartData) {
         getTitlesWidget: (value, meta) {
           // Rotate the labels if the chart is rotated
           // and the number of data points is greater than 4.
-          if (meta.rotationQuarterTurns == 1 &&
-              chartData.length > 4) {
+          if (meta.rotationQuarterTurns == 1 && chartData.length > 4) {
             return ((meta.formattedValue._toDouble! % 2).toInt() == 0)
                 ? Transform.rotate(
                   angle: -30 * (math.pi / 180),

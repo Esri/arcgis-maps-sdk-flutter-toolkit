@@ -20,7 +20,10 @@ part of '../../arcgis_maps_toolkit.dart';
 /// parameters:
 /// - [mediaElement]: The media popup element to be displayed.
 class _MediaPopupElementView extends StatefulWidget {
-  const _MediaPopupElementView({required this.mediaElement, this.isExpanded = false});
+  const _MediaPopupElementView({
+    required this.mediaElement,
+    this.isExpanded = false,
+  });
   final MediaPopupElement mediaElement;
   final bool isExpanded;
 
@@ -148,7 +151,7 @@ extension on PopupMedia {
         if (popupMediaValue.labels.isNotEmpty &&
             popupMediaValue.labels.length > i) {
           label = popupMediaValue.labels[i];
-        } 
+        }
 
         var color = Colors.blue as Color;
         if (popupMediaValue.chartColors.isNotEmpty &&

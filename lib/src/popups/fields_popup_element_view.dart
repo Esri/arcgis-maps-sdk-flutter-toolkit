@@ -20,7 +20,10 @@ part of '../../arcgis_maps_toolkit.dart';
 /// parameters:
 /// - [fieldsElement]: The fields popup element to be displayed.
 class _FieldsPopupElementView extends StatefulWidget {
-  const _FieldsPopupElementView({required this.fieldsElement, this.isExpanded = false});
+  const _FieldsPopupElementView({
+    required this.fieldsElement,
+    this.isExpanded = false,
+  });
 
   final FieldsPopupElement fieldsElement;
   final bool isExpanded;

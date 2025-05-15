@@ -190,9 +190,9 @@ class _PopupAttachmentViewInGalleryState
               overflow: TextOverflow.ellipsis,
             ),
             if (filePath == null)
-              const Icon(Icons.download, color: Colors.indigoAccent, size: 12,)
+              const Icon(Icons.download, color: Colors.indigoAccent, size: 12)
             else
-              const Icon(Icons.check, color: Colors.green, size: 12,),
+              const Icon(Icons.check, color: Colors.green, size: 12),
           ],
         ),
       ),
@@ -200,10 +200,7 @@ class _PopupAttachmentViewInGalleryState
   }
 
   Future<ArcGISImage> getThumbnailFuture(int size) {
-    return widget.popupAttachment.createThumbnail(
-      width: size,
-      height: size,
-    );
+    return widget.popupAttachment.createThumbnail(width: size, height: size);
   }
 }
 
@@ -222,7 +219,8 @@ class _PopupAttachmentViewInList extends StatefulWidget {
       _PopupAttachmentViewInListState();
 }
 
-class _PopupAttachmentViewInListState extends State<_PopupAttachmentViewInList> {
+class _PopupAttachmentViewInListState
+    extends State<_PopupAttachmentViewInList> {
   final double thumbnailSize = 35;
   late Future<ArcGISImage> thumbnailFuture;
   late Future<void>? downloadFuture;
@@ -245,8 +243,11 @@ class _PopupAttachmentViewInListState extends State<_PopupAttachmentViewInList> 
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      leading: _thumbnailFutureBuilder(thumbnailFuture, widget.popupAttachment, 
-          thumbnailSize),
+      leading: _thumbnailFutureBuilder(
+        thumbnailFuture,
+        widget.popupAttachment,
+        thumbnailSize,
+      ),
       title: Text(widget.popupAttachment.name),
       subtitle: Text(
         widget.popupAttachment.size.toSizeString,
@@ -257,41 +258,41 @@ class _PopupAttachmentViewInListState extends State<_PopupAttachmentViewInList> 
       trailing:
           filePath == null
               ? (downloadFuture == null
-                ? IconButton(
-                  icon: const Icon(Icons.download),
-                  onPressed: () {
-                    setState(() {
-                      downloadFuture = downloadAttachment();
-                    });
-                  },
-                )
-              : FutureBuilder<void>(
-                  future: downloadFuture,
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return const SizedBox(
-                        width: 12,
-                        height: 12,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      );
-                    } else if (snapshot.hasError) {
-                      return IconButton(
-                        icon: const Icon(Icons.error, color: Colors.red),
-                        onPressed: () {
-                          setState(() {
-                            downloadFuture = downloadAttachment();
-                          });
-                        },
-                      );
-                    } else {
-                      // Download complete, update filePath and reset downloadFuture
-                      WidgetsBinding.instance.addPostFrameCallback((_) {
-                        setState(() => downloadFuture = null);
+                  ? IconButton(
+                    icon: const Icon(Icons.download),
+                    onPressed: () {
+                      setState(() {
+                        downloadFuture = downloadAttachment();
                       });
-                      return const Icon(Icons.check, color: Colors.green);
-                    }
-                  },
-                ))
+                    },
+                  )
+                  : FutureBuilder<void>(
+                    future: downloadFuture,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const SizedBox(
+                          width: 12,
+                          height: 12,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        );
+                      } else if (snapshot.hasError) {
+                        return IconButton(
+                          icon: const Icon(Icons.error, color: Colors.red),
+                          onPressed: () {
+                            setState(() {
+                              downloadFuture = downloadAttachment();
+                            });
+                          },
+                        );
+                      } else {
+                        // Download complete, update filePath and reset downloadFuture
+                        WidgetsBinding.instance.addPostFrameCallback((_) {
+                          setState(() => downloadFuture = null);
+                        });
+                        return const Icon(Icons.check, color: Colors.green);
+                      }
+                    },
+                  ))
               : const Icon(Icons.check, color: Colors.green),
       onTap:
           () => {
@@ -324,10 +325,7 @@ class _PopupAttachmentViewInListState extends State<_PopupAttachmentViewInList> 
   }
 
   Future<ArcGISImage> getThumbnailFuture(int size) {
-    return widget.popupAttachment.createThumbnail(
-      width: size,
-      height: size,
-    );
+    return widget.popupAttachment.createThumbnail(width: size, height: size);
   }
 }
 
