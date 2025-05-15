@@ -60,9 +60,7 @@ class _FieldsPopupElementViewState extends State<_FieldsPopupElementView> {
         ),
         initiallyExpanded: isExpanded,
         onExpansionChanged: (expanded) {
-          setState(() {
-            isExpanded = expanded;
-          });
+          setState(() => isExpanded = expanded);
         },
         expandedCrossAxisAlignment: CrossAxisAlignment.start,
         children:

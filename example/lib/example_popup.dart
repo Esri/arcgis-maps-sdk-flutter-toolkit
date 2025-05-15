@@ -146,23 +146,21 @@ class _PopupExampleState extends State<PopupExample> {
       final popup = result.popups.first;
       await popup.evaluateExpressions();
 
-      setState(() {
-        _popup = popup;
-      });
+      setState(() => _popup = popup);
     } else if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text('No popups found'),
+          backgroundColor: Theme.of(context).colorScheme.primary,
+          content: const Text('No Popup found'),
           duration: const Duration(seconds: 2),
         ),
       );
-      setState(() {
-        _popup = null;
-      });
+      setState(() =>_popup = null);
     }
   }
 
   void reloadMap(String valueId, {bool secured = false}) {
+    setState(() =>_popup = null);
     if (secured) {
       _mapViewController.arcGISMap = ArcGISMap.withItem(
         PortalItem.withPortalAndItemId(

@@ -55,9 +55,7 @@ class _TextPopupElementViewState extends State<_TextPopupElementView> {
               onPageFinished: (url) async {
                 final height = await _calculateHeight();
                 if (height != null) {
-                  setState(() {
-                    _height = height;
-                  });
+                  setState(() => _height = height);
                 }
               },
             ),

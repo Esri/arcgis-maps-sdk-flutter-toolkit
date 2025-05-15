@@ -70,9 +70,7 @@ class _AttachmentsPopupElementViewState
             ),
             initiallyExpanded: isExpanded,
             onExpansionChanged: (expanded) {
-              setState(() {
-                isExpanded = expanded;
-              });
+              setState(() => isExpanded = expanded);
             },
             expandedCrossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -132,19 +130,22 @@ class _PopupAttachmentViewInGallery extends StatefulWidget {
 
 class _PopupAttachmentViewInGalleryState
     extends State<_PopupAttachmentViewInGallery> {
+  late FutureBuilder<ArcGISImage> thumbnailFuture;
   String? filePath;
 
   @override
   void initState() {
     super.initState();
+    // Create a thumbnail for the attachment and prevent it from being
+    // recreated every time the widget is rebuilt.
+    thumbnailFuture = _thumbnailFutureBuilder(widget.popupAttachment, 50);
+    // Load the file path from cache
     loadFilePath();
   }
 
   Future<void> loadFilePath() async {
     final cachePath = await _getCachedFilePath(widget.popupAttachment.name);
-    setState(() {
-      filePath = cachePath;
-    });
+    setState(() => filePath = cachePath);
   }
 
   @override
@@ -153,9 +154,10 @@ class _PopupAttachmentViewInGalleryState
     return InkWell(
       onTap: () async {
         filePath ??= await _downloadingAttachment(attachment);
+        setState(() => filePath);
         if (filePath != null) {
           if (attachment.contentType.startsWith('image') && mounted) {
-             await showDialog(
+            await showDialog(
               context: context,
               builder:
                   (context) => _DetailsScreenImageDialog(filePath: filePath!),
@@ -169,7 +171,7 @@ class _PopupAttachmentViewInGalleryState
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            _thumbnailFutureBuilder(attachment, 50),
+            thumbnailFuture,
             Text(
               attachment.name,
               style: Theme.of(
@@ -178,6 +180,18 @@ class _PopupAttachmentViewInGalleryState
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
+            Text(
+              attachment.size.toSizeString,
+              style: Theme.of(
+                context,
+              ).textTheme.labelSmall?.copyWith(color: Colors.grey),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+            if (filePath == null)
+              const Icon(Icons.download, color: Colors.indigoAccent, size: 12,)
+            else
+              const Icon(Icons.check, color: Colors.green, size: 12,),
           ],
         ),
       ),
@@ -202,26 +216,26 @@ class _PopupAttachmentViewInList extends StatefulWidget {
 
 class _PopupAttachmentViewInListState
     extends State<_PopupAttachmentViewInList> {
-  final double sizePreview = 35;
+  late FutureBuilder<ArcGISImage> thumbnailFuture;
   String? filePath;
+  Future<void>? downloadFuture;
 
   @override
   void initState() {
     super.initState();
+    thumbnailFuture = _thumbnailFutureBuilder(widget.popupAttachment, 35);
     loadFilePath();
   }
 
   Future<void> loadFilePath() async {
     final cachePath = await _getCachedFilePath(widget.popupAttachment.name);
-    setState(() {
-      filePath = cachePath;
-    });
+    setState(() => filePath = cachePath);
   }
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      leading: _thumbnailFutureBuilder(widget.popupAttachment, sizePreview),
+      leading: thumbnailFuture,
       title: Text(widget.popupAttachment.name),
       subtitle: Text(
         widget.popupAttachment.size.toSizeString,
@@ -231,7 +245,45 @@ class _PopupAttachmentViewInListState
       ),
       trailing:
           filePath == null
-              ? _buildDownloadButton()
+              ? (downloadFuture == null
+                ? IconButton(
+                  icon: const Icon(Icons.download),
+                  onPressed: () {
+                    setState(() {
+                      downloadFuture = downloadAttachment();
+                    });
+                  },
+                )
+              : FutureBuilder<void>(
+                  future: downloadFuture,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return const SizedBox(
+                        width: 12,
+                        height: 12,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      );
+                    } else if (snapshot.hasError) {
+                      return IconButton(
+                        icon: const Icon(Icons.error, color: Colors.red),
+                        onPressed: () {
+                          setState(() {
+                            downloadFuture = downloadAttachment();
+                          });
+                        },
+                      );
+                    } else {
+                      // Download complete, update filePath and reset downloadFuture
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        setState(() {
+                          downloadFuture = null;
+                        });
+                        //loadFilePath();
+                      });
+                      return const Icon(Icons.check, color: Colors.green);
+                    }
+                  },
+                ))
               : const Icon(Icons.check, color: Colors.green),
       onTap:
           () => {
@@ -247,43 +299,20 @@ class _PopupAttachmentViewInListState
                     ),
                   }
                 else
-                  {OpenFile.open(filePath, type: widget.popupAttachment.contentType,)},
+                  {
+                    OpenFile.open(
+                      filePath,
+                      type: widget.popupAttachment.contentType,
+                    ),
+                  },
               },
           },
     );
   }
 
-  Widget _buildDownloadButton() {
-    return FutureBuilder<void>(
-      future: downloadAttachment(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const SizedBox(
-            width: 24,
-            height: 24,
-            child: CircularProgressIndicator(strokeWidth: 2),
-          );
-        } else if (snapshot.connectionState == ConnectionState.done &&
-            snapshot.hasError) {
-          return const Icon(Icons.error, color: Colors.red);
-        } else if (snapshot.connectionState == ConnectionState.done) {
-          // Download finished, show check icon
-          return const Icon(Icons.check, color: Colors.green);
-        }
-        // Not downloading, show download icon
-        return IconButton(
-          icon: const Icon(Icons.download, color: Colors.indigoAccent),
-          onPressed: downloadAttachment,
-        );
-      },
-    );
-  }
-
   Future<void> downloadAttachment() async {
-    final filePath = await _downloadingAttachment(widget.popupAttachment);
-    setState(() {
-      this.filePath = filePath;
-    });
+    final downloadPath = await _downloadingAttachment(widget.popupAttachment);
+    setState(() => filePath = downloadPath);
   }
 }
 

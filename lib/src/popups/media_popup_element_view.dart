@@ -53,9 +53,7 @@ class _MediaPopupElementViewState extends State<_MediaPopupElementView> {
           ),
           initiallyExpanded: isExpanded,
           onExpansionChanged: (expanded) {
-            setState(() {
-              isExpanded = expanded;
-            });
+            setState(() => isExpanded = expanded);
           },
           children: [
             _PopupMediaView(
