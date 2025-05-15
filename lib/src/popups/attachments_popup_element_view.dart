@@ -118,7 +118,7 @@ class _AttachmentsPopupElementViewState
   }
 }
 
-/// Presets a single attachment popup element in a gallery view.
+/// A widget that represents a popup attachment element in a preview mode.
 class _PopupAttachmentViewInGallery extends StatefulWidget {
   const _PopupAttachmentViewInGallery({required this.popupAttachment});
   final PopupAttachment popupAttachment;
@@ -130,7 +130,8 @@ class _PopupAttachmentViewInGallery extends StatefulWidget {
 
 class _PopupAttachmentViewInGalleryState
     extends State<_PopupAttachmentViewInGallery> {
-  late FutureBuilder<ArcGISImage> thumbnailFuture;
+  final double thumbnailSize = 50;
+  late Future<ArcGISImage> thumbnailFuture;
   String? filePath;
 
   @override
@@ -138,7 +139,7 @@ class _PopupAttachmentViewInGalleryState
     super.initState();
     // Create a thumbnail for the attachment and prevent it from being
     // recreated every time the widget is rebuilt.
-    thumbnailFuture = _thumbnailFutureBuilder(widget.popupAttachment, 50);
+    thumbnailFuture = getThumbnailFuture(thumbnailSize.toInt());
     // Load the file path from cache
     loadFilePath();
   }
@@ -171,7 +172,7 @@ class _PopupAttachmentViewInGalleryState
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            thumbnailFuture,
+            _thumbnailFutureBuilder(thumbnailFuture, attachment, thumbnailSize),
             Text(
               attachment.name,
               style: Theme.of(
@@ -197,6 +198,13 @@ class _PopupAttachmentViewInGalleryState
       ),
     );
   }
+
+  Future<ArcGISImage> getThumbnailFuture(int size) {
+    return widget.popupAttachment.createThumbnail(
+      width: size,
+      height: size,
+    );
+  }
 }
 
 /// A widget that displays a popup attachment element in a ListTile.
@@ -214,16 +222,18 @@ class _PopupAttachmentViewInList extends StatefulWidget {
       _PopupAttachmentViewInListState();
 }
 
-class _PopupAttachmentViewInListState
-    extends State<_PopupAttachmentViewInList> {
-  late FutureBuilder<ArcGISImage> thumbnailFuture;
+class _PopupAttachmentViewInListState extends State<_PopupAttachmentViewInList> {
+  final double thumbnailSize = 35;
+  late Future<ArcGISImage> thumbnailFuture;
+  late Future<void>? downloadFuture;
   String? filePath;
-  Future<void>? downloadFuture;
 
   @override
   void initState() {
     super.initState();
-    thumbnailFuture = _thumbnailFutureBuilder(widget.popupAttachment, 35);
+    thumbnailFuture = getThumbnailFuture(thumbnailSize.toInt());
+    downloadFuture = null;
+    // Load the file path from cache
     loadFilePath();
   }
 
@@ -235,7 +245,8 @@ class _PopupAttachmentViewInListState
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      leading: thumbnailFuture,
+      leading: _thumbnailFutureBuilder(thumbnailFuture, widget.popupAttachment, 
+          thumbnailSize),
       title: Text(widget.popupAttachment.name),
       subtitle: Text(
         widget.popupAttachment.size.toSizeString,
@@ -275,10 +286,7 @@ class _PopupAttachmentViewInListState
                     } else {
                       // Download complete, update filePath and reset downloadFuture
                       WidgetsBinding.instance.addPostFrameCallback((_) {
-                        setState(() {
-                          downloadFuture = null;
-                        });
-                        //loadFilePath();
+                        setState(() => downloadFuture = null);
                       });
                       return const Icon(Icons.check, color: Colors.green);
                     }
@@ -314,17 +322,22 @@ class _PopupAttachmentViewInListState
     final downloadPath = await _downloadingAttachment(widget.popupAttachment);
     setState(() => filePath = downloadPath);
   }
+
+  Future<ArcGISImage> getThumbnailFuture(int size) {
+    return widget.popupAttachment.createThumbnail(
+      width: size,
+      height: size,
+    );
+  }
 }
 
 FutureBuilder<ArcGISImage> _thumbnailFutureBuilder(
+  Future<ArcGISImage> createThumbnail,
   PopupAttachment attachment,
   double size,
 ) {
   return FutureBuilder<ArcGISImage>(
-    future: attachment.createThumbnail(
-      width: size.toInt(),
-      height: size.toInt(),
-    ),
+    future: createThumbnail,
     builder: (context, snapshot) {
       if (snapshot.connectionState == ConnectionState.waiting) {
         return const CircularProgressIndicator();
