@@ -148,9 +148,7 @@ extension on PopupMedia {
         if (popupMediaValue.labels.isNotEmpty &&
             popupMediaValue.labels.length > i) {
           label = popupMediaValue.labels[i];
-        } else if (popupMediaValue.fieldNames.isNotEmpty) {
-          label = popupMediaValue.fieldNames[i];
-        }
+        } 
 
         var color = Colors.blue as Color;
         if (popupMediaValue.chartColors.isNotEmpty &&
