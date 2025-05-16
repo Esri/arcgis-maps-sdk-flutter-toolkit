@@ -19,6 +19,7 @@ part of '../../arcgis_maps_toolkit.dart';
 /// It uses a list view to render the fields content.
 /// parameters:
 /// - [fieldsElement]: The fields popup element to be displayed.
+/// - [isExpanded]: A boolean indicating whether the expansion tile should be initially expanded or not.
 class _FieldsPopupElementView extends StatefulWidget {
   const _FieldsPopupElementView({
     required this.fieldsElement,

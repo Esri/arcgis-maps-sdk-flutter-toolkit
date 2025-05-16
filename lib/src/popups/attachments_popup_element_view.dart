@@ -18,6 +18,9 @@ part of '../../arcgis_maps_toolkit.dart';
 /// Displays a list of attachments in a popup.
 /// It fetches the attachments from the server and displays them in a grid
 /// or list view, depending on the display type.
+/// parameters:
+/// - [attachmentsElement]: The attachments popup element to be displayed.
+/// - [isExpanded]: A boolean indicating whether the expansion tile should be initially expanded or not.
 class _AttachmentsPopupElementView extends StatefulWidget {
   const _AttachmentsPopupElementView({
     required this.attachmentsElement,
@@ -33,11 +36,13 @@ class _AttachmentsPopupElementView extends StatefulWidget {
 
 class _AttachmentsPopupElementViewState
     extends State<_AttachmentsPopupElementView> {
-  late bool isExpanded = true;
+  late bool isExpanded;
+  late Future<void> fetchAttachmentsFuture;
   @override
   void initState() {
     super.initState();
     isExpanded = widget.isExpanded;
+    fetchAttachmentsFuture = widget.attachmentsElement.fetchAttachments();
   }
 
   @override
@@ -45,7 +50,7 @@ class _AttachmentsPopupElementViewState
     return Card(
       margin: const EdgeInsets.all(8),
       child: FutureBuilder<void>(
-        future: widget.attachmentsElement.fetchAttachments(),
+        future: fetchAttachmentsFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const SizedBox(
@@ -154,9 +159,12 @@ class _PopupAttachmentViewInGalleryState
     final attachment = widget.popupAttachment;
     return InkWell(
       onTap: () async {
-        filePath ??= await _downloadingAttachment(attachment);
-        setState(() => filePath);
-        if (filePath != null) {
+        if (filePath == null) {
+          final downloadedFilePath = await _downloadingAttachment(attachment);
+          if (downloadedFilePath != null) {
+            setState(() => filePath = downloadedFilePath);
+          }
+        } else {
           if (attachment.contentType.startsWith('image') && mounted) {
             await showDialog(
               context: context,
@@ -223,15 +231,13 @@ class _PopupAttachmentViewInListState
     extends State<_PopupAttachmentViewInList> {
   final double thumbnailSize = 35;
   late Future<ArcGISImage> thumbnailFuture;
-  late Future<void>? downloadFuture;
+  Future<void>? downloadFuture;
   String? filePath;
 
   @override
   void initState() {
     super.initState();
     thumbnailFuture = getThumbnailFuture(thumbnailSize.toInt());
-    downloadFuture = null;
-    // Load the file path from cache
     loadFilePath();
   }
 
@@ -284,11 +290,7 @@ class _PopupAttachmentViewInListState
                             });
                           },
                         );
-                      } else {
-                        // Download complete, update filePath and reset downloadFuture
-                        WidgetsBinding.instance.addPostFrameCallback((_) {
-                          setState(() => downloadFuture = null);
-                        });
+                      } {
                         return const Icon(Icons.check, color: Colors.green);
                       }
                     },
@@ -321,7 +323,10 @@ class _PopupAttachmentViewInListState
 
   Future<void> downloadAttachment() async {
     final downloadPath = await _downloadingAttachment(widget.popupAttachment);
-    setState(() => filePath = downloadPath);
+    setState(() {
+      filePath = downloadPath;
+      downloadFuture = null;
+    });
   }
 
   Future<ArcGISImage> getThumbnailFuture(int size) {
@@ -334,7 +339,7 @@ FutureBuilder<ArcGISImage> _thumbnailFutureBuilder(
   PopupAttachment attachment,
   double size,
 ) {
-  return FutureBuilder<ArcGISImage>(
+  return FutureBuilder(
     future: createThumbnail,
     builder: (context, snapshot) {
       if (snapshot.connectionState == ConnectionState.waiting) {

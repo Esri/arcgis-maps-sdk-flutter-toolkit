@@ -99,9 +99,6 @@ class _PopupExampleState extends State<PopupExample> {
   @override
   void dispose() {
     ArcGISEnvironment.authenticationManager.arcGISCredentialStore.removeAll();
-    ArcGISEnvironment
-        .authenticationManager
-        .arcGISAuthenticationChallengeHandler = null;
     super.dispose();
   }
 

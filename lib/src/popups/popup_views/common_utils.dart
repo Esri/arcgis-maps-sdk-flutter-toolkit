@@ -53,7 +53,7 @@ class _DetailsScreenImageDialog extends StatelessWidget {
             top: 24,
             right: 24,
             child: IconButton(
-              icon: const Icon(Icons.close, color: Colors.white, size: 24),
+              icon: const Icon(Icons.close, color: Colors.black, size: 24),
               onPressed: () => Navigator.of(context).pop(),
             ),
           ),

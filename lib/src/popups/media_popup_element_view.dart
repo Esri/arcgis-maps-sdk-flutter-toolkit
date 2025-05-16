@@ -19,6 +19,7 @@ part of '../../arcgis_maps_toolkit.dart';
 /// It uses a horizontal list view to render the media content.
 /// parameters:
 /// - [mediaElement]: The media popup element to be displayed.
+/// - [isExpanded]: A boolean indicating whether the expansion tile should be initially expanded or not.
 class _MediaPopupElementView extends StatefulWidget {
   const _MediaPopupElementView({
     required this.mediaElement,
