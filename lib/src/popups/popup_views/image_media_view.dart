@@ -32,23 +32,32 @@ class _ImageMediaView extends StatefulWidget {
 }
 
 class _ImageMediaViewState extends State<_ImageMediaView> {
-  // TODO(3337): show detail view when clicked.
-  bool isShowingDetailView = false;
+  // A flag to indicate if the detail view is cached and ready to be shown.
+  bool isShowingDetailReady = false;
 
   @override
   Widget build(BuildContext context) {
     final sourceURL = widget.popupMedia.value?.sourceUri;
-
+    final imageInterval = widget.popupMedia.imageRefreshInterval;
     if (sourceURL != null) {
       return GestureDetector(
         onTap: () {
-          setState(() {
-            isShowingDetailView = true;
-          });
+          if (isShowingDetailReady) {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder:
+                    (context) => _MediaDetailView(
+                      popupMedia: widget.popupMedia,
+                      onClose: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+              ),
+            );
+          }
         },
         child: Stack(
           children: [
-            // Async Image View
             ClipRRect(
               borderRadius: BorderRadius.circular(8),
               child: Image.network(
@@ -57,7 +66,10 @@ class _ImageMediaViewState extends State<_ImageMediaView> {
                 height: widget.mediaSize.height,
                 fit: BoxFit.cover,
                 loadingBuilder: (context, child, loadingProgress) {
-                  if (loadingProgress == null) return child;
+                  if (loadingProgress == null) {
+                    isShowingDetailReady = true;
+                    return child;
+                  }
                   return Center(
                     child: CircularProgressIndicator(
                       value:
@@ -78,9 +90,8 @@ class _ImageMediaViewState extends State<_ImageMediaView> {
                     ),
                   );
                 },
-              ),
-            ),
-
+              )
+            ),  
             // Footer Overlay
             Positioned(
               bottom: 0,
@@ -91,6 +102,14 @@ class _ImageMediaViewState extends State<_ImageMediaView> {
                 mediaSize: widget.mediaSize,
               ),
             ),
+
+            // Add a clock icon to indicate the image refresh interval
+            if (widget.popupMedia.imageRefreshInterval > 0)
+              const Positioned(
+                top: 8,
+                right: 8,
+                child: Icon(Icons.access_time, color: Colors.white, size: 16),
+              ),
 
             // Border
             Positioned.fill(
@@ -140,20 +159,58 @@ class _MediaDetailView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(popupMedia.title),
-        leading: IconButton(icon: const Icon(Icons.close), onPressed: onClose),
-      ),
-      body: Center(
-        child: Image.network(
-          popupMedia.value?.linkUri.toString() ?? '',
-          fit: BoxFit.contain,
-          errorBuilder: (context, error, stackTrace) {
-            return const Center(
-              child: Text('Image details not implemented yet'),
-            );
-          },
+    final imageRefreshInterval = popupMedia.imageRefreshInterval;
+    final sourceUri = popupMedia.value?.sourceUri;
+
+    return Dialog.fullscreen(
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(popupMedia.title),
+          leading: IconButton(
+            icon: const Icon(Icons.close),
+            onPressed: onClose,
+          ),
+        ),
+        body: Center(
+          // Add timer to refresh the image for the given interval
+          child:
+              imageRefreshInterval > 0
+                  ? TimerBuilder.periodic(
+                    Duration(milliseconds: imageRefreshInterval),
+                    builder: (context) {
+                      final url =
+                          sourceUri == null
+                              ? ''
+                              : sourceUri
+                                  .replace(
+                                    queryParameters: {
+                                      ...sourceUri.queryParameters,
+                                      't':
+                                          DateTime.now().millisecondsSinceEpoch
+                                              .toString(),
+                                    },
+                                  )
+                                  .toString();
+                      return Image.network(
+                        url,
+                        fit: BoxFit.fill,
+                        errorBuilder: (context, error, stackTrace) {
+                          return const Center(
+                            child: Text('Image details not implemented yet'),
+                          );
+                        },
+                      );
+                    },
+                  )
+                  : Image.network(
+                    popupMedia.value?.sourceUri?.toString() ?? '',
+                    fit: BoxFit.fill,
+                    errorBuilder: (context, error, stackTrace) {
+                      return const Center(
+                        child: Text('Image details not implemented yet'),
+                      );
+                    },
+                  ),
         ),
       ),
     );

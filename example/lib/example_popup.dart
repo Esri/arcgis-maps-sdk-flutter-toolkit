@@ -50,6 +50,7 @@ class _PopupExampleState extends State<PopupExample> {
     (id: '66c1d496ae354fd79e174f8e3074c3f9', title: 'All Charts Popup', secured: false),
     (id: 'bfce95f294c341a580c608567956806d', title: 'Attachments1(Qt)', secured: true),
     (id: '70abf39d396147c4bb958f0340e3ff54', title: 'Attachments2(Android)', secured: true),
+    (id: '67c72e385e6e46bc813e0b378696aba8', title: 'ImageIntervalTest', secured: false),
     (id: '9f3a674e998f461580006e626611f9ad', title: 'Design demo popup', secured: false), // keep this as the last one
   ];
 
