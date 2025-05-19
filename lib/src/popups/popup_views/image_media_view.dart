@@ -208,9 +208,12 @@ class _MediaDetailView extends StatelessWidget {
                           Positioned(
                             top: 12,
                             right: 12,
-                            child:  _IndicatorDot(
+                            child: _IndicatorDot(
                               size: 16,
-                              duration: Duration(milliseconds: (imageRefreshInterval/2).toInt()),
+                              duration: Duration(
+                                milliseconds:
+                                    (imageRefreshInterval / 2).toInt(),
+                              ),
                             ),
                           ),
                         ],
@@ -233,7 +236,10 @@ class _MediaDetailView extends StatelessWidget {
 }
 
 class _IndicatorDot extends StatefulWidget {
-  const _IndicatorDot({required this.size, this.duration = const Duration(milliseconds: 600)});
+  const _IndicatorDot({
+    required this.size,
+    this.duration = const Duration(milliseconds: 600),
+  });
 
   final double size;
   final Duration duration;
@@ -242,16 +248,15 @@ class _IndicatorDot extends StatefulWidget {
   State<_IndicatorDot> createState() => _IndicatorDotState();
 }
 
-class _IndicatorDotState extends State<_IndicatorDot> with SingleTickerProviderStateMixin {
+class _IndicatorDotState extends State<_IndicatorDot>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: widget.duration,
-    )..repeat(reverse: true);
+    _controller = AnimationController(vsync: this, duration: widget.duration)
+      ..repeat(reverse: true);
   }
 
   @override

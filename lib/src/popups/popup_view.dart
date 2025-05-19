@@ -20,12 +20,7 @@ part of '../../arcgis_maps_toolkit.dart';
 /// The popup view is built using a ListView and contains a header with the title
 /// and a close button. The body of the popup view consists of different types of popup elements,
 /// such as text (HTML), fields, media, and attachments elements.
-/// 
-/// This widget is designed to be used within a Flutter application and provides
-/// a convenient way to display popups with various content types.
-/// The PopupView widget is a stateful widget that takes a Popup object and an optional
-/// onClose callback function as parameters.
-/// parameters:
+///
 /// - [popup]: The Popup object to be displayed.
 /// - [onClose]: An optional callback function that is called when the popup is closed.
 class PopupView extends StatefulWidget {
@@ -85,7 +80,6 @@ class _PopupViewState extends State<PopupView> {
                   maxLines: 2,
                 ),
               ),
-
               IconButton(
                 icon: const Icon(Icons.close, size: 20),
                 onPressed: () {
