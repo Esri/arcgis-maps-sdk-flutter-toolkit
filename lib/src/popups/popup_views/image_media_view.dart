@@ -38,7 +38,6 @@ class _ImageMediaViewState extends State<_ImageMediaView> {
   @override
   Widget build(BuildContext context) {
     final sourceURL = widget.popupMedia.value?.sourceUri;
-    final imageInterval = widget.popupMedia.imageRefreshInterval;
     if (sourceURL != null) {
       return GestureDetector(
         onTap: () {
@@ -90,8 +89,8 @@ class _ImageMediaViewState extends State<_ImageMediaView> {
                     ),
                   );
                 },
-              )
-            ),  
+              ),
+            ),
             // Footer Overlay
             Positioned(
               bottom: 0,
@@ -172,11 +171,13 @@ class _MediaDetailView extends StatelessWidget {
           ),
         ),
         body: Center(
-          // Add timer to refresh the image for the given interval
+          // Use the TimerBuilder package to periodically update the image
+          // source URL with a timestamp to prevent caching.
           child:
               imageRefreshInterval > 0
                   ? TimerBuilder.periodic(
                     Duration(milliseconds: imageRefreshInterval),
+                    alignment: Duration.zero,
                     builder: (context) {
                       final url =
                           sourceUri == null
@@ -191,14 +192,28 @@ class _MediaDetailView extends StatelessWidget {
                                     },
                                   )
                                   .toString();
-                      return Image.network(
-                        url,
-                        fit: BoxFit.fill,
-                        errorBuilder: (context, error, stackTrace) {
-                          return const Center(
-                            child: Text('Image details not implemented yet'),
-                          );
-                        },
+                      return Stack(
+                        children: [
+                          Image.network(
+                            url,
+                            fit: BoxFit.fill,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Center(
+                                child: Text(
+                                  'Fails to get the image details: $error',
+                                ),
+                              );
+                            },
+                          ),
+                          Positioned(
+                            top: 12,
+                            right: 12,
+                            child:  _IndicatorDot(
+                              size: 16,
+                              duration: Duration(milliseconds: (imageRefreshInterval/2).toInt()),
+                            ),
+                          ),
+                        ],
                       );
                     },
                   )
@@ -206,11 +221,55 @@ class _MediaDetailView extends StatelessWidget {
                     popupMedia.value?.sourceUri?.toString() ?? '',
                     fit: BoxFit.fill,
                     errorBuilder: (context, error, stackTrace) {
-                      return const Center(
-                        child: Text('Image details not implemented yet'),
+                      return Center(
+                        child: Text('Fails to get the image details: $error'),
                       );
                     },
                   ),
+        ),
+      ),
+    );
+  }
+}
+
+class _IndicatorDot extends StatefulWidget {
+  const _IndicatorDot({required this.size, this.duration = const Duration(milliseconds: 600)});
+
+  final double size;
+  final Duration duration;
+
+  @override
+  State<_IndicatorDot> createState() => _IndicatorDotState();
+}
+
+class _IndicatorDotState extends State<_IndicatorDot> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: widget.duration,
+    )..repeat(reverse: true);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FadeTransition(
+      opacity: _controller,
+      child: Container(
+        width: widget.size,
+        height: widget.size,
+        decoration: const BoxDecoration(
+          color: Colors.red,
+          shape: BoxShape.circle,
         ),
       ),
     );

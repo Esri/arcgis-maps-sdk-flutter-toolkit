@@ -20,6 +20,11 @@ part of '../../arcgis_maps_toolkit.dart';
 /// The popup view is built using a ListView and contains a header with the title
 /// and a close button. The body of the popup view consists of different types of popup elements,
 /// such as text (HTML), fields, media, and attachments elements.
+/// 
+/// This widget is designed to be used within a Flutter application and provides
+/// a convenient way to display popups with various content types.
+/// The PopupView widget is a stateful widget that takes a Popup object and an optional
+/// onClose callback function as parameters.
 /// parameters:
 /// - [popup]: The Popup object to be displayed.
 /// - [onClose]: An optional callback function that is called when the popup is closed.
@@ -33,13 +38,42 @@ class PopupView extends StatefulWidget {
 }
 
 class _PopupViewState extends State<PopupView> {
+  late final Future<List<PopupExpressionEvaluation>>
+  _evaluatedExpressionsFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _evaluatedExpressionsFuture = widget.popup.evaluateExpressions();
+  }
+
   @override
   Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: _evaluatedExpressionsFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          return _buildListView();
+        } else if (snapshot.hasError) {
+          return Center(
+            child: Text(
+              'Error: ${snapshot.error}',
+              style: const TextStyle(color: Colors.red),
+            ),
+          );
+        } else {
+          return const Center(child: CircularProgressIndicator());
+        }
+      },
+    );
+  }
+
+  Widget _buildListView() {
     return ListView(
       children: [
-        // Header with title and close button
         Padding(
-          padding: const EdgeInsets.all(10),
+          padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
+          // Header with title and close button
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -51,19 +85,16 @@ class _PopupViewState extends State<PopupView> {
                   maxLines: 2,
                 ),
               ),
-              SizedBox(
-                width: 18,
-                height: 40,
-                child: IconButton(
-                  icon: const Icon(Icons.close),
-                  onPressed: () {
-                    if (widget.onClose != null) {
-                      widget.onClose!();
-                    } else {
-                      Navigator.of(context).pop();
-                    }
-                  },
-                ),
+
+              IconButton(
+                icon: const Icon(Icons.close, size: 20),
+                onPressed: () {
+                  if (widget.onClose != null) {
+                    widget.onClose!();
+                  } else {
+                    Navigator.of(context).pop();
+                  }
+                },
               ),
             ],
           ),
