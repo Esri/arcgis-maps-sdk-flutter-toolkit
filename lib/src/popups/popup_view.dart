@@ -20,7 +20,7 @@ part of '../../arcgis_maps_toolkit.dart';
 /// The popup view is built using a ListView and contains a header with the title
 /// and a close button. The body of the popup view consists of different types of popup elements,
 /// such as text (HTML), fields, media, and attachments elements.
-///
+/// parameters:
 /// - [popup]: The Popup object to be displayed.
 /// - [onClose]: An optional callback function that is called when the popup is closed.
 class PopupView extends StatefulWidget {
