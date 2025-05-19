@@ -37,6 +37,32 @@ Future<void> _showErrorDialog(BuildContext context, String message) async {
   );
 }
 
+class _DetailsScreenImageDialog extends StatelessWidget {
+  const _DetailsScreenImageDialog({required this.filePath});
+  final String filePath;
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      backgroundColor: Colors.white,
+      insetPadding: EdgeInsets.zero,
+      child: Stack(
+        children: [
+          Center(child: Image.file(File(filePath), fit: BoxFit.contain)),
+          Positioned(
+            top: 24,
+            right: 24,
+            child: IconButton(
+              icon: const Icon(Icons.close, color: Colors.black, size: 24),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 /// The maximum Y value for the chart is calculated based on the data.
 double _calculateMaximumYValue(List<_ChartData> chartData) {
   if (chartData.isEmpty) {
@@ -75,6 +101,7 @@ FlGridData get _gridData {
 /// Returns the titles data for the chart.
 /// The top and right titles are not shown.
 FlTitlesData _getFlTitlesData(List<_ChartData> chartData) {
+  final interval = chartData.length > 4 ? 2 : 1;
   return FlTitlesData(
     topTitles: const AxisTitles(),
     rightTitles: AxisTitles(
@@ -98,7 +125,26 @@ FlTitlesData _getFlTitlesData(List<_ChartData> chartData) {
     bottomTitles: AxisTitles(
       sideTitles: SideTitles(
         showTitles: true,
+        reservedSize: 20,
+        interval: interval.toDouble(),
+        maxIncluded: false,
+        minIncluded: false,
         getTitlesWidget: (value, meta) {
+          // Rotate the labels if the chart is rotated
+          // and the number of data points is greater than 4.
+          if (meta.rotationQuarterTurns == 1 && chartData.length > 4) {
+            return ((meta.formattedValue._toDouble! % 2).toInt() == 0)
+                ? Transform.rotate(
+                  angle: -30 * (math.pi / 180),
+                  child: Text(
+                    chartData[value.toInt()].label,
+                    style: const TextStyle(fontSize: 12, color: Colors.grey),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                )
+                : const SizedBox.shrink();
+          }
           return Padding(
             padding: const EdgeInsets.all(2),
             child: Text(

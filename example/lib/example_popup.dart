@@ -14,6 +14,8 @@
 // limitations under the License.
 //
 
+import 'dart:async';
+
 import 'package:arcgis_maps_toolkit/arcgis_maps_toolkit.dart';
 import 'package:flutter/material.dart';
 import 'package:arcgis_maps/arcgis_maps.dart';
@@ -43,43 +45,50 @@ class _PopupExampleState extends State<PopupExample> {
   final _mapViewController = ArcGISMapView.createController();
   Popup? _popup;
 
-  final webmapIds = [
-    'f4ea5041f73b40f5ac241035664eff7e',
-    '66c1d496ae354fd79e174f8e3074c3f9',
-    '9f3a674e998f461580006e626611f9ad' // keep this as the last one
+  final webmaps = [
+    (id: 'f4ea5041f73b40f5ac241035664eff7e', title: 'Fields Popup', secured: false),
+    (id: '66c1d496ae354fd79e174f8e3074c3f9', title: 'All Charts Popup', secured: false),
+    (id: 'bfce95f294c341a580c608567956806d', title: 'Attachments1(Qt)', secured: true),
+    (id: '70abf39d396147c4bb958f0340e3ff54', title: 'Attachments2(Android)', secured: true),
+    (id: '9f3a674e998f461580006e626611f9ad', title: 'Design demo popup', secured: false), // keep this as the last one
   ];
-  final webmapTitles = [
-    'Fields Popup',
-    'All Charts Popup',
-    'Design demo popup' // keep this as the last one
-  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Popup Example'),
+        title: Text('Popup Examples'),
         actions: [
           PopupMenuButton(
             itemBuilder: (context) {
-              return List.generate(webmapIds.length, (index) {
+              return List.generate(webmaps.length, (index) {
                 return PopupMenuItem(
-                  value: webmapIds[index],
-                  child: Text(webmapTitles[index]),
+                  value: webmaps[index].id,
+                  child: Text(webmaps[index].title),
                 );
               });
             },
             onSelected: (valueId) {
-              reloadMap(valueId);
-          },
+              final selectedWebmap = webmaps.firstWhere((webmap) => webmap.id == valueId);
+              if (selectedWebmap.secured) {
+                ArcGISEnvironment.apiKey ='';
+              }
+              reloadMap(
+                selectedWebmap.id,
+                secured: selectedWebmap.secured,
+              );
+            },
           ),
         ],
       ),
       body: Stack(
         children: [
-          ArcGISMapView(
-            controllerProvider: () => _mapViewController,
-            onMapViewReady: onMapViewReady,
-            onTap: identifyArcGISPopup,
+          Authenticator(
+            child: ArcGISMapView(
+              controllerProvider: () => _mapViewController,
+              onMapViewReady: onMapViewReady,
+              onTap: identifyArcGISPopup,
+            ),
           ),
         ],
       ),
@@ -87,8 +96,14 @@ class _PopupExampleState extends State<PopupExample> {
     );
   }
 
+  @override
+  void dispose() {
+    ArcGISEnvironment.authenticationManager.arcGISCredentialStore.removeAll();
+    super.dispose();
+  }
+
   void onMapViewReady() {
-    reloadMap(webmapIds.last);
+    reloadMap(webmaps.last.id, secured: webmaps.last.secured);
   }
 
   Widget? getBottomSheet(BuildContext context) {
@@ -128,29 +143,34 @@ class _PopupExampleState extends State<PopupExample> {
       final popup = result.popups.first;
       await popup.evaluateExpressions();
 
-      setState(() {
-        _popup = popup;
-      });
+      setState(() => _popup = popup);
     } else if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text('No popups found'),
+          backgroundColor: Theme.of(context).colorScheme.primary,
+          content: const Text('No Popup found'),
           duration: const Duration(seconds: 2),
         ),
       );
-      setState(() {
-        _popup = null;
-      });
+      setState(() =>_popup = null);
     }
   }
-  
-  void reloadMap(String valueId) {
-     _mapViewController.arcGISMap = ArcGISMap.withItem(
-      PortalItem.withUri(
-        Uri.parse(
-          'https://www.arcgis.com/home/item.html?id=$valueId',
+
+  void reloadMap(String valueId, {bool secured = false}) {
+    setState(() =>_popup = null);
+    if (secured) {
+      _mapViewController.arcGISMap = ArcGISMap.withItem(
+        PortalItem.withPortalAndItemId(
+          portal: Portal.arcGISOnline(connection: PortalConnection.authenticated),
+          itemId: valueId,
         ),
-      )!,
-    );
+      );
+    } else {
+      _mapViewController.arcGISMap = ArcGISMap.withItem(
+        PortalItem.withUri(
+          Uri.parse('https://www.arcgis.com/home/item.html?id=$valueId'),
+        )!,
+      );
+    }
   }
 }

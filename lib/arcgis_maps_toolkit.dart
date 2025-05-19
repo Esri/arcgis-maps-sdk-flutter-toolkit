@@ -18,11 +18,15 @@
 library;
 
 import 'dart:async';
+import 'dart:io';
 import 'dart:math' as math;
 
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:open_file/open_file.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -33,6 +37,7 @@ part 'src/compass/compass_needle_painter.dart';
 part 'src/overview_map/overview_map.dart';
 // Popup Widget
 part 'src/popups/popup_view.dart';
+part 'src/popups/attachments_popup_element_view.dart';
 part 'src/popups/fields_popup_element_view.dart';
 part 'src/popups/media_popup_element_view.dart';
 part 'src/popups/text_popup_element_view.dart';

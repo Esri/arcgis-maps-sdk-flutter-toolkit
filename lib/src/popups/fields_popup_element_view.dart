@@ -19,22 +19,28 @@ part of '../../arcgis_maps_toolkit.dart';
 /// It uses a list view to render the fields content.
 /// parameters:
 /// - [fieldsElement]: The fields popup element to be displayed.
+/// - [isExpanded]: A boolean indicating whether the expansion tile should be initially expanded or not.
 class _FieldsPopupElementView extends StatefulWidget {
-  const _FieldsPopupElementView({required this.fieldsElement});
+  const _FieldsPopupElementView({
+    required this.fieldsElement,
+    this.isExpanded = false,
+  });
 
   final FieldsPopupElement fieldsElement;
+  final bool isExpanded;
 
   @override
   _FieldsPopupElementViewState createState() => _FieldsPopupElementViewState();
 }
 
 class _FieldsPopupElementViewState extends State<_FieldsPopupElementView> {
-  bool _isExpanded = true;
+  late bool isExpanded;
   late final List<_DisplayField> displayFields;
 
   @override
   void initState() {
     super.initState();
+    isExpanded = widget.isExpanded;
     displayFields = List.generate(
       widget.fieldsElement.labels.length,
       (index) => _DisplayField(
@@ -56,11 +62,9 @@ class _FieldsPopupElementViewState extends State<_FieldsPopupElementView> {
                   : widget.fieldsElement.title,
           description: widget.fieldsElement.description,
         ),
-        initiallyExpanded: _isExpanded,
+        initiallyExpanded: isExpanded,
         onExpansionChanged: (expanded) {
-          setState(() {
-            _isExpanded = expanded;
-          });
+          setState(() => isExpanded = expanded);
         },
         expandedCrossAxisAlignment: CrossAxisAlignment.start,
         children:

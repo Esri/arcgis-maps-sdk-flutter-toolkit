@@ -27,10 +27,7 @@ class _PopupPieChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8),
-      child: Expanded(child: PieChart(pieData)),
-    );
+    return Padding(padding: const EdgeInsets.all(8), child: PieChart(pieData));
   }
 
   PieChartData get pieData {

@@ -19,17 +19,28 @@ part of '../../arcgis_maps_toolkit.dart';
 /// It uses a horizontal list view to render the media content.
 /// parameters:
 /// - [mediaElement]: The media popup element to be displayed.
+/// - [isExpanded]: A boolean indicating whether the expansion tile should be initially expanded or not.
 class _MediaPopupElementView extends StatefulWidget {
-  const _MediaPopupElementView({required this.mediaElement});
+  const _MediaPopupElementView({
+    required this.mediaElement,
+    this.isExpanded = false,
+  });
   final MediaPopupElement mediaElement;
+  final bool isExpanded;
 
   @override
   _MediaPopupElementViewState createState() => _MediaPopupElementViewState();
 }
 
 class _MediaPopupElementViewState extends State<_MediaPopupElementView> {
-  bool _isExpanded = true;
+  late bool isExpanded;
   int get displayableMediaCount => widget.mediaElement.media.length;
+
+  @override
+  void initState() {
+    super.initState();
+    isExpanded = widget.isExpanded;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,11 +55,9 @@ class _MediaPopupElementViewState extends State<_MediaPopupElementView> {
                     : widget.mediaElement.title,
             description: widget.mediaElement.description,
           ),
-          initiallyExpanded: _isExpanded,
+          initiallyExpanded: isExpanded,
           onExpansionChanged: (expanded) {
-            setState(() {
-              _isExpanded = expanded;
-            });
+            setState(() => isExpanded = expanded);
           },
           children: [
             _PopupMediaView(
@@ -140,14 +149,14 @@ extension on PopupMedia {
         final value = popupMediaValue.data[i]._toDouble!;
 
         var label = 'untitled';
-        if (popupMediaValue.labels.isNotEmpty) {
+        if (popupMediaValue.labels.isNotEmpty &&
+            popupMediaValue.labels.length > i) {
           label = popupMediaValue.labels[i];
-        } else if (popupMediaValue.fieldNames.isNotEmpty) {
-          label = popupMediaValue.fieldNames[i];
         }
 
         var color = Colors.blue as Color;
-        if (popupMediaValue.chartColors.isNotEmpty) {
+        if (popupMediaValue.chartColors.isNotEmpty &&
+            popupMediaValue.chartColors.length > i) {
           color = popupMediaValue.chartColors[i];
         }
         list.add(_ChartData(value: value, label: label, color: color));

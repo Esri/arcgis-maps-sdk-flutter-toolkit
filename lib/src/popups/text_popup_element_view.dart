@@ -33,7 +33,7 @@ class _TextPopupElementView extends StatefulWidget {
 
 class _TextPopupElementViewState extends State<_TextPopupElementView> {
   late final WebViewController _controller;
-  double _height = 100;
+  double height = 100;
 
   @override
   void initState() {
@@ -53,11 +53,9 @@ class _TextPopupElementViewState extends State<_TextPopupElementView> {
               },
 
               onPageFinished: (url) async {
-                final height = await _calculateHeight();
-                if (height != null) {
-                  setState(() {
-                    _height = height;
-                  });
+                final calculatedHeight = await _calculateHeight();
+                if (calculatedHeight != null) {
+                  setState(() => height = calculatedHeight);
                 }
               },
             ),
@@ -73,7 +71,7 @@ class _TextPopupElementViewState extends State<_TextPopupElementView> {
     return Card(
       margin: const EdgeInsets.all(8),
       child: SizedBox(
-        height: _height, // Default height until calculated
+        height: height, // Default height until calculated
         child: WebViewWidget(controller: _controller),
       ),
     );

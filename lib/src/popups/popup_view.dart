@@ -76,12 +76,20 @@ class _PopupViewState extends State<PopupView> {
               widget.popup.evaluatedElements.isNotEmpty
                   ? widget.popup.evaluatedElements.map((element) {
                     if (element is FieldsPopupElement) {
-                      return _FieldsPopupElementView(fieldsElement: element);
+                      return _FieldsPopupElementView(
+                        fieldsElement: element,
+                        isExpanded: true,
+                      );
                     } else if (element is AttachmentsPopupElement) {
-                      // TODO(3336): Implement AttachmentsPopupElementView
-                      return const Text('Attachments not implemented');
+                      return _AttachmentsPopupElementView(
+                        attachmentsElement: element,
+                        isExpanded: true,
+                      );
                     } else if (element is MediaPopupElement) {
-                      return _MediaPopupElementView(mediaElement: element);
+                      return _MediaPopupElementView(
+                        mediaElement: element,
+                        isExpanded: true,
+                      );
                     } else if (element is TextPopupElement) {
                       return _TextPopupElementView(textElement: element);
                     } else {
