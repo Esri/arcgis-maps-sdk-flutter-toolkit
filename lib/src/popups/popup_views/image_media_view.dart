@@ -32,23 +32,31 @@ class _ImageMediaView extends StatefulWidget {
 }
 
 class _ImageMediaViewState extends State<_ImageMediaView> {
-  // TODO(3337): show detail view when clicked.
-  bool isShowingDetailView = false;
+  // A flag to indicate if the detail view is cached and ready to be shown.
+  bool isShowingDetailReady = false;
 
   @override
   Widget build(BuildContext context) {
     final sourceURL = widget.popupMedia.value?.sourceUri;
-
     if (sourceURL != null) {
       return GestureDetector(
         onTap: () {
-          setState(() {
-            isShowingDetailView = true;
-          });
+          if (isShowingDetailReady) {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder:
+                    (context) => _MediaDetailView(
+                      popupMedia: widget.popupMedia,
+                      onClose: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+              ),
+            );
+          }
         },
         child: Stack(
           children: [
-            // Async Image View
             ClipRRect(
               borderRadius: BorderRadius.circular(8),
               child: Image.network(
@@ -57,7 +65,10 @@ class _ImageMediaViewState extends State<_ImageMediaView> {
                 height: widget.mediaSize.height,
                 fit: BoxFit.cover,
                 loadingBuilder: (context, child, loadingProgress) {
-                  if (loadingProgress == null) return child;
+                  if (loadingProgress == null) {
+                    isShowingDetailReady = true;
+                    return child;
+                  }
                   return Center(
                     child: CircularProgressIndicator(
                       value:
@@ -80,7 +91,6 @@ class _ImageMediaViewState extends State<_ImageMediaView> {
                 },
               ),
             ),
-
             // Footer Overlay
             Positioned(
               bottom: 0,
@@ -91,6 +101,14 @@ class _ImageMediaViewState extends State<_ImageMediaView> {
                 mediaSize: widget.mediaSize,
               ),
             ),
+
+            // Add a clock icon to indicate the image refresh interval
+            if (widget.popupMedia.imageRefreshInterval > 0)
+              const Positioned(
+                top: 8,
+                right: 8,
+                child: Icon(Icons.access_time, color: Colors.white, size: 16),
+              ),
 
             // Border
             Positioned.fill(
@@ -140,20 +158,123 @@ class _MediaDetailView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(popupMedia.title),
-        leading: IconButton(icon: const Icon(Icons.close), onPressed: onClose),
+    final imageRefreshInterval = popupMedia.imageRefreshInterval;
+    final sourceUri = popupMedia.value?.sourceUri;
+
+    return Dialog.fullscreen(
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(popupMedia.title),
+          leading: IconButton(
+            icon: const Icon(Icons.close),
+            onPressed: onClose,
+          ),
+        ),
+        body: Center(
+          // Use the TimerBuilder package to periodically update the image
+          // source URL with a timestamp to prevent caching.
+          child:
+              imageRefreshInterval > 0
+                  ? TimerBuilder.periodic(
+                    Duration(milliseconds: imageRefreshInterval),
+                    alignment: Duration.zero,
+                    builder: (context) {
+                      final url =
+                          sourceUri == null
+                              ? ''
+                              : sourceUri
+                                  .replace(
+                                    queryParameters: {
+                                      ...sourceUri.queryParameters,
+                                      't':
+                                          DateTime.now().millisecondsSinceEpoch
+                                              .toString(),
+                                    },
+                                  )
+                                  .toString();
+                      return Stack(
+                        children: [
+                          Image.network(
+                            url,
+                            fit: BoxFit.fill,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Center(
+                                child: Text(
+                                  'Fails to get the image details: $error',
+                                ),
+                              );
+                            },
+                          ),
+                          Positioned(
+                            top: 12,
+                            right: 12,
+                            child: _IndicatorDot(
+                              size: 16,
+                              duration: Duration(
+                                milliseconds:
+                                    (imageRefreshInterval / 2).toInt(),
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  )
+                  : Image.network(
+                    popupMedia.value?.sourceUri?.toString() ?? '',
+                    fit: BoxFit.fill,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Center(
+                        child: Text('Fails to get the image details: $error'),
+                      );
+                    },
+                  ),
+        ),
       ),
-      body: Center(
-        child: Image.network(
-          popupMedia.value?.linkUri.toString() ?? '',
-          fit: BoxFit.contain,
-          errorBuilder: (context, error, stackTrace) {
-            return const Center(
-              child: Text('Image details not implemented yet'),
-            );
-          },
+    );
+  }
+}
+
+class _IndicatorDot extends StatefulWidget {
+  const _IndicatorDot({
+    required this.size,
+    this.duration = const Duration(milliseconds: 600),
+  });
+
+  final double size;
+  final Duration duration;
+
+  @override
+  State<_IndicatorDot> createState() => _IndicatorDotState();
+}
+
+class _IndicatorDotState extends State<_IndicatorDot>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(vsync: this, duration: widget.duration)
+      ..repeat(reverse: true);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FadeTransition(
+      opacity: _controller,
+      child: Container(
+        width: widget.size,
+        height: widget.size,
+        decoration: const BoxDecoration(
+          color: Colors.red,
+          shape: BoxShape.circle,
         ),
       ),
     );

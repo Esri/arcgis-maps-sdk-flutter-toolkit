@@ -290,7 +290,7 @@ class _PopupAttachmentViewInListState
                             });
                           },
                         );
-                      } {
+                      } else {
                         return const Icon(Icons.check, color: Colors.green);
                       }
                     },
