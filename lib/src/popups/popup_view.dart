@@ -44,56 +44,66 @@ class _PopupViewState extends State<PopupView> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: _evaluatedExpressionsFuture,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.done) {
-          return _buildListView();
-        } else if (snapshot.hasError) {
-          return Center(
+    return Column(
+      children: [
+        _buildTitleWidget(),
+        const Divider(color: Colors.grey, height: 2, thickness: 2),
+        Expanded(
+          child: FutureBuilder(
+            future: _evaluatedExpressionsFuture,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.done) {
+                return _buildListView();
+              } else if (snapshot.hasError) {
+                return Center(
+                  child: Text(
+                    'Error: ${snapshot.error}',
+                    style: const TextStyle(color: Colors.red),
+                  ),
+                );
+              } else {
+                return const Center(child: CircularProgressIndicator());
+              }
+            },
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTitleWidget() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
+      // Header with title and close button
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Expanded(
             child: Text(
-              'Error: ${snapshot.error}',
-              style: const TextStyle(color: Colors.red),
+              widget.popup.title,
+              style: Theme.of(context).textTheme.titleMedium,
+              overflow: TextOverflow.ellipsis,
+              maxLines: 2,
             ),
-          );
-        } else {
-          return const Center(child: CircularProgressIndicator());
-        }
-      },
+          ),
+          IconButton(
+            icon: const Icon(Icons.close, size: 20),
+            onPressed: () {
+              if (widget.onClose != null) {
+                widget.onClose!();
+              } else {
+                Navigator.of(context).pop();
+              }
+            },
+          ),
+        ],
+      ),
     );
   }
 
   Widget _buildListView() {
     return ListView(
       children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
-          // Header with title and close button
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Text(
-                  widget.popup.title,
-                  style: Theme.of(context).textTheme.titleMedium,
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 2,
-                ),
-              ),
-              IconButton(
-                icon: const Icon(Icons.close, size: 20),
-                onPressed: () {
-                  if (widget.onClose != null) {
-                    widget.onClose!();
-                  } else {
-                    Navigator.of(context).pop();
-                  }
-                },
-              ),
-            ],
-          ),
-        ),
-        const Divider(color: Colors.grey, height: 2, thickness: 2),
         // Body with popup elements
         Column(
           spacing: 8,

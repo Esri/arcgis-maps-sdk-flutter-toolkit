@@ -97,7 +97,7 @@ class _TextPopupElementViewState extends State<_TextPopupElementView> {
           @media (prefers-color-scheme: dark) {
             :root {
               --body-bg: #00000000;
-              --body-color: #FFFFFF;
+              --body-color: #D3D3D3;
               --link-color: #1796FA;
             }
           }

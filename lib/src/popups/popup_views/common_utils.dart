@@ -76,6 +76,17 @@ double _calculateMaximumYValue(List<_ChartData> chartData) {
   return maxY + (maxY / 5).ceilToDouble();
 }
 
+/// Calculates the width of the text based on the maximum  value.
+double _measureTextWidth(List<_ChartData> chartData, TextStyle style) {
+  final maxValue = _calculateMaximumYValue(chartData).toString();
+  final textPainter = TextPainter(
+    text: TextSpan(text: maxValue, style: style),
+    maxLines: 1,
+    textDirection: TextDirection.ltr,
+  )..layout();
+  return textPainter.width.ceilToDouble();
+}
+
 /// Returns the grid data for the chart.
 /// The grid lines are drawn with a light gray color and a stroke width of 0.5.
 FlGridData get _gridData {
@@ -107,7 +118,10 @@ FlTitlesData _getFlTitlesData(List<_ChartData> chartData) {
     rightTitles: AxisTitles(
       sideTitles: SideTitles(
         showTitles: true,
-        reservedSize: 40,
+        reservedSize: _measureTextWidth(
+          chartData,
+          const TextStyle(fontSize: 12, color: Colors.grey),
+        ),
         getTitlesWidget: (value, meta) {
           return Padding(
             padding: const EdgeInsets.all(2),
