@@ -55,12 +55,12 @@ class _PopupExampleState extends State<PopupExample> {
       title: 'Popup with all chart types',
     ),
     (
-      id: '66c1d496ae354fd79e174f8e3074c3f9',
-      title: 'Popup with all chart types',
-    ),
-    (
       id: '00570dfb5ff043efae7be3fee0536361',
       title: 'Popup with attachments',
+    ),
+    (
+      id: '67c72e385e6e46bc813e0b378696aba8',
+      title: 'Popup with image interval',
     ),
     (
       id: '9f3a674e998f461580006e626611f9ad',
