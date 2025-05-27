@@ -46,12 +46,26 @@ class _PopupExampleState extends State<PopupExample> {
   Popup? _popup;
 
   final webmaps = [
-    (id: 'f4ea5041f73b40f5ac241035664eff7e', title: 'Fields Popup', secured: false),
-    (id: '66c1d496ae354fd79e174f8e3074c3f9', title: 'All Charts Popup', secured: false),
-    (id: 'bfce95f294c341a580c608567956806d', title: 'Attachments1(Qt)', secured: true),
-    (id: '70abf39d396147c4bb958f0340e3ff54', title: 'Attachments2(Android)', secured: true),
-    (id: '67c72e385e6e46bc813e0b378696aba8', title: 'Image Interval Test', secured: false),
-    (id: '9f3a674e998f461580006e626611f9ad', title: 'Design demo popup', secured: false), // keep this as the last one
+    (
+      id: 'f4ea5041f73b40f5ac241035664eff7e',
+      title: 'Popup - Hawaii big island',
+    ),
+    (
+      id: '66c1d496ae354fd79e174f8e3074c3f9',
+      title: 'Popup with all chart types',
+    ),
+    (
+      id: '00570dfb5ff043efae7be3fee0536361',
+      title: 'Popup with attachments',
+    ),
+    (
+      id: '67c72e385e6e46bc813e0b378696aba8',
+      title: 'Popup with image interval',
+    ),
+    (
+      id: '9f3a674e998f461580006e626611f9ad',
+      title: 'Popup design demo',
+    ), // keep this as the last one
   ];
 
   @override
@@ -70,14 +84,10 @@ class _PopupExampleState extends State<PopupExample> {
               });
             },
             onSelected: (valueId) {
-              final selectedWebmap = webmaps.firstWhere((webmap) => webmap.id == valueId);
-              if (selectedWebmap.secured) {
-                ArcGISEnvironment.apiKey ='';
-              }
-              reloadMap(
-                selectedWebmap.id,
-                secured: selectedWebmap.secured,
+              final selectedWebmap = webmaps.firstWhere(
+                (webmap) => webmap.id == valueId,
               );
+              reloadMap(selectedWebmap.id);
             },
           ),
         ],
@@ -104,7 +114,7 @@ class _PopupExampleState extends State<PopupExample> {
   }
 
   void onMapViewReady() {
-    reloadMap(webmaps.last.id, secured: webmaps.last.secured);
+    reloadMap(webmaps.last.id);
   }
 
   Widget? getBottomSheet(BuildContext context) {
@@ -152,25 +162,16 @@ class _PopupExampleState extends State<PopupExample> {
           duration: const Duration(seconds: 2),
         ),
       );
-      setState(() =>_popup = null);
+      setState(() => _popup = null);
     }
   }
 
-  void reloadMap(String valueId, {bool secured = false}) {
-    setState(() =>_popup = null);
-    if (secured) {
-      _mapViewController.arcGISMap = ArcGISMap.withItem(
-        PortalItem.withPortalAndItemId(
-          portal: Portal.arcGISOnline(connection: PortalConnection.authenticated),
-          itemId: valueId,
-        ),
-      );
-    } else {
-      _mapViewController.arcGISMap = ArcGISMap.withItem(
-        PortalItem.withUri(
-          Uri.parse('https://www.arcgis.com/home/item.html?id=$valueId'),
-        )!,
-      );
-    }
+  void reloadMap(String valueId) {
+    setState(() => _popup = null);
+    _mapViewController.arcGISMap = ArcGISMap.withItem(
+      PortalItem.withUri(
+        Uri.parse('https://www.arcgis.com/home/item.html?id=$valueId'),
+      )!,
+    );
   }
 }
