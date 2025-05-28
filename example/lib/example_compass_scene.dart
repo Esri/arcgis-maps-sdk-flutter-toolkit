@@ -76,7 +76,7 @@ class _ExampleCompassSceneState extends State<ExampleCompassScene> {
   }
 
   void onSceneViewReady() {
-    // Create a scene with an imagery basemap style and initial viewpoint.
+    // Create a scene with an imagery basemap style.
     final scene = ArcGISScene.withBasemapStyle(BasemapStyle.arcGISImagery);
 
     // Add surface elevation to the scene.
