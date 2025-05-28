@@ -296,28 +296,25 @@ class _PopupAttachmentViewInListState
                     },
                   ))
               : const Icon(Icons.check, color: Colors.green),
-      onTap:
-          () => {
-            if (filePath != null)
-              {
-                if (widget.popupAttachment.contentType.startsWith('image'))
-                  {
-                    showDialog(
-                      context: context,
-                      builder:
-                          (context) =>
-                              _DetailsScreenImageDialog(filePath: filePath!),
-                    ),
-                  }
-                else
-                  {
-                    OpenFile.open(
-                      filePath,
-                      type: widget.popupAttachment.contentType,
-                    ),
-                  },
-              },
-          },
+      onTap: () {
+        if (filePath == null) {
+          if (downloadFuture == null) {
+            setState(() {
+              downloadFuture = downloadAttachment();
+            });
+          }
+        } else {
+          if (widget.popupAttachment.contentType.startsWith('image')) {
+            showDialog(
+              context: context,
+              builder:
+                  (context) => _DetailsScreenImageDialog(filePath: filePath!),
+            );
+          } else {
+            OpenFile.open(filePath, type: widget.popupAttachment.contentType);
+          }
+        }
+      },
     );
   }
 
