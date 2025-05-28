@@ -53,14 +53,14 @@ class _ExampleOverviewMapState extends State<ExampleOverviewMap> {
             onMapViewReady: onMapViewReady,
           ),
           // Default OverviewMap.
-          OverviewMap(controllerProvider: () => _mapViewController),
+          OverviewMap.withMapView(controllerProvider: () => _mapViewController),
           // Custom OverviewMap.
-          OverviewMap(
+          OverviewMap.withMapView(
             controllerProvider: () => _mapViewController,
             alignment: Alignment.centerLeft,
             padding: EdgeInsets.zero,
             scaleFactor: 10,
-            extentSymbol: SimpleFillSymbol(
+            symbol: SimpleFillSymbol(
               color: Colors.transparent,
               outline: SimpleLineSymbol(
                 color: Colors.deepPurple,
