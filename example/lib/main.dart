@@ -18,7 +18,8 @@ import 'package:flutter/material.dart';
 import 'package:arcgis_maps/arcgis_maps.dart';
 
 import 'example_authenticator.dart';
-import 'example_compass.dart';
+import 'example_compass_map.dart';
+import 'example_compass_scene.dart';
 import 'example_overview_map.dart';
 import 'example_popup.dart';
 
@@ -51,10 +52,15 @@ enum ComponentExample {
     'Authenticate with OAuth or Token',
     ExampleAuthenticator.new,
   ),
-  compass(
-    'Compass',
+  compassMap(
+    'Compass Map',
     'A "North Arrow" always pointing north on a map',
-    ExampleCompass.new,
+    ExampleCompassMap.new,
+  ),
+  compassView(
+    'Compass Scene',
+    'A "North Arrow" always pointing north on a 3D scene',
+    ExampleCompassScene.new,
   ),
   overviewMap(
     'Overview Map',

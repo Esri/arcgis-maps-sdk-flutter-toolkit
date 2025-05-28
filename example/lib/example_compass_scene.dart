@@ -29,34 +29,34 @@ void main() {
     ArcGISEnvironment.apiKey = apiKey;
   }
 
-  runApp(const MaterialApp(home: ExampleCompass()));
+  runApp(const MaterialApp(home: ExampleCompassScene()));
 }
 
-class ExampleCompass extends StatefulWidget {
-  const ExampleCompass({super.key});
+class ExampleCompassScene extends StatefulWidget {
+  const ExampleCompassScene({super.key});
 
   @override
-  State<ExampleCompass> createState() => _ExampleCompassState();
+  State<ExampleCompassScene> createState() => _ExampleCompassSceneState();
 }
 
-class _ExampleCompassState extends State<ExampleCompass> {
-  final _mapViewController = ArcGISMapView.createController();
+class _ExampleCompassSceneState extends State<ExampleCompassScene> {
+  final _sceneViewController = ArcGISSceneView.createController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Compass')),
+      appBar: AppBar(title: Text('Compass Scene')),
       body: Stack(
         children: [
-          ArcGISMapView(
-            controllerProvider: () => _mapViewController,
-            onMapViewReady: onMapViewReady,
+          ArcGISSceneView(
+            controllerProvider: () => _sceneViewController,
+            onSceneViewReady: onSceneViewReady,
           ),
           // Default Compass.
-          Compass(controllerProvider: () => _mapViewController),
+          Compass(controllerProvider: () => _sceneViewController),
           // Compass with custom settings.
           Compass(
-            controllerProvider: () => _mapViewController,
+            controllerProvider: () => _sceneViewController,
             automaticallyHides: false,
             alignment: Alignment.centerLeft,
             padding: const EdgeInsets.all(40),
@@ -75,14 +75,36 @@ class _ExampleCompassState extends State<ExampleCompass> {
     );
   }
 
-  void onMapViewReady() {
-    _mapViewController.arcGISMap = ArcGISMap.withBasemapStyle(
-        BasemapStyle.arcGISTopographic,
-      )
-      ..initialViewpoint = Viewpoint.fromCenter(
-        ArcGISPoint(x: 4, y: 51, spatialReference: SpatialReference.wgs84),
-        scale: 20000000,
-        rotation: -45,
-      );
+  void onSceneViewReady() {
+    // Create a scene with an imagery basemap style and initial viewpoint.
+    final scene = ArcGISScene.withBasemapStyle(BasemapStyle.arcGISImagery);
+
+    // Add surface elevation to the scene.
+    final surface = Surface();
+    final worldElevationService = Uri.parse(
+      'https://elevation3d.arcgis.com/arcgis/rest/services/WorldElevation3D/Terrain3D/ImageServer',
+    );
+    final elevationSource = ArcGISTiledElevationSource.withUri(
+      worldElevationService,
+    );
+    surface.elevationSources.add(elevationSource);
+    scene.baseSurface = surface;
+
+    // Add the scene to the view controller.
+    _sceneViewController.arcGISScene = scene;
+
+    // Set a viewpoint camera for the scene.
+    final viewpointCamera = Camera.withLocation(
+      location: ArcGISPoint(
+        x: 4,
+        y: 51,
+        z: 5000000,
+        spatialReference: SpatialReference.wgs84,
+      ),
+      heading: -45,
+      pitch: 0,
+      roll: 0,
+    );
+    _sceneViewController.setViewpointCamera(viewpointCamera);
   }
 }
