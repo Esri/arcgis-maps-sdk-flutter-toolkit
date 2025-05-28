@@ -106,7 +106,9 @@ class _CompassState extends State<Compass> {
   @override
   void dispose() {
     _rotationSubscription?.cancel();
+    _rotationSubscription = null;
     _viewpointSubscription?.cancel();
+    _viewpointSubscription = null;
 
     super.dispose();
   }
