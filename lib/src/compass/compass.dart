@@ -137,8 +137,8 @@ class _CompassState extends State<Compass> {
     } else {
       final controller = _controller as ArcGISSceneViewController;
       final currentCamera = controller.getCurrentViewpointCamera();
-      controller.setViewpointCamera(
-        currentCamera.rotateTo(
+      controller.setViewpointCameraAnimated(
+        camera: currentCamera.rotateTo(
           heading: 0,
           pitch: currentCamera.pitch,
           roll: currentCamera.roll,
