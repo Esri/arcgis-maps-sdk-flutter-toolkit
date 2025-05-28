@@ -298,7 +298,13 @@ class _PopupAttachmentViewInListState
               : const Icon(Icons.check, color: Colors.green),
       onTap:
           () => {
-            if (filePath != null)
+            if (filePath == null && downloadFuture == null)
+              {
+                setState(() {
+                  downloadFuture = downloadAttachment();
+                }),
+              }
+            else
               {
                 if (widget.popupAttachment.contentType.startsWith('image'))
                   {
