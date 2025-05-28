@@ -17,10 +17,8 @@
 import 'package:flutter/material.dart';
 import 'package:arcgis_maps/arcgis_maps.dart';
 
-import 'example_authenticator.dart';
-import 'example_compass.dart';
-import 'example_overview_map.dart';
-import 'example_popup.dart';
+import 'example_compass_map.dart';
+import 'example_compass_scene.dart';
 
 void main() {
   // Supply your apiKey using the --dart-define-from-file command line argument.
@@ -40,34 +38,24 @@ void main() {
         colorScheme: colorScheme,
         appBarTheme: AppBarTheme(backgroundColor: colorScheme.inversePrimary),
       ),
-      home: const ExampleApp(),
+      home: const ExampleCompass(),
     ),
   );
 }
 
-enum ComponentExample {
-  authenticator(
-    'Authenticator',
-    'Authenticate with OAuth or Token',
-    ExampleAuthenticator.new,
+enum CompassExample {
+  compassMap(
+    'Compass Map',
+    'A "North Arrow" always pointing north on a 2D map',
+    ExampleCompassMap.new,
   ),
-  compass(
-    'Compass',
-    'A "North Arrow" always pointing north on a map or scene',
-    ExampleCompass.new,
-  ),
-  overviewMap(
-    'Overview Map',
-    'A small map that shows the extent of a larger map',
-    ExampleOverviewMap.new,
-  ),
-  popupView(
-    'Popup View',
-    'A PopupView renders the popup elements associated with a single GeoElement.',
-    PopupExample.new,
+  compassScene(
+    'Compass Scene',
+    'A "North Arrow" always pointing north on a 3D scene',
+    ExampleCompassScene.new,
   );
 
-  const ComponentExample(this.title, this.subtitle, this.constructor);
+  const CompassExample(this.title, this.subtitle, this.constructor);
 
   final String title;
   final String subtitle;
@@ -89,19 +77,18 @@ enum ComponentExample {
   }
 }
 
-class ExampleApp extends StatelessWidget {
-  const ExampleApp({super.key});
+class ExampleCompass extends StatelessWidget {
+  const ExampleCompass({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Toolkit Examples')),
+      appBar: AppBar(title: Text('Compass')),
       body: ListView.builder(
         padding: const EdgeInsets.all(10),
-        itemCount: ComponentExample.values.length,
+        itemCount: CompassExample.values.length,
         itemBuilder:
-            (context, index) =>
-                ComponentExample.values[index].buildCard(context),
+            (context, index) => CompassExample.values[index].buildCard(context),
       ),
     );
   }
