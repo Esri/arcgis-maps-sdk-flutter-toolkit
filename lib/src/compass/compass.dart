@@ -30,12 +30,12 @@ class Compass extends StatefulWidget {
     this.iconBuilder,
   });
 
-  /// A function that provides an [ArcGISMapViewController] to listen to and
+  /// A function that provides an [GeoViewController] to listen to and
   /// control.
   ///
   /// This should return the same controller that is provided to the
-  /// corresponding [ArcGISMapView].
-  final ArcGISMapViewController Function() controllerProvider;
+  /// corresponding [ArcGISMapView] or [ArcGISSceneView].
+  final GeoViewController Function() controllerProvider;
 
   /// Whether the compass should automatically hide when the map is oriented
   /// north.
@@ -46,7 +46,7 @@ class Compass extends StatefulWidget {
   /// The alignment of the compass within the parent widget.
   ///
   /// Defaults to [Alignment.topRight]. The compass should generally be placed
-  /// in a [Stack] on top of the corresponding [ArcGISMapView].
+  /// in a [Stack] on top of the corresponding [ArcGISMapView] or [ArcGISSceneView].
   final Alignment alignment;
 
   /// The padding around the compass.
@@ -66,11 +66,12 @@ class Compass extends StatefulWidget {
 }
 
 class _CompassState extends State<Compass> {
-  late ArcGISMapViewController _controller;
+  late GeoViewController _controller;
 
-  late StreamSubscription<double> _rotationSubscription;
+  StreamSubscription<double>? _rotationSubscription;
+  StreamSubscription<void>? _viewpointSubscription;
 
-  var _angleRadians = 0.0;
+  var _angleDegrees = 0.0;
 
   late Widget Function(BuildContext context, double angleRadians) _iconBuilder;
 
@@ -82,17 +83,30 @@ class _CompassState extends State<Compass> {
 
     _controller = widget.controllerProvider();
 
-    _angleRadians = rotationToAngle(_controller.rotation);
-    _rotationSubscription = _controller.onRotationChanged.listen((rotation) {
-      setState(() => _angleRadians = rotationToAngle(rotation));
-    });
+    if (_controller is ArcGISMapViewController) {
+      final controller = _controller as ArcGISMapViewController;
+      _angleDegrees = controller.rotation;
+      _rotationSubscription = controller.onRotationChanged.listen((rotation) {
+        setState(() => _angleDegrees = rotation);
+      });
+    } else {
+      final controller = _controller as ArcGISSceneViewController;
+      _angleDegrees = controller.getCurrentViewpointCamera().heading;
+      _viewpointSubscription = controller.onViewpointChanged.listen((_) {
+        final heading = controller.getCurrentViewpointCamera().heading;
+        if (heading != _angleDegrees) {
+          setState(() => _angleDegrees = heading);
+        }
+      });
+    }
 
     _iconBuilder = widget.iconBuilder ?? defaultIconBuilder;
   }
 
   @override
   void dispose() {
-    _rotationSubscription.cancel();
+    _rotationSubscription?.cancel();
+    _viewpointSubscription?.cancel();
 
     super.dispose();
   }
@@ -100,7 +114,7 @@ class _CompassState extends State<Compass> {
   @override
   Widget build(BuildContext context) {
     return Visibility(
-      visible: !widget.automaticallyHides || _angleRadians != 0,
+      visible: !widget.automaticallyHides || _angleDegrees != 0,
       child: Align(
         alignment: widget.alignment,
         child: Padding(
@@ -108,14 +122,30 @@ class _CompassState extends State<Compass> {
           child: IconButton(
             padding: EdgeInsets.zero,
             onPressed: onPressed,
-            icon: _iconBuilder(context, _angleRadians),
+            icon: _iconBuilder(context, rotationToAngle(_angleDegrees)),
           ),
         ),
       ),
     );
   }
 
-  void onPressed() => _controller.setViewpointRotation(angleDegrees: 0);
+  void onPressed() {
+    if (_controller is ArcGISMapViewController) {
+      (_controller as ArcGISMapViewController).setViewpointRotation(
+        angleDegrees: 0,
+      );
+    } else {
+      final controller = _controller as ArcGISSceneViewController;
+      final currentCamera = controller.getCurrentViewpointCamera();
+      controller.setViewpointCamera(
+        currentCamera.rotateTo(
+          heading: 0,
+          pitch: currentCamera.pitch,
+          roll: currentCamera.roll,
+        ),
+      );
+    }
+  }
 
   Widget defaultIconBuilder(BuildContext context, double angleRadians) {
     return CustomPaint(
