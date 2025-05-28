@@ -42,6 +42,11 @@ class ExampleCompassMap extends StatefulWidget {
 class _ExampleCompassMapState extends State<ExampleCompassMap> {
   final _mapViewController = ArcGISMapView.createController();
 
+  // Provides ArcGISMapViewController to the ArcGISMapView and Compass
+  ArcGISMapViewController controllerProvider() {
+    return _mapViewController;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,14 +54,14 @@ class _ExampleCompassMapState extends State<ExampleCompassMap> {
       body: Stack(
         children: [
           ArcGISMapView(
-            controllerProvider: () => _mapViewController,
+            controllerProvider: controllerProvider,
             onMapViewReady: onMapViewReady,
           ),
           // Default Compass.
           Compass(controllerProvider: () => _mapViewController),
           // Compass with custom settings.
           Compass(
-            controllerProvider: () => _mapViewController,
+            controllerProvider: controllerProvider,
             automaticallyHides: false,
             alignment: Alignment.centerLeft,
             padding: const EdgeInsets.all(40),

@@ -42,6 +42,11 @@ class ExampleCompassScene extends StatefulWidget {
 class _ExampleCompassSceneState extends State<ExampleCompassScene> {
   final _sceneViewController = ArcGISSceneView.createController();
 
+  // Provides ArcGISSceneViewController to the ArcGISSceneView and Compass
+  ArcGISSceneViewController controllerProvider() {
+    return _sceneViewController;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,14 +54,14 @@ class _ExampleCompassSceneState extends State<ExampleCompassScene> {
       body: Stack(
         children: [
           ArcGISSceneView(
-            controllerProvider: () => _sceneViewController,
+            controllerProvider: controllerProvider,
             onSceneViewReady: onSceneViewReady,
           ),
           // Default Compass.
           Compass(controllerProvider: () => _sceneViewController),
           // Compass with custom settings.
           Compass(
-            controllerProvider: () => _sceneViewController,
+            controllerProvider: controllerProvider,
             automaticallyHides: false,
             alignment: Alignment.centerLeft,
             padding: const EdgeInsets.all(40),
