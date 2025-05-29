@@ -58,7 +58,7 @@ class _ExampleCompassMapState extends State<ExampleCompassMap> {
             onMapViewReady: onMapViewReady,
           ),
           // Default Compass.
-          Compass(controllerProvider: () => _mapViewController),
+          Compass(controllerProvider: controllerProvider),
           // Compass with custom settings.
           Compass(
             controllerProvider: controllerProvider,

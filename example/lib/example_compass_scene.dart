@@ -58,7 +58,7 @@ class _ExampleCompassSceneState extends State<ExampleCompassScene> {
             onSceneViewReady: onSceneViewReady,
           ),
           // Default Compass.
-          Compass(controllerProvider: () => _sceneViewController),
+          Compass(controllerProvider: controllerProvider),
           // Compass with custom settings.
           Compass(
             controllerProvider: controllerProvider,
