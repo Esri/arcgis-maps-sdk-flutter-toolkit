@@ -217,18 +217,11 @@ class _OverviewMapState extends State<OverviewMap> {
     } else if (sceneGeometry != null) {
       _extentGraphic.geometry = sceneGeometry;
 
-      Viewpoint.fromCenter(
+      _overviewController.setViewpoint(Viewpoint.fromCenter(
         sceneGeometry as ArcGISPoint,
         scale: viewpoint.targetScale * widget.scaleFactor,
-      );
+      ));
     }
-
-    _overviewController.setViewpoint(
-      Viewpoint.fromCenter(
-        viewpoint.targetGeometry as ArcGISPoint,
-        scale: viewpoint.targetScale * widget.scaleFactor,
-      ),
-    );
   }
 
   // Returns a default symbol based on the type of GeoView.
