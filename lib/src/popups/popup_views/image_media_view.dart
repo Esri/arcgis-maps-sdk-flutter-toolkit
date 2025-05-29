@@ -80,12 +80,26 @@ class _ImageMediaViewState extends State<_ImageMediaView> {
                   );
                 },
                 errorBuilder: (context, error, stackTrace) {
+                  // This is to prevent showing a detail view with an error image.
+                  isShowingDetailReady = false;
                   return Center(
-                    child: Text(
-                      'Image not available',
-                      style: Theme.of(
-                        context,
-                      ).textTheme.bodyMedium?.copyWith(color: Colors.red),
+                    child: Column(
+                      spacing: 8,
+                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children:  [
+                        const Icon(Icons.error_outline, color: Colors.red, size: 30),
+                        Text(
+                          error.toString().replaceFirst('Exception:', ''),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            color: Colors.grey,
+                            fontSize: 10,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
                     ),
                   );
                 },
