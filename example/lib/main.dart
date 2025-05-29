@@ -53,7 +53,7 @@ enum ComponentExample {
   ),
   compass(
     'Compass',
-    'A "North Arrow" always pointing north on a map',
+    'A "North Arrow" always pointing north on a map or scene',
     ExampleCompass.new,
   ),
   overviewMap(
