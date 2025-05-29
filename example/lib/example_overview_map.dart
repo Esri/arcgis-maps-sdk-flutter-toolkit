@@ -39,54 +39,153 @@ class ExampleOverviewMap extends StatefulWidget {
   State<ExampleOverviewMap> createState() => _ExampleOverviewMapState();
 }
 
+// Which GeoModel type to use.
+enum _ViewType { map, scene }
+
 class _ExampleOverviewMapState extends State<ExampleOverviewMap> {
   final _mapViewController = ArcGISMapView.createController();
+  final _sceneViewController = ArcGISSceneView.createController();
+
+  var _viewType = _ViewType.scene;
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(title: Text('OverviewMap')),
-      body: Stack(
-        children: [
-          ArcGISMapView(
-            controllerProvider: () => _mapViewController,
-            onMapViewReady: onMapViewReady,
-          ),
-          // Default OverviewMap.
-          OverviewMap.withMapView(controllerProvider: () => _mapViewController),
-          // Custom OverviewMap.
-          OverviewMap.withMapView(
-            controllerProvider: () => _mapViewController,
-            alignment: Alignment.centerLeft,
-            padding: EdgeInsets.zero,
-            scaleFactor: 10,
-            symbol: SimpleFillSymbol(
-              color: Colors.transparent,
-              outline: SimpleLineSymbol(
-                color: Colors.deepPurple,
-                width: 2,
-                style: SimpleLineSymbolStyle.dot,
+      body: SafeArea(
+        left: false,
+        right: false,
+
+        child: Column(
+          children: [
+            Expanded(
+              child: Stack(
+                children: [
+                  getGeoView(_viewType),
+                  // Default OverviewMap.
+                  getOverViewMap(_viewType),
+                ],
               ),
             ),
-            map: ArcGISMap.withBasemapStyle(BasemapStyle.arcGISLightGrayBase),
-            containerBuilder:
-                (context, child) => Container(
-                  width: 200,
-                  height: 200,
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.deepPurple, width: 3),
-                    borderRadius: BorderRadius.circular(3),
-                  ),
-                  child: Opacity(opacity: .8, child: child),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SegmentedButton(
+                  segments: [
+                    ButtonSegment(value: _ViewType.map, label: Text('Map')),
+                    ButtonSegment(value: _ViewType.scene, label: Text('Scene')),
+                  ],
+                  selected: {_viewType},
+                  onSelectionChanged: (selection) {
+                    setState(() => _viewType = selection.first);
+                  },
                 ),
-          ),
-        ],
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
 
+  Widget getGeoView(_ViewType viewType) =>
+      viewType == _ViewType.map
+          ? ArcGISMapView(
+            controllerProvider: () => _mapViewController,
+            onMapViewReady: onMapViewReady,
+          )
+          : ArcGISSceneView(
+            controllerProvider: () => _sceneViewController,
+            onSceneViewReady: onSceneViewReady,
+          );
+
+  Widget getOverViewMap(_ViewType viewType) =>
+      viewType == _ViewType.map
+          ? Column(
+            children: [
+              OverviewMap.withMapView(
+                key: ValueKey('overview-${_viewType.name}'),
+                controllerProvider: () => _mapViewController,
+              ),
+              // Custom OverviewMap.
+              OverviewMap.withMapView(
+                key: ValueKey('overview-${_viewType.name}1'),
+                controllerProvider: () => _mapViewController,
+                alignment: Alignment.centerLeft,
+                padding: EdgeInsets.zero,
+                scaleFactor: 10,
+                symbol: SimpleFillSymbol(
+                  color: Colors.transparent,
+                  outline: SimpleLineSymbol(
+                    color: Colors.deepPurple,
+                    width: 2,
+                    style: SimpleLineSymbolStyle.dot,
+                  ),
+                ),
+                map: ArcGISMap.withBasemapStyle(
+                  BasemapStyle.arcGISLightGrayBase,
+                ),
+                containerBuilder:
+                    (context, child) => Container(
+                      width: 200,
+                      height: 200,
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.deepPurple, width: 3),
+                        borderRadius: BorderRadius.circular(3),
+                      ),
+                      child: Opacity(opacity: .8, child: child),
+                    ),
+              ),
+            ],
+          )
+          : Column(
+            children: [
+              OverviewMap.withSceneView(
+                key: ValueKey('overview-${_viewType.name}'),
+                controllerProvider: () => _sceneViewController,
+              ),
+              OverviewMap.withSceneView(
+                key: ValueKey('overview-${_viewType.name}1'),
+                controllerProvider: () => _sceneViewController,
+                alignment: Alignment.centerLeft,
+                padding: EdgeInsets.zero,
+                scaleFactor: 10,
+                symbol: SimpleMarkerSymbol(color: Colors.blue),
+                map: ArcGISMap.withBasemapStyle(
+                  BasemapStyle.arcGISLightGrayBase,
+                ),
+                containerBuilder:
+                    (context, child) => Container(
+                      width: 200,
+                      height: 200,
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.deepPurple, width: 3),
+                        borderRadius: BorderRadius.circular(3),
+                      ),
+                      child: Opacity(opacity: .8, child: child),
+                    ),
+              ),
+            ],
+          );
+
   void onMapViewReady() {
     _mapViewController.arcGISMap = ArcGISMap.withBasemapStyle(
+        BasemapStyle.arcGISTopographic,
+      )
+      ..initialViewpoint = Viewpoint.fromCenter(
+        ArcGISPoint(x: 4, y: 40, spatialReference: SpatialReference.wgs84),
+        scale: 40000000,
+      );
+  }
+
+  void onSceneViewReady() {
+    _sceneViewController.arcGISScene = ArcGISScene.withBasemapStyle(
         BasemapStyle.arcGISTopographic,
       )
       ..initialViewpoint = Viewpoint.fromCenter(

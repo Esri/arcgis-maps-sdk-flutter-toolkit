@@ -27,10 +27,8 @@ class OverviewMap extends StatefulWidget {
     this.alignment = Alignment.topRight,
     this.padding = const EdgeInsets.all(10),
     this.scaleFactor = 25,
-    this.symbol,
+    this.extentSymbol,
     this.map,
-    this.opacity = 1.0,
-    this.visible = true,
     this.containerBuilder,
   });
 
@@ -43,8 +41,6 @@ class OverviewMap extends StatefulWidget {
     double scaleFactor = 25.0,
     SimpleFillSymbol? symbol,
     ArcGISMap? map,
-    double opacity = 1.0,
-    bool visible = true,
     Widget Function(BuildContext, Widget)? containerBuilder,
   }) {
     return OverviewMap._internal(
@@ -53,10 +49,8 @@ class OverviewMap extends StatefulWidget {
       alignment: alignment,
       padding: padding,
       scaleFactor: scaleFactor,
-      symbol: symbol,
+      extentSymbol: symbol,
       map: map,
-      opacity: opacity,
-      visible: visible,
       containerBuilder: containerBuilder,
     );
   }
@@ -70,8 +64,6 @@ class OverviewMap extends StatefulWidget {
     double scaleFactor = 25.0,
     SimpleMarkerSymbol? symbol,
     ArcGISMap? map,
-    double opacity = 1.0,
-    bool visible = true,
     Widget Function(BuildContext, Widget)? containerBuilder,
   }) {
     return OverviewMap._internal(
@@ -80,10 +72,8 @@ class OverviewMap extends StatefulWidget {
       alignment: alignment,
       padding: padding,
       scaleFactor: scaleFactor,
-      symbol: symbol,
+      extentSymbol: symbol,
       map: map,
-      opacity: opacity,
-      visible: visible,
       containerBuilder: containerBuilder,
     );
   }
@@ -113,7 +103,7 @@ class OverviewMap extends StatefulWidget {
   /// The symbol used to represent the current viewpoint.
   /// - For MapView: a [SimpleFillSymbol]
   /// - For SceneView: a [SimpleMarkerSymbol]
-  final ArcGISSymbol? symbol;
+  final ArcGISSymbol? extentSymbol;
 
   /// The map to use as the overview map.
   ///
@@ -127,12 +117,6 @@ class OverviewMap extends StatefulWidget {
   /// having the desired size, border, opacity, etc. The returned [Widget] must
   /// include the provided `child`, which will be the overview map itself.
   final Widget Function(BuildContext context, Widget child)? containerBuilder;
-
-  /// Opacity of the overview map (0.0 to 1.0).
-  final double opacity;
-
-  /// Whether the overview map is visible.
-  final bool visible;
 
   @override
   State<OverviewMap> createState() => _OverviewMapState();
@@ -156,13 +140,14 @@ class _OverviewMapState extends State<OverviewMap> {
     _controller = widget.controllerProvider();
 
     // Assign the symbol or use a default based on controller type.
-    _extentGraphic.symbol = widget.symbol ?? _defaultSymbolFor(_controller);
+    _extentGraphic.symbol =
+        widget.extentSymbol ?? _defaultSymbolFor(_controller);
 
     _overviewController.graphicsOverlays.add(
       GraphicsOverlay()..graphics.add(_extentGraphic),
     );
 
-    _containerBuilder = widget.containerBuilder ?? defaultContainerBuilder;
+    _containerBuilder = widget.containerBuilder ?? _defaultContainerBuilder;
   }
 
   @override
@@ -209,20 +194,30 @@ class _OverviewMapState extends State<OverviewMap> {
     if (viewpoint == null) return;
 
     Geometry? geometry;
+    Geometry? sceneGeometry;
 
     if (_controller is ArcGISMapViewController) {
       geometry = (_controller as ArcGISMapViewController).visibleArea;
+      sceneGeometry = null;
     } else if (_controller is ArcGISSceneViewController) {
-      geometry = viewpoint.targetGeometry;
+      sceneGeometry = viewpoint.targetGeometry;
+      geometry = null;
     }
 
     if (geometry != null) {
       _extentGraphic.geometry = geometry;
+      final polygonGeometry = geometry as Polygon;
+      final center = polygonGeometry.extent.center;
       _overviewController.setViewpoint(
         Viewpoint.fromCenter(
-          geometry as ArcGISPoint,
+          center,
           scale: viewpoint.targetScale * widget.scaleFactor,
         ),
+      );
+    } else if (sceneGeometry != null) {
+      Viewpoint.fromCenter(
+        sceneGeometry as ArcGISPoint,
+        scale: viewpoint.targetScale * widget.scaleFactor,
       );
     }
 
@@ -234,7 +229,7 @@ class _OverviewMapState extends State<OverviewMap> {
     );
   }
 
-  /// Returns a default symbol based on the type of GeoView.
+  // Returns a default symbol based on the type of GeoView.
   ArcGISSymbol _defaultSymbolFor(GeoViewController controller) {
     if (controller is ArcGISMapViewController) {
       return SimpleFillSymbol(
@@ -245,12 +240,12 @@ class _OverviewMapState extends State<OverviewMap> {
       return SimpleMarkerSymbol(
         style: SimpleMarkerSymbolStyle.cross,
         color: Colors.red,
-        size: 10,
+        size: 50,
       );
     }
   }
 
-  Widget defaultContainerBuilder(BuildContext context, Widget child) {
+  Widget _defaultContainerBuilder(BuildContext context, Widget child) {
     return Container(
       width: 150,
       height: 100,
