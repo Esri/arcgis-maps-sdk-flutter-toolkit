@@ -2,7 +2,7 @@
 
 ## Usage
 
-A `Compass` is generally placed in a `Stack` on top of an `ArcGISMapView` or an `ArcGISSceneView`. The `Compass` must provided the same `ArcGISMapViewController` or `ArcGISSceneViewController` as the `ArcGISMapView` or `ArcGISSceneView`.
+A `Compass` is generally placed in a `Stack` on top of an `ArcGISMapView` or an `ArcGISSceneView`. The `Compass` must be provided the same `ArcGISMapViewController` or `ArcGISSceneViewController` as the `ArcGISMapView` or `ArcGISSceneView`.
 
 Use `alignment` and `padding` to position the compass on the map. Set `automaticallyHides` to `false` to keep the compass visible even when the map is rotated to north (0 degrees). Set `iconBuilder` to provide your own `Widget` to represent the compass.
 
