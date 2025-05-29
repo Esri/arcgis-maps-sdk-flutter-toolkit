@@ -146,12 +146,14 @@ class _PopupAttachmentViewInGalleryState
     // recreated every time the widget is rebuilt.
     thumbnailFuture = getThumbnailFuture(thumbnailSize.toInt());
     // Load the file path from cache
-    loadFilePath();
+    initFilePath();
   }
 
-  Future<void> loadFilePath() async {
+  Future<void> initFilePath() async {
     final cachePath = await _getCachedFilePath(widget.popupAttachment.name);
-    setState(() => filePath = cachePath);
+    if (cachePath != null && File(cachePath).existsSync()) {
+        setState(() => filePath = cachePath);
+    }
   }
 
   @override
@@ -238,12 +240,14 @@ class _PopupAttachmentViewInListState
   void initState() {
     super.initState();
     thumbnailFuture = getThumbnailFuture(thumbnailSize.toInt());
-    loadFilePath();
+    initFilePath();
   }
 
-  Future<void> loadFilePath() async {
+  Future<void> initFilePath() async {
     final cachePath = await _getCachedFilePath(widget.popupAttachment.name);
-    setState(() => filePath = cachePath);
+    if (cachePath != null && File(cachePath).existsSync()) {
+        setState(() => filePath = cachePath);
+    }
   }
 
   @override
@@ -367,16 +371,6 @@ Future<String?> _downloadingAttachment(PopupAttachment popupAttachment) async {
   } else {
     return null;
   }
-}
-
-Future<String?> _getCachedFilePath(String name) async {
-  final sharedPreferences = await SharedPreferences.getInstance();
-  return sharedPreferences.getString(name);
-}
-
-Future<bool> _setCachedFilePath(String name, String filePath) async {
-  final sharedPreferences = await SharedPreferences.getInstance();
-  return sharedPreferences.setString(name, filePath);
 }
 
 Icon _getContentTypeIcon(String contentType, {double size = 35}) {
