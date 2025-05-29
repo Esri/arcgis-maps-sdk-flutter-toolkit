@@ -156,7 +156,11 @@ class _ExampleOverviewMapState extends State<ExampleOverviewMap> {
                 alignment: Alignment.centerLeft,
                 padding: EdgeInsets.zero,
                 scaleFactor: 10,
-                symbol: SimpleMarkerSymbol(color: Colors.blue),
+                symbol: SimpleMarkerSymbol(
+                  style: SimpleMarkerSymbolStyle.cross,
+                  size: 30,
+                  color: Colors.blue,
+                ),
                 map: ArcGISMap.withBasemapStyle(
                   BasemapStyle.arcGISLightGrayBase,
                 ),

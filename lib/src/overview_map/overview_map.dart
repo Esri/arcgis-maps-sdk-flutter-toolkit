@@ -215,6 +215,8 @@ class _OverviewMapState extends State<OverviewMap> {
         ),
       );
     } else if (sceneGeometry != null) {
+      _extentGraphic.geometry = sceneGeometry;
+
       Viewpoint.fromCenter(
         sceneGeometry as ArcGISPoint,
         scale: viewpoint.targetScale * widget.scaleFactor,
@@ -236,13 +238,12 @@ class _OverviewMapState extends State<OverviewMap> {
         color: Colors.transparent,
         outline: SimpleLineSymbol(color: Colors.red),
       );
-    } else {
-      return SimpleMarkerSymbol(
-        style: SimpleMarkerSymbolStyle.cross,
-        color: Colors.red,
-        size: 50,
-      );
     }
+    return SimpleMarkerSymbol(
+      style: SimpleMarkerSymbolStyle.cross,
+      color: Colors.red,
+      size: 20,
+    );
   }
 
   Widget _defaultContainerBuilder(BuildContext context, Widget child) {
