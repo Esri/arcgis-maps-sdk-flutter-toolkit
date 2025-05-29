@@ -30,7 +30,7 @@ class Compass extends StatefulWidget {
     this.iconBuilder,
   });
 
-  /// A function that provides an [GeoViewController] to listen to and
+  /// A function that provides a [GeoViewController] to listen to and
   /// control.
   ///
   /// This should return the same controller that is provided to the
