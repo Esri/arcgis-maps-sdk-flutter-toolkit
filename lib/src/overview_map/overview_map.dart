@@ -32,7 +32,7 @@ class OverviewMap extends StatefulWidget {
     this.containerBuilder,
   });
 
-  /// Create an OverviewMap widget with [ArcGISMapViewController] .
+  /// Create an OverviewMap widget with [ArcGISMapViewController].
   factory OverviewMap.withMapView({
     required ArcGISMapViewController Function() controllerProvider,
     Key? key,
@@ -43,6 +43,7 @@ class OverviewMap extends StatefulWidget {
     ArcGISMap? map,
     Widget Function(BuildContext, Widget)? containerBuilder,
   }) {
+
     return OverviewMap._internal(
       controllerProvider: controllerProvider,
       key: key,
