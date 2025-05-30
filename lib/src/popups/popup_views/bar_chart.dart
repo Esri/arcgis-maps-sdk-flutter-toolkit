@@ -47,7 +47,7 @@ class _PopupBarChart extends StatelessWidget {
           barRods: [
             BarChartRodData(
               toY: data.value,
-              color: data.color,
+              color: data.color.withAlpha(160),
               width: _barWidth,
               borderRadius: BorderRadius.circular(0),
             ),
@@ -57,6 +57,22 @@ class _PopupBarChart extends StatelessWidget {
       titlesData: _getFlTitlesData(chartData),
       gridData: _gridData,
       borderData: _flBorderData,
+      barTouchData: BarTouchData(
+        enabled: true,
+        allowTouchBarBackDraw: true,
+        touchTooltipData: BarTouchTooltipData(
+          fitInsideHorizontally: true,
+          fitInsideVertically: true,
+          getTooltipItem: (group, groupIndex, rod, rodIndex) {
+            final value = rod.toY;
+            final label = chartData[group.x].label;
+            return BarTooltipItem(
+              '$label\n$value',
+              const TextStyle(color: Colors.white),
+            );
+          },
+        ),
+      ),
     );
   }
 

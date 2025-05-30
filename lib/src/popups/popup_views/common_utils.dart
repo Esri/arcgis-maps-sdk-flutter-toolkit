@@ -144,20 +144,9 @@ FlTitlesData _getFlTitlesData(List<_ChartData> chartData) {
         maxIncluded: false,
         minIncluded: false,
         getTitlesWidget: (value, meta) {
-          // Rotate the labels if the chart is rotated
-          // and the number of data points is greater than 4.
-          if (meta.rotationQuarterTurns == 1 && chartData.length > 4) {
-            return ((meta.formattedValue._toDouble! % 2).toInt() == 0)
-                ? Transform.rotate(
-                  angle: -30 * (math.pi / 180),
-                  child: Text(
-                    chartData[value.toInt()].label,
-                    style: const TextStyle(fontSize: 12, color: Colors.grey),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                )
-                : const SizedBox.shrink();
+          // If the chart is rotated 90 degrees, do not show the labels.
+          if (meta.rotationQuarterTurns == 1) {
+            return const SizedBox.shrink();
           }
           return Padding(
             padding: const EdgeInsets.all(2),

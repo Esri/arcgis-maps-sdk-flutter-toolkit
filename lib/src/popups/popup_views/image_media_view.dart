@@ -80,12 +80,13 @@ class _ImageMediaViewState extends State<_ImageMediaView> {
                   );
                 },
                 errorBuilder: (context, error, stackTrace) {
-                  return Center(
-                    child: Text(
-                      'Image not available',
-                      style: Theme.of(
-                        context,
-                      ).textTheme.bodyMedium?.copyWith(color: Colors.red),
+                  // This is to prevent showing a detail view with an error image.
+                  isShowingDetailReady = false;
+                  return const Center(
+                    child: Icon(
+                      Icons.error_outline,
+                      color: Colors.red,
+                      size: 30,
                     ),
                   );
                 },
@@ -137,9 +138,20 @@ class _PopupMediaFooter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      decoration: BoxDecoration(
+        borderRadius: const BorderRadius.only(
+          bottomLeft: Radius.circular(8),
+          bottomRight: Radius.circular(8),
+        ),
+        border: Border.all(color: Colors.grey),
+        gradient: LinearGradient(
+          colors: [Colors.black.withAlpha(150), Colors.transparent],
+          begin: Alignment.bottomCenter,
+          end: Alignment.topCenter,
+        ),
+      ),
       width: mediaSize.width,
       padding: const EdgeInsets.all(8),
-      color: Colors.black.withValues(alpha: 0.5),
       child: Text(
         popupMedia.title.isNotEmpty ? popupMedia.title : 'untitled',
         maxLines: 2,
