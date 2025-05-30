@@ -152,7 +152,6 @@ class _PopupMediaFooter extends StatelessWidget {
       ),
       width: mediaSize.width,
       padding: const EdgeInsets.all(8),
-
       child: Text(
         popupMedia.title.isNotEmpty ? popupMedia.title : 'untitled',
         maxLines: 2,
