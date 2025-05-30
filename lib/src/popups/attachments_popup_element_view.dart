@@ -152,7 +152,7 @@ class _PopupAttachmentViewInGalleryState
   Future<void> initFilePath() async {
     final cachePath = await _getCachedFilePath(widget.popupAttachment.name);
     if (cachePath != null && File(cachePath).existsSync()) {
-        setState(() => filePath = cachePath);
+      setState(() => filePath = cachePath);
     }
   }
 
@@ -246,7 +246,7 @@ class _PopupAttachmentViewInListState
   Future<void> initFilePath() async {
     final cachePath = await _getCachedFilePath(widget.popupAttachment.name);
     if (cachePath != null && File(cachePath).existsSync()) {
-        setState(() => filePath = cachePath);
+      setState(() => filePath = cachePath);
     }
   }
 

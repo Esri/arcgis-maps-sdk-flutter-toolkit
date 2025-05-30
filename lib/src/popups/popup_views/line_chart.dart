@@ -51,6 +51,21 @@ class _PopupLineChart extends StatelessWidget {
       titlesData: _getFlTitlesData(chartData),
       gridData: _gridData,
       borderData: _flBorderData,
+      lineTouchData: LineTouchData(
+        touchTooltipData: LineTouchTooltipData(
+          fitInsideHorizontally: true,
+          fitInsideVertically: true,
+          getTooltipItems: (touchedSpots) {
+            return touchedSpots.map((spot) {
+              final data = chartData[spot.x.toInt()];
+              return LineTooltipItem(
+                '${data.label}: ${data.value}',
+                const TextStyle(color: Colors.white),
+              );
+            }).toList();
+          },
+        ),
+      ),
     );
   }
 }

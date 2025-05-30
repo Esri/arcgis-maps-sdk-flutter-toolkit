@@ -82,24 +82,11 @@ class _ImageMediaViewState extends State<_ImageMediaView> {
                 errorBuilder: (context, error, stackTrace) {
                   // This is to prevent showing a detail view with an error image.
                   isShowingDetailReady = false;
-                  return Center(
-                    child: Column(
-                      spacing: 8,
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children:  [
-                        const Icon(Icons.error_outline, color: Colors.red, size: 30),
-                        Text(
-                          error.toString().replaceFirst('Exception:', ''),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            color: Colors.grey,
-                            fontSize: 10,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ],
+                  return const Center(
+                    child: Icon(
+                      Icons.error_outline,
+                      color: Colors.red,
+                      size: 30,
                     ),
                   );
                 },
@@ -151,9 +138,21 @@ class _PopupMediaFooter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      decoration: BoxDecoration(
+        borderRadius: const BorderRadius.only(
+          bottomLeft: Radius.circular(8),
+          bottomRight: Radius.circular(8),
+        ),
+        border: Border.all(color: Colors.grey),
+        gradient: LinearGradient(
+          colors: [Colors.black.withAlpha(150), Colors.transparent],
+          begin: Alignment.bottomCenter,
+          end: Alignment.topCenter,
+        ),
+      ),
       width: mediaSize.width,
       padding: const EdgeInsets.all(8),
-      color: Colors.black.withValues(alpha: 0.5),
+
       child: Text(
         popupMedia.title.isNotEmpty ? popupMedia.title : 'untitled',
         maxLines: 2,
