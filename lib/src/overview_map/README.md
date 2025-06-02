@@ -8,6 +8,7 @@ Use `alignment` and `padding` to position the overview map on the target map. Th
 
 Set `containerBuilder` to provide your own `Widget` to customize the presentation of the overview map. The returned `Widget` must include the provided `child`, which will be the overview map itself. By default, the overview map will be 150x100 pixels with a 1 pixel black border.
 
+### When using `ArcGISMapViewController`:
 ```dart
   @override
   Widget build(BuildContext context) {
@@ -17,12 +18,12 @@ Set `containerBuilder` to provide your own `Widget` to customize the presentatio
           ArcGISMapView(
             controllerProvider: () => _mapViewController,
           ),
-          OverviewMap(
+          OverviewMap.withMapView(
             controllerProvider: () => _mapViewController,
             alignment: Alignment.centerLeft,
             padding: EdgeInsets.zero,
             scaleFactor: 10,
-            extentSymbol: SimpleFillSymbol(
+            symbol: SimpleFillSymbol(
               color: Colors.transparent,
               outline: SimpleLineSymbol(
                 color: Colors.deepPurple,
@@ -30,17 +31,59 @@ Set `containerBuilder` to provide your own `Widget` to customize the presentatio
                 style: SimpleLineSymbolStyle.dot,
               ),
             ),
-            map: ArcGISMap.withBasemapStyle(BasemapStyle.arcGISLightGrayBase),
+            map: ArcGISMap.withBasemapStyle(
+              BasemapStyle.arcGISLightGrayBase,
+            ),
             containerBuilder:
                 (context, child) => Container(
-                  width: 200,
-                  height: 200,
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.deepPurple, width: 3),
-                    borderRadius: BorderRadius.circular(3),
-                  ),
-                  child: Opacity(opacity: .8, child: child),
-                ),
+              width: 200,
+              height: 200,
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.deepPurple, width: 3),
+                borderRadius: BorderRadius.circular(3),
+              ),
+              child: Opacity(opacity: .8, child: child),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+```
+### When using `ArcGISSceneViewController`:
+
+```dart
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Stack(
+        children: [
+          ArcGISSceneView(
+            controllerProvider: () => _sceneViewController,
+          ),
+          OverviewMap.withSceneView(
+            controllerProvider: () => _sceneViewController,
+            alignment: Alignment.centerLeft,
+            padding: EdgeInsets.zero,
+            scaleFactor: 10,
+            symbol: SimpleMarkerSymbol(
+              style: SimpleMarkerSymbolStyle.cross,
+              size: 30,
+              color: Colors.blue,
+            ),
+            map: ArcGISMap.withBasemapStyle(
+              BasemapStyle.arcGISLightGrayBase,
+            ),
+            containerBuilder:
+                (context, child) => Container(
+              width: 200,
+              height: 200,
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.deepPurple, width: 3),
+                borderRadius: BorderRadius.circular(3),
+              ),
+              child: Opacity(opacity: .8, child: child),
+            ),
           ),
         ],
       ),

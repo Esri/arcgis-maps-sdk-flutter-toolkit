@@ -20,8 +20,8 @@ part of '../../arcgis_maps_toolkit.dart';
 /// viewpoint of the target map. The current viewpoint will be represented by a
 /// polygon displaying the visible area of the target map.
 class OverviewMap extends StatefulWidget {
-  /// Create an OverviewMap widget.
-  const OverviewMap({
+  /// Private constructor for use by the factory constructors.
+  const OverviewMap._internal({
     required this.controllerProvider,
     super.key,
     this.alignment = Alignment.topRight,
@@ -32,11 +32,58 @@ class OverviewMap extends StatefulWidget {
     this.containerBuilder,
   });
 
-  /// A function that provides the [ArcGISMapViewController] of the target map.
+  /// Create an OverviewMap widget with [ArcGISMapViewController].
+  factory OverviewMap.withMapView({
+    required ArcGISMapViewController Function() controllerProvider,
+    Key? key,
+    Alignment alignment = Alignment.topRight,
+    EdgeInsets padding = const EdgeInsets.all(10),
+    double scaleFactor = 25.0,
+    SimpleFillSymbol? symbol,
+    ArcGISMap? map,
+    Widget Function(BuildContext, Widget)? containerBuilder,
+  }) {
+
+    return OverviewMap._internal(
+      controllerProvider: controllerProvider,
+      key: key,
+      alignment: alignment,
+      padding: padding,
+      scaleFactor: scaleFactor,
+      extentSymbol: symbol,
+      map: map,
+      containerBuilder: containerBuilder,
+    );
+  }
+
+  /// Create an OverviewMap widget with [ArcGISSceneViewController] .
+  factory OverviewMap.withSceneView({
+    required ArcGISSceneViewController Function() controllerProvider,
+    Key? key,
+    Alignment alignment = Alignment.topRight,
+    EdgeInsets padding = const EdgeInsets.all(10),
+    double scaleFactor = 25.0,
+    SimpleMarkerSymbol? symbol,
+    ArcGISMap? map,
+    Widget Function(BuildContext, Widget)? containerBuilder,
+  }) {
+    return OverviewMap._internal(
+      controllerProvider: controllerProvider,
+      key: key,
+      alignment: alignment,
+      padding: padding,
+      scaleFactor: scaleFactor,
+      extentSymbol: symbol,
+      map: map,
+      containerBuilder: containerBuilder,
+    );
+  }
+
+  /// A function that provides the [GeoViewController] of the target map.
   ///
   /// This should return the same controller that is provided to the
-  /// corresponding [ArcGISMapView].
-  final ArcGISMapViewController Function() controllerProvider;
+  /// corresponding [GeoModel].
+  final GeoViewController Function() controllerProvider;
 
   /// The alignment of the overview map within the parent widget.
   ///
@@ -55,9 +102,9 @@ class OverviewMap extends StatefulWidget {
   final double scaleFactor;
 
   /// The symbol used to represent the current viewpoint.
-  ///
-  /// Defaults to a 1 pixel red outline.
-  final SimpleFillSymbol? extentSymbol;
+  /// - For MapView: a [SimpleFillSymbol]
+  /// - For SceneView: a [SimpleMarkerSymbol]
+  final ArcGISSymbol? extentSymbol;
 
   /// The map to use as the overview map.
   ///
@@ -77,7 +124,7 @@ class OverviewMap extends StatefulWidget {
 }
 
 class _OverviewMapState extends State<OverviewMap> {
-  late ArcGISMapViewController _controller;
+  late GeoViewController _controller;
 
   final _overviewController = ArcGISMapView.createController();
 
@@ -90,21 +137,18 @@ class _OverviewMapState extends State<OverviewMap> {
   @override
   void initState() {
     super.initState();
-
+    // Get the main GeoView controller.
     _controller = widget.controllerProvider();
 
+    // Assign the symbol or use a default based on controller type.
     _extentGraphic.symbol =
-        widget.extentSymbol ??
-        SimpleFillSymbol(
-          color: Colors.transparent,
-          outline: SimpleLineSymbol(color: Colors.red),
-        );
+        widget.extentSymbol ?? _defaultSymbolFor(_controller);
 
     _overviewController.graphicsOverlays.add(
       GraphicsOverlay()..graphics.add(_extentGraphic),
     );
 
-    _containerBuilder = widget.containerBuilder ?? defaultContainerBuilder;
+    _containerBuilder = widget.containerBuilder ?? _defaultContainerBuilder;
   }
 
   @override
@@ -145,22 +189,58 @@ class _OverviewMapState extends State<OverviewMap> {
   }
 
   void onViewpointChanged(void _) {
-    _extentGraphic.geometry = _controller.visibleArea;
-
     final viewpoint = _controller.getCurrentViewpoint(
       ViewpointType.centerAndScale,
     );
     if (viewpoint == null) return;
 
-    _overviewController.setViewpoint(
-      Viewpoint.fromCenter(
-        viewpoint.targetGeometry as ArcGISPoint,
+    Geometry? geometry;
+    Geometry? sceneGeometry;
+
+    if (_controller is ArcGISMapViewController) {
+      geometry = (_controller as ArcGISMapViewController).visibleArea;
+      sceneGeometry = null;
+    } else if (_controller is ArcGISSceneViewController) {
+      sceneGeometry = viewpoint.targetGeometry;
+      geometry = null;
+    }
+
+    if (geometry != null) {
+      _extentGraphic.geometry = geometry;
+      final polygonGeometry = geometry as Polygon;
+      final center = polygonGeometry.extent.center;
+      _overviewController.setViewpoint(
+        Viewpoint.fromCenter(
+          center,
+          scale: viewpoint.targetScale * widget.scaleFactor,
+        ),
+      );
+    } else if (sceneGeometry != null) {
+      _extentGraphic.geometry = sceneGeometry;
+
+      _overviewController.setViewpoint(Viewpoint.fromCenter(
+        sceneGeometry as ArcGISPoint,
         scale: viewpoint.targetScale * widget.scaleFactor,
-      ),
+      ));
+    }
+  }
+
+  // Returns a default symbol based on the type of GeoView.
+  ArcGISSymbol _defaultSymbolFor(GeoViewController controller) {
+    if (controller is ArcGISMapViewController) {
+      return SimpleFillSymbol(
+        color: Colors.transparent,
+        outline: SimpleLineSymbol(color: Colors.red),
+      );
+    }
+    return SimpleMarkerSymbol(
+      style: SimpleMarkerSymbolStyle.cross,
+      color: Colors.red,
+      size: 20,
     );
   }
 
-  Widget defaultContainerBuilder(BuildContext context, Widget child) {
+  Widget _defaultContainerBuilder(BuildContext context, Widget child) {
     return Container(
       width: 150,
       height: 100,
