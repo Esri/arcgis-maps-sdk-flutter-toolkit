@@ -22,10 +22,15 @@ part of '../../../arcgis_maps_toolkit.dart';
 /// - [popupMedia]: The popup media to be displayed.
 /// - [mediaSize]: The size of the media view.
 class _ImageMediaView extends StatefulWidget {
-  const _ImageMediaView({required this.popupMedia, required this.mediaSize});
+  const _ImageMediaView({
+    required this.popupMedia,
+    required this.mediaSize,
+    this.chartColor,
+  });
 
   final PopupMedia popupMedia;
   final Size mediaSize;
+  final Color? chartColor;
 
   @override
   _ImageMediaViewState createState() => _ImageMediaViewState();

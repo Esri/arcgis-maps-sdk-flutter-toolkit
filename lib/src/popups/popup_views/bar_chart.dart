@@ -20,12 +20,16 @@ part of '../../../arcgis_maps_toolkit.dart';
 /// The chart can be displayed as a column chart or a bar chart based on the
 /// `isColumnChart` parameter.
 class _PopupBarChart extends StatelessWidget {
-  _PopupBarChart({required this.popupMedia, required this.isColumnChart})
-    : chartData = popupMedia._getChartData();
+  _PopupBarChart({
+    required this.popupMedia,
+    required this.isColumnChart,
+    this.chartColor,
+  }) : chartData = popupMedia._getChartData(chartColor);
 
   final PopupMedia popupMedia;
   final List<_ChartData> chartData;
   final bool isColumnChart;
+  final Color? chartColor;
 
   double get _maximumYValue => _calculateMaximumYValue(chartData);
 

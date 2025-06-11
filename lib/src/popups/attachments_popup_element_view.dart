@@ -24,11 +24,21 @@ part of '../../arcgis_maps_toolkit.dart';
 class _AttachmentsPopupElementView extends StatefulWidget {
   const _AttachmentsPopupElementView({
     required this.attachmentsElement,
+    this.height = 200,
     this.isExpanded = false,
+    this.style,
+    this.waitingBuilder,
+    this.errorBuilder,
+    super.key,
   });
 
   final AttachmentsPopupElement attachmentsElement;
+  final double height;
   final bool isExpanded;
+  final PopupElementStyle? style;
+  final Widget Function(BuildContext context)? waitingBuilder;
+  final Widget Function(BuildContext context, Object error)? errorBuilder;
+
   @override
   State<_AttachmentsPopupElementView> createState() =>
       _AttachmentsPopupElementViewState();
@@ -36,62 +46,92 @@ class _AttachmentsPopupElementView extends StatefulWidget {
 
 class _AttachmentsPopupElementViewState
     extends State<_AttachmentsPopupElementView> {
+  late double height;
   late bool isExpanded;
+  late PopupElementStyle? style;
   late Future<void> fetchAttachmentsFuture;
   @override
   void initState() {
     super.initState();
+    height = widget.height;
     isExpanded = widget.isExpanded;
+    style = widget.style;
     fetchAttachmentsFuture = widget.attachmentsElement.fetchAttachments();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      margin: const EdgeInsets.all(8),
-      child: FutureBuilder<void>(
-        future: fetchAttachmentsFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const SizedBox(
-              height: 200,
-              child: Center(child: CircularProgressIndicator()),
-            );
-          } else if (snapshot.hasError) {
-            return SizedBox(
-              height: 200,
-              child: Center(
-                child: Text('Failed to load attachments: ${snapshot.error}'),
+    return SizedBox(
+      height: widget.height,
+      child: Card(
+        elevation: widget.style?.elevation,
+        shape: widget.style?.shape,
+        margin: widget.style?.margin ?? const EdgeInsets.all(8),
+        clipBehavior: widget.style?.clipBehavior ?? Clip.none,
+        child: FutureBuilder<void>(
+          future: fetchAttachmentsFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return widget.waitingBuilder?.call(context) ??
+                  const Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return widget.errorBuilder?.call(context, snapshot.error!) ??
+                  Center(
+                    child: Text(
+                      'Failed to load attachments: ${snapshot.error}',
+                    ),
+                  );
+            }
+
+            final tileStyle = widget.style?.tile;
+
+            return ExpansionTile(
+              title: _PopupElementHeader(
+                title:
+                    widget.attachmentsElement.title.isEmpty
+                        ? 'Attachments'
+                        : widget.attachmentsElement.title,
+                description: widget.attachmentsElement.description,
               ),
+              initiallyExpanded: tileStyle?.initiallyExpanded ?? isExpanded,
+              onExpansionChanged: (expanded) {
+                setState(() => isExpanded = expanded);
+              },
+              // Visual & layout customizations
+              leading: tileStyle?.leading,
+              trailing: tileStyle?.trailing,
+              showTrailingIcon: tileStyle?.showTrailingIcon ?? true,
+              tilePadding: tileStyle?.tilePadding,
+              expandedCrossAxisAlignment:
+                  tileStyle?.expandedCrossAxisAlignment ??
+                  CrossAxisAlignment.start,
+              expandedAlignment: tileStyle?.expandedAlignment,
+              childrenPadding: tileStyle?.childrenPadding,
+              backgroundColor: tileStyle?.backgroundColor,
+              collapsedBackgroundColor: tileStyle?.collapsedBackgroundColor,
+              textColor: tileStyle?.textColor,
+              collapsedTextColor: tileStyle?.collapsedTextColor,
+              iconColor: tileStyle?.iconColor,
+              collapsedIconColor: tileStyle?.collapsedIconColor,
+              shape: tileStyle?.shape,
+              collapsedShape: tileStyle?.collapsedShape,
+              clipBehavior: tileStyle?.clipBehavior ?? Clip.none,
+              dense: tileStyle?.dense,
+              minTileHeight: tileStyle?.minTileHeight,
+              enabled: tileStyle?.enabled ?? true,
+              expansionAnimationStyle: tileStyle?.expansionAnimationStyle,
+              children: [
+                if (widget.attachmentsElement.attachments.isEmpty)
+                  const Center(child: Text('No attachments available'))
+                else if (widget.attachmentsElement.displayType ==
+                    PopupAttachmentsDisplayType.preview)
+                  _buildGridView()
+                else
+                  _buildListView(),
+              ],
             );
-          }
-          return ExpansionTile(
-            title: _PopupElementHeader(
-              title:
-                  widget.attachmentsElement.title.isEmpty
-                      ? 'Attachments'
-                      : widget.attachmentsElement.title,
-              description: widget.attachmentsElement.description,
-            ),
-            initiallyExpanded: isExpanded,
-            onExpansionChanged: (expanded) {
-              setState(() => isExpanded = expanded);
-            },
-            expandedCrossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(
-                height: 200,
-                child:
-                    widget.attachmentsElement.attachments.isEmpty
-                        ? const Center(child: Text('No attachments available'))
-                        : widget.attachmentsElement.displayType ==
-                            PopupAttachmentsDisplayType.preview
-                        ? _buildGridView()
-                        : _buildListView(),
-              ),
-            ],
-          );
-        },
+          },
+        ),
       ),
     );
   }

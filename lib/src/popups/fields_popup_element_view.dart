@@ -24,10 +24,14 @@ class _FieldsPopupElementView extends StatefulWidget {
   const _FieldsPopupElementView({
     required this.fieldsElement,
     this.isExpanded = false,
+    this.style,
+    this.divider,
   });
 
   final FieldsPopupElement fieldsElement;
   final bool isExpanded;
+  final PopupElementStyle? style;
+  final WidgetBuilder? divider;
 
   @override
   _FieldsPopupElementViewState createState() => _FieldsPopupElementViewState();
@@ -35,12 +39,14 @@ class _FieldsPopupElementView extends StatefulWidget {
 
 class _FieldsPopupElementViewState extends State<_FieldsPopupElementView> {
   late bool isExpanded;
+  late PopupElementStyle? style;
   late final List<_DisplayField> displayFields;
 
   @override
   void initState() {
     super.initState();
     isExpanded = widget.isExpanded;
+    style = widget.style;
     displayFields = List.generate(
       widget.fieldsElement.labels.length,
       (index) => _DisplayField(
@@ -52,8 +58,12 @@ class _FieldsPopupElementViewState extends State<_FieldsPopupElementView> {
 
   @override
   Widget build(BuildContext context) {
+    final tileStyle = widget.style?.tile;
     return Card(
-      margin: const EdgeInsets.all(8),
+      elevation: widget.style?.elevation,
+      shape: widget.style?.shape,
+      margin: widget.style?.margin ?? const EdgeInsets.all(8),
+      clipBehavior: widget.style?.clipBehavior ?? Clip.none,
       child: ExpansionTile(
         title: _PopupElementHeader(
           title:
@@ -62,39 +72,63 @@ class _FieldsPopupElementViewState extends State<_FieldsPopupElementView> {
                   : widget.fieldsElement.title,
           description: widget.fieldsElement.description,
         ),
-        initiallyExpanded: isExpanded,
+        initiallyExpanded: tileStyle?.initiallyExpanded ?? isExpanded,
         onExpansionChanged: (expanded) {
           setState(() => isExpanded = expanded);
         },
-        expandedCrossAxisAlignment: CrossAxisAlignment.start,
+        // Visual & layout customizations
+        leading: tileStyle?.leading,
+        trailing: tileStyle?.trailing,
+        showTrailingIcon: tileStyle?.showTrailingIcon ?? true,
+        tilePadding: tileStyle?.tilePadding,
+        expandedCrossAxisAlignment:
+            tileStyle?.expandedCrossAxisAlignment ?? CrossAxisAlignment.start,
+        expandedAlignment: tileStyle?.expandedAlignment,
+        childrenPadding: tileStyle?.childrenPadding,
+        backgroundColor: tileStyle?.backgroundColor,
+        collapsedBackgroundColor: tileStyle?.collapsedBackgroundColor,
+        textColor: tileStyle?.textColor,
+        collapsedTextColor: tileStyle?.collapsedTextColor,
+        iconColor: tileStyle?.iconColor,
+        collapsedIconColor: tileStyle?.collapsedIconColor,
+        shape: tileStyle?.shape,
+        collapsedShape: tileStyle?.collapsedShape,
+        clipBehavior: tileStyle?.clipBehavior ?? Clip.none,
+        dense: tileStyle?.dense,
+        minTileHeight: tileStyle?.minTileHeight,
+        enabled: tileStyle?.enabled ?? true,
+        expansionAnimationStyle: tileStyle?.expansionAnimationStyle,
         children:
-            displayFields.map((field) => _FieldRow(field: field)).toList(),
+            displayFields
+                .map(
+                  (field) => _FieldRow(field: field, divider: widget.divider),
+                )
+                .toList(),
       ),
     );
   }
 }
 
 class _FieldRow extends StatelessWidget {
-  const _FieldRow({required this.field});
+  const _FieldRow({required this.field, this.divider});
   final _DisplayField field;
+  final WidgetBuilder? divider;
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(10, 1, 10, 1),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            field.label,
-            style: Theme.of(
-              context,
-            ).textTheme.titleSmall?.copyWith(color: Colors.grey),
-          ),
-          _FormattedValueText(formattedValue: field.formattedValue),
-          const Divider(color: Colors.grey, height: 2, thickness: 1),
-        ],
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          field.label,
+          style: Theme.of(
+            context,
+          ).textTheme.titleSmall?.copyWith(color: Colors.grey),
+        ),
+        _FormattedValueText(formattedValue: field.formattedValue),
+        divider?.call(context) ??
+            const Divider(color: Colors.grey, height: 2, thickness: 1),
+      ],
     );
   }
 }

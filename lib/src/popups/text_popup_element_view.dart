@@ -24,8 +24,9 @@ part of '../../arcgis_maps_toolkit.dart';
 /// parameters:
 /// - [textElement]: The text popup element to be displayed.
 class _TextPopupElementView extends StatefulWidget {
-  const _TextPopupElementView({required this.textElement});
+  const _TextPopupElementView({required this.textElement, this.style});
   final TextPopupElement textElement;
+  final PopupElementStyle? style;
 
   @override
   _TextPopupElementViewState createState() => _TextPopupElementViewState();
@@ -69,7 +70,10 @@ class _TextPopupElementViewState extends State<_TextPopupElementView> {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: const EdgeInsets.all(8),
+      elevation: widget.style?.elevation,
+      shape: widget.style?.shape,
+      margin: widget.style?.margin ?? const EdgeInsets.all(8),
+      clipBehavior: widget.style?.clipBehavior ?? Clip.none,
       child: SizedBox(
         height: height, // Default height until calculated
         child: WebViewWidget(controller: _controller),

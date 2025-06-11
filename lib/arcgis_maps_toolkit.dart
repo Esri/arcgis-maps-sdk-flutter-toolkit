@@ -49,5 +49,6 @@ part 'src/popups/popup_views/image_media_view.dart';
 part 'src/popups/popup_views/popup_element_header.dart';
 part 'src/popups/popup_views/common_utils.dart';
 part 'src/popups/theme/theme_data.dart';
+part 'src/popups/theme/popup_expansion_title_style.dart';
 
 part 'src/template_widget.dart';

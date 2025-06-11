@@ -24,9 +24,11 @@ class _MediaPopupElementView extends StatefulWidget {
   const _MediaPopupElementView({
     required this.mediaElement,
     this.isExpanded = false,
+    this.style,
   });
   final MediaPopupElement mediaElement;
   final bool isExpanded;
+  final PopupElementStyle? style;
 
   @override
   _MediaPopupElementViewState createState() => _MediaPopupElementViewState();
@@ -34,19 +36,24 @@ class _MediaPopupElementView extends StatefulWidget {
 
 class _MediaPopupElementViewState extends State<_MediaPopupElementView> {
   late bool isExpanded;
+  late PopupElementStyle? style;
   int get displayableMediaCount => widget.mediaElement.media.length;
 
   @override
   void initState() {
     super.initState();
     isExpanded = widget.isExpanded;
+    style = widget.style;
   }
 
   @override
   Widget build(BuildContext context) {
     if (displayableMediaCount > 0) {
       return Card(
-        margin: const EdgeInsets.all(8),
+        elevation: style?.elevation,
+        shape: style?.shape,
+        margin: style?.margin ?? const EdgeInsets.all(8),
+        clipBehavior: style?.clipBehavior ?? Clip.none,
         child: ExpansionTile(
           title: _PopupElementHeader(
             title:
@@ -55,14 +62,43 @@ class _MediaPopupElementViewState extends State<_MediaPopupElementView> {
                     : widget.mediaElement.title,
             description: widget.mediaElement.description,
           ),
-          initiallyExpanded: isExpanded,
+          initiallyExpanded: style?.tile?.initiallyExpanded ?? isExpanded,
           onExpansionChanged: (expanded) {
             setState(() => isExpanded = expanded);
           },
+          // General tile styling
+          leading: style?.tile?.leading,
+          trailing: style?.tile?.trailing,
+          showTrailingIcon: style?.tile?.showTrailingIcon ?? true,
+          tilePadding: style?.tile?.tilePadding,
+          childrenPadding: style?.tile?.childrenPadding,
+          backgroundColor: style?.tile?.backgroundColor,
+          collapsedBackgroundColor: style?.tile?.collapsedBackgroundColor,
+          // Typography & icon styling
+          textColor: style?.tile?.textColor,
+          collapsedTextColor: style?.tile?.collapsedTextColor,
+          iconColor: style?.tile?.iconColor,
+          collapsedIconColor: style?.tile?.collapsedIconColor,
+          // Layout
+          expandedCrossAxisAlignment:
+              style?.tile?.expandedCrossAxisAlignment ??
+              CrossAxisAlignment.start,
+          expandedAlignment: style?.tile?.expandedAlignment,
+          // Shape & animation
+          shape: style?.tile?.shape,
+          collapsedShape: style?.tile?.collapsedShape,
+          clipBehavior: style?.tile?.clipBehavior ?? Clip.none,
+          dense: style?.tile?.dense,
+          minTileHeight: style?.tile?.minTileHeight,
+          enabled: style?.tile?.enabled ?? true,
+          expansionAnimationStyle: style?.tile?.expansionAnimationStyle,
+          // Content
           children: [
             _PopupMediaView(
               popupMedia: widget.mediaElement.media,
               displayableMediaCount: displayableMediaCount,
+              chartColor: style?.chartColor,
+              chartForegroundColor: style?.chartForegroundColor,
             ),
           ],
         ),
@@ -77,11 +113,15 @@ class _PopupMediaView extends StatelessWidget {
   const _PopupMediaView({
     required this.popupMedia,
     required this.displayableMediaCount,
+    this.chartForegroundColor,
+    this.chartColor,
   });
 
   final List<PopupMedia> popupMedia;
   final int displayableMediaCount;
   double get widthScaleFactor => displayableMediaCount > 1 ? 0.75 : 1.0;
+  final Color? chartForegroundColor;
+  final Color? chartColor;
 
   @override
   Widget build(BuildContext context) {
@@ -95,7 +135,7 @@ class _PopupMediaView extends StatelessWidget {
       child:
           (popupMedia.length > 1)
               ? _buildMediaListWidgets(mediaSize)
-              : _buildMediaWidget(popupMedia.first, mediaSize),
+              : _buildMediaWidget(popupMedia.first, mediaSize, chartColor),
     );
   }
 
@@ -112,27 +152,43 @@ class _PopupMediaView extends StatelessWidget {
             height: mediaSize.height,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8),
-              color: Colors.grey.shade200,
+              color: chartForegroundColor ?? Colors.grey.shade200,
             ),
-            child: _buildMediaWidget(media, mediaSize),
+            child: _buildMediaWidget(media, mediaSize, chartColor),
           ),
         );
       },
     );
   }
 
-  Widget _buildMediaWidget(PopupMedia popupMedia, Size mediaSize) {
+  Widget _buildMediaWidget(
+    PopupMedia popupMedia,
+    Size mediaSize,
+    Color? chartColor,
+  ) {
     switch (popupMedia.type) {
       case PopupMediaType.image:
-        return _ImageMediaView(popupMedia: popupMedia, mediaSize: mediaSize);
+        return _ImageMediaView(
+          popupMedia: popupMedia,
+          mediaSize: mediaSize,
+          chartColor: chartColor,
+        );
       case PopupMediaType.barChart:
-        return _PopupBarChart(popupMedia: popupMedia, isColumnChart: false);
+        return _PopupBarChart(
+          popupMedia: popupMedia,
+          chartColor: chartColor,
+          isColumnChart: false,
+        );
       case PopupMediaType.columnChart:
-        return _PopupBarChart(popupMedia: popupMedia, isColumnChart: true);
+        return _PopupBarChart(
+          popupMedia: popupMedia,
+          chartColor: chartColor,
+          isColumnChart: true,
+        );
       case PopupMediaType.lineChart:
-        return _PopupLineChart(popupMedia: popupMedia);
+        return _PopupLineChart(popupMedia: popupMedia, chartColor: chartColor);
       case PopupMediaType.pieChart:
-        return _PopupPieChart(popupMedia: popupMedia);
+        return _PopupPieChart(popupMedia: popupMedia, chartColor: chartColor);
       default:
         return const SizedBox.shrink(); // Empty view for unsupported media types
     }
@@ -141,7 +197,7 @@ class _PopupMediaView extends StatelessWidget {
 
 /// Converts the PopupMediaValue data into a list of _ChartData.
 extension on PopupMedia {
-  List<_ChartData> _getChartData() {
+  List<_ChartData> _getChartData(Color? chartColor) {
     final popupMediaValue = value;
     final list = <_ChartData>[];
     if (popupMediaValue != null) {
@@ -154,7 +210,7 @@ extension on PopupMedia {
           label = popupMediaValue.labels[i];
         }
 
-        var color = Colors.blue as Color;
+        var color = chartColor ?? (Colors.blue as Color);
         if (popupMediaValue.chartColors.isNotEmpty &&
             popupMediaValue.chartColors.length > i) {
           color = popupMediaValue.chartColors[i];

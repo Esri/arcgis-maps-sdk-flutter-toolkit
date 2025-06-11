@@ -18,11 +18,12 @@ part of '../../../arcgis_maps_toolkit.dart';
 
 /// A widget that displays a line chart for the given [popupMedia].
 class _PopupLineChart extends StatelessWidget {
-  _PopupLineChart({required this.popupMedia})
-    : chartData = popupMedia._getChartData();
+  _PopupLineChart({required this.popupMedia, this.chartColor})
+    : chartData = popupMedia._getChartData(chartColor);
 
   final PopupMedia popupMedia;
   final List<_ChartData> chartData;
+  final Color? chartColor;
 
   double get _maximumYValue => _calculateMaximumYValue(chartData);
 
@@ -39,7 +40,7 @@ class _PopupLineChart extends StatelessWidget {
       maxY: _maximumYValue,
       lineBarsData: [
         LineChartBarData(
-          color: Colors.blue,
+          color: chartColor,
           barWidth: 2.5,
           isStrokeCapRound: true,
           dotData: const FlDotData(show: false),

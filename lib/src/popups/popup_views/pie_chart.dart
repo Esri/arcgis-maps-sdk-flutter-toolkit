@@ -19,11 +19,12 @@ part of '../../../arcgis_maps_toolkit.dart';
 /// A widget that displays a pie chart for the given [popupMedia].
 /// The chart data is generated based on the data provided in the [popupMedia].
 class _PopupPieChart extends StatelessWidget {
-  _PopupPieChart({required this.popupMedia})
-    : chartData = popupMedia._getChartData();
+  _PopupPieChart({required this.popupMedia, this.chartColor})
+    : chartData = popupMedia._getChartData(chartColor);
 
   final PopupMedia popupMedia;
   final List<_ChartData> chartData;
+  final Color? chartColor;
 
   @override
   Widget build(BuildContext context) {
