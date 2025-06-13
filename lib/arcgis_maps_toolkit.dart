@@ -33,6 +33,7 @@ import 'package:webview_flutter/webview_flutter.dart';
 
 part 'src/authenticator/authenticator.dart';
 part 'src/authenticator/authenticator_login.dart';
+part 'src/authenticator/authenticator_trust.dart';
 part 'src/compass/compass.dart';
 part 'src/compass/compass_needle_painter.dart';
 part 'src/overview_map/overview_map.dart';
