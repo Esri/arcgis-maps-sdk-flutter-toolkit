@@ -63,8 +63,10 @@ class Authenticator extends StatefulWidget {
   }
 
   /// Clear all credentials from the credential store.
-  static void clearCredentials() {
+  static Future<void> clearCredentials() async {
     ArcGISEnvironment.authenticationManager.arcGISCredentialStore.removeAll();
+    await ArcGISEnvironment.authenticationManager.networkCredentialStore
+        .removeAll();
   }
 
   @override
