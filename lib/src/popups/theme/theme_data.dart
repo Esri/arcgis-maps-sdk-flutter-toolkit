@@ -37,23 +37,21 @@ ThemeData popupViewThemeData = ThemeData(
       fontWeight: FontWeight.bold,
       color: Colors.grey,
     ),
-
     titleSmall: TextStyle(
       fontSize: 16,
       fontWeight: FontWeight.w500,
       color: Colors.black,
     ),
-
     labelMedium: TextStyle(
       fontSize: 16,
       fontWeight: FontWeight.w400,
       color: Colors.black,
     ),
-
     bodyMedium: TextStyle(
       fontSize: 14,
       fontWeight: FontWeight.w400,
       color: Colors.black,
     ),
   ),
+  dividerTheme: const DividerThemeData(color: Colors.grey, thickness: 2),
 );
