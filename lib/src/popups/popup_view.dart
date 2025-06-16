@@ -87,7 +87,7 @@ class _PopupViewState extends State<PopupView> {
             ),
           ),
           IconButton(
-            icon: const Icon(Icons.close, size: 20),
+            icon: const Icon(Icons.close),
             onPressed: () {
               if (widget.onClose != null) {
                 widget.onClose!();
