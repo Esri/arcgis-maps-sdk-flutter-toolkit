@@ -47,7 +47,7 @@ class _PopupViewState extends State<PopupView> {
     return Column(
       children: [
         _buildTitleWidget(),
-        const Divider(color: Colors.grey, height: 2, thickness: 2),
+        const Divider(),
         Expanded(
           child: FutureBuilder(
             future: _evaluatedExpressionsFuture,
