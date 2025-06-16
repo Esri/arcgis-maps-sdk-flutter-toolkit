@@ -63,7 +63,6 @@ class _AuthenticatorTrustState extends State<_AuthenticatorTrust> {
               ),
               // Buttons to cancel or accept the certificate.
               Row(
-                spacing: 10,
                 children: [
                   TextButton(onPressed: cancel, child: const Text('Cancel')),
                   const Spacer(),
