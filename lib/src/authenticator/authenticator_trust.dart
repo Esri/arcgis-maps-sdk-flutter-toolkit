@@ -66,12 +66,8 @@ class _AuthenticatorTrustState extends State<_AuthenticatorTrust> {
                 spacing: 10,
                 children: [
                   TextButton(onPressed: cancel, child: const Text('Cancel')),
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: trust,
-                      child: const Text('Trust'),
-                    ),
-                  ),
+                  const Spacer(),
+                  ElevatedButton(onPressed: trust, child: const Text('Trust')),
                 ],
               ),
             ],
