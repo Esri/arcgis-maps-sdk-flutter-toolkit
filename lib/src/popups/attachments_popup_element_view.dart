@@ -261,9 +261,7 @@ class _PopupAttachmentViewInListState
       title: Text(widget.popupAttachment.name),
       subtitle: Text(
         widget.popupAttachment.size.toSizeString,
-        style: Theme.of(
-          context,
-        ).textTheme.titleSmall?.copyWith(color: Colors.grey),
+        style: Theme.of(context).textTheme.titleSmall,
       ),
       trailing:
           filePath == null
