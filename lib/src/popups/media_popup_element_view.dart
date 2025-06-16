@@ -47,24 +47,27 @@ class _MediaPopupElementViewState extends State<_MediaPopupElementView> {
     if (displayableMediaCount > 0) {
       return Card(
         margin: const EdgeInsets.all(8),
-        child: ExpansionTile(
-          title: _PopupElementHeader(
-            title:
-                widget.mediaElement.title.isEmpty
-                    ? 'Media'
-                    : widget.mediaElement.title,
-            description: widget.mediaElement.description,
-          ),
-          initiallyExpanded: isExpanded,
-          onExpansionChanged: (expanded) {
-            setState(() => isExpanded = expanded);
-          },
-          children: [
-            _PopupMediaView(
-              popupMedia: widget.mediaElement.media,
-              displayableMediaCount: displayableMediaCount,
+        child: Theme(
+          data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+          child: ExpansionTile(
+            title: _PopupElementHeader(
+              title:
+                  widget.mediaElement.title.isEmpty
+                      ? 'Media'
+                      : widget.mediaElement.title,
+              description: widget.mediaElement.description,
             ),
-          ],
+            initiallyExpanded: isExpanded,
+            onExpansionChanged: (expanded) {
+              setState(() => isExpanded = expanded);
+            },
+            children: [
+              _PopupMediaView(
+                popupMedia: widget.mediaElement.media,
+                displayableMediaCount: displayableMediaCount,
+              ),
+            ],
+          ),
         ),
       );
     } else {

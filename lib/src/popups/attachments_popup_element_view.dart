@@ -65,31 +65,36 @@ class _AttachmentsPopupElementViewState
               ),
             );
           }
-          return ExpansionTile(
-            title: _PopupElementHeader(
-              title:
-                  widget.attachmentsElement.title.isEmpty
-                      ? 'Attachments'
-                      : widget.attachmentsElement.title,
-              description: widget.attachmentsElement.description,
-            ),
-            initiallyExpanded: isExpanded,
-            onExpansionChanged: (expanded) {
-              setState(() => isExpanded = expanded);
-            },
-            expandedCrossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(
-                height: 200,
-                child:
-                    widget.attachmentsElement.attachments.isEmpty
-                        ? const Center(child: Text('No attachments available'))
-                        : widget.attachmentsElement.displayType ==
-                            PopupAttachmentsDisplayType.preview
-                        ? _buildGridView()
-                        : _buildListView(),
+          return Theme(
+            data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+            child: ExpansionTile(
+              title: _PopupElementHeader(
+                title:
+                    widget.attachmentsElement.title.isEmpty
+                        ? 'Attachments'
+                        : widget.attachmentsElement.title,
+                description: widget.attachmentsElement.description,
               ),
-            ],
+              initiallyExpanded: isExpanded,
+              onExpansionChanged: (expanded) {
+                setState(() => isExpanded = expanded);
+              },
+              expandedCrossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  height: 200,
+                  child:
+                      widget.attachmentsElement.attachments.isEmpty
+                          ? const Center(
+                            child: Text('No attachments available'),
+                          )
+                          : widget.attachmentsElement.displayType ==
+                              PopupAttachmentsDisplayType.preview
+                          ? _buildGridView()
+                          : _buildListView(),
+                ),
+              ],
+            ),
           );
         },
       ),
