@@ -51,15 +51,17 @@ class _AuthenticatorTrustState extends State<_AuthenticatorTrust> {
             spacing: 10,
             children: [
               Text(
-                'Trust Required', //fixme message
+                'Untrusted Host',
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
                   color: Theme.of(context).colorScheme.primary,
                 ),
               ),
-              //fixme comments
               // Show the server URL that is requiring authentication.
               Text(widget.challenge.host),
-              // Buttons to cancel or log in.
+              const Text(
+                'The server certificate could not be verified. Trust this host and continue?',
+              ),
+              // Buttons to cancel or accept the certificate.
               Row(
                 spacing: 10,
                 children: [
