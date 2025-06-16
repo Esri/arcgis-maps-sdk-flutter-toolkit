@@ -169,7 +169,9 @@ class _AuthenticatorState extends State<Authenticator>
     // Show an _AuthenticatorLogin dialog, which will answer the challenge.
     showDialog(
       context: context,
-      builder: (context) => _AuthenticatorLogin(challenge: challenge),
+      builder:
+          (context) =>
+              _AuthenticatorLogin(challenge: _ArcGISLoginChallenge(challenge)),
     );
   }
 
@@ -183,6 +185,15 @@ class _AuthenticatorState extends State<Authenticator>
         showDialog(
           context: context,
           builder: (context) => _AuthenticatorTrust(challenge: challenge),
+        );
+      case NtlmAuthenticationChallenge():
+        // Show an _AuthenticatorLogin dialog, which will answer the challenge.
+        showDialog(
+          context: context,
+          builder:
+              (context) => _AuthenticatorLogin(
+                challenge: _NetworkLoginChallenge(challenge),
+              ),
         );
       default:
         challenge.continueAndFail();

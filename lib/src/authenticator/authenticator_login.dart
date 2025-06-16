@@ -16,12 +16,66 @@
 
 part of '../../arcgis_maps_toolkit.dart';
 
+// A _LoginChallenge can either be an ArcGIS challenge (at the server level), or a
+// Network challenge. The _AuthenticatorLogin widget handles both types.
+sealed class _LoginChallenge {
+  String get host;
+  String? get realm;
+  void continueAndFail();
+  void cancel();
+}
+
+class _ArcGISLoginChallenge extends _LoginChallenge {
+  _ArcGISLoginChallenge(this.challenge);
+
+  final ArcGISAuthenticationChallenge challenge;
+
+  @override
+  String get host => challenge.requestUri.host;
+
+  @override
+  String? get realm => null;
+
+  @override
+  void continueAndFail() => challenge.continueAndFail();
+
+  @override
+  void cancel() => challenge.cancel();
+}
+
+class _NetworkLoginChallenge extends _LoginChallenge {
+  _NetworkLoginChallenge(this.challenge);
+
+  final NetworkAuthenticationChallenge challenge;
+
+  @override
+  String get host => challenge.host;
+
+  @override
+  String? get realm {
+    switch (challenge) {
+      case BasicAuthenticationChallenge(realm: final realm):
+        return realm;
+      case DigestAuthenticationChallenge(realm: final realm):
+        return realm;
+      default:
+        return null;
+    }
+  }
+
+  @override
+  void continueAndFail() => challenge.continueAndFail();
+
+  @override
+  void cancel() => challenge.cancel();
+}
+
 // A dialog that prompts the user to log in with a username and password and
 // answers the given challenge with a TokenCredential.
 class _AuthenticatorLogin extends StatefulWidget {
   const _AuthenticatorLogin({required this.challenge});
 
-  final ArcGISAuthenticationChallenge challenge;
+  final _LoginChallenge challenge;
 
   @override
   State<_AuthenticatorLogin> createState() => _AuthenticatorLoginState();
@@ -68,7 +122,10 @@ class _AuthenticatorLoginState extends State<_AuthenticatorLogin> {
                 ),
               ),
               // Show the host that is requiring authentication.
-              Text(widget.challenge.requestUri.host),
+              Text(widget.challenge.host),
+              // Show realm (if applicable).
+              if (widget.challenge.realm != null)
+                Text('Realm: ${widget.challenge.realm}'),
               // Text fields for the username and password.
               TextField(
                 controller: _usernameController,
@@ -125,22 +182,72 @@ class _AuthenticatorLoginState extends State<_AuthenticatorLogin> {
       return;
     }
 
+    // Attempt to log in with the provided username and password, using the appropriate type.
+    switch (widget.challenge) {
+      case _ArcGISLoginChallenge(challenge: final challenge):
+        await _loginArcGIS(challenge, username, password);
+      case _NetworkLoginChallenge(challenge: final challenge):
+        await _loginNetwork(challenge, username, password);
+    }
+  }
+
+  Future<void> _loginArcGIS(
+    ArcGISAuthenticationChallenge challenge,
+    String username,
+    String password,
+  ) async {
     try {
       // Attempt to create a credential with the provided username and password.
       final credential = await TokenCredential.createWithChallenge(
-        widget.challenge,
+        challenge,
         username: username,
         password: password,
       );
       if (!mounted) return;
 
       // If successful, continue with the credential.
-      widget.challenge.continueWithCredential(credential);
+      challenge.continueWithCredential(credential);
       Navigator.of(context).pop(_loginResult = true);
     } on ArcGISException catch (e) {
       // If there was an error, display the error message.
       setState(() => _errorMessage = e.message);
     }
+  }
+
+  Future<void> _loginNetwork(
+    NetworkAuthenticationChallenge challenge,
+    String username,
+    String password,
+  ) async {
+    // Create the appropriate credential based on the challenge type.
+    switch (challenge) {
+      case BasicAuthenticationChallenge():
+        final credential = BasicNetworkCredential.forChallenge(
+          challenge,
+          username,
+          password,
+        );
+        challenge.continueWithCredential(credential);
+      case DigestAuthenticationChallenge():
+        final credential = DigestNetworkCredential.forChallenge(
+          challenge,
+          username,
+          password,
+        );
+        challenge.continueWithCredential(credential);
+      case NtlmAuthenticationChallenge():
+        final credential = NtlmNetworkCredential.forChallenge(
+          challenge,
+          username,
+          password,
+        );
+        challenge.continueWithCredential(credential);
+      default:
+        throw UnsupportedError(
+          'Unsupported NetworkAuthenticationChallenge type: ${challenge.runtimeType}',
+        );
+    }
+    Navigator.of(context).pop(_loginResult = true);
   }
 
   void cancel() {
