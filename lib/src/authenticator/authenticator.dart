@@ -101,11 +101,13 @@ class _AuthenticatorState extends State<Authenticator>
   void dispose() {
     if (_errorMessage.isEmpty) {
       ArcGISEnvironment
-          .authenticationManager
-          .arcGISAuthenticationChallengeHandler = null;
+              .authenticationManager
+              .arcGISAuthenticationChallengeHandler =
+          null;
       ArcGISEnvironment
-          .authenticationManager
-          .networkAuthenticationChallengeHandler = null;
+              .authenticationManager
+              .networkAuthenticationChallengeHandler =
+          null;
     }
 
     super.dispose();
@@ -125,13 +127,12 @@ class _AuthenticatorState extends State<Authenticator>
     ArcGISAuthenticationChallenge challenge,
   ) {
     // If an OAuth configuration matches, use it. Else use token login.
-    final configuration =
-        widget.oAuthUserConfigurations
-            .where(
-              (configuration) =>
-                  configuration.canBeUsedForUri(challenge.requestUri),
-            )
-            .firstOrNull;
+    final configuration = widget.oAuthUserConfigurations
+        .where(
+          (configuration) =>
+              configuration.canBeUsedForUri(challenge.requestUri),
+        )
+        .firstOrNull;
 
     if (configuration != null) {
       _oauthLogin(challenge, configuration);
@@ -169,9 +170,8 @@ class _AuthenticatorState extends State<Authenticator>
     // Show an _AuthenticatorLogin dialog, which will answer the challenge.
     showDialog(
       context: context,
-      builder:
-          (context) =>
-              _AuthenticatorLogin(challenge: _ArcGISLoginChallenge(challenge)),
+      builder: (context) =>
+          _AuthenticatorLogin(challenge: _ArcGISLoginChallenge(challenge)),
     );
   }
 
@@ -186,14 +186,14 @@ class _AuthenticatorState extends State<Authenticator>
           context: context,
           builder: (context) => _AuthenticatorTrust(challenge: challenge),
         );
+      case BasicAuthenticationChallenge():
+      case DigestAuthenticationChallenge():
       case NtlmAuthenticationChallenge():
         // Show an _AuthenticatorLogin dialog, which will answer the challenge.
         showDialog(
           context: context,
-          builder:
-              (context) => _AuthenticatorLogin(
-                challenge: _NetworkLoginChallenge(challenge),
-              ),
+          builder: (context) =>
+              _AuthenticatorLogin(challenge: _NetworkLoginChallenge(challenge)),
         );
       default:
         challenge.continueAndFail();

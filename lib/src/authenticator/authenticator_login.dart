@@ -19,6 +19,7 @@ part of '../../arcgis_maps_toolkit.dart';
 // A _LoginChallenge can either be an ArcGIS challenge (at the server level), or a
 // Network challenge. The _AuthenticatorLogin widget handles both types.
 sealed class _LoginChallenge {
+  // Common functionality to be overridden in the type-specific classes.
   String get host;
   String? get realm;
   void continueAndFail();
