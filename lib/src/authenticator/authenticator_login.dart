@@ -67,8 +67,8 @@ class _AuthenticatorLoginState extends State<_AuthenticatorLogin> {
                   color: Theme.of(context).colorScheme.primary,
                 ),
               ),
-              // Show the server URL that is requiring authentication.
-              Text(widget.challenge.requestUri.toString()),
+              // Show the host that is requiring authentication.
+              Text(widget.challenge.requestUri.host),
               // Text fields for the username and password.
               TextField(
                 controller: _usernameController,

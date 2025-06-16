@@ -63,8 +63,10 @@ class Authenticator extends StatefulWidget {
   }
 
   /// Clear all credentials from the credential store.
-  static void clearCredentials() {
+  static Future<void> clearCredentials() async {
     ArcGISEnvironment.authenticationManager.arcGISCredentialStore.removeAll();
+    await ArcGISEnvironment.authenticationManager.networkCredentialStore
+        .removeAll();
   }
 
   @override
@@ -72,7 +74,9 @@ class Authenticator extends StatefulWidget {
 }
 
 class _AuthenticatorState extends State<Authenticator>
-    implements ArcGISAuthenticationChallengeHandler {
+    implements
+        ArcGISAuthenticationChallengeHandler,
+        NetworkAuthenticationChallengeHandler {
   var _errorMessage = '';
 
   @override
@@ -84,8 +88,12 @@ class _AuthenticatorState extends State<Authenticator>
     if (manager.arcGISAuthenticationChallengeHandler != null) {
       _errorMessage =
           'Authenticator failed to load: another AuthenticationChallengeHandler has already been set, of type ${manager.arcGISAuthenticationChallengeHandler.runtimeType}';
+    } else if (manager.networkAuthenticationChallengeHandler != null) {
+      _errorMessage =
+          'Authenticator failed to load: another NetworkAuthenticationChallengeHandler has already been set, of type ${manager.networkAuthenticationChallengeHandler.runtimeType}';
     } else {
       manager.arcGISAuthenticationChallengeHandler = this;
+      manager.networkAuthenticationChallengeHandler = this;
     }
   }
 
@@ -95,6 +103,9 @@ class _AuthenticatorState extends State<Authenticator>
       ArcGISEnvironment
           .authenticationManager
           .arcGISAuthenticationChallengeHandler = null;
+      ArcGISEnvironment
+          .authenticationManager
+          .networkAuthenticationChallengeHandler = null;
     }
 
     super.dispose();
@@ -160,5 +171,21 @@ class _AuthenticatorState extends State<Authenticator>
       context: context,
       builder: (context) => _AuthenticatorLogin(challenge: challenge),
     );
+  }
+
+  @override
+  FutureOr<void> handleNetworkAuthenticationChallenge(
+    NetworkAuthenticationChallenge challenge,
+  ) {
+    switch (challenge) {
+      case ServerTrustAuthenticationChallenge():
+        // Show an _AuthenticatorTrust dialog, which will answer the challenge.
+        showDialog(
+          context: context,
+          builder: (context) => _AuthenticatorTrust(challenge: challenge),
+        );
+      default:
+        challenge.continueAndFail();
+    }
   }
 }
