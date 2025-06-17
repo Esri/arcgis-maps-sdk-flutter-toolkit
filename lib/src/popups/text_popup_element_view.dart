@@ -69,6 +69,8 @@ class _TextPopupElementViewState extends State<_TextPopupElementView> {
   @override
   Widget build(BuildContext context) {
     return Card(
+      color: Colors.white,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       margin: const EdgeInsets.all(8),
       child: SizedBox(
         height: height, // Default height until calculated
