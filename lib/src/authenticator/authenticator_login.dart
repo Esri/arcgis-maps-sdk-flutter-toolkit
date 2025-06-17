@@ -20,6 +20,7 @@ part of '../../arcgis_maps_toolkit.dart';
 // Network challenge. The _AuthenticatorLogin widget handles both types.
 sealed class _LoginChallenge {
   // Common functionality to be overridden in the type-specific classes.
+  int get previousFailureCount;
   String get host;
   String? get realm;
   void continueAndFail();
@@ -30,6 +31,9 @@ class _ArcGISLoginChallenge extends _LoginChallenge {
   _ArcGISLoginChallenge(this.challenge);
 
   final ArcGISAuthenticationChallenge challenge;
+
+  @override
+  int get previousFailureCount => challenge.previousFailureCount;
 
   @override
   String get host => challenge.requestUri.host;
@@ -48,6 +52,9 @@ class _NetworkLoginChallenge extends _LoginChallenge {
   _NetworkLoginChallenge(this.challenge);
 
   final NetworkAuthenticationChallenge challenge;
+
+  @override
+  int get previousFailureCount => challenge.previousFailureCount;
 
   @override
   String get host => challenge.host;
@@ -92,6 +99,17 @@ class _AuthenticatorLoginState extends State<_AuthenticatorLogin> {
 
   // The result: true if the user logged in, false if the user canceled.
   bool? _loginResult;
+
+  @override
+  void initState() {
+    super.initState();
+
+    if (widget.challenge is _NetworkLoginChallenge) {
+      if (widget.challenge.previousFailureCount > 0) {
+        _errorMessage = 'Invalid credentials. Please try again.';
+      }
+    }
+  }
 
   @override
   void dispose() {
