@@ -29,12 +29,7 @@ class _PopupElementHeader extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          title,
-          style: Theme.of(
-            context,
-          ).textTheme.titleSmall?.copyWith(color: Colors.grey),
-        ),
+        Text(title, style: Theme.of(context).textTheme.titleSmall),
         if (description.isNotEmpty)
           Text(description, style: Theme.of(context).textTheme.bodyMedium),
       ],

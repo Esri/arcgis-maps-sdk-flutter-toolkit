@@ -88,12 +88,7 @@ class _FieldRow extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            field.label,
-            style: Theme.of(
-              context,
-            ).textTheme.titleSmall?.copyWith(color: Colors.grey),
-          ),
+          Text(field.label, style: Theme.of(context).textTheme.titleSmall),
           _FormattedValueText(formattedValue: field.formattedValue),
           const Divider(color: Colors.grey, height: 2, thickness: 1),
         ],
@@ -124,9 +119,8 @@ class _FormattedValueText extends StatelessWidget {
           padding: const EdgeInsets.only(bottom: 4),
           child: Text(
             'View',
-            style: TextStyle(
+            style: Theme.of(context).textTheme.labelMedium?.copyWith(
               color: Theme.of(context).primaryColor,
-              decoration: TextDecoration.underline,
             ),
           ),
         ),
