@@ -37,31 +37,29 @@ class _TextPopupElementViewState extends State<_TextPopupElementView> {
 
   @override
   void initState() {
-    _controller =
-        WebViewController()
-          ..setJavaScriptMode(JavaScriptMode.unrestricted)
-          ..setNavigationDelegate(
-            NavigationDelegate(
-              onNavigationRequest: (request) {
-                final url = request.url;
-                if (url.startsWith('http') || url.startsWith('https')) {
-                  _launchUri(context, url);
-                  return NavigationDecision.prevent;
-                }
-                return NavigationDecision
-                    .navigate; // Allow WebView to load the URL
-              },
+    _controller = WebViewController()
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..setNavigationDelegate(
+        NavigationDelegate(
+          onNavigationRequest: (request) {
+            final url = request.url;
+            if (url.startsWith('http') || url.startsWith('https')) {
+              _launchUri(context, url);
+              return NavigationDecision.prevent;
+            }
+            return NavigationDecision.navigate; // Allow WebView to load the URL
+          },
 
-              onPageFinished: (url) async {
-                final calculatedHeight = await _calculateHeight();
-                if (calculatedHeight != null) {
-                  setState(() => height = calculatedHeight);
-                }
-              },
-            ),
-          )
-          ..setBackgroundColor(Colors.transparent)
-          ..loadHtmlString(_buildHTML(widget.textElement.text));
+          onPageFinished: (url) async {
+            final calculatedHeight = await _calculateHeight();
+            if (calculatedHeight != null) {
+              setState(() => height = calculatedHeight);
+            }
+          },
+        ),
+      )
+      ..setBackgroundColor(Colors.transparent)
+      ..loadHtmlString(_buildHTML(widget.textElement.text));
 
     super.initState();
   }
@@ -69,7 +67,6 @@ class _TextPopupElementViewState extends State<_TextPopupElementView> {
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: const EdgeInsets.all(8),
       child: SizedBox(
         height: height, // Default height until calculated
         child: WebViewWidget(controller: _controller),

@@ -24,12 +24,7 @@ part of '../../arcgis_maps_toolkit.dart';
 /// - [popup]: The Popup object to be displayed.
 /// - [onClose]: An optional callback function that is called when the popup is closed.
 class PopupView extends StatelessWidget {
-  const PopupView({
-    required this.popup,
-    this.onClose,
-    this.theme,
-    super.key,
-  });
+  const PopupView({required this.popup, this.onClose, this.theme, super.key});
 
   final VoidCallback? onClose;
   final Popup popup;
@@ -45,7 +40,6 @@ class PopupView extends StatelessWidget {
           color: themeData.colorScheme.surface,
           borderRadius: BorderRadius.circular(12),
         ),
-        padding: const EdgeInsets.all(16),
         child: Column(
           children: [
             _buildTitleWidget(
@@ -89,7 +83,7 @@ class PopupView extends StatelessWidget {
     TextStyle? style,
   }) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       // Header with title and close button
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -112,37 +106,35 @@ class PopupView extends StatelessWidget {
   }
 
   Widget _buildListView() {
-    return ListView(
-      children: [
-        // Body with popup elements
-        Column(
-          spacing: 8,
-          children: popup.evaluatedElements.isNotEmpty
-              ? popup.evaluatedElements.map((element) {
-                  if (element is FieldsPopupElement) {
-                    return _FieldsPopupElementView(
-                      fieldsElement: element,
-                      isExpanded: true,
-                    );
-                  } else if (element is AttachmentsPopupElement) {
-                    return _AttachmentsPopupElementView(
-                      attachmentsElement: element,
-                      isExpanded: true,
-                    );
-                  } else if (element is MediaPopupElement) {
-                    return _MediaPopupElementView(
-                      mediaElement: element,
-                      isExpanded: true,
-                    );
-                  } else if (element is TextPopupElement) {
-                    return _TextPopupElementView(textElement: element);
-                  } else {
-                    return const Text('Element not supported');
-                  }
-                }).toList()
-              : [const Text('No popup elements available.')],
-        ),
-      ],
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(12),
+      child: Column(
+        spacing: 8,
+        children: popup.evaluatedElements.isNotEmpty
+            ? popup.evaluatedElements.map((element) {
+                if (element is FieldsPopupElement) {
+                  return _FieldsPopupElementView(
+                    fieldsElement: element,
+                    isExpanded: true,
+                  );
+                } else if (element is AttachmentsPopupElement) {
+                  return _AttachmentsPopupElementView(
+                    attachmentsElement: element,
+                    isExpanded: true,
+                  );
+                } else if (element is MediaPopupElement) {
+                  return _MediaPopupElementView(
+                    mediaElement: element,
+                    isExpanded: true,
+                  );
+                } else if (element is TextPopupElement) {
+                  return _TextPopupElementView(textElement: element);
+                } else {
+                  return const Text('Element not supported');
+                }
+              }).toList()
+            : [const Text('No popup elements available.')],
+      ),
     );
   }
 }

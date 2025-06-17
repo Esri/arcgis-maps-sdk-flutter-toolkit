@@ -46,21 +46,20 @@ class _MediaPopupElementViewState extends State<_MediaPopupElementView> {
   Widget build(BuildContext context) {
     if (displayableMediaCount > 0) {
       return Card(
-        margin: const EdgeInsets.all(8),
         child: Theme(
           data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
           child: ExpansionTile(
             title: _PopupElementHeader(
-              title:
-                  widget.mediaElement.title.isEmpty
-                      ? 'Media'
-                      : widget.mediaElement.title,
+              title: widget.mediaElement.title.isEmpty
+                  ? 'Media'
+                  : widget.mediaElement.title,
               description: widget.mediaElement.description,
             ),
             initiallyExpanded: isExpanded,
             onExpansionChanged: (expanded) {
               setState(() => isExpanded = expanded);
             },
+            tilePadding: const EdgeInsets.symmetric(horizontal: 10),
             children: [
               _PopupMediaView(
                 popupMedia: widget.mediaElement.media,
@@ -95,31 +94,31 @@ class _PopupMediaView extends StatelessWidget {
 
     return SizedBox(
       height: mediaSize.height,
-      child:
-          (popupMedia.length > 1)
-              ? _buildMediaListWidgets(mediaSize)
-              : _buildMediaWidget(popupMedia.first, mediaSize),
+      child: (popupMedia.length > 1)
+          ? _buildMediaListWidgets(mediaSize)
+          : _buildMediaWidget(popupMedia.first, mediaSize),
     );
   }
 
   Widget _buildMediaListWidgets(Size mediaSize) {
-    return ListView.builder(
+    return ListView.separated(
       scrollDirection: Axis.horizontal,
       itemCount: popupMedia.length,
+      padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
       itemBuilder: (context, index) {
         final media = popupMedia[index];
-        return Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-          child: Container(
-            width: mediaSize.width,
-            height: mediaSize.height,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8),
-              color: Colors.grey.shade200,
-            ),
-            child: _buildMediaWidget(media, mediaSize),
+        return Container(
+          width: mediaSize.width,
+          height: mediaSize.height,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8),
+            color: Colors.grey.shade200,
           ),
+          child: _buildMediaWidget(media, mediaSize),
         );
+      },
+      separatorBuilder: (context, index) {
+        return const SizedBox(width: 8);
       },
     );
   }
