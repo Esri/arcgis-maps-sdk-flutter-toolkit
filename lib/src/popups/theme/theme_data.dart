@@ -27,7 +27,7 @@ part of '../../../arcgis_maps_toolkit.dart';
 /// PopupView(
 ///   theme: popupViewThemeData,
 ///   popup: myPopup,
-/// ),
+/// )
 /// ```
 ///
 /// Alternatively, developers can provide their own custom [ThemeData].
