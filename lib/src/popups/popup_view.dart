@@ -23,10 +23,13 @@ part of '../../arcgis_maps_toolkit.dart';
 /// parameters:
 /// - [popup]: The Popup object to be displayed.
 /// - [onClose]: An optional callback function that is called when the popup is closed.
+/// - [theme]: An optional parameter that specifies custom theme data for the popup.
 class PopupView extends StatefulWidget {
-  const PopupView({required this.popup, this.onClose, super.key});
-  final Popup popup;
+  const PopupView({required this.popup, this.onClose, this.theme, super.key});
+
   final VoidCallback? onClose;
+  final Popup popup;
+  final ThemeData? theme;
 
   @override
   State<PopupView> createState() => _PopupViewState();
@@ -44,30 +47,40 @@ class _PopupViewState extends State<PopupView> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        _buildTitleWidget(),
-        const Divider(),
-        Expanded(
-          child: FutureBuilder(
-            future: _evaluatedExpressionsFuture,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.done) {
-                return _buildListView();
-              } else if (snapshot.hasError) {
-                return Center(
-                  child: Text(
-                    'Error: ${snapshot.error}',
-                    style: const TextStyle(color: Colors.red),
-                  ),
-                );
-              } else {
-                return const Center(child: CircularProgressIndicator());
-              }
-            },
-          ),
+    final themeData = widget.theme ?? Theme.of(context);
+    return Theme(
+      data: themeData,
+      child: Container(
+        decoration: BoxDecoration(
+          color: themeData.colorScheme.surface,
+          borderRadius: BorderRadius.circular(12),
         ),
-      ],
+        child: Column(
+          children: [
+            _buildTitleWidget(),
+            const Divider(),
+            Expanded(
+              child: FutureBuilder(
+                future: _evaluatedExpressionsFuture,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    return _buildListView();
+                  } else if (snapshot.hasError) {
+                    return Center(
+                      child: Text(
+                        'Error: ${snapshot.error}',
+                        style: const TextStyle(color: Colors.red),
+                      ),
+                    );
+                  } else {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -107,31 +120,30 @@ class _PopupViewState extends State<PopupView> {
         // Body with popup elements
         Column(
           spacing: 8,
-          children:
-              widget.popup.evaluatedElements.isNotEmpty
-                  ? widget.popup.evaluatedElements.map((element) {
-                    if (element is FieldsPopupElement) {
-                      return _FieldsPopupElementView(
-                        fieldsElement: element,
-                        isExpanded: true,
-                      );
-                    } else if (element is AttachmentsPopupElement) {
-                      return _AttachmentsPopupElementView(
-                        attachmentsElement: element,
-                        isExpanded: true,
-                      );
-                    } else if (element is MediaPopupElement) {
-                      return _MediaPopupElementView(
-                        mediaElement: element,
-                        isExpanded: true,
-                      );
-                    } else if (element is TextPopupElement) {
-                      return _TextPopupElementView(textElement: element);
-                    } else {
-                      return const Text('Element not supported');
-                    }
-                  }).toList()
-                  : [const Text('No popup elements available.')],
+          children: widget.popup.evaluatedElements.isNotEmpty
+              ? widget.popup.evaluatedElements.map((element) {
+                  if (element is FieldsPopupElement) {
+                    return _FieldsPopupElementView(
+                      fieldsElement: element,
+                      isExpanded: true,
+                    );
+                  } else if (element is AttachmentsPopupElement) {
+                    return _AttachmentsPopupElementView(
+                      attachmentsElement: element,
+                      isExpanded: true,
+                    );
+                  } else if (element is MediaPopupElement) {
+                    return _MediaPopupElementView(
+                      mediaElement: element,
+                      isExpanded: true,
+                    );
+                  } else if (element is TextPopupElement) {
+                    return _TextPopupElementView(textElement: element);
+                  } else {
+                    return const Text('Element not supported');
+                  }
+                }).toList()
+              : [const Text('No popup elements available.')],
         ),
       ],
     );
