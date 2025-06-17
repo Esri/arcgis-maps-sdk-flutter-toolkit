@@ -49,6 +49,12 @@ class _MediaPopupElementViewState extends State<_MediaPopupElementView> {
         child: Theme(
           data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
           child: ExpansionTile(
+            collapsedShape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
             title: _PopupElementHeader(
               title: widget.mediaElement.title.isEmpty
                   ? 'Media'
