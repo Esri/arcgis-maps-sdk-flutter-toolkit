@@ -118,13 +118,9 @@ class _PopupMediaView extends StatelessWidget {
         final media = popupMedia[index];
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 8),
-          child: Container(
+          child: SizedBox(
             width: mediaSize.width,
             height: mediaSize.height,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(8),
-              color: Colors.grey.shade200,
-            ),
             child: _buildMediaWidget(media, mediaSize),
           ),
         );
