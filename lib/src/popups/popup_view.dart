@@ -84,7 +84,7 @@ class PopupView extends StatelessWidget {
     TextStyle? style,
   }) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+      padding: const EdgeInsets.all(12),
       // Header with title and close button
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -97,10 +97,7 @@ class PopupView extends StatelessWidget {
               maxLines: 2,
             ),
           ),
-          IconButton(
-            icon: const Icon(Icons.close),
-            onPressed: onClosePressed,
-          ),
+          IconButton(icon: const Icon(Icons.close), onPressed: onClosePressed),
         ],
       ),
     );
@@ -108,7 +105,7 @@ class PopupView extends StatelessWidget {
 
   Widget _buildListView() {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(10),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
       child: Column(
         spacing: 8,
         children: popup.evaluatedElements.isNotEmpty
