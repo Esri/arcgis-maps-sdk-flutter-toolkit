@@ -46,10 +46,14 @@ class _MediaPopupElementViewState extends State<_MediaPopupElementView> {
   Widget build(BuildContext context) {
     if (displayableMediaCount > 0) {
       return Card(
+        color: Colors.transparent,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         margin: const EdgeInsets.all(8),
         child: Theme(
           data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
           child: ExpansionTile(
+            backgroundColor: Colors.white,
+            collapsedBackgroundColor: Colors.white,
             collapsedShape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8),
             ),
