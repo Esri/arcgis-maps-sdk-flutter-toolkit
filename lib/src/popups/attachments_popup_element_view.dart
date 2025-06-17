@@ -79,10 +79,9 @@ class _AttachmentsPopupElementViewState
                 borderRadius: BorderRadius.circular(8),
               ),
               title: _PopupElementHeader(
-                title:
-                    widget.attachmentsElement.title.isEmpty
-                        ? 'Attachments'
-                        : widget.attachmentsElement.title,
+                title: widget.attachmentsElement.title.isEmpty
+                    ? 'Attachments'
+                    : widget.attachmentsElement.title,
                 description: widget.attachmentsElement.description,
               ),
               initiallyExpanded: isExpanded,
@@ -93,15 +92,12 @@ class _AttachmentsPopupElementViewState
               children: [
                 SizedBox(
                   height: 200,
-                  child:
-                      widget.attachmentsElement.attachments.isEmpty
-                          ? const Center(
-                            child: Text('No attachments available'),
-                          )
-                          : widget.attachmentsElement.displayType ==
-                              PopupAttachmentsDisplayType.preview
-                          ? _buildGridView()
-                          : _buildListView(),
+                  child: widget.attachmentsElement.attachments.isEmpty
+                      ? const Center(child: Text('No attachments available'))
+                      : widget.attachmentsElement.displayType ==
+                            PopupAttachmentsDisplayType.preview
+                      ? _buildGridView()
+                      : _buildListView(),
                 ),
               ],
             ),
@@ -185,8 +181,8 @@ class _PopupAttachmentViewInGalleryState
           if (attachment.contentType.startsWith('image') && mounted) {
             await showDialog(
               context: context,
-              builder:
-                  (context) => _DetailsScreenImageDialog(filePath: filePath!),
+              builder: (context) =>
+                  _DetailsScreenImageDialog(filePath: filePath!),
             );
           } else {
             await OpenFile.open(filePath, type: attachment.contentType);
@@ -278,10 +274,9 @@ class _PopupAttachmentViewInListState
         widget.popupAttachment.size.toSizeString,
         style: Theme.of(context).textTheme.titleSmall,
       ),
-      trailing:
-          filePath == null
-              ? (downloadFuture == null
-                  ? IconButton(
+      trailing: filePath == null
+          ? (downloadFuture == null
+                ? IconButton(
                     icon: const Icon(Icons.download),
                     onPressed: () {
                       setState(() {
@@ -289,7 +284,7 @@ class _PopupAttachmentViewInListState
                       });
                     },
                   )
-                  : FutureBuilder<void>(
+                : FutureBuilder<void>(
                     future: downloadFuture,
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
@@ -312,7 +307,7 @@ class _PopupAttachmentViewInListState
                       }
                     },
                   ))
-              : const Icon(Icons.check, color: Colors.green),
+          : const Icon(Icons.check, color: Colors.green),
       onTap: () {
         if (filePath == null) {
           if (downloadFuture == null) {
@@ -324,8 +319,8 @@ class _PopupAttachmentViewInListState
           if (widget.popupAttachment.contentType.startsWith('image')) {
             showDialog(
               context: context,
-              builder:
-                  (context) => _DetailsScreenImageDialog(filePath: filePath!),
+              builder: (context) =>
+                  _DetailsScreenImageDialog(filePath: filePath!),
             );
           } else {
             OpenFile.open(filePath, type: widget.popupAttachment.contentType);
