@@ -53,10 +53,18 @@ class _FieldsPopupElementViewState extends State<_FieldsPopupElementView> {
   @override
   Widget build(BuildContext context) {
     return Card(
+      color: Colors.transparent,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       margin: const EdgeInsets.all(8),
       child: Theme(
         data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
         child: ExpansionTile(
+          backgroundColor: Colors.white,
+          collapsedBackgroundColor: Colors.white,
+          collapsedShape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           title: _PopupElementHeader(
             title:
                 widget.fieldsElement.title.isEmpty
