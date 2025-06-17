@@ -30,12 +30,13 @@ class _PopupLineChart extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
-      child: LineChart(lineData),
+      child: ColoredBox(color: Colors.white, child: LineChart(lineData)),
     );
   }
 
   LineChartData get lineData {
     return LineChartData(
+      backgroundColor: Colors.white,
       maxY: _maximumYValue,
       lineBarsData: [
         LineChartBarData(

@@ -31,12 +31,16 @@ class _PopupBarChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(padding: const EdgeInsets.all(8), child: BarChart(barData));
+    return Padding(
+      padding: const EdgeInsets.all(8),
+      child: ColoredBox(color: Colors.white, child: BarChart(barData)),
+    );
   }
 
   /// Returns the bar chart data.
   BarChartData get barData {
     return BarChartData(
+      backgroundColor: Colors.white,
       rotationQuarterTurns: isColumnChart ? 0 : 1,
       alignment: BarChartAlignment.spaceEvenly,
       maxY: _maximumYValue,
