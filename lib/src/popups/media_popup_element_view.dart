@@ -57,10 +57,9 @@ class _MediaPopupElementViewState extends State<_MediaPopupElementView> {
               borderRadius: BorderRadius.circular(8),
             ),
             title: _PopupElementHeader(
-              title:
-                  widget.mediaElement.title.isEmpty
-                      ? 'Media'
-                      : widget.mediaElement.title,
+              title: widget.mediaElement.title.isEmpty
+                  ? 'Media'
+                  : widget.mediaElement.title,
               description: widget.mediaElement.description,
             ),
             initiallyExpanded: isExpanded,
@@ -101,10 +100,9 @@ class _PopupMediaView extends StatelessWidget {
 
     return SizedBox(
       height: mediaSize.height,
-      child:
-          (popupMedia.length > 1)
-              ? _buildMediaListWidgets(mediaSize)
-              : _buildMediaWidget(popupMedia.first, mediaSize),
+      child: (popupMedia.length > 1)
+          ? _buildMediaListWidgets(mediaSize)
+          : _buildMediaWidget(popupMedia.first, mediaSize),
     );
   }
 
