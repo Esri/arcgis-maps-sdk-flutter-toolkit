@@ -23,6 +23,7 @@ part of '../../arcgis_maps_toolkit.dart';
 /// parameters:
 /// - [popup]: The Popup object to be displayed.
 /// - [onClose]: An optional callback function that is called when the popup is closed.
+/// - [theme]: An optional parameter that specifies custom theme data for the popup.
 class PopupView extends StatelessWidget {
   const PopupView({required this.popup, this.onClose, this.theme, super.key});
 
