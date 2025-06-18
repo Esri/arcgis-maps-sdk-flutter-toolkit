@@ -52,16 +52,20 @@ class _FieldsPopupElementViewState extends State<_FieldsPopupElementView> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.fieldsElement.labels.isEmpty &&
+        widget.fieldsElement.formattedValues.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
     return Card(
       margin: const EdgeInsets.all(8),
       child: Theme(
         data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
         child: ExpansionTile(
           title: _PopupElementHeader(
-            title:
-                widget.fieldsElement.title.isEmpty
-                    ? 'Fields'
-                    : widget.fieldsElement.title,
+            title: widget.fieldsElement.title.isEmpty
+                ? 'Fields'
+                : widget.fieldsElement.title,
             description: widget.fieldsElement.description,
           ),
           initiallyExpanded: isExpanded,
@@ -69,8 +73,9 @@ class _FieldsPopupElementViewState extends State<_FieldsPopupElementView> {
             setState(() => isExpanded = expanded);
           },
           expandedCrossAxisAlignment: CrossAxisAlignment.start,
-          children:
-              displayFields.map((field) => _FieldRow(field: field)).toList(),
+          children: displayFields
+              .map((field) => _FieldRow(field: field))
+              .toList(),
         ),
       ),
     );
