@@ -178,11 +178,11 @@ class _AuthenticatorState extends State<Authenticator>
   @override
   FutureOr<void> handleNetworkAuthenticationChallenge(
     NetworkAuthenticationChallenge challenge,
-  ) {
+  ) async {
     switch (challenge) {
       case ServerTrustAuthenticationChallenge():
         // Show an _AuthenticatorTrust dialog, which will answer the challenge.
-        showDialog(
+        await showDialog(
           context: context,
           builder: (context) => _AuthenticatorTrust(challenge: challenge),
         );
@@ -190,13 +190,24 @@ class _AuthenticatorState extends State<Authenticator>
       case DigestAuthenticationChallenge():
       case NtlmAuthenticationChallenge():
         // Show an _AuthenticatorLogin dialog, which will answer the challenge.
-        showDialog(
+        await showDialog(
           context: context,
           builder: (context) =>
               _AuthenticatorLogin(challenge: _NetworkLoginChallenge(challenge)),
         );
-      default:
-        challenge.continueAndFail();
+      case ClientCertificateAuthenticationChallenge():
+        // Show an _AuthenticatorCertificateRequired dialog. If true is returned,
+        // continue to select a certificate.
+        final browse = await showDialog(
+          context: context,
+          builder: (context) =>
+              _AuthenticatorCertificateRequired(challenge: challenge),
+        );
+
+        if (browse ?? false) {
+          //fixme browse the drive and ask for a password
+          challenge.cancel();
+        }
     }
   }
 }

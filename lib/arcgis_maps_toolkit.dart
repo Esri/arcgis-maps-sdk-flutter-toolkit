@@ -32,6 +32,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 part 'src/authenticator/authenticator.dart';
+part 'src/authenticator/authenticator_certificate_required.dart';
 part 'src/authenticator/authenticator_login.dart';
 part 'src/authenticator/authenticator_trust.dart';
 part 'src/compass/compass.dart';
