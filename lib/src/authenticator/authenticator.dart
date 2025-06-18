@@ -196,18 +196,47 @@ class _AuthenticatorState extends State<Authenticator>
               _AuthenticatorLogin(challenge: _NetworkLoginChallenge(challenge)),
         );
       case ClientCertificateAuthenticationChallenge():
-        // Show an _AuthenticatorCertificateRequired dialog. If true is returned,
-        // continue to select a certificate.
-        final browse = await showDialog(
-          context: context,
-          builder: (context) =>
-              _AuthenticatorCertificateRequired(challenge: challenge),
-        );
-
-        if (browse ?? false) {
-          //fixme browse the drive and ask for a password
-          challenge.cancel();
-        }
+        await _clientCertificateWorkflow(challenge);
     }
+  }
+
+  Future<void> _clientCertificateWorkflow(
+    ClientCertificateAuthenticationChallenge challenge,
+  ) async {
+    // Show an _AuthenticatorCertificateRequired dialog.
+    final browse = await showDialog<bool>(
+      context: context,
+      builder: (context) =>
+          _AuthenticatorCertificateRequired(challenge: challenge),
+    );
+
+    if (browse == null || !browse) {
+      // If the user choose not to browse for a certificate, end here.
+      return;
+    }
+
+    // Browse for a pfx file.
+    final filePickerResult = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['pfx'],
+    );
+
+    if (filePickerResult == null ||
+        filePickerResult.files.isEmpty ||
+        !mounted) {
+      // If the user canceled the file picker, cancel the challenge and end here.
+      challenge.cancel();
+      return;
+    }
+
+    final file = filePickerResult.files.single;
+
+    // Show a dialog to prompt the user for the certificate file's password, which
+    // will answer the challenge.
+    await showDialog(
+      context: context,
+      builder: (context) =>
+          _AuthenticatorCertificatePassword(challenge: challenge, file: file),
+    );
   }
 }

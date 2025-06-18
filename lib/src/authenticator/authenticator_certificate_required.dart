@@ -1,5 +1,22 @@
+//
+// Copyright 2025 Esri
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//   https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+
 part of '../../arcgis_maps_toolkit.dart';
 
+// A dialog that prompts the user to browse for a client certificate.
 class _AuthenticatorCertificateRequired extends StatefulWidget {
   const _AuthenticatorCertificateRequired({required this.challenge});
 
@@ -12,7 +29,7 @@ class _AuthenticatorCertificateRequired extends StatefulWidget {
 
 class _AuthenticatorCertificateRequiredState
     extends State<_AuthenticatorCertificateRequired> {
-  // The result: true if the user browsed for a certificate, false if the user canceled.
+  // The result: true if the user wants to browse for a certificate, false if the user canceled.
   bool? _certificateResult;
 
   @override
@@ -64,6 +81,7 @@ class _AuthenticatorCertificateRequiredState
   }
 
   void browse() {
+    // The user intends to browse for a certificate. The challenge remains unanswered.
     Navigator.of(context).pop(_certificateResult = true);
   }
 

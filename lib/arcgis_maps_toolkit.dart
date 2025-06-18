@@ -22,6 +22,7 @@ import 'dart:io';
 import 'dart:math' as math;
 
 import 'package:arcgis_maps/arcgis_maps.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:open_file/open_file.dart';
@@ -31,12 +32,16 @@ import 'package:timer_builder/timer_builder.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
+// Authenticator Widget
 part 'src/authenticator/authenticator.dart';
 part 'src/authenticator/authenticator_certificate_required.dart';
+part 'src/authenticator/authenticator_certificate_password.dart';
 part 'src/authenticator/authenticator_login.dart';
 part 'src/authenticator/authenticator_trust.dart';
+// Compass Widget
 part 'src/compass/compass.dart';
 part 'src/compass/compass_needle_painter.dart';
+// Overview Map Widget
 part 'src/overview_map/overview_map.dart';
 // Popup Widget
 part 'src/popups/popup_view.dart';
