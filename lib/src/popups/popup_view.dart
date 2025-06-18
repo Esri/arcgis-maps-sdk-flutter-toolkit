@@ -23,13 +23,10 @@ part of '../../arcgis_maps_toolkit.dart';
 /// parameters:
 /// - [popup]: The Popup object to be displayed.
 /// - [onClose]: An optional callback function that is called when the popup is closed.
-/// - [theme]: An optional parameter that specifies custom theme data for the popup.
 class PopupView extends StatefulWidget {
-  const PopupView({required this.popup, this.onClose, this.theme, super.key});
-
-  final VoidCallback? onClose;
+  const PopupView({required this.popup, this.onClose, super.key});
   final Popup popup;
-  final ThemeData? theme;
+  final VoidCallback? onClose;
 
   @override
   State<PopupView> createState() => _PopupViewState();
@@ -47,15 +44,7 @@ class _PopupViewState extends State<PopupView> {
 
   @override
   Widget build(BuildContext context) {
-    final themeData = widget.theme ?? Theme.of(context);
-    return Theme(
-      data: themeData,
-      child: Container(
-        decoration: BoxDecoration(
-          color: themeData.colorScheme.surface,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Column(
+    return Column(
           children: [
             _buildTitleWidget(),
             const Divider(),
@@ -79,8 +68,6 @@ class _PopupViewState extends State<PopupView> {
               ),
             ),
           ],
-        ),
-      ),
     );
   }
 
