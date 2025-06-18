@@ -52,7 +52,6 @@ class _AttachmentsPopupElementViewState
     }
 
     return Card(
-      margin: const EdgeInsets.all(8),
       child: FutureBuilder<void>(
         future: fetchAttachmentsFuture,
         builder: (context, snapshot) {
@@ -73,7 +72,9 @@ class _AttachmentsPopupElementViewState
             data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
             child: ExpansionTile(
               title: _PopupElementHeader(
-                title: widget.attachmentsElement.title,
+                title: widget.attachmentsElement.title.isEmpty
+                    ? 'Attachments'
+                    : widget.attachmentsElement.title,
                 description: widget.attachmentsElement.description,
               ),
               initiallyExpanded: isExpanded,
@@ -81,6 +82,8 @@ class _AttachmentsPopupElementViewState
                 setState(() => isExpanded = expanded);
               },
               expandedCrossAxisAlignment: CrossAxisAlignment.start,
+              tilePadding: const EdgeInsets.symmetric(horizontal: 10),
+              childrenPadding: const EdgeInsets.symmetric(horizontal: 10),
               children: [
                 SizedBox(
                   height: 200,

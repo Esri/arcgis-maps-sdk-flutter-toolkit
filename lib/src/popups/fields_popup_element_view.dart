@@ -35,19 +35,11 @@ class _FieldsPopupElementView extends StatefulWidget {
 
 class _FieldsPopupElementViewState extends State<_FieldsPopupElementView> {
   late bool isExpanded;
-  late final List<_DisplayField> displayFields;
 
   @override
   void initState() {
     super.initState();
     isExpanded = widget.isExpanded;
-    displayFields = List.generate(
-      widget.fieldsElement.labels.length,
-      (index) => _DisplayField(
-        label: widget.fieldsElement.labels[index],
-        formattedValue: widget.fieldsElement.formattedValues[index],
-      ),
-    );
   }
 
   @override
@@ -58,7 +50,6 @@ class _FieldsPopupElementViewState extends State<_FieldsPopupElementView> {
     }
 
     return Card(
-      margin: const EdgeInsets.all(8),
       child: Theme(
         data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
         child: ExpansionTile(
@@ -112,7 +103,6 @@ class _FieldRow extends StatelessWidget {
         children: [
           Text(field.label, style: Theme.of(context).textTheme.titleSmall),
           _FormattedValueText(formattedValue: field.formattedValue),
-          const Divider(color: Colors.grey, height: 2, thickness: 1),
         ],
       ),
     );
