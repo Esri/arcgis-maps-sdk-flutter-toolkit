@@ -45,29 +45,29 @@ class _PopupViewState extends State<PopupView> {
   @override
   Widget build(BuildContext context) {
     return Column(
-          children: [
-            _buildTitleWidget(),
-            const Divider(),
-            Expanded(
-              child: FutureBuilder(
-                future: _evaluatedExpressionsFuture,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.done) {
-                    return _buildListView();
-                  } else if (snapshot.hasError) {
-                    return Center(
-                      child: Text(
-                        'Error: ${snapshot.error}',
-                        style: const TextStyle(color: Colors.red),
-                      ),
-                    );
-                  } else {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                },
-              ),
-            ),
-          ],
+      children: [
+        _buildTitleWidget(),
+        const Divider(),
+        Expanded(
+          child: FutureBuilder(
+            future: _evaluatedExpressionsFuture,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.done) {
+                return _buildListView();
+              } else if (snapshot.hasError) {
+                return Center(
+                  child: Text(
+                    'Error: ${snapshot.error}',
+                    style: const TextStyle(color: Colors.red),
+                  ),
+                );
+              } else {
+                return const Center(child: CircularProgressIndicator());
+              }
+            },
+          ),
+        ),
+      ],
     );
   }
 
