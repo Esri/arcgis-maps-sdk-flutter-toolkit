@@ -73,9 +73,25 @@ class _FieldsPopupElementViewState extends State<_FieldsPopupElementView> {
             setState(() => isExpanded = expanded);
           },
           expandedCrossAxisAlignment: CrossAxisAlignment.start,
-          children: displayFields
-              .map((field) => _FieldRow(field: field))
-              .toList(),
+          tilePadding: const EdgeInsets.symmetric(horizontal: 10),
+          childrenPadding: const EdgeInsets.symmetric(horizontal: 10),
+          children: [
+            ListView.separated(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: widget.fieldsElement.labels.length,
+              separatorBuilder: (context, index) =>
+                  const Divider(color: Colors.grey, height: 2, thickness: 1),
+              itemBuilder: (context, index) {
+                return _FieldRow(
+                  field: _DisplayField(
+                    label: widget.fieldsElement.labels[index],
+                    formattedValue: widget.fieldsElement.formattedValues[index],
+                  ),
+                );
+              },
+            ),
+          ],
         ),
       ),
     );
@@ -89,9 +105,10 @@ class _FieldRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(10, 1, 10, 1),
+      padding: const EdgeInsets.symmetric(vertical: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        spacing: 5,
         children: [
           Text(field.label, style: Theme.of(context).textTheme.titleSmall),
           _FormattedValueText(formattedValue: field.formattedValue),

@@ -69,7 +69,6 @@ class _TextPopupElementViewState extends State<_TextPopupElementView> {
     if (widget.textElement.text.isEmpty) return const SizedBox.shrink();
 
     return Card(
-      margin: const EdgeInsets.all(8),
       child: SizedBox(
         height: height, // Default height until calculated
         child: WebViewWidget(controller: _controller),
