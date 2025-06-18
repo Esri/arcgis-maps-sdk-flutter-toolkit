@@ -23,117 +23,116 @@ part of '../../arcgis_maps_toolkit.dart';
 /// parameters:
 /// - [popup]: The Popup object to be displayed.
 /// - [onClose]: An optional callback function that is called when the popup is closed.
-class PopupView extends StatefulWidget {
-  const PopupView({required this.popup, this.onClose, super.key});
-  final Popup popup;
+/// - [theme]: An optional parameter that specifies custom theme data for the popup.
+class PopupView extends StatelessWidget {
+  const PopupView({required this.popup, this.onClose, this.theme, super.key});
+
   final VoidCallback? onClose;
-
-  @override
-  State<PopupView> createState() => _PopupViewState();
-}
-
-class _PopupViewState extends State<PopupView> {
-  late final Future<List<PopupExpressionEvaluation>>
-  _evaluatedExpressionsFuture;
-
-  @override
-  void initState() {
-    super.initState();
-    _evaluatedExpressionsFuture = widget.popup.evaluateExpressions();
-  }
+  final Popup popup;
+  final ThemeData? theme;
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        _buildTitleWidget(),
-        const Divider(),
-        Expanded(
-          child: FutureBuilder(
-            future: _evaluatedExpressionsFuture,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.done) {
-                return _buildListView();
-              } else if (snapshot.hasError) {
-                return Center(
-                  child: Text(
-                    'Error: ${snapshot.error}',
-                    style: const TextStyle(color: Colors.red),
-                  ),
-                );
-              } else {
-                return const Center(child: CircularProgressIndicator());
-              }
-            },
-          ),
+    final themeData = theme ?? Theme.of(context);
+    return Theme(
+      data: themeData,
+      child: Container(
+        decoration: BoxDecoration(
+          color: themeData.colorScheme.surface,
+          borderRadius: BorderRadius.circular(12),
         ),
-      ],
+        child: Column(
+          children: [
+            _buildTitleWidget(
+              style: themeData.textTheme.titleMedium,
+              onClosePressed: () {
+                if (onClose != null) {
+                  onClose!();
+                } else {
+                  Navigator.of(context).pop();
+                }
+              },
+            ),
+            const Divider(color: Colors.grey, height: 2, thickness: 2),
+            Expanded(
+              child: FutureBuilder(
+                future: popup.evaluateExpressions(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    return _buildListView();
+                  } else if (snapshot.hasError) {
+                    return Center(
+                      child: Text(
+                        'Error: ${snapshot.error}',
+                        style: const TextStyle(color: Colors.red),
+                      ),
+                    );
+                  } else {
+                    return const Center(child: CircularProgressIndicator());
+                  }
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
-  Widget _buildTitleWidget() {
+  Widget _buildTitleWidget({
+    required VoidCallback onClosePressed,
+    TextStyle? style,
+  }) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
+      padding: const EdgeInsets.all(12),
       // Header with title and close button
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Expanded(
             child: Text(
-              widget.popup.title,
-              style: Theme.of(context).textTheme.titleMedium,
+              popup.title,
+              style: style,
               overflow: TextOverflow.ellipsis,
               maxLines: 2,
             ),
           ),
-          IconButton(
-            icon: const Icon(Icons.close),
-            onPressed: () {
-              if (widget.onClose != null) {
-                widget.onClose!();
-              } else {
-                Navigator.of(context).pop();
-              }
-            },
-          ),
+          IconButton(icon: const Icon(Icons.close), onPressed: onClosePressed),
         ],
       ),
     );
   }
 
   Widget _buildListView() {
-    return ListView(
-      children: [
-        // Body with popup elements
-        Column(
-          spacing: 8,
-          children:
-              widget.popup.evaluatedElements.isNotEmpty
-                  ? widget.popup.evaluatedElements.map((element) {
-                    if (element is FieldsPopupElement) {
-                      return _FieldsPopupElementView(
-                        fieldsElement: element,
-                        isExpanded: true,
-                      );
-                    } else if (element is AttachmentsPopupElement) {
-                      return _AttachmentsPopupElementView(
-                        attachmentsElement: element,
-                        isExpanded: true,
-                      );
-                    } else if (element is MediaPopupElement) {
-                      return _MediaPopupElementView(
-                        mediaElement: element,
-                        isExpanded: true,
-                      );
-                    } else if (element is TextPopupElement) {
-                      return _TextPopupElementView(textElement: element);
-                    } else {
-                      return const Text('Element not supported');
-                    }
-                  }).toList()
-                  : [const Text('No popup elements available.')],
-        ),
-      ],
+    return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+      child: Column(
+        spacing: 8,
+        children: popup.evaluatedElements.isNotEmpty
+            ? popup.evaluatedElements.map((element) {
+                if (element is FieldsPopupElement) {
+                  return _FieldsPopupElementView(
+                    fieldsElement: element,
+                    isExpanded: true,
+                  );
+                } else if (element is AttachmentsPopupElement) {
+                  return _AttachmentsPopupElementView(
+                    attachmentsElement: element,
+                    isExpanded: true,
+                  );
+                } else if (element is MediaPopupElement) {
+                  return _MediaPopupElementView(
+                    mediaElement: element,
+                    isExpanded: true,
+                  );
+                } else if (element is TextPopupElement) {
+                  return _TextPopupElementView(textElement: element);
+                } else {
+                  return const Text('Element not supported');
+                }
+              }).toList()
+            : [const Text('No popup elements available.')],
+      ),
     );
   }
 }

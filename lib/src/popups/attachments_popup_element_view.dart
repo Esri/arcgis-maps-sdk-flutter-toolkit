@@ -48,7 +48,6 @@ class _AttachmentsPopupElementViewState
   @override
   Widget build(BuildContext context) {
     return Card(
-      margin: const EdgeInsets.all(8),
       child: FutureBuilder<void>(
         future: fetchAttachmentsFuture,
         builder: (context, snapshot) {
@@ -69,10 +68,9 @@ class _AttachmentsPopupElementViewState
             data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
             child: ExpansionTile(
               title: _PopupElementHeader(
-                title:
-                    widget.attachmentsElement.title.isEmpty
-                        ? 'Attachments'
-                        : widget.attachmentsElement.title,
+                title: widget.attachmentsElement.title.isEmpty
+                    ? 'Attachments'
+                    : widget.attachmentsElement.title,
                 description: widget.attachmentsElement.description,
               ),
               initiallyExpanded: isExpanded,
@@ -80,18 +78,17 @@ class _AttachmentsPopupElementViewState
                 setState(() => isExpanded = expanded);
               },
               expandedCrossAxisAlignment: CrossAxisAlignment.start,
+              tilePadding: const EdgeInsets.symmetric(horizontal: 10),
+              childrenPadding: const EdgeInsets.symmetric(horizontal: 10),
               children: [
                 SizedBox(
                   height: 200,
-                  child:
-                      widget.attachmentsElement.attachments.isEmpty
-                          ? const Center(
-                            child: Text('No attachments available'),
-                          )
-                          : widget.attachmentsElement.displayType ==
-                              PopupAttachmentsDisplayType.preview
-                          ? _buildGridView()
-                          : _buildListView(),
+                  child: widget.attachmentsElement.attachments.isEmpty
+                      ? const Center(child: Text('No attachments available'))
+                      : widget.attachmentsElement.displayType ==
+                            PopupAttachmentsDisplayType.preview
+                      ? _buildGridView()
+                      : _buildListView(),
                 ),
               ],
             ),
@@ -175,8 +172,8 @@ class _PopupAttachmentViewInGalleryState
           if (attachment.contentType.startsWith('image') && mounted) {
             await showDialog(
               context: context,
-              builder:
-                  (context) => _DetailsScreenImageDialog(filePath: filePath!),
+              builder: (context) =>
+                  _DetailsScreenImageDialog(filePath: filePath!),
             );
           } else {
             await OpenFile.open(filePath, type: attachment.contentType);
@@ -268,10 +265,9 @@ class _PopupAttachmentViewInListState
         widget.popupAttachment.size.toSizeString,
         style: Theme.of(context).textTheme.titleSmall,
       ),
-      trailing:
-          filePath == null
-              ? (downloadFuture == null
-                  ? IconButton(
+      trailing: filePath == null
+          ? (downloadFuture == null
+                ? IconButton(
                     icon: const Icon(Icons.download),
                     onPressed: () {
                       setState(() {
@@ -279,7 +275,7 @@ class _PopupAttachmentViewInListState
                       });
                     },
                   )
-                  : FutureBuilder<void>(
+                : FutureBuilder<void>(
                     future: downloadFuture,
                     builder: (context, snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
@@ -302,7 +298,7 @@ class _PopupAttachmentViewInListState
                       }
                     },
                   ))
-              : const Icon(Icons.check, color: Colors.green),
+          : const Icon(Icons.check, color: Colors.green),
       onTap: () {
         if (filePath == null) {
           if (downloadFuture == null) {
@@ -314,8 +310,8 @@ class _PopupAttachmentViewInListState
           if (widget.popupAttachment.contentType.startsWith('image')) {
             showDialog(
               context: context,
-              builder:
-                  (context) => _DetailsScreenImageDialog(filePath: filePath!),
+              builder: (context) =>
+                  _DetailsScreenImageDialog(filePath: filePath!),
             );
           } else {
             OpenFile.open(filePath, type: widget.popupAttachment.contentType);
