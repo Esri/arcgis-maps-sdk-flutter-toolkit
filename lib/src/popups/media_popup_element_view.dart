@@ -98,7 +98,10 @@ class _PopupMediaView extends StatelessWidget {
       height: mediaSize.height,
       child: (popupMedia.length > 1)
           ? _buildMediaListWidgets(mediaSize)
-          : _buildMediaWidget(popupMedia.first, mediaSize),
+          : Padding(
+              padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
+              child: _buildMediaWidget(popupMedia.first, mediaSize),
+            ),
     );
   }
 
