@@ -37,6 +37,9 @@ class _AuthenticatorCertificatePasswordState
   // Controller for the password text field.
   final _passwordController = TextEditingController();
 
+  // An error message to display.
+  String? _errorMessage;
+
   // The result: true if the user provided a password, false if the user canceled.
   bool? _passwordResult;
 
@@ -102,6 +105,9 @@ class _AuthenticatorCertificatePasswordState
                   ),
                 ],
               ),
+              // Display an error message if there is one.
+              if (_errorMessage != null)
+                Text(_errorMessage!, style: const TextStyle(color: Colors.red)),
             ],
           ),
         ),
@@ -110,15 +116,51 @@ class _AuthenticatorCertificatePasswordState
   }
 
   void accept() {
-    // Provide the password for the certificate and respond to the challenge.
+    final bytes = File(widget.file.path!).readAsBytesSync();
+    final password = _passwordController.text;
+
+    // Check that the certificate/password is valid before accepting it.
+    if (!_validateCertificate(bytes, password)) {
+      return;
+    }
+
+    // Respond to the challenge with the provided certificate and password.
     widget.challenge.continueWithCredential(
       ClientCertificateNetworkCredential.forChallenge(
         widget.challenge,
-        File(widget.file.path!).readAsBytesSync(),
-        _passwordController.text,
+        bytes,
+        password,
       ),
     );
     Navigator.of(context).pop(_passwordResult = true);
+  }
+
+  bool _validateCertificate(Uint8List bytes, String password) {
+    // Check whether the certificate/password can be successfully applied to a SecurityContext.
+    String? errorMessage;
+    try {
+      final securityContext = SecurityContext();
+      securityContext.useCertificateChainBytes(bytes, password: password);
+      securityContext.usePrivateKeyBytes(bytes, password: password);
+    } on TlsException catch (e) {
+      if (e.osError?.message.toLowerCase().contains('incorrect_password') ??
+          false) {
+        errorMessage = 'The password is incorrect.';
+      } else {
+        // Some other TLS error occurred.
+        errorMessage = e.toString();
+      }
+    } on Exception catch (e) {
+      // Some other error occurred.
+      errorMessage = e.toString();
+    }
+
+    if (errorMessage != null) {
+      setState(() => _errorMessage = errorMessage);
+      return false;
+    }
+
+    return true;
   }
 
   void cancel() {
