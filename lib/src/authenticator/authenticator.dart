@@ -178,11 +178,11 @@ class _AuthenticatorState extends State<Authenticator>
   @override
   FutureOr<void> handleNetworkAuthenticationChallenge(
     NetworkAuthenticationChallenge challenge,
-  ) {
+  ) async {
     switch (challenge) {
       case ServerTrustAuthenticationChallenge():
         // Show an _AuthenticatorTrust dialog, which will answer the challenge.
-        showDialog(
+        await showDialog(
           context: context,
           builder: (context) => _AuthenticatorTrust(challenge: challenge),
         );
@@ -190,13 +190,53 @@ class _AuthenticatorState extends State<Authenticator>
       case DigestAuthenticationChallenge():
       case NtlmAuthenticationChallenge():
         // Show an _AuthenticatorLogin dialog, which will answer the challenge.
-        showDialog(
+        await showDialog(
           context: context,
           builder: (context) =>
               _AuthenticatorLogin(challenge: _NetworkLoginChallenge(challenge)),
         );
-      default:
-        challenge.continueAndFail();
+      case ClientCertificateAuthenticationChallenge():
+        await _clientCertificateWorkflow(challenge);
     }
+  }
+
+  Future<void> _clientCertificateWorkflow(
+    ClientCertificateAuthenticationChallenge challenge,
+  ) async {
+    // Show an _AuthenticatorCertificateRequired dialog.
+    final browse = await showDialog<bool>(
+      context: context,
+      builder: (context) =>
+          _AuthenticatorCertificateRequired(challenge: challenge),
+    );
+
+    if (browse == null || !browse) {
+      // If the user choose not to browse for a certificate, end here.
+      return;
+    }
+
+    // Browse for a pfx file.
+    final filePickerResult = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['pfx'],
+    );
+
+    if (filePickerResult == null ||
+        filePickerResult.files.isEmpty ||
+        !mounted) {
+      // If the user canceled the file picker, cancel the challenge and end here.
+      challenge.cancel();
+      return;
+    }
+
+    final file = filePickerResult.files.single;
+
+    // Show a dialog to prompt the user for the certificate file's password, which
+    // will answer the challenge.
+    await showDialog(
+      context: context,
+      builder: (context) =>
+          _AuthenticatorCertificatePassword(challenge: challenge, file: file),
+    );
   }
 }
