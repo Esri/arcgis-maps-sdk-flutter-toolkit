@@ -47,53 +47,52 @@ class _AttachmentsPopupElementViewState
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: FutureBuilder<void>(
-        future: fetchAttachmentsFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const SizedBox(
-              height: 200,
-              child: Center(child: CircularProgressIndicator()),
-            );
-          } else if (snapshot.hasError) {
-            return SizedBox(
-              height: 200,
-              child: Center(
+    if (widget.attachmentsElement.attachments.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return SizedBox(
+      height: 200,
+      child: Card(
+        child: FutureBuilder<void>(
+          future: fetchAttachmentsFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Center(
                 child: Text('Failed to load attachments: ${snapshot.error}'),
+              );
+            }
+            return Theme(
+              data: Theme.of(
+                context,
+              ).copyWith(dividerColor: Colors.transparent),
+              child: ExpansionTile(
+                title: _PopupElementHeader(
+                  title: widget.attachmentsElement.title.isEmpty
+                      ? 'Attachments'
+                      : widget.attachmentsElement.title,
+                  description: widget.attachmentsElement.description,
+                ),
+                initiallyExpanded: isExpanded,
+                onExpansionChanged: (expanded) {
+                  setState(() => isExpanded = expanded);
+                },
+                expandedCrossAxisAlignment: CrossAxisAlignment.start,
+                tilePadding: const EdgeInsets.symmetric(horizontal: 10),
+                childrenPadding: const EdgeInsets.symmetric(horizontal: 10),
+                children: [
+                  if (widget.attachmentsElement.displayType ==
+                      PopupAttachmentsDisplayType.preview)
+                    _buildGridView()
+                  else
+                    _buildListView(),
+                ],
               ),
             );
-          }
-          return Theme(
-            data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
-            child: ExpansionTile(
-              title: _PopupElementHeader(
-                title: widget.attachmentsElement.title.isEmpty
-                    ? 'Attachments'
-                    : widget.attachmentsElement.title,
-                description: widget.attachmentsElement.description,
-              ),
-              initiallyExpanded: isExpanded,
-              onExpansionChanged: (expanded) {
-                setState(() => isExpanded = expanded);
-              },
-              expandedCrossAxisAlignment: CrossAxisAlignment.start,
-              tilePadding: const EdgeInsets.symmetric(horizontal: 10),
-              childrenPadding: const EdgeInsets.symmetric(horizontal: 10),
-              children: [
-                SizedBox(
-                  height: 200,
-                  child: widget.attachmentsElement.attachments.isEmpty
-                      ? const Center(child: Text('No attachments available'))
-                      : widget.attachmentsElement.displayType ==
-                            PopupAttachmentsDisplayType.preview
-                      ? _buildGridView()
-                      : _buildListView(),
-                ),
-              ],
-            ),
-          );
-        },
+          },
+        ),
       ),
     );
   }

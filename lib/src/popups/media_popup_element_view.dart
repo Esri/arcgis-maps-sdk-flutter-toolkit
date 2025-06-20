@@ -92,11 +92,16 @@ class _PopupMediaView extends StatelessWidget {
       200,
     );
 
+    if (popupMedia.isEmpty) return const SizedBox.shrink();
+
     return SizedBox(
       height: mediaSize.height,
       child: (popupMedia.length > 1)
           ? _buildMediaListWidgets(mediaSize)
-          : _buildMediaWidget(popupMedia.first, mediaSize),
+          : Padding(
+              padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
+              child: _buildMediaWidget(popupMedia.first, mediaSize),
+            ),
     );
   }
 
