@@ -61,7 +61,12 @@ class _AttachmentsPopupElementViewState
               return const Center(child: CircularProgressIndicator());
             } else if (snapshot.hasError) {
               return Center(
-                child: Text('Failed to load attachments: ${snapshot.error}'),
+                child: Text(
+                  'Unable to load attachments.',
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyLarge?.copyWith(color: Colors.red),
+                ),
               );
             }
             return Theme(
