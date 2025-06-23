@@ -48,6 +48,9 @@ class _AttachmentsPopupElementViewState
   @override
   Widget build(BuildContext context) {
     return Card(
+      color:
+          Theme.of(context).cardTheme.color ??
+          Theme.of(context).colorScheme.surface,
       child: FutureBuilder<void>(
         future: fetchAttachmentsFuture,
         builder: (context, snapshot) {
@@ -67,6 +70,22 @@ class _AttachmentsPopupElementViewState
           return Theme(
             data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
             child: ExpansionTile(
+              backgroundColor:
+                  Theme.of(context).expansionTileTheme.backgroundColor ??
+                  Colors.transparent,
+              collapsedBackgroundColor:
+                  Theme.of(
+                    context,
+                  ).expansionTileTheme.collapsedBackgroundColor ??
+                  Colors.transparent,
+              collapsedShape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+              tilePadding: const EdgeInsets.symmetric(horizontal: 10),
+              childrenPadding: const EdgeInsets.all(10),
               title: _PopupElementHeader(
                 title: widget.attachmentsElement.title.isEmpty
                     ? 'Attachments'
@@ -78,10 +97,12 @@ class _AttachmentsPopupElementViewState
                 setState(() => isExpanded = expanded);
               },
               expandedCrossAxisAlignment: CrossAxisAlignment.start,
-              tilePadding: const EdgeInsets.symmetric(horizontal: 10),
-              childrenPadding: const EdgeInsets.symmetric(horizontal: 10),
               children: [
-                SizedBox(
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(8),
+                    color: const Color.fromARGB(255, 255, 252, 252),
+                  ),
                   height: 200,
                   child: widget.attachmentsElement.attachments.isEmpty
                       ? const Center(child: Text('No attachments available'))
@@ -137,7 +158,7 @@ class _PopupAttachmentViewInGallery extends StatefulWidget {
 
 class _PopupAttachmentViewInGalleryState
     extends State<_PopupAttachmentViewInGallery> {
-  final double thumbnailSize = 50;
+  final double thumbnailSize = 30;
   late Future<ArcGISImage> thumbnailFuture;
   String? filePath;
 
@@ -181,6 +202,8 @@ class _PopupAttachmentViewInGalleryState
         }
       },
       child: Card(
+        elevation: 0,
+        color: const Color.fromARGB(255, 255, 252, 252),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -189,7 +212,7 @@ class _PopupAttachmentViewInGalleryState
               attachment.name,
               style: Theme.of(
                 context,
-              ).textTheme.labelSmall?.copyWith(color: Colors.grey),
+              ).textTheme.titleSmall?.copyWith(color: Colors.black),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
@@ -202,9 +225,9 @@ class _PopupAttachmentViewInGalleryState
               overflow: TextOverflow.ellipsis,
             ),
             if (filePath == null)
-              const Icon(Icons.download, color: Colors.indigoAccent, size: 12)
+              Icon(Icons.download, color: Theme.of(context).colorScheme.primary)
             else
-              const Icon(Icons.check, color: Colors.green, size: 12),
+              const Icon(Icons.check, color: Colors.green),
           ],
         ),
       ),
@@ -260,15 +283,25 @@ class _PopupAttachmentViewInListState
         widget.popupAttachment,
         thumbnailSize,
       ),
-      title: Text(widget.popupAttachment.name),
+      title: Text(
+        widget.popupAttachment.name,
+        style: Theme.of(
+          context,
+        ).textTheme.titleSmall?.copyWith(color: Colors.black),
+      ),
       subtitle: Text(
         widget.popupAttachment.size.toSizeString,
-        style: Theme.of(context).textTheme.titleSmall,
+        style: Theme.of(
+          context,
+        ).textTheme.labelSmall?.copyWith(color: Colors.grey),
       ),
       trailing: filePath == null
           ? (downloadFuture == null
                 ? IconButton(
-                    icon: const Icon(Icons.download),
+                    icon: Icon(
+                      Icons.download,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
                     onPressed: () {
                       setState(() {
                         downloadFuture = downloadAttachment();
@@ -372,20 +405,24 @@ Future<String?> _downloadingAttachment(PopupAttachment popupAttachment) async {
   }
 }
 
-Icon _getContentTypeIcon(String contentType, {double size = 35}) {
+Icon _getContentTypeIcon(
+  String contentType, {
+  double size = 30,
+  Color color = Colors.grey,
+}) {
   switch (contentType) {
     case 'application/pdf':
-      return Icon(Icons.picture_as_pdf, size: size);
+      return Icon(Icons.picture_as_pdf, size: size, color: color);
     case 'video/quicktime':
-      return Icon(Icons.videocam, size: size);
+      return Icon(Icons.videocam, size: size, color: color);
     case 'application/octet-stream':
-      return Icon(Icons.edit_document, size: size);
+      return Icon(Icons.edit_document, size: size, color: color);
     case 'image/jpeg':
     case 'image/png':
     case 'image/gif':
-      return Icon(Icons.image, size: size);
+      return Icon(Icons.image, size: size, color: color);
     default:
-      return Icon(Icons.device_unknown, size: size);
+      return Icon(Icons.device_unknown, size: size, color: color);
   }
 }
 
