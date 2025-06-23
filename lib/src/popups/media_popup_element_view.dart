@@ -46,9 +46,18 @@ class _MediaPopupElementViewState extends State<_MediaPopupElementView> {
   Widget build(BuildContext context) {
     if (displayableMediaCount > 0) {
       return Card(
+        color:
+            Theme.of(context).cardTheme.color ??
+            Theme.of(context).colorScheme.surface,
         child: Theme(
           data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
           child: ExpansionTile(
+            backgroundColor:
+                Theme.of(context).expansionTileTheme.backgroundColor ??
+                Colors.transparent,
+            collapsedBackgroundColor:
+                Theme.of(context).expansionTileTheme.collapsedBackgroundColor ??
+                Colors.transparent,
             collapsedShape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8),
             ),
@@ -66,6 +75,7 @@ class _MediaPopupElementViewState extends State<_MediaPopupElementView> {
               setState(() => isExpanded = expanded);
             },
             tilePadding: const EdgeInsets.symmetric(horizontal: 10),
+            childrenPadding: const EdgeInsets.all(10),
             children: [
               _PopupMediaView(
                 popupMedia: widget.mediaElement.media,
@@ -102,7 +112,13 @@ class _PopupMediaView extends StatelessWidget {
       height: mediaSize.height,
       child: (popupMedia.length > 1)
           ? _buildMediaListWidgets(mediaSize)
-          : _buildMediaWidget(popupMedia.first, mediaSize),
+          : Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                color: const Color.fromARGB(255, 255, 252, 252),
+              ),
+              child: _buildMediaWidget(popupMedia.first, mediaSize),
+            ),
     );
   }
 
@@ -110,16 +126,15 @@ class _PopupMediaView extends StatelessWidget {
     return ListView.separated(
       scrollDirection: Axis.horizontal,
       itemCount: popupMedia.length,
-      padding: const EdgeInsets.fromLTRB(10, 0, 10, 10),
       itemBuilder: (context, index) {
         final media = popupMedia[index];
         return Container(
-          width: mediaSize.width,
-          height: mediaSize.height,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(8),
-            color: Colors.grey.shade200,
+            color: const Color.fromARGB(255, 255, 252, 252),
           ),
+          width: mediaSize.width,
+          height: mediaSize.height,
           child: _buildMediaWidget(media, mediaSize),
         );
       },
