@@ -29,7 +29,7 @@ class _PopupLineChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+      padding: const EdgeInsetsGeometry.all(5),
       child: LineChart(lineData),
     );
   }
@@ -53,6 +53,7 @@ class _PopupLineChart extends StatelessWidget {
       borderData: _flBorderData,
       lineTouchData: LineTouchData(
         touchTooltipData: LineTouchTooltipData(
+          getTooltipColor: (group) => Colors.grey.withAlpha(230),
           fitInsideHorizontally: true,
           fitInsideVertically: true,
           getTooltipItems: (touchedSpots) {
