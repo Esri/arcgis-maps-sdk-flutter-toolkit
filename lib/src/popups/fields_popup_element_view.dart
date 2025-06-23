@@ -45,9 +45,22 @@ class _FieldsPopupElementViewState extends State<_FieldsPopupElementView> {
   @override
   Widget build(BuildContext context) {
     return Card(
+      color:
+          Theme.of(context).cardTheme.color ??
+          Theme.of(context).colorScheme.surface,
       child: Theme(
         data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
         child: ExpansionTile(
+          backgroundColor:
+              Theme.of(context).expansionTileTheme.backgroundColor ??
+              Colors.transparent,
+          collapsedBackgroundColor:
+              Theme.of(context).expansionTileTheme.collapsedBackgroundColor ??
+              Colors.transparent,
+          collapsedShape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+          ),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           title: _PopupElementHeader(
             title: widget.fieldsElement.title.isEmpty
                 ? 'Fields'
@@ -60,14 +73,14 @@ class _FieldsPopupElementViewState extends State<_FieldsPopupElementView> {
           },
           expandedCrossAxisAlignment: CrossAxisAlignment.start,
           tilePadding: const EdgeInsets.symmetric(horizontal: 10),
-          childrenPadding: const EdgeInsets.symmetric(horizontal: 10),
+          childrenPadding: const EdgeInsets.all(10),
           children: [
             ListView.separated(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               itemCount: widget.fieldsElement.labels.length,
               separatorBuilder: (context, index) =>
-                  const Divider(color: Colors.grey, height: 2, thickness: 1),
+                  const Divider(color: Colors.grey, height: 5, thickness: 1),
               itemBuilder: (context, index) {
                 return _FieldRow(
                   field: _DisplayField(
@@ -90,16 +103,13 @@ class _FieldRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        spacing: 5,
-        children: [
-          Text(field.label, style: Theme.of(context).textTheme.titleSmall),
-          _FormattedValueText(formattedValue: field.formattedValue),
-        ],
-      ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      spacing: 5,
+      children: [
+        Text(field.label, style: Theme.of(context).textTheme.labelLarge),
+        _FormattedValueText(formattedValue: field.formattedValue),
+      ],
     );
   }
 }
@@ -127,7 +137,7 @@ class _FormattedValueText extends StatelessWidget {
           child: Text(
             'View',
             style: Theme.of(context).textTheme.labelMedium?.copyWith(
-              color: Theme.of(context).primaryColor,
+              color: Theme.of(context).colorScheme.primary,
             ),
           ),
         ),
