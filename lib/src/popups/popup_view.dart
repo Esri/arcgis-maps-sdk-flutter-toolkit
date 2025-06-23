@@ -53,7 +53,7 @@ class PopupView extends StatelessWidget {
                 }
               },
             ),
-            const Divider(color: Colors.grey, height: 2, thickness: 2),
+            const Divider(),
             Expanded(
               child: FutureBuilder(
                 future: popup.evaluateExpressions(),
