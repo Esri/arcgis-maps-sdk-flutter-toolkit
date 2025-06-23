@@ -67,7 +67,14 @@ class _TextPopupElementViewState extends State<_TextPopupElementView> {
   @override
   Widget build(BuildContext context) {
     return Card(
-      child: SizedBox(
+      color:
+          Theme.of(context).cardTheme.color ??
+          Theme.of(context).colorScheme.surface,
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(8),
+          color: Colors.transparent,
+        ),
         height: height, // Default height until calculated
         child: WebViewWidget(controller: _controller),
       ),
