@@ -70,11 +70,7 @@ class _TextPopupElementViewState extends State<_TextPopupElementView> {
       color:
           Theme.of(context).cardTheme.color ??
           Theme.of(context).colorScheme.surface,
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8),
-          color: Colors.transparent,
-        ),
+      child: SizedBox(
         height: height, // Default height until calculated
         child: WebViewWidget(controller: _controller),
       ),
