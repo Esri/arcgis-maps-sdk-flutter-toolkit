@@ -44,13 +44,12 @@ class _ImageMediaViewState extends State<_ImageMediaView> {
           if (isShowingDetailReady) {
             Navigator.of(context).push(
               MaterialPageRoute(
-                builder:
-                    (context) => _MediaDetailView(
-                      popupMedia: widget.popupMedia,
-                      onClose: () {
-                        Navigator.of(context).pop();
-                      },
-                    ),
+                builder: (context) => _MediaDetailView(
+                  popupMedia: widget.popupMedia,
+                  onClose: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
               ),
             );
           }
@@ -71,11 +70,10 @@ class _ImageMediaViewState extends State<_ImageMediaView> {
                   }
                   return Center(
                     child: CircularProgressIndicator(
-                      value:
-                          loadingProgress.expectedTotalBytes != null
-                              ? loadingProgress.cumulativeBytesLoaded /
-                                  (loadingProgress.expectedTotalBytes ?? 1)
-                              : null,
+                      value: loadingProgress.expectedTotalBytes != null
+                          ? loadingProgress.cumulativeBytesLoaded /
+                                (loadingProgress.expectedTotalBytes ?? 1)
+                          : null,
                     ),
                   );
                 },
@@ -185,62 +183,58 @@ class _MediaDetailView extends StatelessWidget {
         body: Center(
           // Use the TimerBuilder package to periodically update the image
           // source URL with a timestamp to prevent caching.
-          child:
-              imageRefreshInterval > 0
-                  ? TimerBuilder.periodic(
-                    Duration(milliseconds: imageRefreshInterval),
-                    alignment: Duration.zero,
-                    builder: (context) {
-                      final url =
-                          sourceUri == null
-                              ? ''
-                              : sourceUri
-                                  .replace(
-                                    queryParameters: {
-                                      ...sourceUri.queryParameters,
-                                      't':
-                                          DateTime.now().millisecondsSinceEpoch
-                                              .toString(),
-                                    },
-                                  )
-                                  .toString();
-                      return Stack(
-                        children: [
-                          Image.network(
-                            url,
-                            fit: BoxFit.fill,
-                            errorBuilder: (context, error, stackTrace) {
-                              return Center(
-                                child: Text(
-                                  'Fails to get the image details: $error',
-                                ),
-                              );
-                            },
-                          ),
-                          Positioned(
-                            top: 12,
-                            right: 12,
-                            child: _IndicatorDot(
-                              size: 16,
-                              duration: Duration(
-                                milliseconds:
-                                    (imageRefreshInterval / 2).toInt(),
+          child: imageRefreshInterval > 0
+              ? TimerBuilder.periodic(
+                  Duration(milliseconds: imageRefreshInterval),
+                  alignment: Duration.zero,
+                  builder: (context) {
+                    final url = sourceUri == null
+                        ? ''
+                        : sourceUri
+                              .replace(
+                                queryParameters: {
+                                  ...sourceUri.queryParameters,
+                                  't': DateTime.now().millisecondsSinceEpoch
+                                      .toString(),
+                                },
+                              )
+                              .toString();
+                    return Stack(
+                      children: [
+                        Image.network(
+                          url,
+                          fit: BoxFit.fill,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Center(
+                              child: Text(
+                                'Failed to get the image details: $error',
                               ),
+                            );
+                          },
+                        ),
+                        Positioned(
+                          top: 12,
+                          right: 12,
+                          child: _IndicatorDot(
+                            size: 16,
+                            duration: Duration(
+                              milliseconds: (imageRefreshInterval / 2).toInt(),
                             ),
                           ),
-                        ],
-                      );
-                    },
-                  )
-                  : Image.network(
-                    popupMedia.value?.sourceUri?.toString() ?? '',
-                    fit: BoxFit.fill,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Center(
-                        child: Text('Fails to get the image details: $error'),
-                      );
-                    },
-                  ),
+                        ),
+                      ],
+                    );
+                  },
+                )
+              : Image.network(
+                  popupMedia.value?.sourceUri?.toString() ?? '',
+                  fit: BoxFit.fill,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Center(
+                      child: Text('Failed to get the image details: $error'),
+                    );
+                  },
+                ),
         ),
       ),
     );
