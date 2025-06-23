@@ -98,11 +98,7 @@ class _AttachmentsPopupElementViewState
               },
               expandedCrossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(8),
-                    color: const Color.fromARGB(255, 255, 252, 252),
-                  ),
+                SizedBox(
                   height: 200,
                   child: widget.attachmentsElement.attachments.isEmpty
                       ? const Center(child: Text('No attachments available'))
@@ -120,12 +116,18 @@ class _AttachmentsPopupElementViewState
   }
 
   Widget _buildListView() {
-    return ListView.builder(
-      itemCount: widget.attachmentsElement.attachments.length,
-      itemBuilder: (context, index) {
-        final attachment = widget.attachmentsElement.attachments[index];
-        return _PopupAttachmentViewInList(popupAttachment: attachment);
-      },
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8),
+        color: const Color.fromARGB(255, 255, 252, 252),
+      ),
+      child: ListView.builder(
+        itemCount: widget.attachmentsElement.attachments.length,
+        itemBuilder: (context, index) {
+          final attachment = widget.attachmentsElement.attachments[index];
+          return _PopupAttachmentViewInList(popupAttachment: attachment);
+        },
+      ),
     );
   }
 
@@ -134,7 +136,7 @@ class _AttachmentsPopupElementViewState
       shrinkWrap: true,
       itemCount: widget.attachmentsElement.attachments.length,
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 3,
+        crossAxisCount: 2,
         mainAxisSpacing: 8,
         crossAxisSpacing: 8,
       ),
@@ -202,19 +204,21 @@ class _PopupAttachmentViewInGalleryState
         }
       },
       child: Card(
-        elevation: 0,
         color: const Color.fromARGB(255, 255, 252, 252),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             _thumbnailFutureBuilder(thumbnailFuture, attachment, thumbnailSize),
-            Text(
-              attachment.name,
-              style: Theme.of(
-                context,
-              ).textTheme.titleSmall?.copyWith(color: Colors.black),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                attachment.name,
+                style: Theme.of(
+                  context,
+                ).textTheme.titleSmall?.copyWith(color: Colors.black),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
             Text(
               attachment.size.toSizeString,
