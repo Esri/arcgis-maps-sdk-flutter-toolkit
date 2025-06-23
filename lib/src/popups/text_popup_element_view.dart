@@ -66,6 +66,8 @@ class _TextPopupElementViewState extends State<_TextPopupElementView> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.textElement.text.isEmpty) return const SizedBox.shrink();
+
     return Card(
       color:
           Theme.of(context).cardTheme.color ??

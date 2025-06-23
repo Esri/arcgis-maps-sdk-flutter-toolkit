@@ -108,6 +108,8 @@ class _PopupMediaView extends StatelessWidget {
       200,
     );
 
+    if (popupMedia.isEmpty) return const SizedBox.shrink();
+
     return SizedBox(
       height: mediaSize.height,
       child: (popupMedia.length > 1)

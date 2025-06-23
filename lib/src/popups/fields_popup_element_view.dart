@@ -44,6 +44,11 @@ class _FieldsPopupElementViewState extends State<_FieldsPopupElementView> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.fieldsElement.labels.isEmpty &&
+        widget.fieldsElement.formattedValues.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
     return Card(
       color:
           Theme.of(context).cardTheme.color ??
