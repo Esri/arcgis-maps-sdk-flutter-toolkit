@@ -31,7 +31,10 @@ class _PopupBarChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(padding: const EdgeInsets.all(8), child: BarChart(barData));
+    return Padding(
+      padding: const EdgeInsetsGeometry.all(5),
+      child: BarChart(barData),
+    );
   }
 
   /// Returns the bar chart data.
@@ -61,6 +64,7 @@ class _PopupBarChart extends StatelessWidget {
         enabled: true,
         allowTouchBarBackDraw: true,
         touchTooltipData: BarTouchTooltipData(
+          getTooltipColor: (group) => Colors.grey.withAlpha(230),
           fitInsideHorizontally: true,
           fitInsideVertically: true,
           getTooltipItem: (group, groupIndex, rod, rodIndex) {

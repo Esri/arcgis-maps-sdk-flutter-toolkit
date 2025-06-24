@@ -141,9 +141,9 @@ class _PopupMediaFooter extends StatelessWidget {
           bottomLeft: Radius.circular(8),
           bottomRight: Radius.circular(8),
         ),
-        border: Border.all(color: Colors.grey),
+        border: Border.all(color: Colors.black.withAlpha(100)),
         gradient: LinearGradient(
-          colors: [Colors.black.withAlpha(150), Colors.transparent],
+          colors: [Colors.black.withAlpha(200), Colors.black.withAlpha(100)],
           begin: Alignment.bottomCenter,
           end: Alignment.topCenter,
         ),
@@ -207,7 +207,7 @@ class _MediaDetailView extends StatelessWidget {
                           errorBuilder: (context, error, stackTrace) {
                             return Center(
                               child: Text(
-                                'Fails to get the image details: $error',
+                                'Failed to get the image details: $error',
                               ),
                             );
                           },
@@ -231,7 +231,7 @@ class _MediaDetailView extends StatelessWidget {
                   fit: BoxFit.fill,
                   errorBuilder: (context, error, stackTrace) {
                     return Center(
-                      child: Text('Fails to get the image details: $error'),
+                      child: Text('Failed to get the image details: $error'),
                     );
                   },
                 ),

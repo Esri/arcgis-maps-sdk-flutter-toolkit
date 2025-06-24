@@ -69,6 +69,9 @@ class _TextPopupElementViewState extends State<_TextPopupElementView> {
     if (widget.textElement.text.isEmpty) return const SizedBox.shrink();
 
     return Card(
+      color:
+          Theme.of(context).cardTheme.color ??
+          Theme.of(context).colorScheme.surface,
       child: SizedBox(
         height: height, // Default height until calculated
         child: WebViewWidget(controller: _controller),
