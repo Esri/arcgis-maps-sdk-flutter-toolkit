@@ -84,8 +84,11 @@ class _FieldsPopupElementViewState extends State<_FieldsPopupElementView> {
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               itemCount: widget.fieldsElement.labels.length,
-              separatorBuilder: (context, index) =>
-                  const Divider(color: Colors.grey, height: 5, thickness: 1),
+              separatorBuilder: (context, index) => Divider(
+                color: Theme.of(context).dividerTheme.color ?? Colors.grey,
+                height: 5,
+                thickness: Theme.of(context).dividerTheme.thickness ?? 1,
+              ),
               itemBuilder: (context, index) {
                 return _FieldRow(
                   field: _DisplayField(
