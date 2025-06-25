@@ -138,22 +138,20 @@ class _PieChartDetailView extends StatelessWidget {
           ),
         ),
         body: SafeArea(
-          child: SizedBox(
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                spacing: 50,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: SizedBox(
-                      height: pieData.sections.first.radius * 2,
-                      width: pieData.sections.first.radius * 2,
-                      child: PieChart(pieData),
-                    ),
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              spacing: 50,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: SizedBox(
+                    height: pieData.sections.first.radius * 2,
+                    width: pieData.sections.first.radius * 2,
+                    child: PieChart(pieData),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),
