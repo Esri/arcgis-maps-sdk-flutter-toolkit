@@ -34,6 +34,7 @@ class _PopupLineChart extends StatelessWidget {
           MaterialPageRoute(
             builder: (context) => _LineChartDetailView(
               popupMedia: popupMedia,
+              // Line Chart should be interactive in detail view.
               lineData: lineData(interactive: true),
               onClose: () {
                 Navigator.of(context).pop();
@@ -46,6 +47,7 @@ class _PopupLineChart extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsetsGeometry.all(5),
+            // Bar Chart should not be interactive in preview.
             child: LineChart(lineData(interactive: false)),
           ),
           Positioned(
