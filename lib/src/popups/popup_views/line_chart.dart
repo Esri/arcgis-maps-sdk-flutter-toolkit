@@ -28,13 +28,47 @@ class _PopupLineChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsetsGeometry.all(5),
-      child: LineChart(lineData),
+    return GestureDetector(
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => _LineChartDetailView(
+              popupMedia: popupMedia,
+              lineData: lineData(interactive: true),
+              onClose: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ),
+        );
+      },
+      child: Stack(
+        children: [
+          Padding(
+            padding: const EdgeInsetsGeometry.all(5),
+            child: LineChart(lineData(interactive: false)),
+          ),
+          Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: _LineChartFooter(popupMedia: popupMedia),
+          ),
+          // Border
+          Positioned.fill(
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.grey),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
-  LineChartData get lineData {
+  LineChartData lineData({required bool interactive}) {
     return LineChartData(
       maxY: _maximumYValue,
       lineBarsData: [
@@ -51,20 +85,90 @@ class _PopupLineChart extends StatelessWidget {
       titlesData: _getFlTitlesData(chartData),
       gridData: _gridData,
       borderData: _flBorderData,
-      lineTouchData: LineTouchData(
-        touchTooltipData: LineTouchTooltipData(
-          getTooltipColor: (group) => Colors.grey.withAlpha(230),
-          fitInsideHorizontally: true,
-          fitInsideVertically: true,
-          getTooltipItems: (touchedSpots) {
-            return touchedSpots.map((spot) {
-              final data = chartData[spot.x.toInt()];
-              return LineTooltipItem(
-                '${data.label}: ${data.value}',
-                const TextStyle(color: Colors.white),
-              );
-            }).toList();
-          },
+      lineTouchData: interactive
+          ? LineTouchData(
+              touchTooltipData: LineTouchTooltipData(
+                getTooltipColor: (group) => Colors.grey.withAlpha(230),
+                fitInsideHorizontally: true,
+                fitInsideVertically: true,
+                getTooltipItems: (touchedSpots) {
+                  return touchedSpots.map((spot) {
+                    final data = chartData[spot.x.toInt()];
+                    return LineTooltipItem(
+                      '${data.label}: ${data.value}',
+                      const TextStyle(color: Colors.white),
+                    );
+                  }).toList();
+                },
+              ),
+            )
+          : const LineTouchData(enabled: false),
+    );
+  }
+}
+
+class _LineChartFooter extends StatelessWidget {
+  const _LineChartFooter({required this.popupMedia});
+
+  final PopupMedia popupMedia;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: const BorderRadius.only(
+          bottomLeft: Radius.circular(8),
+          bottomRight: Radius.circular(8),
+        ),
+        border: Border.all(color: Colors.black.withAlpha(100)),
+        gradient: LinearGradient(
+          colors: [Colors.black.withAlpha(200), Colors.black.withAlpha(100)],
+          begin: Alignment.bottomCenter,
+          end: Alignment.topCenter,
+        ),
+      ),
+      padding: const EdgeInsets.all(8),
+      child: Text(
+        popupMedia.title.isNotEmpty ? popupMedia.title : 'untitled',
+        maxLines: 2,
+        style: const TextStyle(color: Colors.white, fontSize: 14),
+        overflow: TextOverflow.ellipsis,
+      ),
+    );
+  }
+}
+
+class _LineChartDetailView extends StatelessWidget {
+  const _LineChartDetailView({
+    required this.popupMedia,
+    required this.onClose,
+    required this.lineData,
+  });
+
+  final PopupMedia popupMedia;
+  final LineChartData lineData;
+  final VoidCallback onClose;
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog.fullscreen(
+      child: Scaffold(
+        backgroundColor: const Color.fromARGB(255, 255, 252, 252),
+        appBar: AppBar(
+          title: Text(popupMedia.title),
+          leading: IconButton(
+            icon: const Icon(Icons.close),
+            onPressed: onClose,
+          ),
+        ),
+        body: SafeArea(
+          minimum: const EdgeInsets.all(20),
+          child: Center(
+            child: SizedBox(
+              height: MediaQuery.of(context).size.height / 2,
+              child: LineChart(lineData),
+            ),
+          ),
         ),
       ),
     );
