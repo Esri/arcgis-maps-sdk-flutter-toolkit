@@ -56,7 +56,7 @@ class PopupView extends StatelessWidget {
             const Divider(),
             Expanded(
               child: FutureBuilder(
-                // Evaluate the popup expressions asynchronously, 
+                // Evaluate the popup expressions asynchronously,
                 // it needs to be done before displaying the popup elements.
                 future: popup.evaluateExpressions(),
                 builder: (context, snapshot) {
@@ -66,7 +66,9 @@ class PopupView extends StatelessWidget {
                     return Center(
                       child: Text(
                         'Unable to evaluate popup expressions.',
-                        style: themeData.textTheme.bodyLarge?.copyWith(color: Colors.red),
+                        style: themeData.textTheme.bodyLarge?.copyWith(
+                          color: Colors.red,
+                        ),
                       ),
                     );
                   } else {
