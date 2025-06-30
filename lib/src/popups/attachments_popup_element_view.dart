@@ -225,7 +225,7 @@ class _PopupAttachmentViewInGalleryState
                 attachment.name,
                 style: Theme.of(
                   context,
-                ).textTheme.titleSmall?.copyWith(color: Colors.black),
+                ).textTheme.labelSmall?.copyWith(color: Colors.black),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -301,7 +301,7 @@ class _PopupAttachmentViewInListState
         widget.popupAttachment.name,
         style: Theme.of(
           context,
-        ).textTheme.titleSmall?.copyWith(color: Colors.black),
+        ).textTheme.labelSmall?.copyWith(color: Colors.black),
       ),
       subtitle: Text(
         widget.popupAttachment.size.toSizeString,
