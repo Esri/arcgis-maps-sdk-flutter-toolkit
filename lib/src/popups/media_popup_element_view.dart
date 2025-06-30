@@ -46,6 +46,7 @@ class _MediaPopupElementViewState extends State<_MediaPopupElementView> {
   Widget build(BuildContext context) {
     if (displayableMediaCount > 0) {
       return Card(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         color:
             Theme.of(context).cardTheme.color ??
             Theme.of(context).colorScheme.surface,
