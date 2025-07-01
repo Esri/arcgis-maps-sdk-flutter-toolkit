@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-/// Toolkit for the ArcGIS Maps SDK for Flutter.
+/// ArcGIS Maps SDK for Flutter Toolkit
 library;
 
 import 'dart:async';
