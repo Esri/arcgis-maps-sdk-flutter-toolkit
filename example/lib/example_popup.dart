@@ -75,7 +75,7 @@ class _PopupExampleState extends State<PopupExample> {
     _mapViewController.arcGISMap = webmapContainingPopups;
   }
 
-  // Display a popupview in the bottom sheet when a popup is identified.
+  // Display a popup view in the bottom sheet when a popup is identified.
   Widget? getBottomSheet(BuildContext context) {
     return _identifiedPopup != null
         ? SizedBox(
