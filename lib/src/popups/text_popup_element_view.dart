@@ -69,6 +69,7 @@ class _TextPopupElementViewState extends State<_TextPopupElementView> {
     if (widget.textElement.text.isEmpty) return const SizedBox.shrink();
 
     return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       color:
           Theme.of(context).cardTheme.color ??
           Theme.of(context).colorScheme.surface,

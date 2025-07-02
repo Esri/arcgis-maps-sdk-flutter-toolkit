@@ -51,74 +51,76 @@ class _AttachmentsPopupElementViewState
       return const SizedBox.shrink();
     }
 
-    return SizedBox(
-      height: 200,
-      child: Card(
-        color:
-            Theme.of(context).cardTheme.color ??
-            Theme.of(context).colorScheme.surface,
-        child: FutureBuilder<void>(
-          future: fetchAttachmentsFuture,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            } else if (snapshot.hasError) {
-              return Center(
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      color:
+          Theme.of(context).cardTheme.color ??
+          Theme.of(context).colorScheme.surface,
+      child: FutureBuilder<void>(
+        future: fetchAttachmentsFuture,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const SizedBox(
+              height: 200,
+              child: Center(child: CircularProgressIndicator()),
+            );
+          } else if (snapshot.hasError) {
+            return SizedBox(
+              height: 200,
+              child: Center(
                 child: Text(
                   'Unable to load attachments.',
                   style: Theme.of(
                     context,
                   ).textTheme.bodyLarge?.copyWith(color: Colors.red),
                 ),
-              );
-            }
-            return Theme(
-              data: Theme.of(
-                context,
-              ).copyWith(dividerColor: Colors.transparent),
-              child: ExpansionTile(
-                backgroundColor:
-                    Theme.of(context).expansionTileTheme.backgroundColor ??
-                    Colors.transparent,
-                collapsedBackgroundColor:
-                    Theme.of(
-                      context,
-                    ).expansionTileTheme.collapsedBackgroundColor ??
-                    Colors.transparent,
-                collapsedShape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                tilePadding: const EdgeInsets.symmetric(horizontal: 10),
-                childrenPadding: const EdgeInsets.all(10),
-                title: _PopupElementHeader(
-                  title: widget.attachmentsElement.title.isEmpty
-                      ? 'Attachments'
-                      : widget.attachmentsElement.title,
-                  description: widget.attachmentsElement.description,
-                ),
-                initiallyExpanded: isExpanded,
-                onExpansionChanged: (expanded) {
-                  setState(() => isExpanded = expanded);
-                },
-                expandedCrossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(
-                    height: 200,
-                    child: widget.attachmentsElement.attachments.isEmpty
-                        ? const Center(child: Text('No attachments available'))
-                        : widget.attachmentsElement.displayType ==
-                              PopupAttachmentsDisplayType.preview
-                        ? _buildGridView()
-                        : _buildListView(),
-                  ),
-                ],
               ),
             );
-          },
-        ),
+          }
+          return Theme(
+            data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+            child: ExpansionTile(
+              backgroundColor:
+                  Theme.of(context).expansionTileTheme.backgroundColor ??
+                  Colors.transparent,
+              collapsedBackgroundColor:
+                  Theme.of(
+                    context,
+                  ).expansionTileTheme.collapsedBackgroundColor ??
+                  Colors.transparent,
+              collapsedShape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+              tilePadding: const EdgeInsets.symmetric(horizontal: 10),
+              childrenPadding: const EdgeInsets.all(10),
+              title: _PopupElementHeader(
+                title: widget.attachmentsElement.title.isEmpty
+                    ? 'Attachments'
+                    : widget.attachmentsElement.title,
+                description: widget.attachmentsElement.description,
+              ),
+              initiallyExpanded: isExpanded,
+              onExpansionChanged: (expanded) {
+                setState(() => isExpanded = expanded);
+              },
+              expandedCrossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  height: 200,
+                  child: widget.attachmentsElement.attachments.isEmpty
+                      ? const Center(child: Text('No attachments available'))
+                      : widget.attachmentsElement.displayType ==
+                            PopupAttachmentsDisplayType.preview
+                      ? _buildGridView()
+                      : _buildListView(),
+                ),
+              ],
+            ),
+          );
+        },
       ),
     );
   }
@@ -223,7 +225,7 @@ class _PopupAttachmentViewInGalleryState
                 attachment.name,
                 style: Theme.of(
                   context,
-                ).textTheme.titleSmall?.copyWith(color: Colors.black),
+                ).textTheme.labelSmall?.copyWith(color: Colors.black),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -299,7 +301,7 @@ class _PopupAttachmentViewInListState
         widget.popupAttachment.name,
         style: Theme.of(
           context,
-        ).textTheme.titleSmall?.copyWith(color: Colors.black),
+        ).textTheme.labelSmall?.copyWith(color: Colors.black),
       ),
       subtitle: Text(
         widget.popupAttachment.size.toSizeString,

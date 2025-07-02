@@ -50,6 +50,7 @@ class _FieldsPopupElementViewState extends State<_FieldsPopupElementView> {
     }
 
     return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       color:
           Theme.of(context).cardTheme.color ??
           Theme.of(context).colorScheme.surface,
