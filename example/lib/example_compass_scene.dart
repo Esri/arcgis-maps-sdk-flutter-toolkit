@@ -40,12 +40,8 @@ class ExampleCompassScene extends StatefulWidget {
 }
 
 class _ExampleCompassSceneState extends State<ExampleCompassScene> {
+  // Create a scene view controller.
   final _sceneViewController = ArcGISSceneView.createController();
-
-  // Provides ArcGISSceneViewController to the ArcGISSceneView and Compass
-  ArcGISSceneViewController controllerProvider() {
-    return _sceneViewController;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,28 +49,14 @@ class _ExampleCompassSceneState extends State<ExampleCompassScene> {
       appBar: AppBar(title: Text('Compass Scene')),
       body: Stack(
         children: [
+          // Add a scene view to the widget tree and set a controller.
           ArcGISSceneView(
-            controllerProvider: controllerProvider,
+            controllerProvider: () => _sceneViewController,
             onSceneViewReady: onSceneViewReady,
           ),
-          // Default Compass.
-          Compass(controllerProvider: controllerProvider),
-          // Compass with custom settings.
-          Compass(
-            controllerProvider: controllerProvider,
-            automaticallyHides: false,
-            alignment: Alignment.centerLeft,
-            padding: const EdgeInsets.all(40),
-            iconBuilder:
-                (context, angleRadians) => Transform.rotate(
-                  angle: angleRadians,
-                  child: Icon(
-                    Icons.arrow_circle_up,
-                    size: 80,
-                    color: Colors.purple,
-                  ),
-                ),
-          ),
+          // Create a compass and display on top of the scene view in a stack.
+          // Pass the compass the corresponding scene view controller.
+          Compass(controllerProvider: () => _sceneViewController),
         ],
       ),
     );
@@ -85,20 +67,17 @@ class _ExampleCompassSceneState extends State<ExampleCompassScene> {
     final scene = ArcGISScene.withBasemapStyle(BasemapStyle.arcGISImagery);
 
     // Add surface elevation to the scene.
-    final surface = Surface();
-    final worldElevationService = Uri.parse(
-      'https://elevation3d.arcgis.com/arcgis/rest/services/WorldElevation3D/Terrain3D/ImageServer',
-    );
     final elevationSource = ArcGISTiledElevationSource.withUri(
-      worldElevationService,
+      Uri.parse(
+        'https://elevation3d.arcgis.com/arcgis/rest/services/WorldElevation3D/Terrain3D/ImageServer',
+      ),
     );
-    surface.elevationSources.add(elevationSource);
-    scene.baseSurface = surface;
+    scene.baseSurface.elevationSources.add(elevationSource);
 
     // Add the scene to the view controller.
     _sceneViewController.arcGISScene = scene;
 
-    // Set a viewpoint camera for the scene.
+    // Set an initial viewpoint camera for the scene.
     final viewpointCamera = Camera.withLocation(
       location: ArcGISPoint(
         x: 4,
