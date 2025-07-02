@@ -14,12 +14,12 @@
 // limitations under the License.
 //
 
-import 'package:arcgis_maps_toolkit_example/example_compass_custom.dart';
 import 'package:flutter/material.dart';
 import 'package:arcgis_maps/arcgis_maps.dart';
 
 import 'example_compass_map.dart';
 import 'example_compass_scene.dart';
+import 'example_compass_custom.dart';
 
 void main() {
   // Supply your apiKey using the --dart-define-from-file command line argument.
