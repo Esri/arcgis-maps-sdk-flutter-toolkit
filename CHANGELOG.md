@@ -1,3 +1,9 @@
 ## 0.0.1
 
-* Initial release of the ArcGIS Maps Toolkit.
+* First release of ArcGIS Maps SDK for Flutter Toolkit
+
+### New Toolkit Components
+* Authenticator 
+* Compass
+* OverviewMap
+* PopupView
