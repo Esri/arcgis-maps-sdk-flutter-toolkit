@@ -48,22 +48,22 @@ void main() {
 enum ComponentExample {
   authenticator(
     'Authenticator',
-    'Authenticate with OAuth or Token',
+    'Handles authentication challenges',
     ExampleAuthenticator.new,
   ),
   compass(
     'Compass',
-    'A "North Arrow" always pointing north on a map or scene',
+    'Visualizes current rotation of map/scene and resets the rotation to north on tap',
     ExampleCompass.new,
   ),
   overviewMap(
-    'Overview Map',
-    'A small map that shows the extent of a larger map',
+    'OverviewMap',
+    'Small inset map showing the current viewpoint of the target map/scene',
     ExampleOverviewMap.new,
   ),
   popupView(
-    'Popup View',
-    'A PopupView renders the popup elements associated with a single GeoElement.',
+    'PopupView',
+    'Displays a popup for a feature, including fields, media, and attachments',
     PopupExample.new,
   );
 
@@ -99,9 +99,8 @@ class ExampleApp extends StatelessWidget {
       body: ListView.builder(
         padding: const EdgeInsets.all(10),
         itemCount: ComponentExample.values.length,
-        itemBuilder:
-            (context, index) =>
-                ComponentExample.values[index].buildCard(context),
+        itemBuilder: (context, index) =>
+            ComponentExample.values[index].buildCard(context),
       ),
     );
   }
