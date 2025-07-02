@@ -83,7 +83,7 @@ class _PopupExampleState extends State<PopupExample> {
             child: PopupView(
               // Optionally, provide a theme data to override the default styling.
               theme: popupViewThemeData,
-              // If a popup is selected, pass it to the popup view widget to display it.
+              // Pass a popup to the popup view widget to display it.
               popup: _identifiedPopup!,
               // Optionally, pass a callback for when the popup view is closed.
               // Here we reset the identifiedPopup variable back to null.
