@@ -89,7 +89,7 @@ class _ExampleOverviewMapWithSceneState
     );
     scene.baseSurface.elevationSources.add(elevationSource);
 
-    // Add the scene to the view controller.
+    // Add the scene to the scene view controller.
     _sceneViewController.arcGISScene = scene;
 
     // Set an initial viewpoint camera for the scene.
