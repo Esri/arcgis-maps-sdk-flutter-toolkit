@@ -14,7 +14,7 @@
             ],
         },
         {
-            "name": "Run example app with API key (profile)",
+            "name": "Run example app with API key access token (profile)",
             "type": "dart",
             "flutterMode": "profile",
             "request": "launch",
@@ -24,7 +24,7 @@
             ],
         },
         {
-            "name": "Run example app with API key (release)",
+            "name": "Run example app with API key access token (release)",
             "type": "dart",
             "flutterMode": "release",
             "request": "launch",

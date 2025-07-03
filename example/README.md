@@ -1,4 +1,4 @@
-# ArcGIS Maps SDK for Flutter Toolkit Examples
+# ArcGIS Maps SDK for Flutter Toolkit examples
 
 A series of example apps that demonstrate how to use the ArcGIS Maps SDK for Flutter Toolkit.
 
@@ -20,4 +20,4 @@ For additional information including how to get an access token, see: https://de
 
 ### Running individual examples
 
-After following the above required steps, you can also run individual examples if desired from their corresponding `.dart` files, which all contain a `main()` method.
+After following the required steps above, you can also run individual examples if desired from their corresponding `.dart` files, which all contain a `main()` method.

@@ -13,7 +13,7 @@ ArcGIS Maps SDK for Flutter Toolkit contains ready-made widgets to simplify the 
 * Use a macOS development host to deploy to iOS & Android mobile devices.
 * Use a Windows development host to deploy to Android mobile devices.
 
-For more information, view our detailed [System requirements](https://developers.arcgis.com/flutter/system-requirements/system-requirements-for-200-6/).
+For more information, view our detailed [System requirements](https://developers.arcgis.com/flutter/system-requirements/).
 
 ## Get started
 
