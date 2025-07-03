@@ -16,14 +16,19 @@
 
 part of '../../../arcgis_maps_toolkit.dart';
 
-/// A widget that displays a pie chart for the given [popupMedia].
-/// The chart data is generated based on the data provided in the [popupMedia].
+/// A widget that displays a pie chart for the given [PopupMedia].
+/// The chart data is generated based on the data provided in the [PopupMedia].
 class _PopupPieChart extends StatelessWidget {
   _PopupPieChart({required this.popupMedia, required this.mediaSize})
     : chartData = popupMedia._getChartData();
 
+  /// The popup media associated with this pie chart.
   final PopupMedia popupMedia;
+
+  /// The display size for this media element.
   final Size mediaSize;
+
+  /// The chart data associated with this media element.
   final List<_ChartData> chartData;
 
   @override
@@ -51,17 +56,28 @@ class _PopupPieChart extends StatelessWidget {
         children: [
           // Pie Charts have default size of 40. Define radius that fits within width of media container.
           PieChart(pieData(radius: mediaSize.width / 4)),
+          // Display the footer containing a caption.
           Positioned(
             bottom: 0,
             left: 0,
             right: 0,
             child: _PieChartFooter(popupMedia: popupMedia),
           ),
+          // Border around the preview of the element.
+          Positioned.fill(
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.grey),
+              ),
+            ),
+          ),
         ],
       ),
     );
   }
 
+  /// Configures the pie chart data object which defines how the pie chart is displayed.
   PieChartData pieData({required double radius}) {
     return PieChartData(
       sectionsSpace: 0,
@@ -81,9 +97,12 @@ class _PopupPieChart extends StatelessWidget {
   }
 }
 
+/// Defines the caption which sits at the bottom of the chart in the list view.
+/// It displays the popup media title, if available.
 class _PieChartFooter extends StatelessWidget {
   const _PieChartFooter({required this.popupMedia});
 
+  /// The popup media for this pie chart.
   final PopupMedia popupMedia;
 
   @override
@@ -112,6 +131,7 @@ class _PieChartFooter extends StatelessWidget {
   }
 }
 
+/// Defines the detail view of the chart which is displayed when a chart is selected from the list view of media elements.
 class _PieChartDetailView extends StatelessWidget {
   const _PieChartDetailView({
     required this.popupMedia,
@@ -120,9 +140,16 @@ class _PieChartDetailView extends StatelessWidget {
     required this.chartData,
   });
 
+  /// The popup media for this pie chart.
   final PopupMedia popupMedia;
+
+  /// The data for this chart as defined in the popup definition.
   final List<_ChartData> chartData;
+
+  /// A callback that dismisses the dialog.
   final VoidCallback onClose;
+
+  /// The pie chart data required to draw the chart.
   final PieChartData pieData;
 
   @override
