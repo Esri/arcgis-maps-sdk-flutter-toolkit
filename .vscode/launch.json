@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Run example app with API key (debug)",
+            "name": "Run example app with API key access token (debug)",
             "type": "dart",
             "request": "launch",
             "templateFor": "example/lib/",
