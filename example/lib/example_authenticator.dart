@@ -74,7 +74,7 @@ class _ExampleAuthenticatorState extends State<ExampleAuthenticator> {
                     _authenticationType == _AuthenticationType.oauth
                     ? _oAuthUserConfigurations
                     : [],
-                // An a map view as the child to the Authenticator, and set a controller.
+                // Add a map view as the child to the Authenticator, and set a controller.
                 child: ArcGISMapView(
                   controllerProvider: () => _mapViewController,
                   onMapViewReady: () =>
