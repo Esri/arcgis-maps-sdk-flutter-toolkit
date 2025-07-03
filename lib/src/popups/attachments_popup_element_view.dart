@@ -17,7 +17,7 @@ part of '../../arcgis_maps_toolkit.dart';
 
 /// Displays a list of attachments from a popup definition.
 /// Attachments are fetched from the server and displayed either in a grid
-/// or list, depending on the display type defined in the popup in the Map Viewer.
+/// or list, depending on the display type defined in the Map Viewer.
 class _AttachmentsPopupElementView extends StatefulWidget {
   const _AttachmentsPopupElementView({
     required this.attachmentsElement,
@@ -27,7 +27,7 @@ class _AttachmentsPopupElementView extends StatefulWidget {
   /// The attachments popup element to be displayed.
   final AttachmentsPopupElement attachmentsElement;
 
-  /// A boolean indicating whether the expansion tile should be initially expanded or not.
+  /// A boolean indicating whether the expansion tile should be initially expanded.
   final bool isExpanded;
 
   @override
@@ -126,7 +126,7 @@ class _AttachmentsPopupElementViewState
     );
   }
 
-  // Build a list view of attachments based on the attachments element.
+  /// Build a list view of attachments based on the attachments element.
   Widget _buildListView() {
     return Container(
       decoration: BoxDecoration(
@@ -143,7 +143,7 @@ class _AttachmentsPopupElementViewState
     );
   }
 
-  // Build a grid view of attachments based on the attachments element.
+  /// Build a grid view of attachments based on the attachments element.
   Widget _buildGridView() {
     return GridView.builder(
       shrinkWrap: true,

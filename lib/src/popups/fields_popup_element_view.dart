@@ -26,7 +26,7 @@ class _FieldsPopupElementView extends StatefulWidget {
   /// The fields popup element to be displayed.
   final FieldsPopupElement fieldsElement;
 
-  /// A boolean indicating whether the expansion tile should be initially expanded or not.
+  /// A boolean indicating whether the expansion tile should be initially expanded.
   final bool isExpanded;
 
   @override
