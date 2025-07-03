@@ -20,7 +20,7 @@ part of '../../../arcgis_maps_toolkit.dart';
 class _ImageMediaView extends StatefulWidget {
   const _ImageMediaView({required this.popupMedia, required this.mediaSize});
 
-  // The popup media for this image.
+  // The pop-up media for this image.
   final PopupMedia popupMedia;
   // The size of the media view.
   final Size mediaSize;
@@ -124,11 +124,11 @@ class _ImageMediaViewState extends State<_ImageMediaView> {
 }
 
 /// Defines the caption which sits at the bottom of the image in the list view.
-/// It displays the popup media title, if available.
+/// It displays the pop-up media title, if available.
 class _PopupMediaFooter extends StatelessWidget {
   const _PopupMediaFooter({required this.popupMedia, required this.mediaSize});
 
-  /// The popup media for this image.
+  /// The pop-up media for this image.
   final PopupMedia popupMedia;
 
   /// The size of the media.
@@ -165,7 +165,7 @@ class _PopupMediaFooter extends StatelessWidget {
 class _MediaDetailView extends StatelessWidget {
   const _MediaDetailView({required this.popupMedia, required this.onClose});
 
-  /// The popup media for this image.
+  /// The pop-up media for this image.
   final PopupMedia popupMedia;
 
   /// A callback that dismisses the dialog.

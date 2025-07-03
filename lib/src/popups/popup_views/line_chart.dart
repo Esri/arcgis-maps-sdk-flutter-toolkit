@@ -22,7 +22,7 @@ class _PopupLineChart extends StatelessWidget {
   _PopupLineChart({required this.popupMedia})
     : chartData = popupMedia._getChartData();
 
-  /// The popup media associated with this line chart.
+  /// The pop-up media associated with this line chart.
   final PopupMedia popupMedia;
 
   /// The chart data associated with this media element.
@@ -117,11 +117,11 @@ class _PopupLineChart extends StatelessWidget {
 }
 
 /// Defines the caption which sits at the bottom of the chart in the list view.
-/// It displays the popup media title, if available.
+/// It displays the pop-up media title, if available.
 class _LineChartFooter extends StatelessWidget {
   const _LineChartFooter({required this.popupMedia});
 
-  /// The popup media for this line chart.
+  /// The pop-up media for this line chart.
   final PopupMedia popupMedia;
 
   @override
@@ -158,10 +158,10 @@ class _LineChartDetailView extends StatelessWidget {
     required this.lineData,
   });
 
-  /// The popup media for this line chart.
+  /// The pop-up media for this line chart.
   final PopupMedia popupMedia;
 
-  /// The data for this chart as defined in the popup definition.
+  /// The data for this chart as defined in the pop-up definition.
   final LineChartData lineData;
 
   /// A callback that dismisses the dialog.

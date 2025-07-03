@@ -22,7 +22,7 @@ class _PopupPieChart extends StatelessWidget {
   _PopupPieChart({required this.popupMedia, required this.mediaSize})
     : chartData = popupMedia._getChartData();
 
-  /// The popup media associated with this pie chart.
+  /// The pop-up media associated with this pie chart.
   final PopupMedia popupMedia;
 
   /// The display size for this media element.
@@ -98,11 +98,11 @@ class _PopupPieChart extends StatelessWidget {
 }
 
 /// Defines the caption which sits at the bottom of the chart in the list view.
-/// It displays the popup media title, if available.
+/// It displays the pop-up media title, if available.
 class _PieChartFooter extends StatelessWidget {
   const _PieChartFooter({required this.popupMedia});
 
-  /// The popup media for this pie chart.
+  /// The pop-up media for this pie chart.
   final PopupMedia popupMedia;
 
   @override
@@ -140,10 +140,10 @@ class _PieChartDetailView extends StatelessWidget {
     required this.chartData,
   });
 
-  /// The popup media for this pie chart.
+  /// The pop-up media for this pie chart.
   final PopupMedia popupMedia;
 
-  /// The data for this chart as defined in the popup definition.
+  /// The data for this chart as defined in the pop-up definition.
   final List<_ChartData> chartData;
 
   /// A callback that dismisses the dialog.

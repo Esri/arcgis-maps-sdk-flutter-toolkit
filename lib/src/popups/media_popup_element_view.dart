@@ -16,14 +16,14 @@
 part of '../../arcgis_maps_toolkit.dart';
 
 /// A widget that displays [PopupMedia] in a [Card] with an [ExpansionTile].
-/// The media popup elements represent images and charts, per the [PopupMediaType]s.
+/// The media pop-up elements represent images and charts, per the [PopupMediaType]s.
 class _MediaPopupElementView extends StatefulWidget {
   const _MediaPopupElementView({
     required this.mediaElement,
     this.isExpanded = false,
   });
 
-  /// The media popup element to be displayed.
+  /// The media pop-up element to be displayed.
   final MediaPopupElement mediaElement;
 
   /// A boolean indicating whether the expansion tile should be initially expanded.
@@ -103,7 +103,7 @@ class _PopupMediaView extends StatelessWidget {
     required this.displayableMediaCount,
   });
 
-  /// A list of popup media.
+  /// A list of pop-up media.
   final List<PopupMedia> popupMedia;
 
   /// The count of media to display.
@@ -188,14 +188,14 @@ extension on PopupMedia {
       for (var i = 0; i < popupMediaValue.data.length; i++) {
         final value = popupMediaValue.data[i]._toDouble!;
 
-        // The default label if no label is provided from the popup definition in the Map Viewer.
+        // The default label if no label is provided from the pop-up definition in the Map Viewer.
         var label = 'untitled';
         if (popupMediaValue.labels.isNotEmpty &&
             popupMediaValue.labels.length > i) {
           label = popupMediaValue.labels[i];
         }
 
-        // The default color for charts if no color is provided from the popup definition in the Map Viewer.
+        // The default color for charts if no color is provided from the pop-up definition in the Map Viewer.
         var color = Colors.blue as Color;
         if (popupMediaValue.chartColors.isNotEmpty &&
             popupMediaValue.chartColors.length > i) {

@@ -15,7 +15,7 @@
 //
 part of '../../arcgis_maps_toolkit.dart';
 
-/// A widget that displays a fields popup element in a [Card] with an [ExpansionTile].
+/// A widget that displays a fields pop-up element in a [Card] with an [ExpansionTile].
 /// It uses a [ListView] to render the fields content.
 class _FieldsPopupElementView extends StatefulWidget {
   const _FieldsPopupElementView({
@@ -23,7 +23,7 @@ class _FieldsPopupElementView extends StatefulWidget {
     this.isExpanded = false,
   });
 
-  /// The fields popup element to be displayed.
+  /// The fields pop-up element to be displayed.
   final FieldsPopupElement fieldsElement;
 
   /// A boolean indicating whether the expansion tile should be initially expanded.

@@ -22,7 +22,7 @@ class _PopupBarChart extends StatelessWidget {
   _PopupBarChart({required this.popupMedia, required this.isColumnChart})
     : chartData = popupMedia._getChartData();
 
-  /// The popup media associated with this bar chart.
+  /// The pop-up media associated with this bar chart.
   final PopupMedia popupMedia;
 
   /// The chart data associated with this media element.
@@ -137,11 +137,11 @@ class _PopupBarChart extends StatelessWidget {
 }
 
 /// Defines the caption which sits at the bottom of the chart in the list view.
-/// It displays the popup media title, if available.
+/// It displays the pop-up media title, if available.
 class _BarChartFooter extends StatelessWidget {
   const _BarChartFooter({required this.popupMedia});
 
-  /// The popup media for this bar chart.
+  /// The pop-up media for this bar chart.
   final PopupMedia popupMedia;
 
   @override
@@ -178,10 +178,10 @@ class _BarChartDetailView extends StatelessWidget {
     required this.barData,
   });
 
-  /// The popup media for this bar chart.
+  /// The pop-up media for this bar chart.
   final PopupMedia popupMedia;
 
-  /// The data for this chart as defined in the popup definition.
+  /// The data for this chart as defined in the pop-up definition.
   final BarChartData barData;
 
   /// A callback that dismisses the dialog.

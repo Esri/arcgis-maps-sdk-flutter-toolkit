@@ -15,7 +15,7 @@
 //
 part of '../../arcgis_maps_toolkit.dart';
 
-/// Displays a list of attachments from a popup definition.
+/// Displays a list of attachments from a pop-up definition.
 /// Attachments are fetched from the server and displayed either in a grid
 /// or list, depending on the display type defined in the Map Viewer.
 class _AttachmentsPopupElementView extends StatefulWidget {
@@ -24,7 +24,7 @@ class _AttachmentsPopupElementView extends StatefulWidget {
     this.isExpanded = false,
   });
 
-  /// The attachments popup element to be displayed.
+  /// The attachments pop-up element to be displayed.
   final AttachmentsPopupElement attachmentsElement;
 
   /// A boolean indicating whether the expansion tile should be initially expanded.
@@ -257,13 +257,13 @@ class _PopupAttachmentViewInGalleryState
     );
   }
 
-  /// Creates the thumbail from the popup attachment.
+  /// Creates the thumbail from the pop-up attachment.
   Future<ArcGISImage> getThumbnailFuture(int size) {
     return widget.popupAttachment.createThumbnail(width: size, height: size);
   }
 }
 
-/// A widget that displays a single popup attachment element in a [ListTile] displayed within the list view layout.
+/// A widget that displays a single pop-up attachment element in a [ListTile] displayed within the list view layout.
 /// The tile shows the attachment name, size, and a thumbnail (if the attachment is an image).
 /// Tapping on a tile:
 /// * Opens an image in a dialog.
@@ -397,7 +397,7 @@ class _PopupAttachmentViewInListState
     });
   }
 
-  /// Creates the thumbail from the popup attachment.
+  /// Creates the thumbail from the pop-up attachment.
   Future<ArcGISImage> getThumbnailFuture(int size) {
     return widget.popupAttachment.createThumbnail(width: size, height: size);
   }
