@@ -79,7 +79,7 @@ class _PopupBarChart extends StatelessWidget {
     );
   }
 
-  /// Configures the var chart data object which defines how the bar chart is displayed.
+  /// Configures the bar chart data object which defines how the bar chart is displayed.
   BarChartData barData({required bool interactive}) {
     return BarChartData(
       rotationQuarterTurns: isColumnChart ? 0 : 1,
