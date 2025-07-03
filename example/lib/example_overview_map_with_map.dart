@@ -47,31 +47,26 @@ class _ExampleOverviewMapWithMapState extends State<ExampleOverviewMapWithMap> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
       appBar: AppBar(title: Text('OverviewMap with Map')),
-      body: SafeArea(
-        left: false,
-        right: false,
-        child: Column(
-          children: [
-            Expanded(
-              child: Stack(
-                children: [
-                  // Add a map view to the widget tree and set a controller.
-                  ArcGISMapView(
-                    controllerProvider: () => _mapViewController,
-                    onMapViewReady: onMapViewReady,
-                  ),
-                  // Create an overview map and display on top of the map view in a stack.
-                  // Pass the overview map the corresponding map view controller.
-                  OverviewMap.withMapView(
-                    controllerProvider: () => _mapViewController,
-                  ),
-                ],
-              ),
+      body: Column(
+        children: [
+          Expanded(
+            child: Stack(
+              children: [
+                // Add a map view to the widget tree and set a controller.
+                ArcGISMapView(
+                  controllerProvider: () => _mapViewController,
+                  onMapViewReady: onMapViewReady,
+                ),
+                // Create an overview map and display on top of the map view in a stack.
+                // Pass the overview map the corresponding map view controller.
+                OverviewMap.withMapView(
+                  controllerProvider: () => _mapViewController,
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
