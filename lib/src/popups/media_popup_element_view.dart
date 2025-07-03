@@ -103,7 +103,7 @@ class _PopupMediaView extends StatelessWidget {
     required this.displayableMediaCount,
   });
 
-  /// A list of pop-up media.
+  /// A list of [PopupMedia] from a [MediaPopupElement] to be displayed.
   final List<PopupMedia> popupMedia;
 
   /// The count of media to display.
