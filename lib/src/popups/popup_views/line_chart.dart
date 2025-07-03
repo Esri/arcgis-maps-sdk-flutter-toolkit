@@ -167,7 +167,7 @@ class _LineChartDetailView extends StatelessWidget {
           minimum: const EdgeInsets.all(20),
           child: Center(
             child: SizedBox(
-              height: MediaQuery.of(context).size.height / 2,
+              height: MediaQuery.sizeOf(context).height / 2,
               child: LineChart(lineData),
             ),
           ),

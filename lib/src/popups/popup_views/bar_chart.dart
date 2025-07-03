@@ -189,7 +189,7 @@ class _BarChartDetailView extends StatelessWidget {
           child: Center(
             child: SizedBox(
               // Bar Chart should be interactive in detail view.
-              height: MediaQuery.of(context).size.height / 2,
+              height: MediaQuery.sizeOf(context).height / 2,
               child: BarChart(barData),
             ),
           ),

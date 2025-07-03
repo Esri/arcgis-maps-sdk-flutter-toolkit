@@ -79,7 +79,7 @@ class _PopupExampleState extends State<PopupExample> {
   Widget? getBottomSheet(BuildContext context) {
     return _identifiedPopup != null
         ? SizedBox(
-            height: MediaQuery.of(context).size.height * 0.7,
+            height: MediaQuery.sizeOf(context).height * 0.7,
             child: PopupView(
               // Optionally, provide a theme data to override the default styling.
               theme: popupViewThemeData,
