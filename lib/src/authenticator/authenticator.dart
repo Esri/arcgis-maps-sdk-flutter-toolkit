@@ -29,7 +29,7 @@ part of '../../arcgis_maps_toolkit.dart';
 /// * If credentials were persisted to the keychain, the authenticator will use those instead of requiring the user to re-enter credentials.
 ///
 /// ## Usage
-/// An [Authenticator] can be placed anywhere in your widget tree, though it makes the most sense to use it as the parent of the [ArcGISMapView] widget.
+/// An [Authenticator] can be placed anywhere in your widget tree, though it makes the most sense to use it as the parent of the [ArcGISMapView] or [ArcGISSceneView] widget.
 /// It will then handle authentication challenges from loading network resources.
 ///
 /// To use OAuth, provide one or more [OAuthUserConfiguration]s in the
@@ -63,7 +63,7 @@ part of '../../arcgis_maps_toolkit.dart';
 /// To configure OAuth for use in your ArcGIS Maps SDK for Flutter app, see:
 /// https://developers.arcgis.com/flutter/install-and-set-up/#enabling-user-authentication
 class Authenticator extends StatefulWidget {
-  /// Creates an [Authenticator] widget with the optional child and optional
+  /// Creates an [Authenticator] widget with the optional child [Widget] and optional
   /// `oAuthUserConfigurations`.
   const Authenticator({
     super.key,
