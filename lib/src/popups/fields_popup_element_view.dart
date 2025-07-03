@@ -15,18 +15,18 @@
 //
 part of '../../arcgis_maps_toolkit.dart';
 
-/// A widget that displays a fields popup element in a card with an expansion tile.
-/// It uses a list view to render the fields content.
-/// parameters:
-/// - [fieldsElement]: The fields popup element to be displayed.
-/// - [isExpanded]: A boolean indicating whether the expansion tile should be initially expanded or not.
+/// A widget that displays a fields popup element in a [Card] with an [ExpansionTile].
+/// It uses a [ListView] to render the fields content.
 class _FieldsPopupElementView extends StatefulWidget {
   const _FieldsPopupElementView({
     required this.fieldsElement,
     this.isExpanded = false,
   });
 
+  /// The fields popup element to be displayed.
   final FieldsPopupElement fieldsElement;
+
+  /// A boolean indicating whether the expansion tile should be initially expanded or not.
   final bool isExpanded;
 
   @override
@@ -106,8 +106,11 @@ class _FieldsPopupElementViewState extends State<_FieldsPopupElementView> {
   }
 }
 
+/// Defines and formats the data for an individual field.
 class _FieldRow extends StatelessWidget {
   const _FieldRow({required this.field});
+
+  /// The field to display.
   final _DisplayField field;
 
   @override
@@ -116,13 +119,16 @@ class _FieldRow extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       spacing: 5,
       children: [
+        // The label for the field.
         Text(field.label, style: Theme.of(context).textTheme.labelLarge),
+        // Formats and displays the value of the field.
         _FormattedValueText(formattedValue: field.formattedValue),
       ],
     );
   }
 }
 
+/// Formats the field value depending on whether it includes a link or plain text.
 class _FormattedValueText extends StatelessWidget {
   const _FormattedValueText({required this.formattedValue});
   final String formattedValue;
@@ -136,6 +142,8 @@ class _FormattedValueText extends StatelessWidget {
     }
   }
 
+  /// Links are made interactive and given a display label.
+  /// If a link is invalid, it is displayed as plain text.
   Widget _buildLinkText(BuildContext context, String value) {
     try {
       final uri = Uri.parse(value);
@@ -152,11 +160,12 @@ class _FormattedValueText extends StatelessWidget {
         ),
       );
     } on FormatException {
-      // Handle invalid URL
+      // Handle invalid URL.
       return _buildPlainText(context, value);
     }
   }
 
+  /// Displays values as plain text.
   Widget _buildPlainText(BuildContext context, String value) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 4),
@@ -164,16 +173,18 @@ class _FormattedValueText extends StatelessWidget {
     );
   }
 
+  /// A helper method to launch a Uri.
   Future<void> _launchUri(BuildContext context, Uri uri) async {
     if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
       if (context.mounted) {
-        // Show an error dialog if the URL cannot be launched
+        // Show an error dialog if the URL cannot be launched.
         await _showErrorDialog(context, uri.toString());
       }
     }
   }
 }
 
+/// A class that represents the display of a field.
 class _DisplayField {
   _DisplayField({required this.label, required this.formattedValue});
   final String label;

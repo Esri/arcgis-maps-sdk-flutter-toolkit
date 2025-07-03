@@ -15,17 +15,18 @@
 //
 part of '../../arcgis_maps_toolkit.dart';
 
-/// A widget that displays a media popup element in a card with an expansion tile.
-/// It uses a horizontal list view to render the media content.
-/// parameters:
-/// - [mediaElement]: The media popup element to be displayed.
-/// - [isExpanded]: A boolean indicating whether the expansion tile should be initially expanded or not.
+/// A widget that displays [PopupMedia] in a [Card] with an [ExpansionTile].
+/// The media popup elements represent images and charts, per the [PopupMediaType]s.
 class _MediaPopupElementView extends StatefulWidget {
   const _MediaPopupElementView({
     required this.mediaElement,
     this.isExpanded = false,
   });
+
+  /// The media popup element to be displayed.
   final MediaPopupElement mediaElement;
+
+  /// A boolean indicating whether the expansion tile should be initially expanded or not.
   final bool isExpanded;
 
   @override
@@ -33,7 +34,10 @@ class _MediaPopupElementView extends StatefulWidget {
 }
 
 class _MediaPopupElementViewState extends State<_MediaPopupElementView> {
+  /// Whether the expansion tile is expanded.
   late bool isExpanded;
+
+  /// The count of media elements to display.
   int get displayableMediaCount => widget.mediaElement.media.length;
 
   @override
@@ -87,19 +91,25 @@ class _MediaPopupElementViewState extends State<_MediaPopupElementView> {
         ),
       );
     } else {
-      return const SizedBox.shrink(); // Return an empty widget if no media is available
+      return const SizedBox.shrink(); // Return an empty widget if no media is available.
     }
   }
 }
 
+/// A widget that displays a horizontal [ListView] to render the media content.
 class _PopupMediaView extends StatelessWidget {
   const _PopupMediaView({
     required this.popupMedia,
     required this.displayableMediaCount,
   });
 
+  /// A list of popup media.
   final List<PopupMedia> popupMedia;
+
+  /// The count of media to display.
   final int displayableMediaCount;
+
+  // The width scale factor to display optimally in the list view.
   double get widthScaleFactor => displayableMediaCount > 1 ? 0.75 : 1.0;
 
   @override
@@ -109,10 +119,12 @@ class _PopupMediaView extends StatelessWidget {
       200,
     );
 
+    // Don't display if there is no media.
     if (popupMedia.isEmpty) return const SizedBox.shrink();
 
     return SizedBox(
       height: mediaSize.height,
+      // Display either a list of media elements or a single media element.
       child: (popupMedia.length > 1)
           ? _buildMediaListWidgets(mediaSize)
           : Container(
@@ -125,6 +137,7 @@ class _PopupMediaView extends StatelessWidget {
     );
   }
 
+  /// A list view of media elements with horizontal scroll.
   Widget _buildMediaListWidgets(Size mediaSize) {
     return ListView.separated(
       scrollDirection: Axis.horizontal,
@@ -147,6 +160,7 @@ class _PopupMediaView extends StatelessWidget {
     );
   }
 
+  /// Build a widget to display the media depending on type.
   Widget _buildMediaWidget(PopupMedia popupMedia, Size mediaSize) {
     switch (popupMedia.type) {
       case PopupMediaType.image:
@@ -160,7 +174,7 @@ class _PopupMediaView extends StatelessWidget {
       case PopupMediaType.pieChart:
         return _PopupPieChart(popupMedia: popupMedia, mediaSize: mediaSize);
       default:
-        return const SizedBox.shrink(); // Empty view for unsupported media types
+        return const SizedBox.shrink(); // Empty view for unsupported media types.
     }
   }
 }
@@ -174,12 +188,14 @@ extension on PopupMedia {
       for (var i = 0; i < popupMediaValue.data.length; i++) {
         final value = popupMediaValue.data[i]._toDouble!;
 
+        // The default label if no label is provided from the popup definition in the Map Viewer.
         var label = 'untitled';
         if (popupMediaValue.labels.isNotEmpty &&
             popupMediaValue.labels.length > i) {
           label = popupMediaValue.labels[i];
         }
 
+        // The default color for charts if no color is provided from the popup definition in the Map Viewer.
         var color = Colors.blue as Color;
         if (popupMediaValue.chartColors.isNotEmpty &&
             popupMediaValue.chartColors.length > i) {
@@ -192,7 +208,7 @@ extension on PopupMedia {
   }
 }
 
-/// Representing the data for a chart.
+/// A class that represents the data for a chart.
 class _ChartData {
   const _ChartData({
     required this.value,

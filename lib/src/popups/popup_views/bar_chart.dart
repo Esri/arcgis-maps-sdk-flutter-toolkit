@@ -16,17 +16,22 @@
 
 part of '../../../arcgis_maps_toolkit.dart';
 
-/// A bar chart widget that displays data in a bar chart format.
-/// The chart can be displayed as a column chart or a bar chart based on the
-/// `isColumnChart` parameter.
+/// A widget that displays a bar chart for the given [PopupMedia].
+/// The chart data is generated based on the data provided in the [PopupMedia].
 class _PopupBarChart extends StatelessWidget {
   _PopupBarChart({required this.popupMedia, required this.isColumnChart})
     : chartData = popupMedia._getChartData();
 
+  /// The popup media associated with this bar chart.
   final PopupMedia popupMedia;
+
+  /// The chart data associated with this media element.
   final List<_ChartData> chartData;
+
+  /// Whether the chart is displayed as a column chart (vertical) or a bar chart (horizontal).
   final bool isColumnChart;
 
+  /// The maximum y value for this bar chart.
   double get _maximumYValue => _calculateMaximumYValue(chartData);
 
   @override
@@ -53,13 +58,14 @@ class _PopupBarChart extends StatelessWidget {
             // Bar Chart should not be interactive in preview.
             child: BarChart(barData(interactive: false)),
           ),
+          // Display the footer containing a caption.
           Positioned(
             bottom: 0,
             left: 0,
             right: 0,
             child: _BarChartFooter(popupMedia: popupMedia),
           ),
-          // Border
+          // Border around the preview of the element.
           Positioned.fill(
             child: Container(
               decoration: BoxDecoration(
@@ -73,7 +79,7 @@ class _PopupBarChart extends StatelessWidget {
     );
   }
 
-  /// Returns the bar chart data.
+  /// Configures the var chart data object which defines how the bar chart is displayed.
   BarChartData barData({required bool interactive}) {
     return BarChartData(
       rotationQuarterTurns: isColumnChart ? 0 : 1,
@@ -130,9 +136,12 @@ class _PopupBarChart extends StatelessWidget {
   }
 }
 
+/// Defines the caption which sits at the bottom of the chart in the list view.
+/// It displays the popup media title, if available.
 class _BarChartFooter extends StatelessWidget {
   const _BarChartFooter({required this.popupMedia});
 
+  /// The popup media for this bar chart.
   final PopupMedia popupMedia;
 
   @override
@@ -161,6 +170,7 @@ class _BarChartFooter extends StatelessWidget {
   }
 }
 
+/// Defines the detail view of the chart which is displayed when a chart is selected from the list view of media elements.
 class _BarChartDetailView extends StatelessWidget {
   const _BarChartDetailView({
     required this.popupMedia,
@@ -168,8 +178,13 @@ class _BarChartDetailView extends StatelessWidget {
     required this.barData,
   });
 
+  /// The popup media for this bar chart.
   final PopupMedia popupMedia;
+
+  /// The data for this chart as defined in the popup definition.
   final BarChartData barData;
+
+  /// A callback that dismisses the dialog.
   final VoidCallback onClose;
 
   @override
