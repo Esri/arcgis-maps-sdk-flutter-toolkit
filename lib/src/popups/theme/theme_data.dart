@@ -38,6 +38,8 @@ ThemeData popupViewThemeData = ThemeData(
     // primary:
     // - used as color of download icon of attachments.
     // - used as color of text links in fields popup element.
+    // error:
+    // - used as color for error messages
   ),
   textTheme: const TextTheme(
     // Used as text style for the main title of the popup.
@@ -68,7 +70,7 @@ ThemeData popupViewThemeData = ThemeData(
     // - attachment name (color is set to black).
     // - attachment size (color is set to grey).
     labelSmall: TextStyle(),
-    // Used by error messages (color is set to red).
+    // Used by error messages (color is set to colorScheme.error).
     bodyLarge: TextStyle(),
     // Used as text style for the description of a section.
     bodyMedium: TextStyle(

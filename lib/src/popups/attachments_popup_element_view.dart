@@ -70,9 +70,9 @@ class _AttachmentsPopupElementViewState
               child: Center(
                 child: Text(
                   'Unable to load attachments.',
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodyLarge?.copyWith(color: Colors.red),
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                    color: Theme.of(context).colorScheme.error,
+                  ),
                 ),
               ),
             );
@@ -333,7 +333,10 @@ class _PopupAttachmentViewInListState
                         );
                       } else if (snapshot.hasError) {
                         return IconButton(
-                          icon: const Icon(Icons.error, color: Colors.red),
+                          icon: Icon(
+                            Icons.error,
+                            color: Theme.of(context).colorScheme.error,
+                          ),
                           onPressed: () {
                             setState(() {
                               downloadFuture = downloadAttachment();

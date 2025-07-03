@@ -43,7 +43,6 @@ class OverviewMap extends StatefulWidget {
     ArcGISMap? map,
     Widget Function(BuildContext, Widget)? containerBuilder,
   }) {
-
     return OverviewMap._internal(
       controllerProvider: controllerProvider,
       key: key,
@@ -218,10 +217,12 @@ class _OverviewMapState extends State<OverviewMap> {
     } else if (sceneGeometry != null) {
       _extentGraphic.geometry = sceneGeometry;
 
-      _overviewController.setViewpoint(Viewpoint.fromCenter(
-        sceneGeometry as ArcGISPoint,
-        scale: viewpoint.targetScale * widget.scaleFactor,
-      ));
+      _overviewController.setViewpoint(
+        Viewpoint.fromCenter(
+          sceneGeometry as ArcGISPoint,
+          scale: viewpoint.targetScale * widget.scaleFactor,
+        ),
+      );
     }
   }
 

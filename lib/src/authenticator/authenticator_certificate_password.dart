@@ -107,7 +107,10 @@ class _AuthenticatorCertificatePasswordState
               ),
               // Display an error message if there is one.
               if (_errorMessage != null)
-                Text(_errorMessage!, style: const TextStyle(color: Colors.red)),
+                Text(
+                  _errorMessage!,
+                  style: TextStyle(color: Theme.of(context).colorScheme.error),
+                ),
             ],
           ),
         ),
