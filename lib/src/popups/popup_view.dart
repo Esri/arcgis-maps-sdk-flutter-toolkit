@@ -27,8 +27,6 @@ part of '../../arcgis_maps_toolkit.dart';
 /// Thanks to the backwards compatibility support in the API, it will also work with the legacy pop-up definitions created
 /// by the classic Map Viewer. It does not support editing.
 ///
-/// <img src="https://github.com/Esri/arcgis-maps-sdk-flutter-toolkit/blob/main/lib/src/popups/popup.png?raw=true" alt="Image of PopupView" />
-///
 /// ## Features
 /// * Display a pop-upfor a feature based on the pop-up definition defined in a web map.
 /// * Supports image refresh intervals on image pop-up media, refreshing the image at a given interval defined in the pop-up element.
