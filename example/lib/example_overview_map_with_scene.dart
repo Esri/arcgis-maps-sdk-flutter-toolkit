@@ -49,23 +49,17 @@ class _ExampleOverviewMapWithSceneState
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('OverviewMap with Scene')),
-      body: Column(
+      body: Stack(
         children: [
-          Expanded(
-            child: Stack(
-              children: [
-                // Add a scene view to the widget tree and set a controller.
-                ArcGISSceneView(
-                  controllerProvider: () => _sceneViewController,
-                  onSceneViewReady: onSceneViewReady,
-                ),
-                // Create an overview map and display on top of the scene view in a stack.
-                // Pass the overview map the corresponding scene view controller.
-                OverviewMap.withSceneView(
-                  controllerProvider: () => _sceneViewController,
-                ),
-              ],
-            ),
+          // Add a scene view to the widget tree and set a controller.
+          ArcGISSceneView(
+            controllerProvider: () => _sceneViewController,
+            onSceneViewReady: onSceneViewReady,
+          ),
+          // Create an overview map and display on top of the scene view in a stack.
+          // Pass the overview map the corresponding scene view controller.
+          OverviewMap.withSceneView(
+            controllerProvider: () => _sceneViewController,
           ),
         ],
       ),
