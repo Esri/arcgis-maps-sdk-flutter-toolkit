@@ -16,7 +16,8 @@
 
 part of '../../arcgis_maps_toolkit.dart';
 
-/// A [CustomPainter] that paints a classic compass needle.
+/// A [CustomPainter] that paints a classic compass needle per the default style used by the [Compass] widget.
+/// Use this painter if you want to create a custom compass icon that incorporates the default style.
 class CompassNeedlePainter extends CustomPainter {
   /// Constructs a [CompassNeedlePainter] with the needle rotated by `angleRadians`.
   CompassNeedlePainter(this.angleRadians);
@@ -24,20 +25,20 @@ class CompassNeedlePainter extends CustomPainter {
   /// The angle (in radians) at which the needle is rotated.
   final double angleRadians;
 
-  static final _bronzePaint =
-      Paint()..color = const Color.fromARGB(255, 241, 169, 59);
+  static final _bronzePaint = Paint()
+    ..color = const Color.fromARGB(255, 241, 169, 59);
 
-  static final _darkGreyPaint =
-      Paint()..color = const Color.fromARGB(255, 128, 128, 128);
+  static final _darkGreyPaint = Paint()
+    ..color = const Color.fromARGB(255, 128, 128, 128);
 
-  static final _darkRedPaint =
-      Paint()..color = const Color.fromARGB(255, 124, 22, 13);
+  static final _darkRedPaint = Paint()
+    ..color = const Color.fromARGB(255, 124, 22, 13);
 
-  static final _lightGreyPaint =
-      Paint()..color = const Color.fromARGB(255, 169, 168, 168);
+  static final _lightGreyPaint = Paint()
+    ..color = const Color.fromARGB(255, 169, 168, 168);
 
-  static final _lightRedPaint =
-      Paint()..color = const Color.fromARGB(255, 233, 51, 35);
+  static final _lightRedPaint = Paint()
+    ..color = const Color.fromARGB(255, 233, 51, 35);
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -59,12 +60,12 @@ class CompassNeedlePainter extends CustomPainter {
     canvas.save();
 
     // One quadrant of the needle.
-    final path =
-        Path()..addPolygon([
-          Offset.zero,
-          const Offset(-0.5, 0),
-          const Offset(0, -0.5),
-        ], true);
+    final path = Path()
+      ..addPolygon([
+        Offset.zero,
+        const Offset(-0.5, 0),
+        const Offset(0, -0.5),
+      ], true);
 
     // Squeeze the quadrants to 1/3 of the width.
     canvas.scale(1 / 3, 1);
