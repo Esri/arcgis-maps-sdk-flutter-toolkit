@@ -89,7 +89,7 @@ class _ExampleOverviewMapWithSceneState
         z: 40000000,
         spatialReference: SpatialReference.wgs84,
       ),
-      heading: -45,
+      heading: 0,
       pitch: 0,
       roll: 0,
     );
