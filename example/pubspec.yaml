@@ -1,5 +1,5 @@
 name: arcgis_maps_toolkit_example
-description: Demonstrates how to use the Toolkit for the ArcGIS Maps SDK for Flutter
+description: A series of example apps that demonstrate how to use the ArcGIS Maps SDK for Flutter Toolkit.
 publish_to: 'none'
 version: 1.0.0+1
 
