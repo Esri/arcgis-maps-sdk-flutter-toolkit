@@ -37,7 +37,7 @@ ThemeData popupViewThemeData = ThemeData(
     // - if cardTheme not set, used as background color of cards that wrap each pop-up element.
     // primary:
     // - used as color of download icon of attachments.
-    // - used as color of text links in fields popup element.
+    // - used as color of text links in fields pop-up element.
     // error:
     // - used as color for error messages
   ),
