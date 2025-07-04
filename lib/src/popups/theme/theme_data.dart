@@ -34,10 +34,10 @@ ThemeData popupViewThemeData = ThemeData(
   colorScheme: const ColorScheme.light(
     // surface:
     // - used as background color of PopupView container.
-    // - if cardTheme not set, used as background color of cards that wrap each popup element.
+    // - if cardTheme not set, used as background color of cards that wrap each pop-up element.
     // primary:
     // - used as color of download icon of attachments.
-    // - used as color of text links in fields popup element.
+    // - used as color of text links in fields pop-up element.
     // error:
     // - used as color for error messages
   ),
@@ -79,7 +79,7 @@ ThemeData popupViewThemeData = ThemeData(
       color: Colors.grey,
     ),
   ),
-  // Used as theme for cards that wrap each popup element.
+  // Used as theme for cards that wrap each pop-up element.
   cardTheme: const CardThemeData(color: Colors.white),
   // Used as theme for expansion tiles that wrap media and fields elements.
   // Note: if backgroundColor or collapsedBackgroundColor are not set in expansionTileTheme, the PopupView defaults to transparent.
@@ -90,7 +90,7 @@ ThemeData popupViewThemeData = ThemeData(
     collapsedBackgroundColor: Colors.white,
   ),
   // Used by divider widgets:
-  // - below main popup title.
+  // - below main pop-up title.
   // - between fields in fields section.
   dividerTheme: const DividerThemeData(
     color: Colors.grey,
@@ -99,7 +99,7 @@ ThemeData popupViewThemeData = ThemeData(
     endIndent: 5,
     space: 10,
   ),
-  // Used by close icon next to main popup title.
+  // Used by close icon next to main pop-up title.
   // Used by icons in attachments (note: color is set).
   iconButtonTheme: const IconButtonThemeData(style: ButtonStyle()),
   iconTheme: const IconThemeData(color: Colors.grey),

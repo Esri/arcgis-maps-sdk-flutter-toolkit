@@ -16,15 +16,13 @@
 
 part of '../../../arcgis_maps_toolkit.dart';
 
-/// A widget that displays an image media view in a popup.
-/// It uses a stack to overlay the image with a footer and a border.
-/// parameters:
-/// - [popupMedia]: The popup media to be displayed.
-/// - [mediaSize]: The size of the media view.
+/// A widget that displays an image for the given [PopupMedia].
 class _ImageMediaView extends StatefulWidget {
   const _ImageMediaView({required this.popupMedia, required this.mediaSize});
 
+  // The pop-up media for this image.
   final PopupMedia popupMedia;
+  // The size of the media view.
   final Size mediaSize;
 
   @override
@@ -32,7 +30,7 @@ class _ImageMediaView extends StatefulWidget {
 }
 
 class _ImageMediaViewState extends State<_ImageMediaView> {
-  // A flag to indicate if the detail view is cached and ready to be shown.
+  /// A flag to indicate if the detail view is cached and ready to be shown.
   bool isShowingDetailReady = false;
 
   @override
@@ -78,7 +76,7 @@ class _ImageMediaViewState extends State<_ImageMediaView> {
                   );
                 },
                 errorBuilder: (context, error, stackTrace) {
-                  // This is to prevent showing a detail view with an error image.
+                  // If an image isn't available, we don't display the detail view.
                   isShowingDetailReady = false;
                   return const Center(
                     child: Icon(
@@ -90,7 +88,7 @@ class _ImageMediaViewState extends State<_ImageMediaView> {
                 },
               ),
             ),
-            // Footer Overlay
+            // Display the footer containing a caption.
             Positioned(
               bottom: 0,
               left: 0,
@@ -100,16 +98,14 @@ class _ImageMediaViewState extends State<_ImageMediaView> {
                 mediaSize: widget.mediaSize,
               ),
             ),
-
-            // Add a clock icon to indicate the image refresh interval
+            // Add a clock icon to indicate the image refresh interval, if required.
             if (widget.popupMedia.imageRefreshInterval > 0)
               const Positioned(
                 top: 8,
                 right: 8,
                 child: Icon(Icons.access_time, color: Colors.white, size: 16),
               ),
-
-            // Border
+            // Border around the preview of the element.
             Positioned.fill(
               child: Container(
                 decoration: BoxDecoration(
@@ -127,10 +123,15 @@ class _ImageMediaViewState extends State<_ImageMediaView> {
   }
 }
 
+/// Defines the caption which sits at the bottom of the image in the list view.
+/// It displays the pop-up media title, if available.
 class _PopupMediaFooter extends StatelessWidget {
   const _PopupMediaFooter({required this.popupMedia, required this.mediaSize});
 
+  /// The pop-up media for this image.
   final PopupMedia popupMedia;
+
+  /// The size of the media.
   final Size mediaSize;
 
   @override
@@ -160,10 +161,14 @@ class _PopupMediaFooter extends StatelessWidget {
   }
 }
 
+/// Defines the detail view of the image which is displayed when an image is selected from the list view of media elements.
 class _MediaDetailView extends StatelessWidget {
   const _MediaDetailView({required this.popupMedia, required this.onClose});
 
+  /// The pop-up media for this image.
   final PopupMedia popupMedia;
+
+  /// A callback that dismisses the dialog.
   final VoidCallback onClose;
 
   @override
@@ -207,7 +212,13 @@ class _MediaDetailView extends StatelessWidget {
                           errorBuilder: (context, error, stackTrace) {
                             return Center(
                               child: Text(
-                                'Failed to get the image details: $error',
+                                'Failed to get the image details.',
+                                style: Theme.of(context).textTheme.bodyLarge
+                                    ?.copyWith(
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.error,
+                                    ),
                               ),
                             );
                           },
@@ -231,7 +242,12 @@ class _MediaDetailView extends StatelessWidget {
                   fit: BoxFit.fill,
                   errorBuilder: (context, error, stackTrace) {
                     return Center(
-                      child: Text('Failed to get the image details: $error'),
+                      child: Text(
+                        'Failed to get the image details.',
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          color: Theme.of(context).colorScheme.error,
+                        ),
+                      ),
                     );
                   },
                 ),
@@ -241,6 +257,7 @@ class _MediaDetailView extends StatelessWidget {
   }
 }
 
+/// Used by images with a refresh interval.
 class _IndicatorDot extends StatefulWidget {
   const _IndicatorDot({
     required this.size,

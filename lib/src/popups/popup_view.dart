@@ -16,19 +16,51 @@
 
 part of '../../arcgis_maps_toolkit.dart';
 
-/// A PopupView that displays a Popup with its various popup elements.
-/// The popup view is built using a ListView and contains a header with the title
-/// and a close button. The body of the popup view consists of different types of popup elements,
-/// such as text (HTML), fields, media, and attachments elements.
-/// parameters:
-/// - [popup]: The Popup object to be displayed.
-/// - [onClose]: An optional callback function that is called when the popup is closed.
-/// - [theme]: An optional parameter that specifies custom theme data for the popup.
+/// A widget that will display a pop-up for an individual feature.
+/// This includes showing the feature's title, attributes, custom description, media, and attachments.
+///
+/// The new online Map Viewer allows users to create a pop-up definition by assembling a list of pop-up elements.
+/// PopupView will support the display of pop-up elements created by the Map Viewer, including:
+/// Text, Fields, Attachments, and Media (Images and Charts).
+///
+/// # Overview
+/// Thanks to the backwards compatibility support in the API, it will also work with the legacy pop-up definitions created
+/// by the classic Map Viewer. It does not support editing.
+///
+/// ## Features
+/// * Display a pop-upfor a feature based on the pop-up definition defined in a web map.
+/// * Supports image refresh intervals on image pop-up media, refreshing the image at a given interval defined in the pop-up element.
+/// * Supports elements containing Arcade expression and automatically evaluates expressions.
+/// * Displays media (images and charts) full-screen.
+/// * Supports hyperlinks in text, media, and fields elements.
+///
+/// ## Usage
+///
+/// The PopupView contains:
+/// * A header section with title defined in the popup.
+/// * A body, built using a [Column] and combination of [Card] and [ExpansionTile] widgets, consisting of different types of
+/// pop-up elements, including text (HTML), fields, media, and attachments.
+///
+/// A pop-up is usually obtained from an identify result and then a [PopupView] can be created to wrap the popup and display its contents in a sized widget, such as a [Dialog] or a [Container]:
+/// ```dart
+/// PopupView(
+///   popup: popup,
+///   theme: // Optional: provide custom ThemeData
+///   onClose: () {
+///     // Optional: handle close action
+///   },
+/// )
+/// ```
 class PopupView extends StatelessWidget {
   const PopupView({required this.popup, this.onClose, this.theme, super.key});
 
+  /// An optional callback function that is called when the [PopupView] is closed. By default, it closes the view.
   final VoidCallback? onClose;
+
+  /// The [Popup] object to be displayed.
   final Popup popup;
+
+  /// An optional parameter that specifies a custom [ThemeData] for the pop-up view. By default, it uses the data from the closest [Theme] instance that encloses the given [BuildContext].
   final ThemeData? theme;
 
   @override
@@ -56,16 +88,16 @@ class PopupView extends StatelessWidget {
             const Divider(),
             Expanded(
               child: FutureBuilder(
-                // Evaluate the popup expressions asynchronously,
-                // it needs to be done before displaying the popup elements.
+                // Evaluate the pop-up expressions asynchronously,
+                // it needs to be done before displaying the pop-up elements.
                 future: popup.evaluateExpressions(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.done) {
-                    return _buildListView();
+                    return _buildElementsView();
                   } else if (snapshot.hasError) {
                     return Center(
                       child: Text(
-                        'Unable to evaluate popup expressions.',
+                        'Unable to evaluate pop-up expressions.',
                         style: themeData.textTheme.bodyLarge?.copyWith(
                           color: Theme.of(context).colorScheme.error,
                         ),
@@ -89,7 +121,7 @@ class PopupView extends StatelessWidget {
   }) {
     return Padding(
       padding: const EdgeInsets.all(12),
-      // Header with title and close button
+      // Header with title and close button.
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -107,7 +139,8 @@ class PopupView extends StatelessWidget {
     );
   }
 
-  Widget _buildListView() {
+  /// A list view of different pop-up elements displayed in their respective views.
+  Widget _buildElementsView() {
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
       child: Column(
@@ -135,7 +168,7 @@ class PopupView extends StatelessWidget {
                   return const Text('Element not supported');
                 }
               }).toList()
-            : [const Text('No popup elements available.')],
+            : [const Text('No pop-up elements available.')],
       ),
     );
   }

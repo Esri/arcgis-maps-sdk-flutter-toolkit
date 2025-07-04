@@ -37,6 +37,7 @@ Future<void> _showErrorDialog(BuildContext context, String message) async {
   );
 }
 
+/// Displays an image from an [AttachmentsPopupElement] in a [Dialog].
 class _DetailsScreenImageDialog extends StatelessWidget {
   const _DetailsScreenImageDialog({required this.filePath});
   final String filePath;
@@ -44,7 +45,7 @@ class _DetailsScreenImageDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      backgroundColor: Colors.white,
+      backgroundColor: const Color.fromARGB(255, 255, 252, 252),
       insetPadding: EdgeInsets.zero,
       child: Stack(
         children: [
@@ -53,7 +54,7 @@ class _DetailsScreenImageDialog extends StatelessWidget {
             top: 24,
             right: 24,
             child: IconButton(
-              icon: const Icon(Icons.close, color: Colors.black, size: 24),
+              icon: const Icon(Icons.close),
               onPressed: () => Navigator.of(context).pop(),
             ),
           ),
@@ -68,15 +69,14 @@ double _calculateMaximumYValue(List<_ChartData> chartData) {
   if (chartData.isEmpty) {
     return 0;
   }
-  final maxY =
-      chartData
-          .map((data) => data.value)
-          .fold<double>(0, (a, b) => a > b ? a : b)
-          .ceilToDouble();
+  final maxY = chartData
+      .map((data) => data.value)
+      .fold<double>(0, (a, b) => a > b ? a : b)
+      .ceilToDouble();
   return maxY + (maxY / 5).ceilToDouble();
 }
 
-/// Calculates the width of the text based on the maximum  value.
+/// Calculates the width of the text based on the maximum value.
 double _measureTextWidth(List<_ChartData> chartData, TextStyle style) {
   final maxValue = _calculateMaximumYValue(chartData).toString();
   final textPainter = TextPainter(
@@ -163,7 +163,7 @@ FlTitlesData _getFlTitlesData(List<_ChartData> chartData) {
   );
 }
 
-// Returns the border data for the chart.
+/// Returns the border data for the chart.
 FlBorderData get _flBorderData {
   return FlBorderData(
     show: true,

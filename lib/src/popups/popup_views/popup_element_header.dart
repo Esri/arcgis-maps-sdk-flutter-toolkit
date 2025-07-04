@@ -16,12 +16,17 @@
 
 part of '../../../arcgis_maps_toolkit.dart';
 
-/// A widget that displays a header for a popup element.
-/// It includes a title and an optional description.
+/// A widget that displays the title and description for a pop-up element.
+/// The title and description are defined in the pop-up definition in the Map Viewer.
+/// If a title is not set in the pop-up definition, default values are passed to this widget from the respective pop-up element views.
+/// If the description is empty then no text is displayed.
 class _PopupElementHeader extends StatelessWidget {
   const _PopupElementHeader({required this.title, required this.description});
 
+  /// The title of the pop-up element.
   final String title;
+
+  /// The description for the pop-up element.
   final String description;
 
   @override
