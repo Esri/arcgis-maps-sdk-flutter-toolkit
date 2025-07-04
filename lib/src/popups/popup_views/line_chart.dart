@@ -16,14 +16,19 @@
 
 part of '../../../arcgis_maps_toolkit.dart';
 
-/// A widget that displays a line chart for the given [popupMedia].
+/// A widget that displays a line chart for the given [PopupMedia].
+/// The chart data is generated based on the data provided in the [PopupMedia].
 class _PopupLineChart extends StatelessWidget {
   _PopupLineChart({required this.popupMedia})
     : chartData = popupMedia._getChartData();
 
+  /// The pop-up media associated with this line chart.
   final PopupMedia popupMedia;
+
+  /// The chart data associated with this media element.
   final List<_ChartData> chartData;
 
+  /// The maximum y value for this line chart.
   double get _maximumYValue => _calculateMaximumYValue(chartData);
 
   @override
@@ -47,16 +52,17 @@ class _PopupLineChart extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsetsGeometry.all(5),
-            // Bar Chart should not be interactive in preview.
+            // Line Chart should not be interactive in preview.
             child: LineChart(lineData(interactive: false)),
           ),
+          // Display the footer containing a caption.
           Positioned(
             bottom: 0,
             left: 0,
             right: 0,
             child: _LineChartFooter(popupMedia: popupMedia),
           ),
-          // Border
+          // Border around the preview of the element.
           Positioned.fill(
             child: Container(
               decoration: BoxDecoration(
@@ -70,6 +76,7 @@ class _PopupLineChart extends StatelessWidget {
     );
   }
 
+  /// Configures the line chart data object which defines how the line chart is displayed.
   LineChartData lineData({required bool interactive}) {
     return LineChartData(
       maxY: _maximumYValue,
@@ -109,9 +116,12 @@ class _PopupLineChart extends StatelessWidget {
   }
 }
 
+/// Defines the caption which sits at the bottom of the chart in the list view.
+/// It displays the pop-up media title, if available.
 class _LineChartFooter extends StatelessWidget {
   const _LineChartFooter({required this.popupMedia});
 
+  /// The pop-up media for this line chart.
   final PopupMedia popupMedia;
 
   @override
@@ -140,6 +150,7 @@ class _LineChartFooter extends StatelessWidget {
   }
 }
 
+/// Defines the detail view of the chart which is displayed when a chart is selected from the list view of media elements.
 class _LineChartDetailView extends StatelessWidget {
   const _LineChartDetailView({
     required this.popupMedia,
@@ -147,8 +158,13 @@ class _LineChartDetailView extends StatelessWidget {
     required this.lineData,
   });
 
+  /// The pop-up media for this line chart.
   final PopupMedia popupMedia;
+
+  /// The data for this chart as defined in the pop-up definition.
   final LineChartData lineData;
+
+  /// A callback that dismisses the dialog.
   final VoidCallback onClose;
 
   @override

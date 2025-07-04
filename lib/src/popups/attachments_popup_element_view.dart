@@ -15,20 +15,21 @@
 //
 part of '../../arcgis_maps_toolkit.dart';
 
-/// Displays a list of attachments in a popup.
-/// It fetches the attachments from the server and displays them in a grid
-/// or list view, depending on the display type.
-/// parameters:
-/// - [attachmentsElement]: The attachments popup element to be displayed.
-/// - [isExpanded]: A boolean indicating whether the expansion tile should be initially expanded or not.
+/// Displays a list of attachments from a pop-up definition.
+/// Attachments are fetched from the server and displayed either in a grid
+/// or list, depending on the display type defined in the Map Viewer.
 class _AttachmentsPopupElementView extends StatefulWidget {
   const _AttachmentsPopupElementView({
     required this.attachmentsElement,
     this.isExpanded = false,
   });
 
+  /// The attachments pop-up element to be displayed.
   final AttachmentsPopupElement attachmentsElement;
+
+  /// A boolean indicating whether the expansion tile should be initially expanded.
   final bool isExpanded;
+
   @override
   State<_AttachmentsPopupElementView> createState() =>
       _AttachmentsPopupElementViewState();
@@ -70,9 +71,9 @@ class _AttachmentsPopupElementViewState
               child: Center(
                 child: Text(
                   'Unable to load attachments.',
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodyLarge?.copyWith(color: Colors.red),
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                    color: Theme.of(context).colorScheme.error,
+                  ),
                 ),
               ),
             );
@@ -125,6 +126,7 @@ class _AttachmentsPopupElementViewState
     );
   }
 
+  /// Build a list view of attachments based on the attachments element.
   Widget _buildListView() {
     return Container(
       decoration: BoxDecoration(
@@ -141,6 +143,7 @@ class _AttachmentsPopupElementViewState
     );
   }
 
+  /// Build a grid view of attachments based on the attachments element.
   Widget _buildGridView() {
     return GridView.builder(
       shrinkWrap: true,
@@ -158,7 +161,7 @@ class _AttachmentsPopupElementViewState
   }
 }
 
-/// A widget that represents a popup attachment element in a preview mode.
+/// A widget that represents an attachment in preview mode that is displayed within the grid view layout.
 class _PopupAttachmentViewInGallery extends StatefulWidget {
   const _PopupAttachmentViewInGallery({required this.popupAttachment});
   final PopupAttachment popupAttachment;
@@ -170,8 +173,13 @@ class _PopupAttachmentViewInGallery extends StatefulWidget {
 
 class _PopupAttachmentViewInGalleryState
     extends State<_PopupAttachmentViewInGallery> {
+  /// The size of the preview thumbail.
   final double thumbnailSize = 30;
+
+  /// A future to capture the thumbnail.
   late Future<ArcGISImage> thumbnailFuture;
+
+  /// The path to the thumbnail file.
   String? filePath;
 
   @override
@@ -180,10 +188,11 @@ class _PopupAttachmentViewInGalleryState
     // Create a thumbnail for the attachment and prevent it from being
     // recreated every time the widget is rebuilt.
     thumbnailFuture = getThumbnailFuture(thumbnailSize.toInt());
-    // Load the file path from cache
+    // Load the file path from the cache.
     initFilePath();
   }
 
+  /// Load the thumbnail file path from the cache.
   Future<void> initFilePath() async {
     final cachePath = await _getCachedFilePath(widget.popupAttachment.name);
     if (cachePath != null && File(cachePath).existsSync()) {
@@ -248,17 +257,17 @@ class _PopupAttachmentViewInGalleryState
     );
   }
 
+  /// Creates the thumbail from the pop-up attachment.
   Future<ArcGISImage> getThumbnailFuture(int size) {
     return widget.popupAttachment.createThumbnail(width: size, height: size);
   }
 }
 
-/// A widget that displays a popup attachment element in a ListTile.
-/// Presents a single attachment popup element in a ListTile.
-/// The ListTile shows the attachment name, size, and a thumbnail.
-/// If the attachment is an image, it shows a thumbnail.
-/// Clicking on the ListTile opens the image in a dialog, or opens the file
-/// using the default application for the file type.
+/// A widget that displays a single pop-up attachment element in a [ListTile] displayed within the list view layout.
+/// The tile shows the attachment name, size, and a thumbnail (if the attachment is an image).
+/// Tapping on a tile:
+/// * Opens an image in a dialog.
+/// * Opens a file using the default application on the device for the file type.
 class _PopupAttachmentViewInList extends StatefulWidget {
   const _PopupAttachmentViewInList({required this.popupAttachment});
   final PopupAttachment popupAttachment;
@@ -270,18 +279,29 @@ class _PopupAttachmentViewInList extends StatefulWidget {
 
 class _PopupAttachmentViewInListState
     extends State<_PopupAttachmentViewInList> {
+  /// The thumbnail size.
   final double thumbnailSize = 35;
+
+  /// A future to capture the thumbnail.
   late Future<ArcGISImage> thumbnailFuture;
+
+  /// A future to capture download status.
   Future<void>? downloadFuture;
+
+  /// The path to the thumbnail file.
   String? filePath;
 
   @override
   void initState() {
     super.initState();
+    // Create a thumbnail for the attachment and prevent it from being
+    // recreated every time the widget is rebuilt.
     thumbnailFuture = getThumbnailFuture(thumbnailSize.toInt());
+    // Load the file path from the cache.
     initFilePath();
   }
 
+  /// Load the thumbnail file path from the cache.
   Future<void> initFilePath() async {
     final cachePath = await _getCachedFilePath(widget.popupAttachment.name);
     if (cachePath != null && File(cachePath).existsSync()) {
@@ -333,7 +353,10 @@ class _PopupAttachmentViewInListState
                         );
                       } else if (snapshot.hasError) {
                         return IconButton(
-                          icon: const Icon(Icons.error, color: Colors.red),
+                          icon: Icon(
+                            Icons.error,
+                            color: Theme.of(context).colorScheme.error,
+                          ),
                           onPressed: () {
                             setState(() {
                               downloadFuture = downloadAttachment();
@@ -368,6 +391,7 @@ class _PopupAttachmentViewInListState
     );
   }
 
+  /// A helper method to download the attachment.
   Future<void> downloadAttachment() async {
     final downloadPath = await _downloadingAttachment(widget.popupAttachment);
     setState(() {
@@ -376,11 +400,13 @@ class _PopupAttachmentViewInListState
     });
   }
 
+  /// Creates the thumbail from the pop-up attachment.
   Future<ArcGISImage> getThumbnailFuture(int size) {
     return widget.popupAttachment.createThumbnail(width: size, height: size);
   }
 }
 
+/// Displays the thumbnail once it loads.
 FutureBuilder<ArcGISImage> _thumbnailFutureBuilder(
   Future<ArcGISImage> createThumbnail,
   PopupAttachment attachment,
@@ -403,6 +429,7 @@ FutureBuilder<ArcGISImage> _thumbnailFutureBuilder(
   );
 }
 
+/// Fetches the attachment data and saves to file. Returns the file path, if valid.
 Future<String?> _downloadingAttachment(PopupAttachment popupAttachment) async {
   final data = await popupAttachment.attachment?.fetchData();
   if (data != null) {
@@ -411,7 +438,7 @@ Future<String?> _downloadingAttachment(PopupAttachment popupAttachment) async {
     final file = File(filePath);
     await file.writeAsBytes(data);
     // Save the file path in SharedPreferences
-    // to persist it across app restarts
+    // to persist it across app restarts.
     await _setCachedFilePath(popupAttachment.name, filePath);
     return filePath;
   } else {
@@ -419,6 +446,7 @@ Future<String?> _downloadingAttachment(PopupAttachment popupAttachment) async {
   }
 }
 
+/// A helper method to fetch an appropriate icon depending on file type.
 Icon _getContentTypeIcon(
   String contentType, {
   double size = 30,

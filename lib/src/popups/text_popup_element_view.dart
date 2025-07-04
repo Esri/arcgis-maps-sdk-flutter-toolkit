@@ -16,13 +16,11 @@
 
 part of '../../arcgis_maps_toolkit.dart';
 
-/// A widget that displays a text popup element in a card with a WebView.
-/// It uses a WebView to render the HTML content of the text element.
-/// The height of the WebView is dynamically calculated based on the content.
+/// A widget that displays a text pop-up element in a [Card] with a [WebViewWidget].
+/// It uses a web view to render the HTML content of the text element.
+/// The height of the web view is dynamically calculated based on the content.
 /// The widget also provides a callback to notify when the height changes.
 /// The text element is passed as a parameter to the widget.
-/// parameters:
-/// - [textElement]: The text popup element to be displayed.
 class _TextPopupElementView extends StatefulWidget {
   const _TextPopupElementView({required this.textElement});
   final TextPopupElement textElement;
@@ -32,7 +30,10 @@ class _TextPopupElementView extends StatefulWidget {
 }
 
 class _TextPopupElementViewState extends State<_TextPopupElementView> {
+  /// A controller for the web view.
   late final WebViewController _controller;
+
+  /// The text pop-up element to be displayed.
   double height = 100;
 
   @override
@@ -113,6 +114,7 @@ class _TextPopupElementViewState extends State<_TextPopupElementView> {
     """;
   }
 
+  /// Calculates the height required for the web view.
   Future<double?> _calculateHeight() async {
     try {
       final result = await _controller.runJavaScriptReturningResult(
@@ -124,6 +126,7 @@ class _TextPopupElementViewState extends State<_TextPopupElementView> {
     }
   }
 
+  /// A helper method to launch Uris from the HTML content.
   Future<void> _launchUri(BuildContext context, String uri) async {
     if (!await launchUrl(
       Uri.parse(uri),

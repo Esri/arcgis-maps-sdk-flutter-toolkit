@@ -16,20 +16,54 @@
 
 part of '../../arcgis_maps_toolkit.dart';
 
-/// The [Authenticator] widget handles authentication challenges with either an
-/// OAuth workflow in a browser window, or a username and password dialog.
+/// The [Authenticator] widget handles authentication challenges.
+///
+/// # Overview
+/// A user interface is displayed when network and ArcGIS authentication challenges occur.
+///
+/// ## Features
+/// The [Authenticator] will handle many different types of authentication, for example:
+/// * ArcGIS authentication (token and OAuth)
+/// * Integrated Windows Authentication (IWA)
+/// * Client Cerfificate (PKI)
+/// * If credentials were persisted to the keychain, the authenticator will use those instead of requiring the user to re-enter credentials.
+///
+/// ## Usage
+/// An [Authenticator] can be placed anywhere in your widget tree, though it makes the most sense to use it as the parent of the [ArcGISMapView] or [ArcGISSceneView] widget.
+/// It will then handle authentication challenges from loading network resources.
 ///
 /// To use OAuth, provide one or more [OAuthUserConfiguration]s in the
-/// `oAuthUserConfigurations` parameter. Otherwise, the user will be prompted to
+/// [Authenticator.oAuthUserConfigurations] parameter. Otherwise, the user will be prompted to
 /// sign in using a username and password to obtain a [TokenCredential].
 ///
-/// To learn more about using OAuth with ArcGIS accounts, see this document:
+/// ```dart
+///   @override
+///   Widget build(BuildContext context) {
+///     return Scaffold(
+///       body: Authenticator(
+///         oAuthUserConfigurations: [
+///           OAauthUserConfiguration(
+///             portalUri: Uri.parse('https://www.arcgis.com'),
+///             clientId: 'YOUR-CLIENT-ID',
+///             redirectUri: Uri.parse('YOUR-REDIRECT-URL'),
+///           ),
+///         ],
+///         child: ArcGISMapView(
+///           controllerProvider: () => _mapViewController,
+///         ),
+///       ),
+///     );
+///   }
+/// ```
+///
+/// ## More information
+/// To learn more about using OAuth with ArcGIS accounts, see:
 /// https://developers.arcgis.com/documentation/security-and-authentication/user-authentication/
 ///
-/// To configure OAuth for use in your Maps SDK for Flutter app, see:
+/// To configure OAuth for use in your ArcGIS Maps SDK for Flutter app, see:
 /// https://developers.arcgis.com/flutter/install-and-set-up/#enabling-user-authentication
 class Authenticator extends StatefulWidget {
-  /// Creates an [Authenticator] widget with the optional child and optional
+  /// Creates an [Authenticator] widget with the optional child [Widget] and optional
   /// `oAuthUserConfigurations`.
   const Authenticator({
     super.key,
