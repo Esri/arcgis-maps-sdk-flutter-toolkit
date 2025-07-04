@@ -99,7 +99,7 @@ class PopupView extends StatelessWidget {
                       child: Text(
                         'Unable to evaluate pop-up expressions.',
                         style: themeData.textTheme.bodyLarge?.copyWith(
-                          color: Colors.red,
+                          color: Theme.of(context).colorScheme.error,
                         ),
                       ),
                     );
