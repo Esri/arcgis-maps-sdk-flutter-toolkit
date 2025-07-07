@@ -30,7 +30,7 @@ part of '../../../arcgis_maps_toolkit.dart';
 /// )
 /// ```
 ///
-ThemeData popupViewThemeData = ThemeData(
+ThemeData _popupViewThemeData = ThemeData(
   colorScheme: const ColorScheme.light(
     // surface:
     // - used as background color of PopupView container.

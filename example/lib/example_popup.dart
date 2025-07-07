@@ -113,7 +113,6 @@ class _PopupExampleState extends State<PopupExample> {
         ? SizedBox(
             height: MediaQuery.of(context).size.height * 0.7,
             child: PopupView(
-              theme: popupViewThemeData,
               popup: _popup!,
               onClose: () {
                 setState(() {
