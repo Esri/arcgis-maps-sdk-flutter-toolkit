@@ -32,7 +32,7 @@ part of '../../arcgis_maps_toolkit.dart';
 ///
 /// ## Usage
 /// An [OverviewMap] is generally placed in a [Stack] on top of an [ArcGISMapView] or [ArcGISSceneView].
-/// The compass must be provided the same [ArcGISMapViewController] or [ArcGISSceneViewController] as the corresponding map view or scene view.
+/// The overview map must be provided the same [ArcGISMapViewController] or [ArcGISSceneViewController] as the corresponding map view or scene view.
 /// ```dart
 ///  @override
 ///  Widget build(BuildContext context) {
