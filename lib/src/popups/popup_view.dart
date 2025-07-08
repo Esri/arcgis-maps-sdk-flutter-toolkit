@@ -45,14 +45,13 @@ part of '../../arcgis_maps_toolkit.dart';
 /// ```dart
 /// PopupView(
 ///   popup: popup,
-///   theme: // Optional: provide custom ThemeData
 ///   onClose: () {
 ///     // Optional: handle close action
 ///   },
 /// )
 /// ```
 class PopupView extends StatelessWidget {
-  const PopupView({required this.popup, this.onClose, this.theme, super.key});
+  const PopupView({required this.popup, this.onClose, super.key});
 
   /// An optional callback function that is called when the [PopupView] is closed. By default, it closes the view.
   final VoidCallback? onClose;
@@ -60,12 +59,9 @@ class PopupView extends StatelessWidget {
   /// The [Popup] object to be displayed.
   final Popup popup;
 
-  /// An optional parameter that specifies a custom [ThemeData] for the pop-up view. By default, it uses the data from the closest [Theme] instance that encloses the given [BuildContext].
-  final ThemeData? theme;
-
   @override
   Widget build(BuildContext context) {
-    final themeData = theme ?? Theme.of(context);
+    final themeData = _popupViewThemeData;
     return Theme(
       data: themeData,
       child: Container(

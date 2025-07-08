@@ -81,8 +81,6 @@ class _PopupExampleState extends State<PopupExample> {
         ? SizedBox(
             height: MediaQuery.sizeOf(context).height * 0.7,
             child: PopupView(
-              // Optionally, provide a theme data to override the default styling.
-              theme: popupViewThemeData,
               // Pass a popup to the popup view widget to display it.
               popup: _identifiedPopup!,
               // Optionally, pass a callback for when the popup view is closed.
