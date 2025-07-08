@@ -17,10 +17,9 @@
 part of '../../arcgis_maps_toolkit.dart';
 
 /// A [CustomPainter] that paints a classic compass needle per the default style used by the [Compass] widget.
-/// Use this painter if you want to create a custom compass icon that incorporates the default style.
-class CompassNeedlePainter extends CustomPainter {
-  /// Constructs a [CompassNeedlePainter] with the needle rotated by `angleRadians`.
-  CompassNeedlePainter(this.angleRadians);
+class _CompassNeedlePainter extends CustomPainter {
+  /// Constructs a [_CompassNeedlePainter] with the needle rotated by `angleRadians`.
+  _CompassNeedlePainter(this.angleRadians);
 
   /// The angle (in radians) at which the needle is rotated.
   final double angleRadians;
@@ -88,6 +87,6 @@ class CompassNeedlePainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    return (oldDelegate as CompassNeedlePainter).angleRadians != angleRadians;
+    return (oldDelegate as _CompassNeedlePainter).angleRadians != angleRadians;
   }
 }
