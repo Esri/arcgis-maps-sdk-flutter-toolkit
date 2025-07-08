@@ -79,7 +79,7 @@ class Compass extends StatefulWidget {
   final double size;
 
   /// A function to build the compass icon. If not provided, a default compass icon will be used. Provide a function
-  /// to customize the icon. The returned icon should be a [Widget] with
+  /// to customize the icon. The returned icon must be a [Widget] with
   /// width and height of `size` and some element rotated to `angleRadians` to indicate north.
   final Widget Function(BuildContext context, double size, double angleRadians)?
   iconBuilder;
