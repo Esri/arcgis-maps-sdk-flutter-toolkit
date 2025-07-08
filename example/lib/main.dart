@@ -14,13 +14,12 @@
 // limitations under the License.
 //
 
-import 'package:flutter/material.dart';
 import 'package:arcgis_maps/arcgis_maps.dart';
-
-import 'example_authenticator.dart';
-import 'example_compass.dart';
-import 'example_overview_map.dart';
-import 'example_popup.dart';
+import 'package:arcgis_maps_toolkit_example/example_authenticator.dart';
+import 'package:arcgis_maps_toolkit_example/example_compass.dart';
+import 'package:arcgis_maps_toolkit_example/example_overview_map.dart';
+import 'package:arcgis_maps_toolkit_example/example_popup.dart';
+import 'package:flutter/material.dart';
 
 void main() {
   // Supply your apiKey using the --dart-define-from-file command line argument.
@@ -95,7 +94,7 @@ class ExampleApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Toolkit Examples')),
+      appBar: AppBar(title: const Text('Toolkit Examples')),
       body: ListView.builder(
         padding: const EdgeInsets.all(10),
         itemCount: ComponentExample.values.length,

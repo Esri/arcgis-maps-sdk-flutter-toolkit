@@ -14,10 +14,10 @@
 // limitations under the License.
 //
 
+import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_toolkit_example/example_overview_map_with_map.dart';
 import 'package:arcgis_maps_toolkit_example/example_overview_map_with_scene.dart';
 import 'package:flutter/material.dart';
-import 'package:arcgis_maps/arcgis_maps.dart';
 
 void main() {
   // Supply your apiKey using the --dart-define-from-file command line argument.
@@ -37,7 +37,7 @@ void main() {
         colorScheme: colorScheme,
         appBarTheme: AppBarTheme(backgroundColor: colorScheme.inversePrimary),
       ),
-      home: ExampleOverviewMap(),
+      home: const ExampleOverviewMap(),
     ),
   );
 }
@@ -82,7 +82,7 @@ class ExampleOverviewMap extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('OverviewMap')),
+      appBar: AppBar(title: const Text('OverviewMap')),
       body: ListView.builder(
         padding: const EdgeInsets.all(10),
         itemCount: OverviewMapExample.values.length,

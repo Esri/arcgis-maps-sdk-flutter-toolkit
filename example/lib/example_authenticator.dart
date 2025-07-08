@@ -14,9 +14,9 @@
 // limitations under the License.
 //
 
-import 'package:flutter/material.dart';
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_toolkit/arcgis_maps_toolkit.dart';
+import 'package:flutter/material.dart';
 
 void main() {
   runApp(const MaterialApp(home: ExampleAuthenticator()));
@@ -61,7 +61,7 @@ class _ExampleAuthenticatorState extends State<ExampleAuthenticator> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar: AppBar(title: Text('Authenticator')),
+      appBar: AppBar(title: const Text('Authenticator')),
       body: SafeArea(
         left: false,
         right: false,
@@ -87,7 +87,7 @@ class _ExampleAuthenticatorState extends State<ExampleAuthenticator> {
               children: [
                 // Toggle between OAuth and Token authentication.
                 SegmentedButton(
-                  segments: [
+                  segments: const [
                     ButtonSegment(
                       value: _AuthenticationType.oauth,
                       label: Text('OAuth'),
@@ -108,8 +108,8 @@ class _ExampleAuthenticatorState extends State<ExampleAuthenticator> {
                 ElevatedButton(
                   onPressed: _mapState == _MapState.unloaded ? load : unload,
                   child: _mapState == _MapState.unloaded
-                      ? Text('Load')
-                      : Text('Unload'),
+                      ? const Text('Load')
+                      : const Text('Unload'),
                 ),
               ],
             ),
