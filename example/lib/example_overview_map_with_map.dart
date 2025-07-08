@@ -29,24 +29,25 @@ void main() {
     ArcGISEnvironment.apiKey = apiKey;
   }
 
-  runApp(const MaterialApp(home: ExampleCompassMap()));
+  runApp(const MaterialApp(home: ExampleOverviewMapWithMap()));
 }
 
-class ExampleCompassMap extends StatefulWidget {
-  const ExampleCompassMap({super.key});
+class ExampleOverviewMapWithMap extends StatefulWidget {
+  const ExampleOverviewMapWithMap({super.key});
 
   @override
-  State<ExampleCompassMap> createState() => _ExampleCompassMapState();
+  State<ExampleOverviewMapWithMap> createState() =>
+      _ExampleOverviewMapWithMapState();
 }
 
-class _ExampleCompassMapState extends State<ExampleCompassMap> {
+class _ExampleOverviewMapWithMapState extends State<ExampleOverviewMapWithMap> {
   // Create a map view controller.
   final _mapViewController = ArcGISMapView.createController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Compass Map')),
+      appBar: AppBar(title: Text('OverviewMap with Map')),
       body: Stack(
         children: [
           // Add a map view to the widget tree and set a controller.
@@ -54,9 +55,9 @@ class _ExampleCompassMapState extends State<ExampleCompassMap> {
             controllerProvider: () => _mapViewController,
             onMapViewReady: onMapViewReady,
           ),
-          // Create a compass and display on top of the map view in a stack.
-          // Pass the compass the corresponding map view controller.
-          Compass(controllerProvider: () => _mapViewController),
+          // Create an overview map and display on top of the map view in a stack.
+          // Pass the overview map the corresponding map view controller.
+          OverviewMap.withMapView(controllerProvider: () => _mapViewController),
         ],
       ),
     );
@@ -66,9 +67,8 @@ class _ExampleCompassMapState extends State<ExampleCompassMap> {
     // Set a map with a basemap style and initial viewpoint to the map view controller.
     final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic)
       ..initialViewpoint = Viewpoint.fromCenter(
-        ArcGISPoint(x: 4, y: 51, spatialReference: SpatialReference.wgs84),
-        scale: 20000000,
-        rotation: -45,
+        ArcGISPoint(x: 4, y: 40, spatialReference: SpatialReference.wgs84),
+        scale: 40000000,
       );
     _mapViewController.arcGISMap = map;
   }

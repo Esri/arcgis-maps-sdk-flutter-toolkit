@@ -115,7 +115,7 @@ class _PopupMediaView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final mediaSize = Size(
-      MediaQuery.of(context).size.width * widthScaleFactor,
+      MediaQuery.sizeOf(context).width * widthScaleFactor,
       200,
     );
 

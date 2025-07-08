@@ -19,6 +19,7 @@ import 'package:arcgis_maps/arcgis_maps.dart';
 
 import 'example_compass_map.dart';
 import 'example_compass_scene.dart';
+import 'example_compass_custom.dart';
 
 void main() {
   // Supply your apiKey using the --dart-define-from-file command line argument.
@@ -46,13 +47,18 @@ void main() {
 enum CompassExample {
   compassMap(
     'Compass Map',
-    'A "North Arrow" always pointing north on a 2D map',
+    'Example of compass used with a map. Default styling.',
     ExampleCompassMap.new,
   ),
   compassScene(
     'Compass Scene',
-    'A "North Arrow" always pointing north on a 3D scene',
+    'Example of compass used with a scene. Default styling.',
     ExampleCompassScene.new,
+  ),
+  compassCustom(
+    'Compass Custom',
+    'Example of compass used with a map with custom styling.',
+    ExampleCompassCustom.new,
   );
 
   const CompassExample(this.title, this.subtitle, this.constructor);
@@ -87,8 +93,8 @@ class ExampleCompass extends StatelessWidget {
       body: ListView.builder(
         padding: const EdgeInsets.all(10),
         itemCount: CompassExample.values.length,
-        itemBuilder:
-            (context, index) => CompassExample.values[index].buildCard(context),
+        itemBuilder: (context, index) =>
+            CompassExample.values[index].buildCard(context),
       ),
     );
   }

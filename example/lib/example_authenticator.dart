@@ -36,12 +36,16 @@ enum _AuthenticationType { oauth, token }
 enum _MapState { unloaded, loaded }
 
 class _ExampleAuthenticatorState extends State<ExampleAuthenticator> {
+  // Create a map view controller.
   final _mapViewController = ArcGISMapView.createController();
 
+  // Empty map to display until data is loaded.
   final _emptyMap = ArcGISMap(spatialReference: SpatialReference.wgs84);
 
+  // Holds the selected authentication type.
   var _authenticationType = _AuthenticationType.oauth;
 
+  // Current map state.
   var _mapState = _MapState.unloaded;
 
   // Configurations to use when OAuth is requested.
@@ -68,12 +72,13 @@ class _ExampleAuthenticatorState extends State<ExampleAuthenticator> {
               child: Authenticator(
                 oAuthUserConfigurations:
                     _authenticationType == _AuthenticationType.oauth
-                        ? _oAuthUserConfigurations
-                        : [],
+                    ? _oAuthUserConfigurations
+                    : [],
+                // Add a map view as the child to the Authenticator, and set a controller.
                 child: ArcGISMapView(
                   controllerProvider: () => _mapViewController,
-                  onMapViewReady:
-                      () => _mapViewController.arcGISMap = _emptyMap,
+                  onMapViewReady: () =>
+                      _mapViewController.arcGISMap = _emptyMap,
                 ),
               ),
             ),
@@ -102,10 +107,9 @@ class _ExampleAuthenticatorState extends State<ExampleAuthenticator> {
                 // revoke any OAuth tokens and remove all credentials.
                 ElevatedButton(
                   onPressed: _mapState == _MapState.unloaded ? load : unload,
-                  child:
-                      _mapState == _MapState.unloaded
-                          ? Text('Load')
-                          : Text('Unload'),
+                  child: _mapState == _MapState.unloaded
+                      ? Text('Load')
+                      : Text('Unload'),
                 ),
               ],
             ),
