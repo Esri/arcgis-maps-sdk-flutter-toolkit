@@ -183,7 +183,7 @@ class _CompassState extends State<Compass> {
     double angleRadians,
   ) {
     return CustomPaint(
-      foregroundPainter: CompassNeedlePainter(angleRadians),
+      foregroundPainter: _CompassNeedlePainter(angleRadians),
       child: Container(
         width: size,
         height: size,
