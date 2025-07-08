@@ -16,9 +16,37 @@
 
 part of '../../arcgis_maps_toolkit.dart';
 
-/// A `Compass` (also known as a "north arrow") is a widget that visualizes the
-/// current rotation of the map and allows the user to reset the rotation to
-/// north by tapping on it.
+/// A [Compass] (also known as a "north arrow") is a widget that visualizes the
+/// current rotation of an [ArcGISMapView] or [ArcGISSceneView].
+///
+/// # Overview
+///
+/// ## Features
+/// * Automatically hides when the rotation is zero / oriented North.
+/// * Can be configured to be always visible.
+/// * Will reset the map/scene rotation to North when tapped on.
+///
+/// ## Usage
+/// A [Compass] is generally placed in a [Stack] on top of an [ArcGISMapView] or [ArcGISSceneView].
+/// The compass must be provided the same [ArcGISMapViewController] or [ArcGISSceneViewController] as the corresponding map view or scene view.
+/// ```dart
+///   @override
+///   Widget build(BuildContext context) {
+///     return Scaffold(
+///       body: Stack(
+///         children: [
+///           ArcGISMapView(
+///             controllerProvider: controllerProvider,
+///            ),
+///           Compass(
+///             controllerProvider: controllerProvider,
+///            ),
+///          ],
+///        ),
+///      );
+///    }
+/// ```
+///
 class Compass extends StatefulWidget {
   /// Create a Compass widget.
   const Compass({
@@ -31,32 +59,22 @@ class Compass extends StatefulWidget {
   });
 
   /// A function that provides a [GeoViewController] to listen to and
-  /// control.
-  ///
-  /// This should return the same controller that is provided to the
+  /// control. This should return the same controller that is provided to the
   /// corresponding [ArcGISMapView] or [ArcGISSceneView].
   final GeoViewController Function() controllerProvider;
 
   /// Whether the compass should automatically hide when the map is oriented
-  /// north.
-  ///
-  /// Defaults to `true`. If set to `false`, the compass will always be visible.
+  /// north. Defaults to `true`. If set to `false`, the compass will always be visible.
   final bool automaticallyHides;
 
-  /// The alignment of the compass within the parent widget.
-  ///
-  /// Defaults to [Alignment.topRight]. The compass should generally be placed
+  /// The alignment of the compass within the parent widget. Defaults to [Alignment.topRight]. The compass should generally be placed
   /// in a [Stack] on top of the corresponding [ArcGISMapView] or [ArcGISSceneView].
   final Alignment alignment;
 
-  /// The padding around the compass.
-  ///
-  /// Defaults to 10 pixels on all sides.
+  /// The padding around the compass. Defaults to 10 pixels on all sides.
   final EdgeInsets padding;
 
-  /// A function to build the compass icon.
-  ///
-  /// If not provided, a default compass icon will be used. Provide a function
+  /// A function to build the compass icon. If not provided, a default compass icon will be used. Provide a function
   /// to customize the icon. The returned icon should be a [Widget] with some
   /// element rotated to `angleRadians` to indicate north.
   final Widget Function(BuildContext context, double angleRadians)? iconBuilder;
