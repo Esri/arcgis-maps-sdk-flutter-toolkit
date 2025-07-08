@@ -55,6 +55,7 @@ class Compass extends StatefulWidget {
     this.automaticallyHides = true,
     this.alignment = Alignment.topRight,
     this.padding = const EdgeInsets.all(10),
+    this.size = 50,
     this.iconBuilder,
   });
 
@@ -74,10 +75,14 @@ class Compass extends StatefulWidget {
   /// The padding around the compass. Defaults to 10 pixels on all sides.
   final EdgeInsets padding;
 
+  /// The width and height of the compass icon in pixels. Defaults to 50 pixels.
+  final double size;
+
   /// A function to build the compass icon. If not provided, a default compass icon will be used. Provide a function
-  /// to customize the icon. The returned icon should be a [Widget] with some
-  /// element rotated to `angleRadians` to indicate north.
-  final Widget Function(BuildContext context, double angleRadians)? iconBuilder;
+  /// to customize the icon. The returned icon must be a [Widget] with
+  /// width and height of `size` and some element rotated to `angleRadians` to indicate north.
+  final Widget Function(BuildContext context, double size, double angleRadians)?
+  iconBuilder;
 
   @override
   State<Compass> createState() => _CompassState();
@@ -91,7 +96,8 @@ class _CompassState extends State<Compass> {
 
   var _angleDegrees = 0.0;
 
-  late Widget Function(BuildContext context, double angleRadians) _iconBuilder;
+  late Widget Function(BuildContext context, double size, double angleRadians)
+  _iconBuilder;
 
   static double rotationToAngle(double rotation) => rotation * -math.pi / 180;
 
@@ -142,7 +148,11 @@ class _CompassState extends State<Compass> {
           child: IconButton(
             padding: EdgeInsets.zero,
             onPressed: onPressed,
-            icon: _iconBuilder(context, rotationToAngle(_angleDegrees)),
+            icon: _iconBuilder(
+              context,
+              widget.size,
+              rotationToAngle(_angleDegrees),
+            ),
           ),
         ),
       ),
@@ -167,12 +177,16 @@ class _CompassState extends State<Compass> {
     }
   }
 
-  Widget defaultIconBuilder(BuildContext context, double angleRadians) {
+  Widget defaultIconBuilder(
+    BuildContext context,
+    double size,
+    double angleRadians,
+  ) {
     return CustomPaint(
       foregroundPainter: CompassNeedlePainter(angleRadians),
       child: Container(
-        width: 50,
-        height: 50,
+        width: size,
+        height: size,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           color: const Color.fromARGB(192, 228, 240, 244),

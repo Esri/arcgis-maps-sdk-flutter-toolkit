@@ -65,13 +65,15 @@ class _ExampleCompassCustomState extends State<ExampleCompassCustom> {
             alignment: Alignment.centerLeft,
             // Optionally, apply custom padding. Default is 10.
             padding: const EdgeInsets.all(40),
+            // Optionally, set the size of the compass icon. Default is 50.
+            size: 80,
             // Optionally, apply a custom icon builder to style the icon representing the compass.
             // See the other examples for the default compass style.
-            iconBuilder: (context, angleRadians) => Transform.rotate(
+            iconBuilder: (context, size, angleRadians) => Transform.rotate(
               angle: angleRadians,
               child: Icon(
                 Icons.arrow_circle_up,
-                size: 80,
+                size: size,
                 color: Colors.purple,
               ),
             ),
