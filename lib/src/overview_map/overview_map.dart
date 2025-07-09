@@ -16,9 +16,36 @@
 
 part of '../../arcgis_maps_toolkit.dart';
 
-/// A small "overview" (or "inset") map displaying a representation of the current
-/// viewpoint of the target map. The current viewpoint will be represented by a
-/// polygon displaying the visible area of the target map.
+/// [OverviewMap] is a small, secondary map view (sometimes called an “inset map”), superimposed on an existing [ArcGISMapView] or [ArcGISSceneView], which shows a representation of the current visible area (for an [ArcGISMapView]) or viewpoint (for an [ArcGISSceneView]).
+///
+/// # Overview
+/// For an [OverviewMap] on an [ArcGISMapView], the map view's `visibleArea` property will be represented in the overview map as a polygon, which will rotate as the map view rotates.
+/// For an [OverviewMap] on an [ArcGISSceneView], the center point of the scene view's `currentViewpoint` property will be represented in the overview map by a point.
+///
+/// ## Features
+/// * Displays a representation of the current visible area or viewpoint for a connected map view or scene view, respectively.
+/// * Supports a configurable scaling factor for setting the overview map’s zoom level relative to the connected view.
+/// * Supports a configurable symbol for visualizing the current visible area or viewpoint representation (a `SimpleFillSymbol` for a connected map view; a `SimpleMarkerSymbol` for a connected scene view).
+/// * Supports using a custom map in the overview map display.
+///
+/// Note: [OverviewMap] uses metered ArcGIS Location Platform basemaps by default, so you will need to configure an API key access token. See [Security and authentication](https://developers.arcgis.com/documentation/security-and-authentication/) documentation for more information.
+///
+/// ## Usage
+/// An [OverviewMap] is generally placed in a [Stack] on top of an [ArcGISMapView] or [ArcGISSceneView].
+/// The overview map must be provided the same [ArcGISMapViewController] or [ArcGISSceneViewController] as the corresponding map view or scene view.
+/// ```dart
+///  @override
+///  Widget build(BuildContext context) {
+///    return Scaffold(
+///      body: Stack(
+///        children: [
+///          ArcGISMapView(controllerProvider: controllerProvider),
+///          OverviewMap.withMapView(controllerProvider: controllerProvider),
+///        ],
+///      ),
+///    );
+///  }
+/// ```
 class OverviewMap extends StatefulWidget {
   /// Private constructor for use by the factory constructors.
   const OverviewMap._internal({
@@ -78,36 +105,26 @@ class OverviewMap extends StatefulWidget {
     );
   }
 
-  /// A function that provides the [GeoViewController] of the target map.
-  ///
-  /// This should return the same controller that is provided to the
-  /// corresponding [GeoModel].
+  /// A function that provides the [GeoViewController] of the target map. This should return the same controller that is provided to the
+  /// corresponding [ArcGISMapView] or [ArcGISSceneView].
   final GeoViewController Function() controllerProvider;
 
-  /// The alignment of the overview map within the parent widget.
-  ///
-  /// Defaults to [Alignment.topRight]. The overview map should generally be placed
-  /// in a [Stack] on top of the corresponding [ArcGISMapView].
+  /// The alignment of the overview map within the parent widget. Defaults to [Alignment.topRight]. The overview map should generally be placed
+  /// in a [Stack] on top of the corresponding [ArcGISMapView] or [ArcGISSceneView].
   final Alignment alignment;
 
-  /// The padding around the overview map.
-  ///
-  /// Defaults to 10 pixels on all sides.
+  /// The padding around the overview map. Defaults to 10 pixels on all sides.
   final EdgeInsets padding;
 
-  /// The amount to scale the overview map compared to the target map.
-  ///
-  /// Defaults to 25.
+  /// The factor to multiply the overview map scale by compared to the target map view or scene view. Defaults to 25.
   final double scaleFactor;
 
   /// The symbol used to represent the current viewpoint.
-  /// - For MapView: a [SimpleFillSymbol]
-  /// - For SceneView: a [SimpleMarkerSymbol]
+  /// - For [ArcGISMapView]: a [SimpleFillSymbol] is used to draw the visible area.
+  /// - For [ArcGISSceneView]: a [SimpleMarkerSymbol] is used to draw the current viewpoint's center.
   final ArcGISSymbol? symbol;
 
-  /// The map to use as the overview map.
-  ///
-  /// Defaults to a map with the ArcGIS Topographic basemap style.
+  /// The map to use as the overview map. Defaults to a map with the ArcGIS Topographic basemap style.
   final ArcGISMap? map;
 
   /// A function to build the container holding the overview map.
