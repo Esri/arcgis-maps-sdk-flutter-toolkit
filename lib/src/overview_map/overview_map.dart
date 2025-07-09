@@ -28,7 +28,7 @@ part of '../../arcgis_maps_toolkit.dart';
 /// * Supports a configurable symbol for visualizing the current visible area or viewpoint representation (a `SimpleFillSymbol` for a connected map view; a `SimpleMarkerSymbol` for a connected scene view).
 /// * Supports using a custom map in the overview map display.
 ///
-/// Note: [OverviewMap] uses metered ArcGIS Location Platform basemaps by default, so you will need to configure an API key access token. See [Security and authentication](https://developers.arcgis.com/documentation/security-and-authentication/) documentation for more information.
+/// Note: [OverviewMap] uses metered ArcGIS Location Platform basemaps by default, so you will need to implement authentication using a supported method. See [Security and authentication](https://developers.arcgis.com/documentation/security-and-authentication/) documentation for more information.
 ///
 /// ## Usage
 /// An [OverviewMap] is generally placed in a [Stack] on top of an [ArcGISMapView] or [ArcGISSceneView].
