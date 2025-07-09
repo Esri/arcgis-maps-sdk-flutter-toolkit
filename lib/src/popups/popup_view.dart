@@ -28,7 +28,7 @@ part of '../../arcgis_maps_toolkit.dart';
 /// by the classic Map Viewer. It does not support editing.
 ///
 /// ## Features
-/// * Display a pop-upfor a feature based on the pop-up definition defined in a web map.
+/// * Display a pop-up for a feature based on the pop-up definition defined in a web map.
 /// * Supports image refresh intervals on image pop-up media, refreshing the image at a given interval defined in the pop-up element.
 /// * Supports elements containing Arcade expression and automatically evaluates expressions.
 /// * Displays media (images and charts) full-screen.
@@ -36,12 +36,12 @@ part of '../../arcgis_maps_toolkit.dart';
 ///
 /// ## Usage
 ///
-/// The PopupView contains:
-/// * A header section with title defined in the popup.
+/// The [PopupView] contains:
+/// * A header section with title defined in the [Popup].
 /// * A body, built using a [Column] and combination of [Card] and [ExpansionTile] widgets, consisting of different types of
 /// pop-up elements, including text (HTML), fields, media, and attachments.
 ///
-/// A pop-up is usually obtained from an identify result and then a [PopupView] can be created to wrap the popup and display its contents in a sized widget, such as a [Dialog] or a [Container]:
+/// A pop-up is usually obtained from an identify result and then a [PopupView] can be created to wrap the pop-up and display its contents in a sized widget, such as a [Dialog] or a [Container]:
 /// ```dart
 /// PopupView(
 ///   popup: popup,
