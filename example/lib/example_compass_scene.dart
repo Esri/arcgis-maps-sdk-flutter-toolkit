@@ -14,9 +14,9 @@
 // limitations under the License.
 //
 
-import 'package:flutter/material.dart';
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_toolkit/arcgis_maps_toolkit.dart';
+import 'package:flutter/material.dart';
 
 void main() {
   // Supply your apiKey using the --dart-define-from-file command line argument.
@@ -46,7 +46,7 @@ class _ExampleCompassSceneState extends State<ExampleCompassScene> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Compass Scene')),
+      appBar: AppBar(title: const Text('Compass Scene')),
       body: Stack(
         children: [
           // Add a scene view to the widget tree and set a controller.

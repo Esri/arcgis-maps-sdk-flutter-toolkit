@@ -14,9 +14,9 @@
 // limitations under the License.
 //
 
-import 'package:flutter/material.dart';
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_toolkit/arcgis_maps_toolkit.dart';
+import 'package:flutter/material.dart';
 
 void main() {
   // Supply your apiKey using the --dart-define-from-file command line argument.
@@ -46,7 +46,7 @@ class _ExampleCompassCustomState extends State<ExampleCompassCustom> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Compass Custom')),
+      appBar: AppBar(title: const Text('Compass Custom')),
       body: Stack(
         children: [
           // Add a map view to the widget tree and set a controller.
@@ -71,7 +71,7 @@ class _ExampleCompassCustomState extends State<ExampleCompassCustom> {
             // See the other examples for the default compass style.
             iconBuilder: (context, size, angleRadians) => Transform.rotate(
               angle: angleRadians,
-              child: Icon(
+              child: const Icon(
                 Icons.arrow_circle_up,
                 size: size,
                 color: Colors.purple,

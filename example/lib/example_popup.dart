@@ -16,9 +16,9 @@
 
 import 'dart:async';
 
+import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_toolkit/arcgis_maps_toolkit.dart';
 import 'package:flutter/material.dart';
-import 'package:arcgis_maps/arcgis_maps.dart';
 
 void main() {
   // Supply your apiKey using the --dart-define-from-file command line argument.
@@ -50,7 +50,7 @@ class _PopupExampleState extends State<PopupExample> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('PopupView')),
+      appBar: AppBar(title: const Text('PopupView')),
       // Add a map view to the widget tree and set a controller.
       body: ArcGISMapView(
         controllerProvider: () => _mapViewController,
