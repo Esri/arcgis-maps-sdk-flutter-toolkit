@@ -29,24 +29,24 @@ void main() {
     ArcGISEnvironment.apiKey = apiKey;
   }
 
-  runApp(const MaterialApp(home: ExampleCompassMap()));
+  runApp(const MaterialApp(home: ExampleCompassCustom()));
 }
 
-class ExampleCompassMap extends StatefulWidget {
-  const ExampleCompassMap({super.key});
+class ExampleCompassCustom extends StatefulWidget {
+  const ExampleCompassCustom({super.key});
 
   @override
-  State<ExampleCompassMap> createState() => _ExampleCompassMapState();
+  State<ExampleCompassCustom> createState() => _ExampleCompassCustomState();
 }
 
-class _ExampleCompassMapState extends State<ExampleCompassMap> {
+class _ExampleCompassCustomState extends State<ExampleCompassCustom> {
   // Create a map view controller.
   final _mapViewController = ArcGISMapView.createController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Compass Map')),
+      appBar: AppBar(title: Text('Compass Custom')),
       body: Stack(
         children: [
           // Add a map view to the widget tree and set a controller.
@@ -56,7 +56,28 @@ class _ExampleCompassMapState extends State<ExampleCompassMap> {
           ),
           // Create a compass and display on top of the map view in a stack.
           // Pass the compass the corresponding map view controller.
-          Compass(controllerProvider: () => _mapViewController),
+          // This compass implementation amends default properties, such as alignment and icon style.
+          Compass(
+            controllerProvider: () => _mapViewController,
+            // Optionally, always show the compass. Defaults to true, which hides the compass when the map is oriented north.
+            automaticallyHides: false,
+            // Optionally, apply an alternative alignment. Default is top right.
+            alignment: Alignment.centerLeft,
+            // Optionally, apply custom padding. Default is 10.
+            padding: const EdgeInsets.all(40),
+            // Optionally, set the size of the compass icon. Default is 50.
+            size: 80,
+            // Optionally, apply a custom icon builder to style the icon representing the compass.
+            // See the other examples for the default compass style.
+            iconBuilder: (context, size, angleRadians) => Transform.rotate(
+              angle: angleRadians,
+              child: Icon(
+                Icons.arrow_circle_up,
+                size: size,
+                color: Colors.purple,
+              ),
+            ),
+          ),
         ],
       ),
     );

@@ -42,82 +42,52 @@ class PopupExample extends StatefulWidget {
 }
 
 class _PopupExampleState extends State<PopupExample> {
+  // Create a map view controller.
   final _mapViewController = ArcGISMapView.createController();
-  Popup? _popup;
-
-  final webmaps = [
-    (
-      id: 'f4ea5041f73b40f5ac241035664eff7e',
-      title: 'Popup - Hawaii big island',
-    ),
-    (
-      id: '66c1d496ae354fd79e174f8e3074c3f9',
-      title: 'Popup with all chart types',
-    ),
-    (id: '00570dfb5ff043efae7be3fee0536361', title: 'Popup with attachments'),
-    (
-      id: '67c72e385e6e46bc813e0b378696aba8',
-      title: 'Popup with image interval',
-    ),
-    (
-      id: '9f3a674e998f461580006e626611f9ad',
-      title: 'Popup design demo',
-    ), // keep this as the last one
-  ];
+  // Create a variable to capture a popup when identified.
+  Popup? _identifiedPopup;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Popup Examples'),
-        actions: [
-          PopupMenuButton(
-            itemBuilder: (context) {
-              return List.generate(webmaps.length, (index) {
-                return PopupMenuItem(
-                  value: webmaps[index].id,
-                  child: Text(webmaps[index].title),
-                );
-              });
-            },
-            onSelected: (valueId) {
-              final selectedWebmap = webmaps.firstWhere(
-                (webmap) => webmap.id == valueId,
-              );
-              reloadMap(selectedWebmap.id);
-            },
-          ),
-        ],
+      appBar: AppBar(title: Text('PopupView')),
+      // Add a map view to the widget tree and set a controller.
+      body: ArcGISMapView(
+        controllerProvider: () => _mapViewController,
+        onMapViewReady: onMapViewReady,
+        // Respond to taps on the map view.
+        onTap: identifyPopups,
       ),
-      body: Stack(
-        children: [
-          Authenticator(
-            child: ArcGISMapView(
-              controllerProvider: () => _mapViewController,
-              onMapViewReady: onMapViewReady,
-              onTap: identifyArcGISPopup,
-            ),
-          ),
-        ],
-      ),
+      // This example accesses the bottom sheet to display the popup view.
       bottomSheet: getBottomSheet(context),
     );
   }
 
   void onMapViewReady() {
-    reloadMap(webmaps.last.id);
+    // Configure a webmap containing popups and set to the map view controller.
+    final webmapContainingPopups = ArcGISMap.withItem(
+      PortalItem.withUri(
+        Uri.parse(
+          'https://www.arcgis.com/home/item.html?id=9f3a674e998f461580006e626611f9ad',
+        ),
+      )!,
+    );
+    _mapViewController.arcGISMap = webmapContainingPopups;
   }
 
+  // Display a popup view in the bottom sheet when a popup is identified.
   Widget? getBottomSheet(BuildContext context) {
-    return _popup != null
+    return _identifiedPopup != null
         ? SizedBox(
-            height: MediaQuery.of(context).size.height * 0.7,
+            height: MediaQuery.sizeOf(context).height * 0.7,
             child: PopupView(
-              theme: popupViewThemeData,
-              popup: _popup!,
+              // Pass a popup to the popup view widget to display it.
+              popup: _identifiedPopup!,
+              // Optionally, pass a callback for when the popup view is closed.
+              // Here we reset the identifiedPopup variable back to null.
               onClose: () {
                 setState(() {
-                  _popup = null;
+                  _identifiedPopup = null;
                 });
               },
             ),
@@ -125,22 +95,22 @@ class _PopupExampleState extends State<PopupExample> {
         : null;
   }
 
-  Future<void> identifyArcGISPopup(Offset localPosition) async {
-    final map = _mapViewController.arcGISMap;
-    final firstFeatureLayer =
-        map?.operationalLayers.firstWhere((layer) => layer is FeatureLayer)
-            as FeatureLayer;
-    final result = await _mapViewController.identifyLayer(
-      firstFeatureLayer,
+  Future<void> identifyPopups(Offset localPosition) async {
+    // Perform an identify operation on the map.
+    final result = await _mapViewController.identifyLayers(
       screenPoint: localPosition,
       tolerance: 20,
       returnPopupsOnly: true,
     );
-    if (result.popups.isNotEmpty) {
-      final popup = result.popups.first;
-
-      setState(() => _popup = popup);
+    // Check whether popups have been identified.
+    if (result.isNotEmpty && result.first.popups.isNotEmpty) {
+      // Get the first popup from the identify result.
+      final popup = result.first.popups.first;
+      // Set the identified popup to the state variable.
+      // This causes the bottom sheet to display containing a popupview.
+      setState(() => _identifiedPopup = popup);
     } else if (mounted) {
+      // If no popup identified, show a message and reset the state.
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           backgroundColor: Theme.of(context).colorScheme.primary,
@@ -148,16 +118,7 @@ class _PopupExampleState extends State<PopupExample> {
           duration: const Duration(seconds: 2),
         ),
       );
-      setState(() => _popup = null);
+      setState(() => _identifiedPopup = null);
     }
-  }
-
-  void reloadMap(String valueId) {
-    setState(() => _popup = null);
-    _mapViewController.arcGISMap = ArcGISMap.withItem(
-      PortalItem.withUri(
-        Uri.parse('https://www.arcgis.com/home/item.html?id=$valueId'),
-      )!,
-    );
   }
 }

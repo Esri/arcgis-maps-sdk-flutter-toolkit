@@ -4,9 +4,8 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-
         {
-            "name": "example (debug)",
+            "name": "Run example app with API key access token (debug)",
             "type": "dart",
             "request": "launch",
             "templateFor": "example/lib/",
@@ -15,7 +14,7 @@
             ],
         },
         {
-            "name": "example (profile)",
+            "name": "Run example app with API key access token (profile)",
             "type": "dart",
             "flutterMode": "profile",
             "request": "launch",
@@ -25,7 +24,7 @@
             ],
         },
         {
-            "name": "example (release)",
+            "name": "Run example app with API key access token (release)",
             "type": "dart",
             "flutterMode": "release",
             "request": "launch",

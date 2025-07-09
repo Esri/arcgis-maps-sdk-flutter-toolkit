@@ -29,24 +29,26 @@ void main() {
     ArcGISEnvironment.apiKey = apiKey;
   }
 
-  runApp(const MaterialApp(home: ExampleCompassScene()));
+  runApp(const MaterialApp(home: ExampleOverviewMapWithScene()));
 }
 
-class ExampleCompassScene extends StatefulWidget {
-  const ExampleCompassScene({super.key});
+class ExampleOverviewMapWithScene extends StatefulWidget {
+  const ExampleOverviewMapWithScene({super.key});
 
   @override
-  State<ExampleCompassScene> createState() => _ExampleCompassSceneState();
+  State<ExampleOverviewMapWithScene> createState() =>
+      _ExampleOverviewMapWithSceneState();
 }
 
-class _ExampleCompassSceneState extends State<ExampleCompassScene> {
+class _ExampleOverviewMapWithSceneState
+    extends State<ExampleOverviewMapWithScene> {
   // Create a scene view controller.
   final _sceneViewController = ArcGISSceneView.createController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Compass Scene')),
+      appBar: AppBar(title: Text('OverviewMap with Scene')),
       body: Stack(
         children: [
           // Add a scene view to the widget tree and set a controller.
@@ -54,9 +56,11 @@ class _ExampleCompassSceneState extends State<ExampleCompassScene> {
             controllerProvider: () => _sceneViewController,
             onSceneViewReady: onSceneViewReady,
           ),
-          // Create a compass and display on top of the scene view in a stack.
-          // Pass the compass the corresponding scene view controller.
-          Compass(controllerProvider: () => _sceneViewController),
+          // Create an overview map and display on top of the scene view in a stack.
+          // Pass the overview map the corresponding scene view controller.
+          OverviewMap.withSceneView(
+            controllerProvider: () => _sceneViewController,
+          ),
         ],
       ),
     );
@@ -74,18 +78,18 @@ class _ExampleCompassSceneState extends State<ExampleCompassScene> {
     );
     scene.baseSurface.elevationSources.add(elevationSource);
 
-    // Add the scene to the view controller.
+    // Add the scene to the scene view controller.
     _sceneViewController.arcGISScene = scene;
 
     // Set an initial viewpoint camera for the scene.
     final viewpointCamera = Camera.withLocation(
       location: ArcGISPoint(
         x: 4,
-        y: 51,
-        z: 5000000,
+        y: 40,
+        z: 40000000,
         spatialReference: SpatialReference.wgs84,
       ),
-      heading: -45,
+      heading: 0,
       pitch: 0,
       roll: 0,
     );

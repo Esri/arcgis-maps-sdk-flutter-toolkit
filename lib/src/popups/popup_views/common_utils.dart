@@ -176,16 +176,16 @@ FlBorderData get _flBorderData {
 
 /// Retrieves the cached file path for the given [name].
 Future<String?> _getCachedFilePath(String name) async {
-  return SharedPreferencesHelper.instance.getString(name);
+  return _SharedPreferencesHelper.instance.getString(name);
 }
 
 /// Sets the cached file path for the given [name] and [filePath].
 Future<void> _setCachedFilePath(String name, String filePath) async {
-  return SharedPreferencesHelper.instance.setString(name, filePath);
+  return _SharedPreferencesHelper.instance.setString(name, filePath);
 }
 
 /// A singleton class that provides access to shared preferences.
-class SharedPreferencesHelper {
+class _SharedPreferencesHelper {
   static SharedPreferencesAsync? _instance;
 
   static SharedPreferencesAsync get instance {

@@ -54,7 +54,7 @@ class OverviewMap extends StatefulWidget {
     this.alignment = Alignment.topRight,
     this.padding = const EdgeInsets.all(10),
     this.scaleFactor = 25,
-    this.extentSymbol,
+    this.symbol,
     this.map,
     this.containerBuilder,
   });
@@ -76,7 +76,7 @@ class OverviewMap extends StatefulWidget {
       alignment: alignment,
       padding: padding,
       scaleFactor: scaleFactor,
-      extentSymbol: symbol,
+      symbol: symbol,
       map: map,
       containerBuilder: containerBuilder,
     );
@@ -99,7 +99,7 @@ class OverviewMap extends StatefulWidget {
       alignment: alignment,
       padding: padding,
       scaleFactor: scaleFactor,
-      extentSymbol: symbol,
+      symbol: symbol,
       map: map,
       containerBuilder: containerBuilder,
     );
@@ -122,7 +122,7 @@ class OverviewMap extends StatefulWidget {
   /// The symbol used to represent the current viewpoint.
   /// - For [ArcGISMapView]: a [SimpleFillSymbol] is used to draw the visible area.
   /// - For [ArcGISSceneView]: a [SimpleMarkerSymbol] is used to draw the current viewpoint's center.
-  final ArcGISSymbol? extentSymbol;
+  final ArcGISSymbol? symbol;
 
   /// The map to use as the overview map. Defaults to a map with the ArcGIS Topographic basemap style.
   final ArcGISMap? map;
@@ -157,8 +157,7 @@ class _OverviewMapState extends State<OverviewMap> {
     _controller = widget.controllerProvider();
 
     // Assign the symbol or use a default based on controller type.
-    _extentGraphic.symbol =
-        widget.extentSymbol ?? _defaultSymbolFor(_controller);
+    _extentGraphic.symbol = widget.symbol ?? _defaultSymbolFor(_controller);
 
     _overviewController.graphicsOverlays.add(
       GraphicsOverlay()..graphics.add(_extentGraphic),

@@ -19,18 +19,9 @@ part of '../../../arcgis_maps_toolkit.dart';
 /// A [ThemeData] instance specifically designed for the [PopupView] widget.
 ///
 /// This theme provides text styles and other visual properties
-/// tailored for popups. You can apply a custom theme by passing
-/// a custom [ThemeData] to the [PopupView]'s [PopupView.theme] parameter.
+/// tailored for popups.
 ///
-/// Example:
-/// ```dart
-/// PopupView(
-///   theme: popupViewThemeData,
-///   ...
-/// )
-/// ```
-///
-ThemeData popupViewThemeData = ThemeData(
+ThemeData _popupViewThemeData = ThemeData(
   colorScheme: const ColorScheme.light(
     // surface:
     // - used as background color of PopupView container.
