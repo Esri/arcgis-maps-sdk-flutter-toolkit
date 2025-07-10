@@ -92,8 +92,8 @@ class ExampleCompass extends StatelessWidget {
       body: ListView.builder(
         padding: const EdgeInsets.all(10),
         itemCount: CompassExample.values.length,
-        itemBuilder: (context, index) =>
-            CompassExample.values[index].buildCard(context),
+        itemBuilder:
+            (context, index) => CompassExample.values[index].buildCard(context),
       ),
     );
   }

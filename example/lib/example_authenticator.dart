@@ -72,13 +72,13 @@ class _ExampleAuthenticatorState extends State<ExampleAuthenticator> {
               child: Authenticator(
                 oAuthUserConfigurations:
                     _authenticationType == _AuthenticationType.oauth
-                    ? _oAuthUserConfigurations
-                    : [],
+                        ? _oAuthUserConfigurations
+                        : [],
                 // Add a map view as the child to the Authenticator, and set a controller.
                 child: ArcGISMapView(
                   controllerProvider: () => _mapViewController,
-                  onMapViewReady: () =>
-                      _mapViewController.arcGISMap = _emptyMap,
+                  onMapViewReady:
+                      () => _mapViewController.arcGISMap = _emptyMap,
                 ),
               ),
             ),
@@ -107,9 +107,10 @@ class _ExampleAuthenticatorState extends State<ExampleAuthenticator> {
                 // revoke any OAuth tokens and remove all credentials.
                 ElevatedButton(
                   onPressed: _mapState == _MapState.unloaded ? load : unload,
-                  child: _mapState == _MapState.unloaded
-                      ? const Text('Load')
-                      : const Text('Unload'),
+                  child:
+                      _mapState == _MapState.unloaded
+                          ? const Text('Load')
+                          : const Text('Unload'),
                 ),
               ],
             ),

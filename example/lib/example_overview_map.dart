@@ -86,8 +86,9 @@ class ExampleOverviewMap extends StatelessWidget {
       body: ListView.builder(
         padding: const EdgeInsets.all(10),
         itemCount: OverviewMapExample.values.length,
-        itemBuilder: (context, index) =>
-            OverviewMapExample.values[index].buildCard(context),
+        itemBuilder:
+            (context, index) =>
+                OverviewMapExample.values[index].buildCard(context),
       ),
     );
   }
