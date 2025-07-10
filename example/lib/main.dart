@@ -98,8 +98,9 @@ class ExampleApp extends StatelessWidget {
       body: ListView.builder(
         padding: const EdgeInsets.all(10),
         itemCount: ComponentExample.values.length,
-        itemBuilder: (context, index) =>
-            ComponentExample.values[index].buildCard(context),
+        itemBuilder:
+            (context, index) =>
+                ComponentExample.values[index].buildCard(context),
       ),
     );
   }

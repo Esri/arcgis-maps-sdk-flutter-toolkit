@@ -69,14 +69,15 @@ class _ExampleCompassCustomState extends State<ExampleCompassCustom> {
             size: 80,
             // Optionally, apply a custom icon builder to style the icon representing the compass.
             // See the other examples for the default compass style.
-            iconBuilder: (context, size, angleRadians) => Transform.rotate(
-              angle: angleRadians,
-              child: const Icon(
-                Icons.arrow_circle_up,
-                size: size,
-                color: Colors.purple,
-              ),
-            ),
+            iconBuilder:
+                (context, size, angleRadians) => Transform.rotate(
+                  angle: angleRadians,
+                  child: const Icon(
+                    Icons.arrow_circle_up,
+                    size: size,
+                    color: Colors.purple,
+                  ),
+                ),
           ),
         ],
       ),

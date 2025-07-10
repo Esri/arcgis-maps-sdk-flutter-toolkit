@@ -37,14 +37,15 @@ class _PopupLineChart extends StatelessWidget {
       onTap: () {
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) => _LineChartDetailView(
-              popupMedia: popupMedia,
-              // Line Chart should be interactive in detail view.
-              lineData: lineData(interactive: true),
-              onClose: () {
-                Navigator.of(context).pop();
-              },
-            ),
+            builder:
+                (context) => _LineChartDetailView(
+                  popupMedia: popupMedia,
+                  // Line Chart should be interactive in detail view.
+                  lineData: lineData(interactive: true),
+                  onClose: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
           ),
         );
       },
@@ -94,24 +95,25 @@ class _PopupLineChart extends StatelessWidget {
       titlesData: _getFlTitlesData(chartData),
       gridData: _gridData,
       borderData: _flBorderData,
-      lineTouchData: interactive
-          ? LineTouchData(
-              touchTooltipData: LineTouchTooltipData(
-                getTooltipColor: (group) => Colors.grey.withAlpha(230),
-                fitInsideHorizontally: true,
-                fitInsideVertically: true,
-                getTooltipItems: (touchedSpots) {
-                  return touchedSpots.map((spot) {
-                    final data = chartData[spot.x.toInt()];
-                    return LineTooltipItem(
-                      '${data.label}: ${data.value}',
-                      const TextStyle(color: Colors.white),
-                    );
-                  }).toList();
-                },
-              ),
-            )
-          : const LineTouchData(enabled: false),
+      lineTouchData:
+          interactive
+              ? LineTouchData(
+                touchTooltipData: LineTouchTooltipData(
+                  getTooltipColor: (group) => Colors.grey.withAlpha(230),
+                  fitInsideHorizontally: true,
+                  fitInsideVertically: true,
+                  getTooltipItems: (touchedSpots) {
+                    return touchedSpots.map((spot) {
+                      final data = chartData[spot.x.toInt()];
+                      return LineTooltipItem(
+                        '${data.label}: ${data.value}',
+                        const TextStyle(color: Colors.white),
+                      );
+                    }).toList();
+                  },
+                ),
+              )
+              : const LineTouchData(enabled: false),
     );
   }
 }

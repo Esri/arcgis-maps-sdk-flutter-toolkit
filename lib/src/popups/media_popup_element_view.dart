@@ -70,9 +70,10 @@ class _MediaPopupElementViewState extends State<_MediaPopupElementView> {
               borderRadius: BorderRadius.circular(8),
             ),
             title: _PopupElementHeader(
-              title: widget.mediaElement.title.isEmpty
-                  ? 'Media'
-                  : widget.mediaElement.title,
+              title:
+                  widget.mediaElement.title.isEmpty
+                      ? 'Media'
+                      : widget.mediaElement.title,
               description: widget.mediaElement.description,
             ),
             initiallyExpanded: isExpanded,
@@ -125,15 +126,16 @@ class _PopupMediaView extends StatelessWidget {
     return SizedBox(
       height: mediaSize.height,
       // Display either a list of media elements or a single media element.
-      child: (popupMedia.length > 1)
-          ? _buildMediaListWidgets(mediaSize)
-          : Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
-                color: const Color.fromARGB(255, 255, 252, 252),
+      child:
+          (popupMedia.length > 1)
+              ? _buildMediaListWidgets(mediaSize)
+              : Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  color: const Color.fromARGB(255, 255, 252, 252),
+                ),
+                child: _buildMediaWidget(popupMedia.first, mediaSize),
               ),
-              child: _buildMediaWidget(popupMedia.first, mediaSize),
-            ),
     );
   }
 

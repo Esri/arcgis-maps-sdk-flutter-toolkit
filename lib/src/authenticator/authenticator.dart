@@ -135,13 +135,11 @@ class _AuthenticatorState extends State<Authenticator>
   void dispose() {
     if (_errorMessage.isEmpty) {
       ArcGISEnvironment
-              .authenticationManager
-              .arcGISAuthenticationChallengeHandler =
-          null;
+          .authenticationManager
+          .arcGISAuthenticationChallengeHandler = null;
       ArcGISEnvironment
-              .authenticationManager
-              .networkAuthenticationChallengeHandler =
-          null;
+          .authenticationManager
+          .networkAuthenticationChallengeHandler = null;
     }
 
     super.dispose();
@@ -161,12 +159,13 @@ class _AuthenticatorState extends State<Authenticator>
     ArcGISAuthenticationChallenge challenge,
   ) {
     // If an OAuth configuration matches, use it. Else use token login.
-    final configuration = widget.oAuthUserConfigurations
-        .where(
-          (configuration) =>
-              configuration.canBeUsedForUri(challenge.requestUri),
-        )
-        .firstOrNull;
+    final configuration =
+        widget.oAuthUserConfigurations
+            .where(
+              (configuration) =>
+                  configuration.canBeUsedForUri(challenge.requestUri),
+            )
+            .firstOrNull;
 
     if (configuration != null) {
       _oauthLogin(challenge, configuration);
@@ -204,8 +203,9 @@ class _AuthenticatorState extends State<Authenticator>
     // Show an _AuthenticatorLogin dialog, which will answer the challenge.
     showDialog(
       context: context,
-      builder: (context) =>
-          _AuthenticatorLogin(challenge: _ArcGISLoginChallenge(challenge)),
+      builder:
+          (context) =>
+              _AuthenticatorLogin(challenge: _ArcGISLoginChallenge(challenge)),
     );
   }
 
@@ -226,8 +226,10 @@ class _AuthenticatorState extends State<Authenticator>
         // Show an _AuthenticatorLogin dialog, which will answer the challenge.
         await showDialog(
           context: context,
-          builder: (context) =>
-              _AuthenticatorLogin(challenge: _NetworkLoginChallenge(challenge)),
+          builder:
+              (context) => _AuthenticatorLogin(
+                challenge: _NetworkLoginChallenge(challenge),
+              ),
         );
       case ClientCertificateAuthenticationChallenge():
         await _clientCertificateWorkflow(challenge);
@@ -240,8 +242,8 @@ class _AuthenticatorState extends State<Authenticator>
     // Show an _AuthenticatorCertificateRequired dialog.
     final browse = await showDialog<bool>(
       context: context,
-      builder: (context) =>
-          _AuthenticatorCertificateRequired(challenge: challenge),
+      builder:
+          (context) => _AuthenticatorCertificateRequired(challenge: challenge),
     );
 
     if (browse == null || !browse) {
@@ -269,8 +271,11 @@ class _AuthenticatorState extends State<Authenticator>
     // will answer the challenge.
     await showDialog(
       context: context,
-      builder: (context) =>
-          _AuthenticatorCertificatePassword(challenge: challenge, file: file),
+      builder:
+          (context) => _AuthenticatorCertificatePassword(
+            challenge: challenge,
+            file: file,
+          ),
     );
   }
 }
