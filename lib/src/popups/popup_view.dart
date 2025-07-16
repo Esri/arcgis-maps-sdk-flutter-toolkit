@@ -51,6 +51,7 @@ part of '../../arcgis_maps_toolkit.dart';
 /// )
 /// ```
 class PopupView extends StatelessWidget {
+  /// Creates a [PopupView] widget to display a [Popup] with optional `onClose` callback.
   const PopupView({required this.popup, this.onClose, super.key});
 
   /// An optional callback function that is called when the [PopupView] is closed. By default, it closes the view.
