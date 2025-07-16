@@ -17,7 +17,7 @@ For more information, view our detailed [System requirements](https://developers
 
 ## Get started
 
-arcgis_maps_toolkit requires [arcgis_maps](https://pub.dev/packages/arcgis_maps) to be [installed](https://developers.arcgis.com/flutter/install-and-set-up/) before use.
+The `arcgis_maps_toolkit` package requires [arcgis_maps](https://pub.dev/packages/arcgis_maps) to be [installed](https://developers.arcgis.com/flutter/install-and-set-up/) before use.
 
 Once you have [added arcgis_maps_toolkit to your app as a dependency](https://developers.arcgis.com/flutter/toolkit#install-from-pubdev), import the package and start using the provided widgets.
 
@@ -25,7 +25,24 @@ Once you have [added arcgis_maps_toolkit to your app as a dependency](https://de
 import 'package:arcgis_maps_toolkit/arcgis_maps_toolkit.dart';
 ```
 
+## Examples
+
+Example applications demonstrating each of the toolkit components can be found in the `arcgis-maps-sdk-flutter-toolkit` Github repository. Clone the repository and then within the `example` directory you will find a readme detailing how to run the example applications.
+
+Alternatively, run the following command:
+
+`dart pub unpack arcgis_maps_toolkit`
+
+This will download and unpack the package, including the examples, into the current directory. 
+
+## API reference
+
+API reference for each of the toolkit components can be found via the ArcGIS Maps SDK for Flutter [developer guide](https://developers.arcgis.com/flutter).
+
 # Additional resources
 
 * New to ArcGIS? Explore our documentation: [Guide](https://developers.arcgis.com/flutter) | [API Reference](https://links.esri.com/flutter-api-ref)
 * Got a question? Ask the community on our [forum](https://links.esri.com/flutter-community).
+
+# Contributing
+Esri welcomes contributions from anyone and everyone. Please see our [guidelines for contributing](https://github.com/esri/contributing).
