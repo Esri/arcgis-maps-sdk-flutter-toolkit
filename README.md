@@ -30,7 +30,9 @@ import 'package:arcgis_maps_toolkit/arcgis_maps_toolkit.dart';
 Example applications demonstrating each of the toolkit components can be found in the `arcgis-maps-sdk-flutter-toolkit` Github repository. Clone the repository and then within the `example` directory you will find a readme detailing how to run the example applications.
 
 Alternatively, run the following command:
+
 `dart pub unpack arcgis_maps_toolkit`
+
 This will download and unpack the package, including the examples, into the current directory. 
 
 ## API reference
