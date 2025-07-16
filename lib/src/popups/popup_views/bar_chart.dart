@@ -40,15 +40,14 @@ class _PopupBarChart extends StatelessWidget {
       onTap: () {
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder:
-                (context) => _BarChartDetailView(
-                  popupMedia: popupMedia,
-                  // Bar Chart should be interactive in detail view.
-                  barData: barData(interactive: true),
-                  onClose: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
+            builder: (context) => _BarChartDetailView(
+              popupMedia: popupMedia,
+              // Bar Chart should be interactive in detail view.
+              barData: barData(interactive: true),
+              onClose: () {
+                Navigator.of(context).pop();
+              },
+            ),
           ),
         );
       },
@@ -103,26 +102,25 @@ class _PopupBarChart extends StatelessWidget {
       titlesData: _getFlTitlesData(chartData),
       gridData: _gridData,
       borderData: _flBorderData,
-      barTouchData:
-          interactive
-              ? BarTouchData(
-                enabled: true,
-                allowTouchBarBackDraw: true,
-                touchTooltipData: BarTouchTooltipData(
-                  getTooltipColor: (group) => Colors.grey.withAlpha(230),
-                  fitInsideHorizontally: true,
-                  fitInsideVertically: true,
-                  getTooltipItem: (group, groupIndex, rod, rodIndex) {
-                    final value = rod.toY;
-                    final label = chartData[group.x].label;
-                    return BarTooltipItem(
-                      '$label\n$value',
-                      const TextStyle(color: Colors.white),
-                    );
-                  },
-                ),
-              )
-              : const BarTouchData(enabled: false),
+      barTouchData: interactive
+          ? BarTouchData(
+              enabled: true,
+              allowTouchBarBackDraw: true,
+              touchTooltipData: BarTouchTooltipData(
+                getTooltipColor: (group) => Colors.grey.withAlpha(230),
+                fitInsideHorizontally: true,
+                fitInsideVertically: true,
+                getTooltipItem: (group, groupIndex, rod, rodIndex) {
+                  final value = rod.toY;
+                  final label = chartData[group.x].label;
+                  return BarTooltipItem(
+                    '$label\n$value',
+                    const TextStyle(color: Colors.white),
+                  );
+                },
+              ),
+            )
+          : const BarTouchData(enabled: false),
     );
   }
 

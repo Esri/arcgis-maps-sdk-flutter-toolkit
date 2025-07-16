@@ -79,19 +79,19 @@ class _PopupExampleState extends State<PopupExample> {
   Widget? getBottomSheet(BuildContext context) {
     return _identifiedPopup != null
         ? SizedBox(
-          height: MediaQuery.sizeOf(context).height * 0.7,
-          child: PopupView(
-            // Pass a popup to the popup view widget to display it.
-            popup: _identifiedPopup!,
-            // Optionally, pass a callback for when the popup view is closed.
-            // Here we reset the identifiedPopup variable back to null.
-            onClose: () {
-              setState(() {
-                _identifiedPopup = null;
-              });
-            },
-          ),
-        )
+            height: MediaQuery.sizeOf(context).height * 0.7,
+            child: PopupView(
+              // Pass a popup to the popup view widget to display it.
+              popup: _identifiedPopup!,
+              // Optionally, pass a callback for when the popup view is closed.
+              // Here we reset the identifiedPopup variable back to null.
+              onClose: () {
+                setState(() {
+                  _identifiedPopup = null;
+                });
+              },
+            ),
+          )
         : null;
   }
 

@@ -68,10 +68,9 @@ class _FieldsPopupElementViewState extends State<_FieldsPopupElementView> {
           ),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           title: _PopupElementHeader(
-            title:
-                widget.fieldsElement.title.isEmpty
-                    ? 'Fields'
-                    : widget.fieldsElement.title,
+            title: widget.fieldsElement.title.isEmpty
+                ? 'Fields'
+                : widget.fieldsElement.title,
             description: widget.fieldsElement.description,
           ),
           initiallyExpanded: isExpanded,
@@ -86,12 +85,11 @@ class _FieldsPopupElementViewState extends State<_FieldsPopupElementView> {
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               itemCount: widget.fieldsElement.labels.length,
-              separatorBuilder:
-                  (context, index) => Divider(
-                    color: Theme.of(context).dividerTheme.color ?? Colors.grey,
-                    height: 5,
-                    thickness: Theme.of(context).dividerTheme.thickness ?? 1,
-                  ),
+              separatorBuilder: (context, index) => Divider(
+                color: Theme.of(context).dividerTheme.color ?? Colors.grey,
+                height: 5,
+                thickness: Theme.of(context).dividerTheme.thickness ?? 1,
+              ),
               itemBuilder: (context, index) {
                 return _FieldRow(
                   field: _DisplayField(
