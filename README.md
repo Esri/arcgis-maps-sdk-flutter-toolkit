@@ -1,7 +1,7 @@
-# ArcGIS Maps SDK Flutter Toolkit
+# ArcGIS Maps SDK for Flutter Toolkit
 Additional widgets for use with the [ArcGIS Maps SDK for Flutter](https://developers.arcgis.com/flutter/).
 
-### Note: ArcGIS Maps SDK Flutter Toolkit is currently in pre-release, and will be released alongside the 200.8 release of [ArcGIS Maps SDK for Flutter](https://developers.arcgis.com/flutter/).
+### Note: ArcGIS Maps SDK for Flutter Toolkit is currently in pre-release, and will be released alongside the 200.8 release of [ArcGIS Maps SDK for Flutter](https://developers.arcgis.com/flutter/).
 
 
 # Additional resources
