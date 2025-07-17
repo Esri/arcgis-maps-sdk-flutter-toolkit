@@ -1,14 +1,8 @@
-# ArcGIS Maps Toolkit
-
+# ArcGIS Maps SDK for Flutter Toolkit
 Additional widgets for use with the [ArcGIS Maps SDK for Flutter](https://developers.arcgis.com/flutter/).
 
-## Usage
+### Note: ArcGIS Maps SDK for Flutter Toolkit is currently in pre-release, and will be released alongside the 200.8 release of [ArcGIS Maps SDK for Flutter](https://developers.arcgis.com/flutter/).
 
-Once you have added arcgis_maps_toolkit to your app as a dependency, import the package and start using the provided widgets.
-
-```dart
-import 'package:arcgis_maps_toolkit/arcgis_maps_toolkit.dart';
-```
 
 # Additional resources
 
