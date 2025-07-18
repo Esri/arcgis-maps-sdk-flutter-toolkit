@@ -60,6 +60,7 @@ class _ExampleOverviewMapWithSceneState
           // Pass the overview map the corresponding scene view controller.
           OverviewMap.withSceneView(
             controllerProvider: () => _sceneViewController,
+            map: ArcGISMap.withBasemapStyle(BasemapStyle.arcGISImageryStandard),
           ),
         ],
       ),
