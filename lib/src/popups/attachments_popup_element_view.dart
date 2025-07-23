@@ -48,10 +48,6 @@ class _AttachmentsPopupElementViewState
 
   @override
   Widget build(BuildContext context) {
-    if (widget.attachmentsElement.attachments.isEmpty) {
-      return const SizedBox.shrink();
-    }
-
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       color:
@@ -77,6 +73,9 @@ class _AttachmentsPopupElementViewState
                 ),
               ),
             );
+          }
+          if (widget.attachmentsElement.attachments.isEmpty) {
+            return const SizedBox.shrink();
           }
           return Theme(
             data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
