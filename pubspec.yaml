@@ -1,21 +1,31 @@
 name: arcgis_maps_toolkit
-description: A toolkit of widgets for use with the ArcGIS Maps SDK for Flutter.
-version: 0.0.1
+description: ArcGIS Maps SDK for Flutter Toolkit contains ready-made widgets to simplify the development of mapping and GIS apps with Flutter.
+version: 0.0.0+0 # version will be set during export in ci/stamp_toolkit.sh
 homepage: https://developers.arcgis.com/flutter/
+repository: https://github.com/Esri/arcgis-maps-sdk-flutter-toolkit/
 topics:
   - map
   - location
+  - arcgis
 
 publish_to: none
 
 environment:
-  sdk: '>=3.7.0 <4.0.0'
-  flutter: '>=3.29.0'
+  sdk: '>=3.8.1 <4.0.0'
+  flutter: '>=3.32.2'
 
 dependencies:
-  arcgis_maps: ^200.6.0+4426
+  arcgis_maps: ^200.8.0
+  file_picker: ^10.2.0
+  fl_chart: ^1.0.0
   flutter:
     sdk: flutter
+  open_file: ^3.5.10
+  path_provider: ^2.1.5
+  shared_preferences: ^2.5.3
+  timer_builder: ^2.0.0
+  url_launcher: ^6.3.1
+  webview_flutter: ^4.10.0
 
 dev_dependencies:
   flutter_lints: ^5.0.0

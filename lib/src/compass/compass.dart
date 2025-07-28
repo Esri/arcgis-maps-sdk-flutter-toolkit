@@ -16,9 +16,37 @@
 
 part of '../../arcgis_maps_toolkit.dart';
 
-/// A `Compass` (also known as a "north arrow") is a widget that visualizes the
-/// current rotation of the map and allows the user to reset the rotation to
-/// north by tapping on it.
+/// A [Compass] (also known as a "north arrow") is a widget that visualizes the
+/// current rotation of an [ArcGISMapView] or [ArcGISSceneView].
+///
+/// # Overview
+///
+/// ## Features
+/// * Automatically hides when the rotation is zero / oriented North.
+/// * Can be configured to be always visible.
+/// * Will reset the map/scene rotation to North when tapped on.
+///
+/// ## Usage
+/// A [Compass] is generally placed in a [Stack] on top of an [ArcGISMapView] or [ArcGISSceneView].
+/// The compass must be provided the same [ArcGISMapViewController] or [ArcGISSceneViewController] as the corresponding map view or scene view.
+/// ```dart
+///   @override
+///   Widget build(BuildContext context) {
+///     return Scaffold(
+///       body: Stack(
+///         children: [
+///           ArcGISMapView(
+///             controllerProvider: controllerProvider,
+///            ),
+///           Compass(
+///             controllerProvider: controllerProvider,
+///            ),
+///          ],
+///        ),
+///      );
+///    }
+/// ```
+///
 class Compass extends StatefulWidget {
   /// Create a Compass widget.
   const Compass({
@@ -27,52 +55,49 @@ class Compass extends StatefulWidget {
     this.automaticallyHides = true,
     this.alignment = Alignment.topRight,
     this.padding = const EdgeInsets.all(10),
+    this.size = 50,
     this.iconBuilder,
   });
 
-  /// A function that provides an [ArcGISMapViewController] to listen to and
-  /// control.
-  ///
-  /// This should return the same controller that is provided to the
-  /// corresponding [ArcGISMapView].
-  final ArcGISMapViewController Function() controllerProvider;
+  /// A function that provides a [GeoViewController] to listen to and
+  /// control. This should return the same controller that is provided to the
+  /// corresponding [ArcGISMapView] or [ArcGISSceneView].
+  final GeoViewController Function() controllerProvider;
 
   /// Whether the compass should automatically hide when the map is oriented
-  /// north.
-  ///
-  /// Defaults to `true`. If set to `false`, the compass will always be visible.
+  /// north. Defaults to `true`. If set to `false`, the compass will always be visible.
   final bool automaticallyHides;
 
-  /// The alignment of the compass within the parent widget.
-  ///
-  /// Defaults to [Alignment.topRight]. The compass should generally be placed
-  /// in a [Stack] on top of the corresponding [ArcGISMapView].
+  /// The alignment of the compass within the parent widget. Defaults to [Alignment.topRight]. The compass should generally be placed
+  /// in a [Stack] on top of the corresponding [ArcGISMapView] or [ArcGISSceneView].
   final Alignment alignment;
 
-  /// The padding around the compass.
-  ///
-  /// Defaults to 10 pixels on all sides.
+  /// The padding around the compass. Defaults to 10 pixels on all sides.
   final EdgeInsets padding;
 
-  /// A function to build the compass icon.
-  ///
-  /// If not provided, a default compass icon will be used. Provide a function
-  /// to customize the icon. The returned icon should be a [Widget] with some
-  /// element rotated to `angleRadians` to indicate north.
-  final Widget Function(BuildContext context, double angleRadians)? iconBuilder;
+  /// The width and height of the compass icon in pixels. Defaults to 50 pixels.
+  final double size;
+
+  /// A function to build the compass icon. If not provided, a default compass icon will be used. Provide a function
+  /// to customize the icon. The returned icon must be a [Widget] with
+  /// width and height of `size` and some element rotated to `angleRadians` to indicate north.
+  final Widget Function(BuildContext context, double size, double angleRadians)?
+  iconBuilder;
 
   @override
   State<Compass> createState() => _CompassState();
 }
 
 class _CompassState extends State<Compass> {
-  late ArcGISMapViewController _controller;
+  late GeoViewController _controller;
 
-  late StreamSubscription<double> _rotationSubscription;
+  StreamSubscription<double>? _rotationSubscription;
+  StreamSubscription<void>? _viewpointSubscription;
 
-  var _angleRadians = 0.0;
+  var _angleDegrees = 0.0;
 
-  late Widget Function(BuildContext context, double angleRadians) _iconBuilder;
+  late Widget Function(BuildContext context, double size, double angleRadians)
+  _iconBuilder;
 
   static double rotationToAngle(double rotation) => rotation * -math.pi / 180;
 
@@ -82,17 +107,32 @@ class _CompassState extends State<Compass> {
 
     _controller = widget.controllerProvider();
 
-    _angleRadians = rotationToAngle(_controller.rotation);
-    _rotationSubscription = _controller.onRotationChanged.listen((rotation) {
-      setState(() => _angleRadians = rotationToAngle(rotation));
-    });
+    if (_controller is ArcGISMapViewController) {
+      final controller = _controller as ArcGISMapViewController;
+      _angleDegrees = controller.rotation;
+      _rotationSubscription = controller.onRotationChanged.listen((rotation) {
+        setState(() => _angleDegrees = rotation);
+      });
+    } else {
+      final controller = _controller as ArcGISSceneViewController;
+      _angleDegrees = controller.getCurrentViewpointCamera().heading;
+      _viewpointSubscription = controller.onViewpointChanged.listen((_) {
+        final heading = controller.getCurrentViewpointCamera().heading;
+        if (heading != _angleDegrees) {
+          setState(() => _angleDegrees = heading);
+        }
+      });
+    }
 
     _iconBuilder = widget.iconBuilder ?? defaultIconBuilder;
   }
 
   @override
   void dispose() {
-    _rotationSubscription.cancel();
+    _rotationSubscription?.cancel();
+    _rotationSubscription = null;
+    _viewpointSubscription?.cancel();
+    _viewpointSubscription = null;
 
     super.dispose();
   }
@@ -100,7 +140,7 @@ class _CompassState extends State<Compass> {
   @override
   Widget build(BuildContext context) {
     return Visibility(
-      visible: !widget.automaticallyHides || _angleRadians != 0,
+      visible: !widget.automaticallyHides || _angleDegrees != 0,
       child: Align(
         alignment: widget.alignment,
         child: Padding(
@@ -108,21 +148,45 @@ class _CompassState extends State<Compass> {
           child: IconButton(
             padding: EdgeInsets.zero,
             onPressed: onPressed,
-            icon: _iconBuilder(context, _angleRadians),
+            icon: _iconBuilder(
+              context,
+              widget.size,
+              rotationToAngle(_angleDegrees),
+            ),
           ),
         ),
       ),
     );
   }
 
-  void onPressed() => _controller.setViewpointRotation(angleDegrees: 0);
+  void onPressed() {
+    if (_controller is ArcGISMapViewController) {
+      (_controller as ArcGISMapViewController).setViewpointRotation(
+        angleDegrees: 0,
+      );
+    } else {
+      final controller = _controller as ArcGISSceneViewController;
+      final currentCamera = controller.getCurrentViewpointCamera();
+      controller.setViewpointCameraAnimated(
+        camera: currentCamera.rotateTo(
+          heading: 0,
+          pitch: currentCamera.pitch,
+          roll: currentCamera.roll,
+        ),
+      );
+    }
+  }
 
-  Widget defaultIconBuilder(BuildContext context, double angleRadians) {
+  Widget defaultIconBuilder(
+    BuildContext context,
+    double size,
+    double angleRadians,
+  ) {
     return CustomPaint(
-      foregroundPainter: CompassNeedlePainter(angleRadians),
+      foregroundPainter: _CompassNeedlePainter(angleRadians),
       child: Container(
-        width: 50,
-        height: 50,
+        width: size,
+        height: size,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           color: const Color.fromARGB(192, 228, 240, 244),

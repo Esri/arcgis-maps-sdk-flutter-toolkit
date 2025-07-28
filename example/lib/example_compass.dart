@@ -14,9 +14,11 @@
 // limitations under the License.
 //
 
-import 'package:flutter/material.dart';
 import 'package:arcgis_maps/arcgis_maps.dart';
-import 'package:arcgis_maps_toolkit/arcgis_maps_toolkit.dart';
+import 'package:arcgis_maps_toolkit_example/example_compass_custom.dart';
+import 'package:arcgis_maps_toolkit_example/example_compass_map.dart';
+import 'package:arcgis_maps_toolkit_example/example_compass_scene.dart';
+import 'package:flutter/material.dart';
 
 void main() {
   // Supply your apiKey using the --dart-define-from-file command line argument.
@@ -29,60 +31,70 @@ void main() {
     ArcGISEnvironment.apiKey = apiKey;
   }
 
-  runApp(const MaterialApp(home: ExampleCompass()));
+  final colorScheme = ColorScheme.fromSeed(seedColor: Colors.deepPurple);
+  runApp(
+    MaterialApp(
+      theme: ThemeData(
+        colorScheme: colorScheme,
+        appBarTheme: AppBarTheme(backgroundColor: colorScheme.inversePrimary),
+      ),
+      home: const ExampleCompass(),
+    ),
+  );
 }
 
-class ExampleCompass extends StatefulWidget {
+enum CompassExample {
+  compassMap(
+    'Compass Map',
+    'Example of compass used with a map. Default styling.',
+    ExampleCompassMap.new,
+  ),
+  compassScene(
+    'Compass Scene',
+    'Example of compass used with a scene. Default styling.',
+    ExampleCompassScene.new,
+  ),
+  compassCustom(
+    'Compass Custom',
+    'Example of compass used with a map with custom styling.',
+    ExampleCompassCustom.new,
+  );
+
+  const CompassExample(this.title, this.subtitle, this.constructor);
+
+  final String title;
+  final String subtitle;
+  final Widget Function({Key? key}) constructor;
+
+  Card buildCard(BuildContext context) {
+    return Card(
+      child: ListTile(
+        title: Text(title),
+        subtitle: Text(subtitle),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => constructor()),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class ExampleCompass extends StatelessWidget {
   const ExampleCompass({super.key});
-
-  @override
-  State<ExampleCompass> createState() => _ExampleCompassState();
-}
-
-class _ExampleCompassState extends State<ExampleCompass> {
-  final _mapViewController = ArcGISMapView.createController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Compass')),
-      body: Stack(
-        children: [
-          ArcGISMapView(
-            controllerProvider: () => _mapViewController,
-            onMapViewReady: onMapViewReady,
-          ),
-          // Default Compass.
-          Compass(controllerProvider: () => _mapViewController),
-          // Compass with custom settings.
-          Compass(
-            controllerProvider: () => _mapViewController,
-            automaticallyHides: false,
-            alignment: Alignment.centerLeft,
-            padding: const EdgeInsets.all(40),
-            iconBuilder:
-                (context, angleRadians) => Transform.rotate(
-                  angle: angleRadians,
-                  child: Icon(
-                    Icons.arrow_circle_up,
-                    size: 80,
-                    color: Colors.purple,
-                  ),
-                ),
-          ),
-        ],
+      appBar: AppBar(title: const Text('Compass')),
+      body: ListView.builder(
+        padding: const EdgeInsets.all(10),
+        itemCount: CompassExample.values.length,
+        itemBuilder: (context, index) =>
+            CompassExample.values[index].buildCard(context),
       ),
     );
-  }
-
-  void onMapViewReady() {
-    _mapViewController.arcGISMap = ArcGISMap.withBasemapStyle(
-        BasemapStyle.arcGISTopographic,
-      )
-      ..initialViewpoint = Viewpoint.fromCenter(
-        ArcGISPoint(x: 4, y: 51, spatialReference: SpatialReference.wgs84),
-        scale: 20000000,
-        rotation: -45,
-      );
   }
 }

@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "com.esri.arcgis_maps_toolkit_example"
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 36
     ndkVersion = "27.0.12077973"
 
     compileOptions {
@@ -21,7 +21,7 @@ android {
 
     defaultConfig {
         applicationId = "com.esri.arcgis_maps_toolkit_example"
-        minSdk = 26
+        minSdk = 28
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName

@@ -29,38 +29,47 @@ void main() {
     ArcGISEnvironment.apiKey = apiKey;
   }
 
-  runApp(const MaterialApp(home: ExampleTemplateWidget()));
+  runApp(const MaterialApp(home: ExampleCompassMap()));
 }
 
-class ExampleTemplateWidget extends StatefulWidget {
-  const ExampleTemplateWidget({super.key});
+class ExampleCompassMap extends StatefulWidget {
+  const ExampleCompassMap({super.key});
 
   @override
-  State<ExampleTemplateWidget> createState() => _ExampleTemplateWidgetState();
+  State<ExampleCompassMap> createState() => _ExampleCompassMapState();
 }
 
-class _ExampleTemplateWidgetState extends State<ExampleTemplateWidget> {
+class _ExampleCompassMapState extends State<ExampleCompassMap> {
+  // Create a map view controller.
   final _mapViewController = ArcGISMapView.createController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('TemplateWidget')),
+      appBar: AppBar(title: const Text('Compass Map')),
       body: Stack(
         children: [
+          // Add a map view to the widget tree and set a controller.
           ArcGISMapView(
             controllerProvider: () => _mapViewController,
             onMapViewReady: onMapViewReady,
           ),
-          const Center(child: TemplateWidget()),
+          // Create a compass and display on top of the map view in a stack.
+          // Pass the compass the corresponding map view controller.
+          Compass(controllerProvider: () => _mapViewController),
         ],
       ),
     );
   }
 
   void onMapViewReady() {
-    _mapViewController.arcGISMap = ArcGISMap.withBasemapStyle(
-      BasemapStyle.arcGISTopographic,
-    );
+    // Set a map with a basemap style and initial viewpoint to the map view controller.
+    final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic)
+      ..initialViewpoint = Viewpoint.fromCenter(
+        ArcGISPoint(x: 4, y: 51, spatialReference: SpatialReference.wgs84),
+        scale: 20000000,
+        rotation: -45,
+      );
+    _mapViewController.arcGISMap = map;
   }
 }

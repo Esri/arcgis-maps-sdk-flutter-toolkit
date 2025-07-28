@@ -14,9 +14,10 @@
 // limitations under the License.
 //
 
-import 'package:flutter/material.dart';
 import 'package:arcgis_maps/arcgis_maps.dart';
-import 'package:arcgis_maps_toolkit/arcgis_maps_toolkit.dart';
+import 'package:arcgis_maps_toolkit_example/example_overview_map_with_map.dart';
+import 'package:arcgis_maps_toolkit_example/example_overview_map_with_scene.dart';
+import 'package:flutter/material.dart';
 
 void main() {
   // Supply your apiKey using the --dart-define-from-file command line argument.
@@ -29,69 +30,65 @@ void main() {
     ArcGISEnvironment.apiKey = apiKey;
   }
 
-  runApp(const MaterialApp(home: ExampleOverviewMap()));
+  final colorScheme = ColorScheme.fromSeed(seedColor: Colors.deepPurple);
+  runApp(
+    MaterialApp(
+      theme: ThemeData(
+        colorScheme: colorScheme,
+        appBarTheme: AppBarTheme(backgroundColor: colorScheme.inversePrimary),
+      ),
+      home: const ExampleOverviewMap(),
+    ),
+  );
 }
 
-class ExampleOverviewMap extends StatefulWidget {
+enum OverviewMapExample {
+  overviewMapWithMap(
+    'Overview Map with map',
+    'Example of overview map with map.',
+    ExampleOverviewMapWithMap.new,
+  ),
+  overviewMapWithScene(
+    'Overview Map with scene',
+    'Example of overview map with scene.',
+    ExampleOverviewMapWithScene.new,
+  );
+
+  const OverviewMapExample(this.title, this.subtitle, this.constructor);
+
+  final String title;
+  final String subtitle;
+  final Widget Function({Key? key}) constructor;
+
+  Card buildCard(BuildContext context) {
+    return Card(
+      child: ListTile(
+        title: Text(title),
+        subtitle: Text(subtitle),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => constructor()),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class ExampleOverviewMap extends StatelessWidget {
   const ExampleOverviewMap({super.key});
-
-  @override
-  State<ExampleOverviewMap> createState() => _ExampleOverviewMapState();
-}
-
-class _ExampleOverviewMapState extends State<ExampleOverviewMap> {
-  final _mapViewController = ArcGISMapView.createController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('OverviewMap')),
-      body: Stack(
-        children: [
-          ArcGISMapView(
-            controllerProvider: () => _mapViewController,
-            onMapViewReady: onMapViewReady,
-          ),
-          // Default OverviewMap.
-          OverviewMap(controllerProvider: () => _mapViewController),
-          // Custom OverviewMap.
-          OverviewMap(
-            controllerProvider: () => _mapViewController,
-            alignment: Alignment.centerLeft,
-            padding: EdgeInsets.zero,
-            scaleFactor: 10,
-            extentSymbol: SimpleFillSymbol(
-              color: Colors.transparent,
-              outline: SimpleLineSymbol(
-                color: Colors.deepPurple,
-                width: 2,
-                style: SimpleLineSymbolStyle.dot,
-              ),
-            ),
-            map: ArcGISMap.withBasemapStyle(BasemapStyle.arcGISLightGrayBase),
-            containerBuilder:
-                (context, child) => Container(
-                  width: 200,
-                  height: 200,
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.deepPurple, width: 3),
-                    borderRadius: BorderRadius.circular(3),
-                  ),
-                  child: Opacity(opacity: .8, child: child),
-                ),
-          ),
-        ],
+      appBar: AppBar(title: const Text('OverviewMap')),
+      body: ListView.builder(
+        padding: const EdgeInsets.all(10),
+        itemCount: OverviewMapExample.values.length,
+        itemBuilder: (context, index) =>
+            OverviewMapExample.values[index].buildCard(context),
       ),
     );
-  }
-
-  void onMapViewReady() {
-    _mapViewController.arcGISMap = ArcGISMap.withBasemapStyle(
-        BasemapStyle.arcGISTopographic,
-      )
-      ..initialViewpoint = Viewpoint.fromCenter(
-        ArcGISPoint(x: 4, y: 40, spatialReference: SpatialReference.wgs84),
-        scale: 40000000,
-      );
   }
 }

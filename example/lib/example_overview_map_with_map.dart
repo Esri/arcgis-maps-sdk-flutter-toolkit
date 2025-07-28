@@ -29,38 +29,47 @@ void main() {
     ArcGISEnvironment.apiKey = apiKey;
   }
 
-  runApp(const MaterialApp(home: ExampleTemplateWidget()));
+  runApp(const MaterialApp(home: ExampleOverviewMapWithMap()));
 }
 
-class ExampleTemplateWidget extends StatefulWidget {
-  const ExampleTemplateWidget({super.key});
+class ExampleOverviewMapWithMap extends StatefulWidget {
+  const ExampleOverviewMapWithMap({super.key});
 
   @override
-  State<ExampleTemplateWidget> createState() => _ExampleTemplateWidgetState();
+  State<ExampleOverviewMapWithMap> createState() =>
+      _ExampleOverviewMapWithMapState();
 }
 
-class _ExampleTemplateWidgetState extends State<ExampleTemplateWidget> {
+class _ExampleOverviewMapWithMapState extends State<ExampleOverviewMapWithMap> {
+  // Create a map view controller.
   final _mapViewController = ArcGISMapView.createController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('TemplateWidget')),
+      appBar: AppBar(title: const Text('OverviewMap with Map')),
       body: Stack(
         children: [
+          // Add a map view to the widget tree and set a controller.
           ArcGISMapView(
             controllerProvider: () => _mapViewController,
             onMapViewReady: onMapViewReady,
           ),
-          const Center(child: TemplateWidget()),
+          // Create an overview map and display on top of the map view in a stack.
+          // Pass the overview map the corresponding map view controller.
+          OverviewMap.withMapView(controllerProvider: () => _mapViewController),
         ],
       ),
     );
   }
 
   void onMapViewReady() {
-    _mapViewController.arcGISMap = ArcGISMap.withBasemapStyle(
-      BasemapStyle.arcGISTopographic,
-    );
+    // Set a map with a basemap style and initial viewpoint to the map view controller.
+    final map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic)
+      ..initialViewpoint = Viewpoint.fromCenter(
+        ArcGISPoint(x: 4, y: 40, spatialReference: SpatialReference.wgs84),
+        scale: 40000000,
+      );
+    _mapViewController.arcGISMap = map;
   }
 }

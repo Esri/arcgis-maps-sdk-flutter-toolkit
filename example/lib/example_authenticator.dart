@@ -14,9 +14,9 @@
 // limitations under the License.
 //
 
-import 'package:flutter/material.dart';
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_toolkit/arcgis_maps_toolkit.dart';
+import 'package:flutter/material.dart';
 
 void main() {
   runApp(const MaterialApp(home: ExampleAuthenticator()));
@@ -36,12 +36,16 @@ enum _AuthenticationType { oauth, token }
 enum _MapState { unloaded, loaded }
 
 class _ExampleAuthenticatorState extends State<ExampleAuthenticator> {
+  // Create a map view controller.
   final _mapViewController = ArcGISMapView.createController();
 
+  // Empty map to display until data is loaded.
   final _emptyMap = ArcGISMap(spatialReference: SpatialReference.wgs84);
 
+  // Holds the selected authentication type.
   var _authenticationType = _AuthenticationType.oauth;
 
+  // Current map state.
   var _mapState = _MapState.unloaded;
 
   // Configurations to use when OAuth is requested.
@@ -57,7 +61,7 @@ class _ExampleAuthenticatorState extends State<ExampleAuthenticator> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar: AppBar(title: Text('Authenticator')),
+      appBar: AppBar(title: const Text('Authenticator')),
       body: SafeArea(
         left: false,
         right: false,
@@ -68,12 +72,13 @@ class _ExampleAuthenticatorState extends State<ExampleAuthenticator> {
               child: Authenticator(
                 oAuthUserConfigurations:
                     _authenticationType == _AuthenticationType.oauth
-                        ? _oAuthUserConfigurations
-                        : [],
+                    ? _oAuthUserConfigurations
+                    : [],
+                // Add a map view as the child to the Authenticator, and set a controller.
                 child: ArcGISMapView(
                   controllerProvider: () => _mapViewController,
-                  onMapViewReady:
-                      () => _mapViewController.arcGISMap = _emptyMap,
+                  onMapViewReady: () =>
+                      _mapViewController.arcGISMap = _emptyMap,
                 ),
               ),
             ),
@@ -82,7 +87,7 @@ class _ExampleAuthenticatorState extends State<ExampleAuthenticator> {
               children: [
                 // Toggle between OAuth and Token authentication.
                 SegmentedButton(
-                  segments: [
+                  segments: const [
                     ButtonSegment(
                       value: _AuthenticationType.oauth,
                       label: Text('OAuth'),
@@ -102,10 +107,9 @@ class _ExampleAuthenticatorState extends State<ExampleAuthenticator> {
                 // revoke any OAuth tokens and remove all credentials.
                 ElevatedButton(
                   onPressed: _mapState == _MapState.unloaded ? load : unload,
-                  child:
-                      _mapState == _MapState.unloaded
-                          ? Text('Load')
-                          : Text('Unload'),
+                  child: _mapState == _MapState.unloaded
+                      ? const Text('Load')
+                      : const Text('Unload'),
                 ),
               ],
             ),
@@ -142,7 +146,7 @@ class _ExampleAuthenticatorState extends State<ExampleAuthenticator> {
     _mapViewController.arcGISMap = _emptyMap;
 
     await Authenticator.revokeOAuthTokens();
-    Authenticator.clearCredentials();
+    await Authenticator.clearCredentials();
 
     setState(() => _mapState = _MapState.unloaded);
   }

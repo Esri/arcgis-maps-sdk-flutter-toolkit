@@ -14,12 +14,12 @@
 // limitations under the License.
 //
 
-import 'package:flutter/material.dart';
 import 'package:arcgis_maps/arcgis_maps.dart';
-
-import 'example_authenticator.dart';
-import 'example_compass.dart';
-import 'example_overview_map.dart';
+import 'package:arcgis_maps_toolkit_example/example_authenticator.dart';
+import 'package:arcgis_maps_toolkit_example/example_compass.dart';
+import 'package:arcgis_maps_toolkit_example/example_overview_map.dart';
+import 'package:arcgis_maps_toolkit_example/example_popup.dart';
+import 'package:flutter/material.dart';
 
 void main() {
   // Supply your apiKey using the --dart-define-from-file command line argument.
@@ -47,18 +47,23 @@ void main() {
 enum ComponentExample {
   authenticator(
     'Authenticator',
-    'Authenticate with OAuth or Token',
+    'Handles authentication challenges',
     ExampleAuthenticator.new,
   ),
   compass(
     'Compass',
-    'A "North Arrow" always pointing north on a map',
+    'Visualizes current rotation of map/scene and resets the rotation to north on tap',
     ExampleCompass.new,
   ),
   overviewMap(
-    'Overview Map',
-    'A small map that shows the extent of a larger map',
+    'OverviewMap',
+    'Small inset map showing the current viewpoint of the target map/scene',
     ExampleOverviewMap.new,
+  ),
+  popupView(
+    'PopupView',
+    'Displays a popup for a feature, including fields, media, and attachments',
+    PopupExample.new,
   );
 
   const ComponentExample(this.title, this.subtitle, this.constructor);
@@ -89,13 +94,12 @@ class ExampleApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Toolkit Examples')),
+      appBar: AppBar(title: const Text('Toolkit Examples')),
       body: ListView.builder(
         padding: const EdgeInsets.all(10),
         itemCount: ComponentExample.values.length,
-        itemBuilder:
-            (context, index) =>
-                ComponentExample.values[index].buildCard(context),
+        itemBuilder: (context, index) =>
+            ComponentExample.values[index].buildCard(context),
       ),
     );
   }

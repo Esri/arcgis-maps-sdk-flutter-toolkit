@@ -16,20 +16,54 @@
 
 part of '../../arcgis_maps_toolkit.dart';
 
-/// The [Authenticator] widget handles authentication challenges with either an
-/// OAuth workflow in a browser window, or a username and password dialog.
+/// The [Authenticator] widget handles authentication challenges.
+///
+/// # Overview
+/// A user interface is displayed when network and ArcGIS authentication challenges occur.
+///
+/// ## Features
+/// The [Authenticator] will handle many different types of authentication, for example:
+/// * ArcGIS authentication (token and OAuth)
+/// * Integrated Windows Authentication (IWA)
+/// * Client Cerfificate (PKI)
+/// * If credentials were persisted to the keychain, the authenticator will use those instead of requiring the user to re-enter credentials.
+///
+/// ## Usage
+/// An [Authenticator] can be placed anywhere in your widget tree, though it makes the most sense to use it as the parent of the [ArcGISMapView] or [ArcGISSceneView] widget.
+/// It will then handle authentication challenges from loading network resources.
 ///
 /// To use OAuth, provide one or more [OAuthUserConfiguration]s in the
-/// `oAuthUserConfigurations` parameter. Otherwise, the user will be prompted to
+/// [Authenticator.oAuthUserConfigurations] parameter. Otherwise, the user will be prompted to
 /// sign in using a username and password to obtain a [TokenCredential].
 ///
-/// To learn more about using OAuth with ArcGIS accounts, see this document:
+/// ```dart
+///   @override
+///   Widget build(BuildContext context) {
+///     return Scaffold(
+///       body: Authenticator(
+///         oAuthUserConfigurations: [
+///           OAauthUserConfiguration(
+///             portalUri: Uri.parse('https://www.arcgis.com'),
+///             clientId: 'YOUR-CLIENT-ID',
+///             redirectUri: Uri.parse('YOUR-REDIRECT-URL'),
+///           ),
+///         ],
+///         child: ArcGISMapView(
+///           controllerProvider: () => _mapViewController,
+///         ),
+///       ),
+///     );
+///   }
+/// ```
+///
+/// ## More information
+/// To learn more about using OAuth with ArcGIS accounts, see:
 /// https://developers.arcgis.com/documentation/security-and-authentication/user-authentication/
 ///
-/// To configure OAuth for use in your Maps SDK for Flutter app, see:
+/// To configure OAuth for use in your ArcGIS Maps SDK for Flutter app, see:
 /// https://developers.arcgis.com/flutter/install-and-set-up/#enabling-user-authentication
 class Authenticator extends StatefulWidget {
-  /// Creates an [Authenticator] widget with the optional child and optional
+  /// Creates an [Authenticator] widget with the optional child [Widget] and optional
   /// `oAuthUserConfigurations`.
   const Authenticator({
     super.key,
@@ -63,8 +97,10 @@ class Authenticator extends StatefulWidget {
   }
 
   /// Clear all credentials from the credential store.
-  static void clearCredentials() {
+  static Future<void> clearCredentials() async {
     ArcGISEnvironment.authenticationManager.arcGISCredentialStore.removeAll();
+    await ArcGISEnvironment.authenticationManager.networkCredentialStore
+        .removeAll();
   }
 
   @override
@@ -72,7 +108,9 @@ class Authenticator extends StatefulWidget {
 }
 
 class _AuthenticatorState extends State<Authenticator>
-    implements ArcGISAuthenticationChallengeHandler {
+    implements
+        ArcGISAuthenticationChallengeHandler,
+        NetworkAuthenticationChallengeHandler {
   var _errorMessage = '';
 
   @override
@@ -84,8 +122,12 @@ class _AuthenticatorState extends State<Authenticator>
     if (manager.arcGISAuthenticationChallengeHandler != null) {
       _errorMessage =
           'Authenticator failed to load: another AuthenticationChallengeHandler has already been set, of type ${manager.arcGISAuthenticationChallengeHandler.runtimeType}';
+    } else if (manager.networkAuthenticationChallengeHandler != null) {
+      _errorMessage =
+          'Authenticator failed to load: another NetworkAuthenticationChallengeHandler has already been set, of type ${manager.networkAuthenticationChallengeHandler.runtimeType}';
     } else {
       manager.arcGISAuthenticationChallengeHandler = this;
+      manager.networkAuthenticationChallengeHandler = this;
     }
   }
 
@@ -93,8 +135,13 @@ class _AuthenticatorState extends State<Authenticator>
   void dispose() {
     if (_errorMessage.isEmpty) {
       ArcGISEnvironment
-          .authenticationManager
-          .arcGISAuthenticationChallengeHandler = null;
+              .authenticationManager
+              .arcGISAuthenticationChallengeHandler =
+          null;
+      ArcGISEnvironment
+              .authenticationManager
+              .networkAuthenticationChallengeHandler =
+          null;
     }
 
     super.dispose();
@@ -114,13 +161,12 @@ class _AuthenticatorState extends State<Authenticator>
     ArcGISAuthenticationChallenge challenge,
   ) {
     // If an OAuth configuration matches, use it. Else use token login.
-    final configuration =
-        widget.oAuthUserConfigurations
-            .where(
-              (configuration) =>
-                  configuration.canBeUsedForUri(challenge.requestUri),
-            )
-            .firstOrNull;
+    final configuration = widget.oAuthUserConfigurations
+        .where(
+          (configuration) =>
+              configuration.canBeUsedForUri(challenge.requestUri),
+        )
+        .firstOrNull;
 
     if (configuration != null) {
       _oauthLogin(challenge, configuration);
@@ -158,7 +204,73 @@ class _AuthenticatorState extends State<Authenticator>
     // Show an _AuthenticatorLogin dialog, which will answer the challenge.
     showDialog(
       context: context,
-      builder: (context) => _AuthenticatorLogin(challenge: challenge),
+      builder: (context) =>
+          _AuthenticatorLogin(challenge: _ArcGISLoginChallenge(challenge)),
+    );
+  }
+
+  @override
+  FutureOr<void> handleNetworkAuthenticationChallenge(
+    NetworkAuthenticationChallenge challenge,
+  ) async {
+    switch (challenge) {
+      case ServerTrustAuthenticationChallenge():
+        // Show an _AuthenticatorTrust dialog, which will answer the challenge.
+        await showDialog(
+          context: context,
+          builder: (context) => _AuthenticatorTrust(challenge: challenge),
+        );
+      case BasicAuthenticationChallenge():
+      case DigestAuthenticationChallenge():
+      case NtlmAuthenticationChallenge():
+        // Show an _AuthenticatorLogin dialog, which will answer the challenge.
+        await showDialog(
+          context: context,
+          builder: (context) =>
+              _AuthenticatorLogin(challenge: _NetworkLoginChallenge(challenge)),
+        );
+      case ClientCertificateAuthenticationChallenge():
+        await _clientCertificateWorkflow(challenge);
+    }
+  }
+
+  Future<void> _clientCertificateWorkflow(
+    ClientCertificateAuthenticationChallenge challenge,
+  ) async {
+    // Show an _AuthenticatorCertificateRequired dialog.
+    final browse = await showDialog<bool>(
+      context: context,
+      builder: (context) =>
+          _AuthenticatorCertificateRequired(challenge: challenge),
+    );
+
+    if (browse == null || !browse) {
+      // If the user choose not to browse for a certificate, end here.
+      return;
+    }
+
+    // Browse for a pfx file.
+    final filePickerResult = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['pfx'],
+    );
+
+    if (filePickerResult == null ||
+        filePickerResult.files.isEmpty ||
+        !mounted) {
+      // If the user canceled the file picker, cancel the challenge and end here.
+      challenge.cancel();
+      return;
+    }
+
+    final file = filePickerResult.files.single;
+
+    // Show a dialog to prompt the user for the certificate file's password, which
+    // will answer the challenge.
+    await showDialog(
+      context: context,
+      builder: (context) =>
+          _AuthenticatorCertificatePassword(challenge: challenge, file: file),
     );
   }
 }
