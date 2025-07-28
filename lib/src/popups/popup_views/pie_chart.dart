@@ -33,7 +33,7 @@ class _PopupPieChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final radius = MediaQuery.of(context).orientation == Orientation.portrait
+    final radius = MediaQuery.orientationOf(context) == Orientation.portrait
         ? MediaQuery.sizeOf(context).width / 3
         : MediaQuery.sizeOf(context).height / 3;
     return GestureDetector(
