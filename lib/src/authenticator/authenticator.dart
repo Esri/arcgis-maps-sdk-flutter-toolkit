@@ -202,7 +202,7 @@ class _AuthenticatorState extends State<Authenticator>
 
   void _tokenLogin(ArcGISAuthenticationChallenge challenge) {
     // Show an _AuthenticatorLogin dialog, which will answer the challenge.
-    showDialog(
+    showDialog<void>(
       context: context,
       builder: (context) =>
           _AuthenticatorLogin(challenge: _ArcGISLoginChallenge(challenge)),
@@ -216,7 +216,7 @@ class _AuthenticatorState extends State<Authenticator>
     switch (challenge) {
       case ServerTrustAuthenticationChallenge():
         // Show an _AuthenticatorTrust dialog, which will answer the challenge.
-        await showDialog(
+        await showDialog<void>(
           context: context,
           builder: (context) => _AuthenticatorTrust(challenge: challenge),
         );
@@ -224,7 +224,7 @@ class _AuthenticatorState extends State<Authenticator>
       case DigestAuthenticationChallenge():
       case NtlmAuthenticationChallenge():
         // Show an _AuthenticatorLogin dialog, which will answer the challenge.
-        await showDialog(
+        await showDialog<void>(
           context: context,
           builder: (context) =>
               _AuthenticatorLogin(challenge: _NetworkLoginChallenge(challenge)),
@@ -267,7 +267,7 @@ class _AuthenticatorState extends State<Authenticator>
 
     // Show a dialog to prompt the user for the certificate file's password, which
     // will answer the challenge.
-    await showDialog(
+    await showDialog<void>(
       context: context,
       builder: (context) =>
           _AuthenticatorCertificatePassword(challenge: challenge, file: file),
