@@ -36,7 +36,7 @@ class _PopupLineChart extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         Navigator.of(context).push(
-          MaterialPageRoute(
+          MaterialPageRoute<void>(
             builder: (context) => _LineChartDetailView(
               popupMedia: popupMedia,
               // Line Chart should be interactive in detail view.

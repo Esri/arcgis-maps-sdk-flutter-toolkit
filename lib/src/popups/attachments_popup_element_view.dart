@@ -211,7 +211,7 @@ class _PopupAttachmentViewInGalleryState
           }
         } else {
           if (attachment.contentType.startsWith('image') && mounted) {
-            await showDialog(
+            await showDialog<void>(
               context: context,
               builder: (context) =>
                   _DetailsScreenImageDialog(filePath: filePath!),
@@ -377,7 +377,7 @@ class _PopupAttachmentViewInListState
           }
         } else {
           if (widget.popupAttachment.contentType.startsWith('image')) {
-            showDialog(
+            showDialog<void>(
               context: context,
               builder: (context) =>
                   _DetailsScreenImageDialog(filePath: filePath!),

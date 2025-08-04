@@ -39,7 +39,7 @@ class _PopupPieChart extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         Navigator.of(context).push(
-          MaterialPageRoute(
+          MaterialPageRoute<void>(
             builder: (context) => _PieChartDetailView(
               popupMedia: popupMedia,
               chartData: chartData,
