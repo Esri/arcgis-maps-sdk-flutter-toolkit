@@ -162,7 +162,7 @@ class _CompassState extends State<Compass> {
   void onPressed() {
     if (_controller is ArcGISMapViewController) {
       (_controller as ArcGISMapViewController).setViewpointRotation(
-        angleDegrees: 0,
+        0,
       );
     } else {
       final controller = _controller as ArcGISSceneViewController;
