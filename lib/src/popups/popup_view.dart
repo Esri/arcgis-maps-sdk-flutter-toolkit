@@ -39,7 +39,7 @@ part of '../../arcgis_maps_toolkit.dart';
 /// The [PopupView] contains:
 /// * A header section with title defined in the [Popup].
 /// * A body, built using a [Column] and combination of [Card] and [ExpansionTile] widgets, consisting of different types of
-/// pop-up elements, including text (HTML), fields, media, and attachments.
+/// pop-up elements, including text (HTML), fields, media, attachments, and utility network associations.
 ///
 /// A pop-up is usually obtained from an identify result and then a [PopupView] can be created to wrap the pop-up and display its contents in a sized widget, such as a [Dialog] or a [Container]:
 /// ```dart
@@ -161,6 +161,11 @@ class PopupView extends StatelessWidget {
                   );
                 } else if (element is TextPopupElement) {
                   return _TextPopupElementView(textElement: element);
+                } else if (element is UtilityAssociationsPopupElement) {
+                  return _UtilityAssociationsPopupElementView(
+                    popupElement: element,
+                    isExpanded: true,
+                  );
                 } else {
                   return const Text('Element not supported');
                 }

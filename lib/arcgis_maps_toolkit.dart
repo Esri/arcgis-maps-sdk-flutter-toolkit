@@ -56,6 +56,8 @@ part 'src/popups/attachments_popup_element_view.dart';
 part 'src/popups/fields_popup_element_view.dart';
 part 'src/popups/media_popup_element_view.dart';
 part 'src/popups/text_popup_element_view.dart';
+part 'src/popups/utility_associations_popup_element_view.dart';
+part 'src/popups/popup_views/utility_group_result.dart';
 part 'src/popups/popup_views/bar_chart.dart';
 part 'src/popups/popup_views/line_chart.dart';
 part 'src/popups/popup_views/pie_chart.dart';

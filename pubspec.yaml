@@ -15,7 +15,8 @@ environment:
   flutter: '>=3.35.2'
 
 dependencies:
-  arcgis_maps: ^300.0.0
+  arcgis_maps: 
+    path: ../flutter/arcgis_maps
   file_picker: ^10.2.0
   fl_chart: ^1.1.0
   flutter:
@@ -31,3 +32,7 @@ dev_dependencies:
   flutter_lints: ^5.0.0
   flutter_test:
     sdk: flutter
+
+flutter:
+ assets:
+  - assets/icons/
