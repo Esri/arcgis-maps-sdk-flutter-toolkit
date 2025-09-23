@@ -50,7 +50,7 @@ part of '../../arcgis_maps_toolkit.dart';
 ///   },
 /// )
 /// ```
-class PopupView extends StatelessWidget {
+class PopupView extends StatefulWidget {
   /// Creates a [PopupView] widget to display a [Popup] with optional `onClose` callback.
   const PopupView({required this.popup, this.onClose, super.key});
 
@@ -59,6 +59,18 @@ class PopupView extends StatelessWidget {
 
   /// The [Popup] object to be displayed.
   final Popup popup;
+  
+  @override
+  State<StatefulWidget> createState() => PopupState();
+}
+
+class PopupState extends State<PopupView> {
+ late Future<List<PopupExpressionEvaluation>> _futurePopupExprEvaluation;
+  @override
+  void initState() {
+    _futurePopupExprEvaluation = widget.popup.evaluateExpressions();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -75,8 +87,8 @@ class PopupView extends StatelessWidget {
             _buildTitleWidget(
               style: themeData.textTheme.titleMedium,
               onClosePressed: () {
-                if (onClose != null) {
-                  onClose!();
+                if (widget.onClose != null) {
+                  widget.onClose!();
                 } else {
                   Navigator.of(context).pop();
                 }
@@ -87,7 +99,7 @@ class PopupView extends StatelessWidget {
               child: FutureBuilder(
                 // Evaluate the pop-up expressions asynchronously,
                 // it needs to be done before displaying the pop-up elements.
-                future: popup.evaluateExpressions(),
+                future: _futurePopupExprEvaluation,
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.done) {
                     return _buildElementsView();
@@ -124,7 +136,7 @@ class PopupView extends StatelessWidget {
         children: [
           Expanded(
             child: Text(
-              popup.title,
+              widget.popup.title,
               style: style,
               overflow: TextOverflow.ellipsis,
               maxLines: 2,
@@ -142,8 +154,8 @@ class PopupView extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
       child: Column(
         spacing: 8,
-        children: popup.evaluatedElements.isNotEmpty
-            ? popup.evaluatedElements.map((element) {
+        children: widget.popup.evaluatedElements.isNotEmpty
+            ? widget.popup.evaluatedElements.map((element) {
                 if (element is FieldsPopupElement) {
                   return _FieldsPopupElementView(
                     fieldsElement: element,
