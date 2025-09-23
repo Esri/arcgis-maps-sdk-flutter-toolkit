@@ -17,14 +17,15 @@
 part of '../../../arcgis_maps_toolkit.dart';
 
 /// A view that displays an expanded [UtilityAssociationsFilterResult]
-/// with navigation controls and group results.
+/// with navigation controls and 
+/// a lists the [UtilityAssociationGroupResult] elements
 class _UtilityAssociationsFilterResultDetailView extends StatefulWidget {
   const _UtilityAssociationsFilterResultDetailView({
     required this.associationsFilterResult,
     required this.displayCount,
   });
 
-  /// The utility associations filter result to display.
+  /// The utility associations filter result to expand.
   final UtilityAssociationsFilterResult associationsFilterResult;
 
   /// Maximum number of associations to display per group.
@@ -60,7 +61,8 @@ class _UtilityAssociationsFilterResultDetailViewState
     );
   }
 
-  // 
+  // Build the navigation header.
+  // It will navigate the page to (<) previous page, (^) the original page, (x) close the page.
   Widget _buildNavigationHeader(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 12),
@@ -77,11 +79,7 @@ class _UtilityAssociationsFilterResultDetailViewState
           ),
           //Add a grey vertical bar
           Container(width: 1, height: 40, color: Colors.grey),
-          //const SizedBox(width: 12),
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.arrow_upward),
-          ),
+          IconButton(onPressed: () {}, icon: const Icon(Icons.arrow_upward)),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -103,7 +101,7 @@ class _UtilityAssociationsFilterResultDetailViewState
           ),
           IconButton(
             icon: const Icon(Icons.close),
-            onPressed: () => {},
+            onPressed: () => {Navigator.of(context).pop()},
             padding: EdgeInsets.zero,
             constraints: const BoxConstraints(),
           ),
@@ -112,7 +110,7 @@ class _UtilityAssociationsFilterResultDetailViewState
     );
   }
 
-  /// Build the contents from the list of UtilityAssociationGroupResult.
+  /// Build the contents from the a list of [UtilityAssociationGroupResult].
   Widget _buildGroupResults(BuildContext context) {
     final groupResults = associationsFilterResult.groupResults;
 
@@ -137,7 +135,8 @@ class _UtilityAssociationsFilterResultDetailViewState
     );
   }
 
-  /// Build the content from a UtilityAssociationGroup.
+  /// Build the content from a [UtilityAssociationGroupResult]
+  /// which has a list of [UtilityAssociationResult].
   Widget _buildGroupResultTile(
     BuildContext context,
     UtilityAssociationGroupResult associationGroupResult,
@@ -156,6 +155,7 @@ class _UtilityAssociationsFilterResultDetailViewState
       title: Text(title),
       initiallyExpanded: true,
       childrenPadding: const EdgeInsets.only(left: 20),
+      // Show a totalCount in a grey circle
       trailing: SizedBox(
         width: 25,
         height: 25,
@@ -206,7 +206,7 @@ class _UtilityAssociationsFilterResultDetailViewState
     );
   }
 
-  // Build the content from the UtilityAssociationResult.
+  /// Build the content from the [UtilityAssociationResult].
   Widget buildWithUtilityAssociationResult(UtilityAssociationResult result) {
     final utilityAssociate = result.association;
     final popup = result.associatedFeature.toPopup();
@@ -272,20 +272,10 @@ class _UtilityAssociationsFilterResultDetailViewState
 
   Widget getTupIcon() {
     const assetsPath = 'packages/arcgis_maps_toolkit/assets/icons';
-    return const ImageIcon(
-      AssetImage('$assetsPath/t-up-24.png'),
-      size: 24,
-    );
-      
+    return const ImageIcon(AssetImage('$assetsPath/t-up-24.png'), size: 24);
   }
 }
 
-Widget buildAssociationPopupPage(Popup popup) {
-  return Scaffold(
-    appBar: AppBar(),
-    body: PopupView(popup: popup),
-  );
-}
 
 // Create a Popup from the ArcGISFeature.
 extension on ArcGISFeature {
@@ -306,7 +296,8 @@ extension on ArcGISFeature {
   }
 }
 
-/// Display a list of UtilityAssociationResult with the text search text field.
+/// Display a list of [UtilityAssociationResult] with the text search text field.
+/// 
 class _AssociationResultSelectionPage extends StatefulWidget {
   const _AssociationResultSelectionPage({required this.groupResult});
 
@@ -395,3 +386,17 @@ class _AssociationResultSelectionPageState
     );
   }
 }
+
+/// Present the associations Popup in a Scaffold widget.
+Widget buildAssociationPopupPage(Popup popup) {
+  
+  return Scaffold(
+    appBar: AppBar(title: Text(popup.title),),
+    body: PopupView(popup: popup),
+  );
+}
+
+
+
+
+
