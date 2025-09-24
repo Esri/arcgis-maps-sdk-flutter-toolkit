@@ -17,7 +17,7 @@
 part of '../../../arcgis_maps_toolkit.dart';
 
 /// A view that displays an expanded [UtilityAssociationsFilterResult]
-/// with navigation controls and 
+/// with navigation controls and
 /// a lists the [UtilityAssociationGroupResult] elements
 class _UtilityAssociationsFilterResultDetailView extends StatefulWidget {
   const _UtilityAssociationsFilterResultDetailView({
@@ -50,12 +50,17 @@ class _UtilityAssociationsFilterResultDetailViewState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text(associationsFilterResult.displayTitle)),
+      appBar: AppBar(
+        title: Text(
+          associationsFilterResult.displayTitle,
+          style: Theme.of(context).textTheme.titleSmall,
+        ),
+      ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildNavigationHeader(context),
-          _buildGroupResults(context),
+          _UtilityAssociationGroupResultWidget(widget.associationsFilterResult),
         ],
       ),
     );
@@ -65,7 +70,7 @@ class _UtilityAssociationsFilterResultDetailViewState
   // It will navigate the page to (<) previous page, (^) the original page, (x) close the page.
   Widget _buildNavigationHeader(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
       decoration: const BoxDecoration(
         border: Border(bottom: BorderSide(color: Colors.grey, width: 0.5)),
       ),
@@ -77,9 +82,10 @@ class _UtilityAssociationsFilterResultDetailViewState
             padding: EdgeInsets.zero,
             constraints: const BoxConstraints(),
           ),
-          //Add a grey vertical bar
+          // Add a grey vertical bar
           Container(width: 1, height: 40, color: Colors.grey),
-          IconButton(onPressed: () {}, icon: const Icon(Icons.arrow_upward)),
+          // TODO: navigate back to original feature.
+          // IconButton(onPressed: () {}, icon: const Icon(Icons.arrow_upward)),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -109,11 +115,18 @@ class _UtilityAssociationsFilterResultDetailViewState
       ),
     );
   }
+}
 
-  /// Build the contents from the a list of [UtilityAssociationGroupResult].
-  Widget _buildGroupResults(BuildContext context) {
+///
+/// Display the list of the [UtilityAssociationGroupResult].
+///
+class _UtilityAssociationGroupResultWidget extends StatelessWidget {
+  const _UtilityAssociationGroupResultWidget(this.associationsFilterResult);
+  final UtilityAssociationsFilterResult associationsFilterResult;
+
+  @override
+  Widget build(BuildContext context) {
     final groupResults = associationsFilterResult.groupResults;
-
     return Padding(
       padding: const EdgeInsetsGeometry.symmetric(horizontal: 10),
       child: SingleChildScrollView(
@@ -122,12 +135,12 @@ class _UtilityAssociationsFilterResultDetailViewState
           physics: const NeverScrollableScrollPhysics(),
           padding: EdgeInsets.zero,
           separatorBuilder: (context, index) {
-            return const Divider(height: 2, thickness: 1);
+            return const Divider(height: 1, thickness: 1);
           },
           itemCount: groupResults.length,
           itemBuilder: (context, index) {
-            final groupResult =
-                widget.associationsFilterResult.groupResults[index];
+            // Get a UtilityAssociationGroupResult
+            final groupResult = associationsFilterResult.groupResults[index];
             return _buildGroupResultTile(context, groupResult);
           },
         ),
@@ -176,7 +189,7 @@ class _UtilityAssociationsFilterResultDetailViewState
       children: totalCount > 1
           ? [
               const Divider(color: Colors.grey, height: 1, thickness: 1),
-              buildWithUtilityAssociationResult(utilityAssociationResult),
+              _UtilityAssociationResultWidget(utilityAssociationResult),
               const Divider(color: Colors.grey, height: 1, thickness: 1),
               Padding(
                 padding: const EdgeInsets.only(left: 40),
@@ -202,33 +215,11 @@ class _UtilityAssociationsFilterResultDetailViewState
                 ),
               ),
             ]
-          : [buildWithUtilityAssociationResult(utilityAssociationResult)],
+          : [_UtilityAssociationResultWidget(utilityAssociationResult)],
     );
   }
 
-  /// Build the content from the [UtilityAssociationResult].
-  Widget buildWithUtilityAssociationResult(UtilityAssociationResult result) {
-    final utilityAssociate = result.association;
-    final popup = result.associatedFeature.toPopup();
-
-    return ListTile(
-      leading: getAssociationTypeIcon(utilityAssociate.associationType),
-      title: Text(result.title),
-      trailing: IconButton(
-        icon: const Icon(Icons.chevron_right),
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute<void>(
-              builder: (_) => buildAssociationPopupPage(popup),
-            ),
-          );
-        },
-      ),
-    );
-  }
-
-  // Build the association selection page
+  /// Build the association selection page
   Widget buildAssociationSelectionPage(
     UtilityAssociationGroupResult associationGroupResult,
   ) {
@@ -240,163 +231,4 @@ class _UtilityAssociationsFilterResultDetailViewState
       ),
     );
   }
-
-  // Get the association connection type icon.
-  Widget getAssociationTypeIcon(UtilityAssociationType type) {
-    const assetsPath = 'packages/arcgis_maps_toolkit/assets/icons';
-    switch (type) {
-      case UtilityAssociationType.junctionEdgeObjectConnectivityFromSide:
-        return const ImageIcon(
-          AssetImage('$assetsPath/connection-end-left-24.png'),
-          size: 24,
-        );
-      case UtilityAssociationType.junctionEdgeObjectConnectivityToSide:
-        return const ImageIcon(
-          AssetImage('$assetsPath/connection-end-right-24.png'),
-          size: 24,
-        );
-      case UtilityAssociationType.junctionEdgeObjectConnectivityMidspan:
-        return const ImageIcon(
-          AssetImage('$assetsPath/connection-end-middle-24.png'),
-          size: 24,
-        );
-      case UtilityAssociationType.connectivity:
-        return const ImageIcon(
-          AssetImage('$assetsPath/connection-to-connection-24.png'),
-          size: 24,
-        );
-      default:
-        return const SizedBox.shrink();
-    }
-  }
-
-  Widget getTupIcon() {
-    const assetsPath = 'packages/arcgis_maps_toolkit/assets/icons';
-    return const ImageIcon(AssetImage('$assetsPath/t-up-24.png'), size: 24);
-  }
 }
-
-
-// Create a Popup from the ArcGISFeature.
-extension on ArcGISFeature {
-  Popup toPopup() {
-    var popupDefinition = featureTable?.popupDefinition;
-    if (popupDefinition == null) {
-      if (featureTable != null &&
-          getFeatureSubtype() != null &&
-          featureTable! is ArcGISFeatureTable) {
-        final arcgisFeatureTable = featureTable! as ArcGISFeatureTable;
-        final subTable = arcgisFeatureTable.subtypeSubtables.firstWhere(
-          (it) => it.name == getFeatureSubtype()?.name,
-        );
-        popupDefinition = subTable.popupDefinition;
-      }
-    }
-    return Popup(geoElement: this, popupDefinition: popupDefinition);
-  }
-}
-
-/// Display a list of [UtilityAssociationResult] with the text search text field.
-/// 
-class _AssociationResultSelectionPage extends StatefulWidget {
-  const _AssociationResultSelectionPage({required this.groupResult});
-
-  final UtilityAssociationGroupResult groupResult;
-  @override
-  _AssociationResultSelectionPageState createState() =>
-      _AssociationResultSelectionPageState();
-}
-
-class _AssociationResultSelectionPageState
-    extends State<_AssociationResultSelectionPage> {
-  late List<UtilityAssociationResult> selectAssociationResults;
-  final _searchController = TextEditingController();
-
-  @override
-  void initState() {
-    selectAssociationResults = widget.groupResult.associationResults;
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    _searchController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          spacing: 20,
-          children: [
-            TextField(
-              controller: _searchController,
-              decoration: const InputDecoration(
-                labelText: 'Search',
-                border: OutlineInputBorder(),
-              ),
-            ),
-
-            ValueListenableBuilder<TextEditingValue>(
-              valueListenable: _searchController,
-              builder: (context, value, child) {
-                final filteredResults = selectAssociationResults
-                    .where(
-                      (result) => result.title.toLowerCase().contains(
-                        value.text.toLowerCase(),
-                      ),
-                    )
-                    .toList();
-
-                return Expanded(
-                  child: SingleChildScrollView(
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: filteredResults.length,
-                      itemBuilder: (context, index) => ListTile(
-                        title: Text(filteredResults[index].title),
-                        trailing: IconButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute<void>(
-                                builder: (_) => buildAssociationPopupPage(
-                                  filteredResults[index].associatedFeature
-                                      .toPopup(),
-                                ),
-                              ),
-                            );
-                          },
-                          icon: const Icon(Icons.chevron_right),
-                        ),
-                      ),
-                    ),
-                  ),
-                );
-              },
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-/// Present the associations Popup in a Scaffold widget.
-Widget buildAssociationPopupPage(Popup popup) {
-  
-  return Scaffold(
-    appBar: AppBar(title: Text(popup.title),),
-    body: PopupView(popup: popup),
-  );
-}
-
-
-
-
-

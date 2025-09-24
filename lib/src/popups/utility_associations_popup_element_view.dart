@@ -47,6 +47,12 @@ class _UtilityAssociationsPopupElementViewState
 
     _fetchAssociationsFuture = widget.popupElement
         .fetchAssociationsFilterResults()
+        .timeout(
+          const Duration(seconds: 30),
+          onTimeout: () {
+            throw TimeoutException('The fetchAssociationsFilterResults timed-out');
+          },
+        )
         .catchError((Object error) {
           throw error as Exception;
         });
@@ -62,41 +68,37 @@ class _UtilityAssociationsPopupElementViewState
     return FutureBuilder(
       future: _fetchAssociationsFuture,
       builder: (context, snapshot) {
-        switch (snapshot.connectionState) {
-          case ConnectionState.none:
-          case ConnectionState.waiting:
-          case ConnectionState.active:
-            return Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                spacing: 20,
-                children: [
-                  const Text('Building the UtilityAssociationPopup View'),
-                  // Connection state label
-                  Text(snapshot.connectionState.name),
-                  Center(
-                    child: CircularProgressIndicator(
-                      semanticsLabel: widget.popupElement.title,
-                    ),
-                  ),
-                ],
+        if (snapshot.connectionState == ConnectionState.done) {
+          if (snapshot.hasError) {
+            return Center(
+              child: Text(
+                'Fail to fetch pop-up utility network associations filter results.',
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: Theme.of(context).colorScheme.error,
+                ),
               ),
             );
+          }
 
-          case ConnectionState.done:
-            if (snapshot.hasError) {
-              return Center(
-                child: Text(
-                  'Fail to fetch pop-up utility network associations filter results.',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: Theme.of(context).colorScheme.error,
+          // The UtilityAssociationsFilterResult is ready to retrieve.
+          return buildAssociationsPopupElementCard(context);
+        } else {
+          return Padding(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              spacing: 20,
+              children: [
+                const Text('Building the UtilityAssociationPopup View'),
+                // Connection state label
+                Text(snapshot.connectionState.name),
+                Center(
+                  child: CircularProgressIndicator(
+                    semanticsLabel: widget.popupElement.title,
                   ),
                 ),
-              );
-            } else {
-              // The UtilityAssociationsFilterResult is ready to retrieve.
-              return buildAssociationsPopupElementCard(context);
-            }
+              ],
+            ),
+          );
         }
       },
     );
@@ -154,10 +156,10 @@ class _UtilityAssociationsPopupElementViewState
     return ListView.separated(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      itemCount: associationsFilterResults!.length,
+      itemCount: associationsFilterResults.length,
       separatorBuilder: (context, index) {
-        if (index <= (associationsFilterResults!.length - 1)) {
-          final filterResult = associationsFilterResults![index + 1];
+        if (index <= (associationsFilterResults.length - 1)) {
+          final filterResult = associationsFilterResults[index + 1];
           if (filterResult.resultCount > 0) {
             return Divider(
               color: Theme.of(context).dividerTheme.color ?? Colors.grey,
@@ -169,7 +171,7 @@ class _UtilityAssociationsPopupElementViewState
         return const SizedBox.shrink();
       },
       itemBuilder: (context, index) {
-        final filterResult = associationsFilterResults![index];
+        final filterResult = associationsFilterResults[index];
         if (filterResult.resultCount > 0) {
           return _AssociationsFilterResultTile(
             associationsFilterResult: filterResult,
