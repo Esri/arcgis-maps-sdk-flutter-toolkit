@@ -145,7 +145,7 @@ class _UtilityAssociationsFilterResultDetailViewState
 }
 
 ///
-/// Display the [UtilityAssociationResult].
+/// Display the [UtilityAssociationGroupResult].
 ///
 class _UtilityAssociationGroupResultWidget extends StatefulWidget {
   const _UtilityAssociationGroupResultWidget({
@@ -154,7 +154,6 @@ class _UtilityAssociationGroupResultWidget extends StatefulWidget {
   });
   final String filterDisplayTitle;
   final UtilityAssociationGroupResult utilityAssociationGroupResult;
-  //final UtilityAssociationResult utilityAssociationResult;
 
   @override
   State<StatefulWidget> createState() => _UtilityAssociationGroupResultState();
