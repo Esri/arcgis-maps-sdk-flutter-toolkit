@@ -45,9 +45,7 @@ class _UtilityAssociationResultState
 
     return ListTile(
       leading: getAssociationTypeIcon(utilityAssociate.associationType),
-      title: Text(
-        utilityAssociationResult.title,
-      ),
+      title: Text(utilityAssociationResult.title),
       subtitle: Text(subtitle),
       trailing: IconButton(
         icon: const Icon(Icons.chevron_right),
