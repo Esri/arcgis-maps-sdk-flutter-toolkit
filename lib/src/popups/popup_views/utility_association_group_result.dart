@@ -53,15 +53,42 @@ class _UtilityAssociationsFilterResultDetailViewState
       appBar: AppBar(
         title: Text(
           associationsFilterResult.displayTitle,
-          style: Theme.of(context).textTheme.titleSmall,
+          style: Theme.of(context).textTheme.titleMedium,
         ),
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildNavigationHeader(context),
-          _UtilityAssociationGroupResultWidget(widget.associationsFilterResult),
+          buildListUtilityAssociationGroupResult(),
         ],
+      ),
+    );
+  }
+
+  Widget buildListUtilityAssociationGroupResult() {
+    final groupResults = widget.associationsFilterResult.groupResults;
+    return Padding(
+      padding: const EdgeInsetsGeometry.symmetric(horizontal: 10),
+      child: SingleChildScrollView(
+        child: ListView.separated(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          padding: EdgeInsets.zero,
+          separatorBuilder: (context, index) {
+            return const Divider(height: 1, thickness: 1);
+          },
+          itemCount: groupResults.length,
+          itemBuilder: (context, index) {
+            // Get a UtilityAssociationGroupResult
+            final groupResult =
+                widget.associationsFilterResult.groupResults[index];
+            return _UtilityAssociationGroupResultWidget(
+              filterDisplayTitle: associationsFilterResult.displayTitle,
+              utilityAssociationGroupResult: groupResult,
+            );
+          },
+        ),
       ),
     );
   }
@@ -83,7 +110,7 @@ class _UtilityAssociationsFilterResultDetailViewState
             constraints: const BoxConstraints(),
           ),
           // Add a grey vertical bar
-          Container(width: 1, height: 40, color: Colors.grey),
+          // Container(width: 1, height: 40, color: Colors.grey),
           // TODO: navigate back to original feature.
           // IconButton(onPressed: () {}, icon: const Icon(Icons.arrow_upward)),
           Expanded(
@@ -118,56 +145,54 @@ class _UtilityAssociationsFilterResultDetailViewState
 }
 
 ///
-/// Display the list of the [UtilityAssociationGroupResult].
+/// Display the [UtilityAssociationResult].
 ///
-class _UtilityAssociationGroupResultWidget extends StatelessWidget {
-  const _UtilityAssociationGroupResultWidget(this.associationsFilterResult);
-  final UtilityAssociationsFilterResult associationsFilterResult;
+class _UtilityAssociationGroupResultWidget extends StatefulWidget {
+  const _UtilityAssociationGroupResultWidget({
+    required this.filterDisplayTitle,
+    required this.utilityAssociationGroupResult,
+  });
+  final String filterDisplayTitle;
+  final UtilityAssociationGroupResult utilityAssociationGroupResult;
+  //final UtilityAssociationResult utilityAssociationResult;
 
   @override
-  Widget build(BuildContext context) {
-    final groupResults = associationsFilterResult.groupResults;
-    return Padding(
-      padding: const EdgeInsetsGeometry.symmetric(horizontal: 10),
-      child: SingleChildScrollView(
-        child: ListView.separated(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          padding: EdgeInsets.zero,
-          separatorBuilder: (context, index) {
-            return const Divider(height: 1, thickness: 1);
-          },
-          itemCount: groupResults.length,
-          itemBuilder: (context, index) {
-            // Get a UtilityAssociationGroupResult
-            final groupResult = associationsFilterResult.groupResults[index];
-            return _buildGroupResultTile(context, groupResult);
-          },
-        ),
-      ),
-    );
+  State<StatefulWidget> createState() => _UtilityAssociationGroupResultState();
+}
+
+class _UtilityAssociationGroupResultState
+    extends State<_UtilityAssociationGroupResultWidget> {
+  bool isExpanded = true;
+
+  @override
+  void initState() {
+    super.initState();
   }
 
   /// Build the content from a [UtilityAssociationGroupResult]
   /// which has a list of [UtilityAssociationResult].
-  Widget _buildGroupResultTile(
-    BuildContext context,
-    UtilityAssociationGroupResult associationGroupResult,
-  ) {
-    final title = associationGroupResult.name;
-    final totalCount = associationGroupResult.associationResults.length;
+  @override
+  Widget build(BuildContext context) {
+    final title = widget.utilityAssociationGroupResult.name;
+    final totalCount =
+        widget.utilityAssociationGroupResult.associationResults.length;
     // The last UtilityAssociationResult
     final utilityAssociationResult =
-        associationGroupResult.associationResults[totalCount - 1];
+        widget.utilityAssociationGroupResult.associationResults[totalCount - 1];
 
     return ExpansionTile(
       leading: IconButton(
-        onPressed: () {},
-        icon: const Icon(Icons.keyboard_arrow_down_rounded),
+        onPressed: () => setState(() => isExpanded = !isExpanded),
+        icon: isExpanded
+            ? const Icon(Icons.keyboard_arrow_down_rounded)
+            : const Icon(Icons.keyboard_arrow_right_rounded),
       ),
       title: Text(title),
-      initiallyExpanded: true,
+      initiallyExpanded: isExpanded,
       childrenPadding: const EdgeInsets.only(left: 20),
+      onExpansionChanged: (value) => setState(() => isExpanded = value),
+      showTrailingIcon: true,
+      collapsedShape: BeveledRectangleBorder(),
       // Show a totalCount in a grey circle
       trailing: SizedBox(
         width: 25,
@@ -206,7 +231,7 @@ class _UtilityAssociationGroupResultWidget extends StatelessWidget {
                             name: '/association-selector-view',
                           ),
                           builder: (_) => buildAssociationSelectionPage(
-                            associationGroupResult,
+                            widget.utilityAssociationGroupResult,
                           ),
                         ),
                       ),
@@ -225,7 +250,7 @@ class _UtilityAssociationGroupResultWidget extends StatelessWidget {
   ) {
     // Get a list of UtilityAssociationResult.
     return Scaffold(
-      appBar: AppBar(title: Text(associationsFilterResult.displayTitle)),
+      appBar: AppBar(title: Text(widget.filterDisplayTitle)),
       body: _AssociationResultSelectionPage(
         groupResult: associationGroupResult,
       ),

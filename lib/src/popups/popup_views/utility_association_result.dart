@@ -21,12 +21,13 @@ part of '../../../arcgis_maps_toolkit.dart';
 class _UtilityAssociationResultWidget extends StatefulWidget {
   const _UtilityAssociationResultWidget(this.utilityAssociationResult);
   final UtilityAssociationResult utilityAssociationResult;
-  
+
   @override
   State<StatefulWidget> createState() => _UtilityAssociationResultState();
 }
 
-class _UtilityAssociationResultState extends State<_UtilityAssociationResultWidget> {
+class _UtilityAssociationResultState
+    extends State<_UtilityAssociationResultWidget> {
   late UtilityAssociationResult utilityAssociationResult;
 
   @override
@@ -37,13 +38,16 @@ class _UtilityAssociationResultState extends State<_UtilityAssociationResultWidg
 
   @override
   Widget build(BuildContext context) {
+    // Get the UtilityAssociation.
     final utilityAssociate = utilityAssociationResult.association;
-    // related property string
+    // Get the related property string of the UtilityAssociation.
     final subtitle = getAssociationProperty();
 
     return ListTile(
       leading: getAssociationTypeIcon(utilityAssociate.associationType),
-      title: Text(utilityAssociationResult.title),
+      title: Text(
+        utilityAssociationResult.title,
+      ),
       subtitle: Text(subtitle),
       trailing: IconButton(
         icon: const Icon(Icons.chevron_right),
@@ -60,7 +64,7 @@ class _UtilityAssociationResultState extends State<_UtilityAssociationResultWidg
     );
   }
 
-  // Get the related association property string of the UtilityAssociationResult.
+  // Get the related association property string of the UtilityAssociation.
   String getAssociationProperty() {
     final association = utilityAssociationResult.association;
     final type = association.associationType;
@@ -135,7 +139,7 @@ extension on ArcGISFeature {
           .firstOrNull
           ?.popupDefinition;
     }
-  
+
     return Popup(geoElement: this, popupDefinition: popupDefinition);
   }
 }
