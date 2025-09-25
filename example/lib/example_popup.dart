@@ -66,7 +66,7 @@ class _PopupExampleState extends State<PopupExample> {
     );
   }
 
-  void onMapViewReady() {
+  Future<void> onMapViewReady() async {
     // Configure authentication challenge handler
     ArcGISEnvironment
         .authenticationManager
@@ -91,6 +91,15 @@ class _PopupExampleState extends State<PopupExample> {
       ),
     );
     _mapViewController.arcGISMap = webmapContainingPopups;
+    await webmapContainingPopups.load();
+
+    if (webmapContainingPopups.utilityNetworks.isNotEmpty) {
+      final utilityNetwork = webmapContainingPopups.utilityNetworks.first;
+      await utilityNetwork.load();
+      print('utilityNetwork: ${utilityNetwork.loadStatus}');
+    } else {
+      print('No utilityNetwork');
+    }
   }
 
   // Display a popup view in the bottom sheet when a popup is identified.
@@ -120,7 +129,7 @@ class _PopupExampleState extends State<PopupExample> {
     _featureLayer ??=
         _mapViewController.arcGISMap!.operationalLayers.firstWhere((layer) {
               //print('${layer.name}');
-               return layer.name == 'ElecDist Junction';
+              return layer.name == 'ElecDist Junction';
 
               // return layer.name == 'Structure Boundary';
               //return layer.name == 'Structure Junction';
@@ -155,9 +164,9 @@ class _PopupExampleState extends State<PopupExample> {
     print('>>>>> identifyPopups..end');
   }
 
-   Future<void> identifyPopupsAll(Offset localPosition) async {
-   print('>>>>> identifyPopupsAll.at $localPosition');
-   final results = await _mapViewController.identifyLayers(
+  Future<void> identifyPopupsAll(Offset localPosition) async {
+    print('>>>>> identifyPopupsAll.at $localPosition');
+    final results = await _mapViewController.identifyLayers(
       screenPoint: localPosition,
       tolerance: 22,
       returnPopupsOnly: true,

@@ -60,13 +60,13 @@ class _UtilityAssociationsFilterResultDetailViewState
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildNavigationHeader(context),
-          buildListUtilityAssociationGroupResult(),
+          _buildListUtilityAssociationGroupResult(),
         ],
       ),
     );
   }
 
-  Widget buildListUtilityAssociationGroupResult() {
+  Widget _buildListUtilityAssociationGroupResult() {
     final groupResults = widget.associationsFilterResult.groupResults;
     return Padding(
       padding: const EdgeInsetsGeometry.symmetric(horizontal: 10),
@@ -76,7 +76,10 @@ class _UtilityAssociationsFilterResultDetailViewState
           physics: const NeverScrollableScrollPhysics(),
           padding: EdgeInsets.zero,
           separatorBuilder: (context, index) {
-            return const Divider(height: 1, thickness: 1);
+            if (index < groupResults.length) {
+              return buildDivider(context);
+            }
+            return const SizedBox.shrink();
           },
           itemCount: groupResults.length,
           itemBuilder: (context, index) {
@@ -212,34 +215,39 @@ class _UtilityAssociationGroupResultState
 
       children: totalCount > 1
           ? [
-              const Divider(color: Colors.grey, height: 1, thickness: 1),
+              buildDivider(context),
               _UtilityAssociationResultWidget(utilityAssociationResult),
-              const Divider(color: Colors.grey, height: 1, thickness: 1),
-              Padding(
-                padding: const EdgeInsets.only(left: 40),
-                child: ListTile(
-                  title: const Text('Show all'),
-                  subtitle: Text('Total: $totalCount'),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.list),
-                    onPressed: () => {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute<void>(
-                          settings: const RouteSettings(
-                            name: '/association-selector-view',
-                          ),
-                          builder: (_) => buildAssociationSelectionPage(
-                            widget.utilityAssociationGroupResult,
-                          ),
-                        ),
-                      ),
-                    },
-                  ),
-                ),
-              ),
+              buildDivider(context),
+              buildShowAllWidget(totalCount)
             ]
           : [_UtilityAssociationResultWidget(utilityAssociationResult)],
+    );
+  }
+
+  /// Build the showAll tile.
+  Widget buildShowAllWidget(int total) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 40),
+      child: ListTile(
+        title: const Text('Show all'),
+        subtitle: Text('Total: $total'),
+        trailing: IconButton(
+          icon: const Icon(Icons.list),
+          onPressed: () => {
+            Navigator.push(
+              context,
+              MaterialPageRoute<void>(
+                settings: const RouteSettings(
+                  name: '/association-selector-view',
+                ),
+                builder: (_) => buildAssociationSelectionPage(
+                  widget.utilityAssociationGroupResult,
+                ),
+              ),
+            ),
+          },
+        ),
+      ),
     );
   }
 

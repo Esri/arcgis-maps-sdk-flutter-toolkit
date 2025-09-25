@@ -50,7 +50,9 @@ class _UtilityAssociationsPopupElementViewState
         .timeout(
           const Duration(seconds: 30),
           onTimeout: () {
-            throw TimeoutException('The fetchAssociationsFilterResults timed-out');
+            throw TimeoutException(
+              'The fetchAssociationsFilterResults timed-out',
+            );
           },
         )
         .catchError((Object error) {
@@ -161,11 +163,7 @@ class _UtilityAssociationsPopupElementViewState
         if (index <= (associationsFilterResults.length - 1)) {
           final filterResult = associationsFilterResults[index + 1];
           if (filterResult.resultCount > 0) {
-            return Divider(
-              color: Theme.of(context).dividerTheme.color ?? Colors.grey,
-              height: 1,
-              thickness: Theme.of(context).dividerTheme.thickness ?? 1,
-            );
+            return buildDivider(context);
           }
         }
         return const SizedBox.shrink();
@@ -255,4 +253,12 @@ extension on UtilityAssociationsFilterResult {
 // Get the display title of UtilityAssociationsPopupElement.
 extension on UtilityAssociationsPopupElement {
   String displayTitle() => (title.isEmpty) ? 'Associations' : title;
+}
+
+Widget buildDivider(BuildContext context) {
+  return Divider(
+    color: Theme.of(context).dividerTheme.color ?? Colors.grey,
+    height: 1,
+    thickness: Theme.of(context).dividerTheme.thickness ?? 1,
+  );
 }
