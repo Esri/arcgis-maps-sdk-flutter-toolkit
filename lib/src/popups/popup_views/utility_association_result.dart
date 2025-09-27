@@ -45,8 +45,18 @@ class _UtilityAssociationResultState
 
     return ListTile(
       leading: getAssociationTypeIcon(utilityAssociate.associationType),
-      title: Text(utilityAssociationResult.title),
-      subtitle: Text(subtitle),
+      // UtilityAssociationResult Title
+      title: Text(
+        utilityAssociationResult.title,
+        style: Theme.of(context).textTheme.titleSmall,
+      ),
+      subtitle: Text(
+        subtitle,
+        style: Theme.of(
+          context,
+        ).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
+      ),
+      onTap: () => _navigateToAssociationPopupPage,
       trailing: IconButton(
         icon: const Icon(Icons.chevron_right),
         onPressed: () {
@@ -59,6 +69,14 @@ class _UtilityAssociationResultState
           );
         },
       ),
+    );
+  }
+
+  void _navigateToAssociationPopupPage() {
+    final popup = utilityAssociationResult.associatedFeature.toPopup();
+    Navigator.push(
+      context,
+      MaterialPageRoute<void>(builder: (_) => buildAssociationPopupPage(popup)),
     );
   }
 

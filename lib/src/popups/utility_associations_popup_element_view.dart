@@ -74,7 +74,7 @@ class _UtilityAssociationsPopupElementViewState
           if (snapshot.hasError) {
             return Center(
               child: Text(
-                'Fail to fetch pop-up utility network associations filter results.',
+                'Fail to fetch utility associations filter results.',
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
                   color: Theme.of(context).colorScheme.error,
                 ),
@@ -224,22 +224,25 @@ class _AssociationsFilterResultTile extends StatelessWidget {
         associationsFilterResult.filter.description,
         style: Theme.of(context).textTheme.bodyMedium,
       ),
+      onTap: () => routeToFilterResultDetailView(context),
       trailing: IconButton(
         icon: const Icon(Icons.chevron_right),
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute<void>(
-              settings: const RouteSettings(name: nextRouteName),
-              builder: (_) => _UtilityAssociationsFilterResultDetailView(
-                associationsFilterResult: associationsFilterResult,
-                displayCount: associationDisplayCount,
-              ),
-            ),
-          );
-        },
+        onPressed: () => routeToFilterResultDetailView(context),
       ),
       contentPadding: const EdgeInsets.only(left: 30),
+    );
+  }
+
+  void routeToFilterResultDetailView(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute<void>(
+        settings: const RouteSettings(name: nextRouteName),
+        builder: (_) => _UtilityAssociationsFilterResultView(
+          associationsFilterResult: associationsFilterResult,
+          displayCount: associationDisplayCount,
+        ),
+      ),
     );
   }
 }
