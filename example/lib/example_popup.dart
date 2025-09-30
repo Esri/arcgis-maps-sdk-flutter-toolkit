@@ -47,8 +47,6 @@ class _PopupExampleState extends State<PopupExample> {
   // Create a variable to capture a popup when identified.
   Popup? _identifiedPopup;
 
-  FeatureLayer? _featureLayer;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -59,47 +57,22 @@ class _PopupExampleState extends State<PopupExample> {
         onMapViewReady: onMapViewReady,
         // Respond to taps on the map view.
         onTap: identifyPopups,
-        //onTap: identifyPopupsAll,
       ),
       // This example accesses the bottom sheet to display the popup view.
       bottomSheet: getBottomSheet(context),
     );
   }
 
-  Future<void> onMapViewReady() async {
-    // Configure authentication challenge handler
-    ArcGISEnvironment
-        .authenticationManager
-        .arcGISAuthenticationChallengeHandler = _AuthenticationHandler(
-      'publisher1',
-      'test.publisher01',
-    );
-
-    ArcGISEnvironment
-            .authenticationManager
-            .networkAuthenticationChallengeHandler =
-        _NetworkChallengeHandler();
-
+  void onMapViewReady() {
     // Configure a webmap containing popups and set to the map view controller.
     final webmapContainingPopups = ArcGISMap.withItem(
-      PortalItem.withPortalAndItemId(
-        portal: Portal(
-          Uri.parse('https://rt-server115.esri.com/portal'),
-          connection: PortalConnection.authenticated,
+      PortalItem.withUri(
+        Uri.parse(
+          'https://www.arcgis.com/home/item.html?id=9f3a674e998f461580006e626611f9ad',
         ),
-        itemId: '077c3ad7029647829420274011c9514e',
-      ),
+      )!,
     );
     _mapViewController.arcGISMap = webmapContainingPopups;
-    await webmapContainingPopups.load();
-
-    if (webmapContainingPopups.utilityNetworks.isNotEmpty) {
-      final utilityNetwork = webmapContainingPopups.utilityNetworks.first;
-      await utilityNetwork.load();
-      print('utilityNetwork: ${utilityNetwork.loadStatus}');
-    } else {
-      print('No utilityNetwork');
-    }
   }
 
   // Display a popup view in the bottom sheet when a popup is identified.
@@ -123,141 +96,29 @@ class _PopupExampleState extends State<PopupExample> {
   }
 
   Future<void> identifyPopups(Offset localPosition) async {
-    setState(() {
-      _identifiedPopup = null;
-    });
-    _featureLayer ??=
-        _mapViewController.arcGISMap!.operationalLayers.firstWhere((layer) {
-              //print('${layer.name}');
-              return layer.name == 'ElecDist Junction';
-
-              // return layer.name == 'Structure Boundary';
-              //return layer.name == 'Structure Junction';
-            })
-            as FeatureLayer;
-
-    print('>>>>> identifyPopups..at $localPosition ${_featureLayer!.name}');
     // Perform an identify operation on the map.
-    if (_featureLayer != null) {
-      _featureLayer!.clearSelection();
-
-      final result = await _mapViewController.identifyLayer(
-        _featureLayer!,
-        screenPoint: localPosition,
-        tolerance: 100,
-        returnPopupsOnly: true,
-      );
-
-      print('>>>>> identify ${_featureLayer!.name}...result=$result');
-
-      showPopup(result);
-    } else {
-      final results = await _mapViewController.identifyLayers(
-        screenPoint: localPosition,
-        tolerance: 100,
-        returnPopupsOnly: true,
-      );
-      showPopup(results.first);
-      print('>>>>> identify all layers...result=${results.length}');
-    }
-
-    print('>>>>> identifyPopups..end');
-  }
-
-  Future<void> identifyPopupsAll(Offset localPosition) async {
-    print('>>>>> identifyPopupsAll.at $localPosition');
-    final results = await _mapViewController.identifyLayers(
+    final result = await _mapViewController.identifyLayers(
       screenPoint: localPosition,
-      tolerance: 22,
+      tolerance: 20,
       returnPopupsOnly: true,
     );
-
-    print('>>>>> identifyPopups...result=${results.length}');
     // Check whether popups have been identified.
-    if (results.isNotEmpty) {
+    if (result.isNotEmpty && result.first.popups.isNotEmpty) {
       // Get the first popup from the identify result.
-      final result = results.first;
-      showPopup(result);
-    }
-
-    print('>>>>> identifyPopups..end');
-  }
-
-  void showPopup(IdentifyLayerResult result) {
-    // Check whether popups have been identified.
-    // Get the first popup from the identify result.
-    if (result.popups.isNotEmpty) {
-      final popup = result.popups.first;
-      //final layer = result.layerContent;
-      final geoElement = popup.geoElement;
-
-      if (_featureLayer != null && geoElement is ArcGISFeature) {
-        _featureLayer!.selectFeature(geoElement);
-      }
+      final popup = result.first.popups.first;
       // Set the identified popup to the state variable.
       // This causes the bottom sheet to display containing a popupview.
       setState(() => _identifiedPopup = popup);
-    } else {
-      if (mounted) {
-        // If no popup identified, show a message and reset the state.
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            backgroundColor: Theme.of(context).colorScheme.primary,
-            content: const Text('No identified Popup found'),
-            duration: const Duration(seconds: 5),
-          ),
-        );
-        setState(() => _identifiedPopup = null);
-      }
-    }
-  }
-}
-
-class _AuthenticationHandler implements ArcGISAuthenticationChallengeHandler {
-  _AuthenticationHandler(this.username, this.password);
-
-  final String username;
-  final String password;
-  @override
-  Future<void> handleArcGISAuthenticationChallenge(
-    ArcGISAuthenticationChallenge challenge,
-  ) async {
-    final c = await TokenCredential.createWithChallenge(
-      challenge,
-      username: username,
-      password: password,
-    );
-
-    challenge.continueWithCredential(c);
-  }
-}
-
-class _NetworkChallengeHandler
-    implements NetworkAuthenticationChallengeHandler {
-  @override
-  FutureOr<void> handleNetworkAuthenticationChallenge(
-    NetworkAuthenticationChallenge challenge,
-  ) async {
-    if (challenge is ServerTrustAuthenticationChallenge) {
-      challenge.continueWithCredential(
-        ServerTrustNetworkCredential.forChallenge(challenge),
+    } else if (mounted) {
+      // If no popup identified, show a message and reset the state.
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Theme.of(context).colorScheme.primary,
+          content: const Text('No Popup found'),
+          duration: const Duration(seconds: 2),
+        ),
       );
-    } else {
-      challenge.continueAndFail();
+      setState(() => _identifiedPopup = null);
     }
   }
 }
-
-/**
- * UtilityNetwork Associations:
- * https://devtopia.esri.com/runtime/nautilus/blob/main/prototypes/PopupViewerSample/PopupViewerSample/MainWindow.xaml.cs
- * https://rt-server115.esri.com/portal/home/item.html?id=077c3ad7029647829420274011c9514e
-
-   new Uri("https://rt-server115.esri.com/portal/sharing/rest"),
-                         "publisher1",
-                         "test.publisher01");
-
-
-  https://rt-server115.esri.com/portal/apps/mapviewer/index.html?webmap=077c3ad7029647829420274011c9514e
- *
- */
