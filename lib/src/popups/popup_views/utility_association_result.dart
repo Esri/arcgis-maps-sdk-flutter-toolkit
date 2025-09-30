@@ -19,7 +19,9 @@ part of '../../../arcgis_maps_toolkit.dart';
 /// Display a [UtilityAssociationResult].
 ///
 class _UtilityAssociationResultWidget extends StatefulWidget {
-  const _UtilityAssociationResultWidget(this.utilityAssociationResult);
+  const _UtilityAssociationResultWidget({
+    required this.utilityAssociationResult,
+  });
   final UtilityAssociationResult utilityAssociationResult;
 
   @override
@@ -56,27 +58,11 @@ class _UtilityAssociationResultState
           context,
         ).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
       ),
-      onTap: () => _navigateToAssociationPopupPage,
-      trailing: IconButton(
-        icon: const Icon(Icons.chevron_right),
-        onPressed: () {
-          final popup = utilityAssociationResult.associatedFeature.toPopup();
-          Navigator.push(
-            context,
-            MaterialPageRoute<void>(
-              builder: (_) => buildAssociationPopupPage(popup),
-            ),
-          );
-        },
+      onTap: () => _navigateToAssociationPopupPage(
+        context,
+        utilityAssociationResult.associatedFeature,
       ),
-    );
-  }
-
-  void _navigateToAssociationPopupPage() {
-    final popup = utilityAssociationResult.associatedFeature.toPopup();
-    Navigator.push(
-      context,
-      MaterialPageRoute<void>(builder: (_) => buildAssociationPopupPage(popup)),
+      trailing:  const Icon(Icons.chevron_right),
     );
   }
 
@@ -160,10 +146,57 @@ extension on ArcGISFeature {
   }
 }
 
+/// Tests if the GeoElement PopupView have been shown.
+bool _isShownPopupGeoElement(ArcGISFeature feature) {
+  final fid = feature.attributes['objectId'].toString();
+  final geoElement = _geoElementManager[fid];
+  return geoElement != null;
+}
+
+void _navigateToAssociationPopupPage(
+  BuildContext context,
+  ArcGISFeature feature,
+) {
+  if (_isShownPopupGeoElement(feature)) {
+    // Go to the original PopupView, Show a dialog instead.
+    showMessage(context, feature);
+  } else {
+    // Show a new PopupView.
+    final popup = feature.toPopup();
+    Navigator.push(
+      context,
+      MaterialPageRoute<void>(builder: (_) => buildAssociationPopupPage(popup)),
+    );
+  }
+}
+
 /// Present the associations Popup in a Scaffold widget.
 Widget buildAssociationPopupPage(Popup popup) {
   return Scaffold(
     appBar: AppBar(title: Text(popup.title)),
     body: PopupView(popup: popup),
+  );
+}
+
+/// Show a dialog to show the feature is identical to the
+/// original identified Popup feature.
+void showMessage(BuildContext context, ArcGISFeature feature) {
+  final oid = feature.attributes['objectId'];
+  showDialog<String>(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: Text('Feature: ObjectId = $oid', 
+      style: Theme.of(context).textTheme.bodyLarge,),
+      content: Text(
+        'This feature association is linked to the original identified one.',
+        style: Theme.of(context).textTheme.bodyMedium,
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('OK'),
+        ),
+      ],
+    ),
   );
 }

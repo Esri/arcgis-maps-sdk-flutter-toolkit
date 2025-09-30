@@ -173,8 +173,9 @@ class PopupState extends State<PopupView> {
                   );
                 } else if (element is TextPopupElement) {
                   return _TextPopupElementView(textElement: element);
-                } else if (element is UtilityAssociationsPopupElement) {
+                } else if (element is UtilityAssociationsPopupElement) {         
                   return _UtilityAssociationsPopupElementView(
+                    geoElement: widget.popup.geoElement,
                     popupElement: element,
                     isExpanded: true,
                   );

@@ -56,12 +56,14 @@ class _UtilityAssociationsFilterResultViewState
           style: Theme.of(context).textTheme.titleMedium,
         ),
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildNavigationHeader(context),
-          _buildListUtilityAssociationGroupResult(),
-        ],
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildNavigationHeader(context),
+            _buildListUtilityAssociationGroupResult(),
+          ],
+        ),
       ),
     );
   }
@@ -100,10 +102,8 @@ class _UtilityAssociationsFilterResultViewState
   Widget _buildNavigationHeader(BuildContext context) {
     return ListTile(
       leading: IconButton(
-        onPressed: () => {
-          //TODO: back to initial PopupView
-          //Navigator.popUntil(context, (r) => r.isFirst)
-          Navigator.pop(context),
+        onPressed: () {
+          Navigator.of(context).pop();
         },
         icon: const Icon(Icons.arrow_upward),
       ),

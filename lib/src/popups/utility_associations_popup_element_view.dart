@@ -20,9 +20,13 @@ part of '../../arcgis_maps_toolkit.dart';
 /// navigating through its filter results.
 class _UtilityAssociationsPopupElementView extends StatefulWidget {
   const _UtilityAssociationsPopupElementView({
+    required this.geoElement,
     required this.popupElement,
     this.isExpanded = false,
   });
+
+  /// Original geoElement of the popup.
+  final GeoElement geoElement;
 
   /// The utility associations pop-up element to be displayed.
   final UtilityAssociationsPopupElement popupElement;
@@ -58,10 +62,14 @@ class _UtilityAssociationsPopupElementViewState
         .catchError((Object error) {
           throw error as Exception;
         });
+    final objId = widget.geoElement.attributes['objectId'].toString();
+    _geoElementManager[objId] = widget.geoElement;
   }
 
   @override
   void dispose() {
+    final objId = widget.geoElement.attributes['objectId'].toString();
+    _geoElementManager.remove(objId);
     super.dispose();
   }
 
@@ -210,8 +218,6 @@ class _AssociationsFilterResultTile extends StatelessWidget {
   });
   final UtilityAssociationsFilterResult associationsFilterResult;
   final int associationDisplayCount;
-  // The name of next route view name.
-  static const nextRouteName = '/filter-detail-view';
 
   @override
   Widget build(BuildContext context) {
@@ -237,7 +243,6 @@ class _AssociationsFilterResultTile extends StatelessWidget {
     Navigator.push(
       context,
       MaterialPageRoute<void>(
-        settings: const RouteSettings(name: nextRouteName),
         builder: (_) => _UtilityAssociationsFilterResultView(
           associationsFilterResult: associationsFilterResult,
           displayCount: associationDisplayCount,
@@ -258,6 +263,7 @@ extension on UtilityAssociationsPopupElement {
   String displayTitle() => (title.isEmpty) ? 'Associations' : title;
 }
 
+// Create a Divider for the given context
 Widget buildDivider(BuildContext context) {
   return Divider(
     color: Theme.of(context).dividerTheme.color ?? Colors.grey,
@@ -265,3 +271,6 @@ Widget buildDivider(BuildContext context) {
     thickness: Theme.of(context).dividerTheme.thickness ?? 1,
   );
 }
+
+// Manages the identified GeoElement.
+final _geoElementManager = HashMap<String, GeoElement>();

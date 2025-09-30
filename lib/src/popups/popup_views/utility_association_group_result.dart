@@ -33,11 +33,6 @@ class _UtilityAssociationGroupResultState
     extends State<_UtilityAssociationGroupResultWidget> {
   bool isExpanded = true;
 
-  @override
-  void initState() {
-    super.initState();
-  }
-
   /// Build the content from a [UtilityAssociationGroupResult]
   /// which has a list of [UtilityAssociationResult].
   @override
@@ -47,18 +42,14 @@ class _UtilityAssociationGroupResultState
         widget.utilityAssociationGroupResult.associationResults.length;
     // The last UtilityAssociationResult
     final utilityAssociationResult =
-        widget.utilityAssociationGroupResult.associationResults[totalCount - 1];
+        widget.utilityAssociationGroupResult.associationResults[0];
 
     return ExpansionTile(
-      leading: IconButton(
-        onPressed: () => setState(() => isExpanded = !isExpanded),
-        icon: isExpanded
-            ? const Icon(Icons.keyboard_arrow_down_rounded)
-            : const Icon(Icons.keyboard_arrow_right_rounded),
-      ),
+      leading: isExpanded
+          ? const Icon(Icons.keyboard_arrow_down_rounded)
+          : const Icon(Icons.keyboard_arrow_right_rounded),
       title: Text(title),
       initiallyExpanded: isExpanded,
-      // childrenPadding: const EdgeInsets.only(left: 20),
       onExpansionChanged: (value) => setState(() => isExpanded = value),
       collapsedShape: const BeveledRectangleBorder(),
       // Show a totalCount in a grey circle
@@ -85,11 +76,17 @@ class _UtilityAssociationGroupResultState
       children: totalCount > 1
           ? [
               buildDivider(context),
-              _UtilityAssociationResultWidget(utilityAssociationResult),
+              _UtilityAssociationResultWidget(
+                utilityAssociationResult: utilityAssociationResult,
+              ),
               buildDivider(context),
               buildShowAllWidget(totalCount),
             ]
-          : [_UtilityAssociationResultWidget(utilityAssociationResult)],
+          : [
+              _UtilityAssociationResultWidget(
+                utilityAssociationResult: utilityAssociationResult,
+              ),
+            ],
     );
   }
 
@@ -106,9 +103,6 @@ class _UtilityAssociationGroupResultState
             Navigator.push(
               context,
               MaterialPageRoute<void>(
-                settings: const RouteSettings(
-                  name: '/association-selector-view',
-                ),
                 builder: (_) => buildAssociationSelectionPage(
                   widget.utilityAssociationGroupResult,
                 ),
@@ -126,7 +120,7 @@ class _UtilityAssociationGroupResultState
   ) {
     // Get a list of UtilityAssociationResult.
     return Scaffold(
-      appBar: AppBar(title: Text(widget.filterDisplayTitle)),
+      //appBar: AppBar(title: Text(widget.filterDisplayTitle)),
       body: _AssociationResultSelectionPage(
         groupResult: associationGroupResult,
       ),

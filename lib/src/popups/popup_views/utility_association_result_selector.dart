@@ -20,7 +20,9 @@ part of '../../../arcgis_maps_toolkit.dart';
 /// Display a list of [UtilityAssociationResult] with the text search text field.
 ///
 class _AssociationResultSelectionPage extends StatefulWidget {
-  const _AssociationResultSelectionPage({required this.groupResult});
+  const _AssociationResultSelectionPage({
+    required this.groupResult
+  });
 
   final UtilityAssociationGroupResult groupResult;
   @override
@@ -48,7 +50,7 @@ class _AssociationResultSelectionPageState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(title: Text(widget.groupResult.name)),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -75,23 +77,19 @@ class _AssociationResultSelectionPageState
 
                 return Expanded(
                   child: SingleChildScrollView(
-                    child: ListView.builder(
+                    child: ListView.separated(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
+                      separatorBuilder: (context, index) {
+                        return buildDivider(context);
+                      },
                       itemCount: filteredResults.length,
                       itemBuilder: (context, index) => ListTile(
                         title: Text(filteredResults[index].title),
                         trailing: IconButton(
                           onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute<void>(
-                                builder: (_) => buildAssociationPopupPage(
-                                  filteredResults[index].associatedFeature
-                                      .toPopup(),
-                                ),
-                              ),
-                            );
+                            final feature = filteredResults[index].associatedFeature;
+                            _navigateToAssociationPopupPage(context, feature);
                           },
                           icon: const Icon(Icons.chevron_right),
                         ),
