@@ -77,7 +77,7 @@ class _AssociationResultSelectionPageState
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
                       separatorBuilder: (context, index) {
-                        return buildDivider(context);
+                        return _buildDivider(context);
                       },
                       itemCount: filteredResults.length,
                       itemBuilder: (context, index) => ListTile(

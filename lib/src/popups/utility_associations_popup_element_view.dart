@@ -58,10 +58,7 @@ class _UtilityAssociationsPopupElementViewState
               'The fetchAssociationsFilterResults timed-out',
             );
           },
-        )
-        .catchError((Object error) {
-          throw error as Exception;
-        });
+        );
     final objId = widget.geoElement.attributes['objectId'].toString();
     _geoElementManager[objId] = widget.geoElement;
   }
@@ -82,7 +79,7 @@ class _UtilityAssociationsPopupElementViewState
           if (snapshot.hasError) {
             return Center(
               child: Text(
-                'Fail to fetch utility associations filter results.',
+                'Failed to fetch utility associations filter results.',
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
                   color: Theme.of(context).colorScheme.error,
                 ),
@@ -135,7 +132,7 @@ class _UtilityAssociationsPopupElementViewState
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           // The Popup title and description.
           title: _PopupElementHeader(
-            title: widget.popupElement.displayTitle(),
+            title: widget.popupElement.displayTitle,
             description: widget.popupElement.description,
           ),
           initiallyExpanded: isExpanded,
@@ -168,10 +165,10 @@ class _UtilityAssociationsPopupElementViewState
       physics: const NeverScrollableScrollPhysics(),
       itemCount: associationsFilterResults.length,
       separatorBuilder: (context, index) {
-        if (index <= (associationsFilterResults.length - 1)) {
+        if (index < (associationsFilterResults.length - 1)) {
           final filterResult = associationsFilterResults[index + 1];
           if (filterResult.resultCount > 0) {
-            return buildDivider(context);
+            return _buildDivider(context);
           }
         }
         return const SizedBox.shrink();
@@ -195,9 +192,17 @@ class _UtilityAssociationsPopupElementViewState
       padding: const EdgeInsets.all(10),
       child: Row(
         children: [
-          Container(width: 4, height: 40, color: Colors.red),
+          Container(
+            width: 4,
+            height: 40,
+            color: Theme.of(context).colorScheme.error,
+          ),
           const SizedBox(width: 12),
-          const Icon(Icons.warning, color: Colors.red, size: 20),
+          Icon(
+            Icons.warning,
+            color: Theme.of(context).colorScheme.error,
+            size: 20,
+          ),
           const SizedBox(width: 8),
           Text(
             'No associations were found',
@@ -245,7 +250,6 @@ class _AssociationsFilterResultTile extends StatelessWidget {
       MaterialPageRoute<void>(
         builder: (_) => _UtilityAssociationsFilterResultView(
           associationsFilterResult: associationsFilterResult,
-          displayCount: associationDisplayCount,
         ),
       ),
     );
@@ -260,11 +264,11 @@ extension on UtilityAssociationsFilterResult {
 
 // Get the display title of UtilityAssociationsPopupElement.
 extension on UtilityAssociationsPopupElement {
-  String displayTitle() => (title.isEmpty) ? 'Associations' : title;
+  String get displayTitle => (title.isEmpty) ? 'Associations' : title;
 }
 
 // Create a Divider for the given context
-Widget buildDivider(BuildContext context) {
+Widget _buildDivider(BuildContext context) {
   return Divider(
     color: Theme.of(context).dividerTheme.color ?? Colors.grey,
     height: 1,

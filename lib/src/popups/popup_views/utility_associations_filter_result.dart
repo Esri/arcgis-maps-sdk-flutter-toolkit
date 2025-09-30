@@ -18,18 +18,18 @@ part of '../../../arcgis_maps_toolkit.dart';
 
 /// A view that displays an expanded [UtilityAssociationsFilterResult]
 /// with navigation controls and
-/// a lists the [UtilityAssociationGroupResult] elements
+/// lists the [UtilityAssociationGroupResult] elements.
 class _UtilityAssociationsFilterResultView extends StatefulWidget {
   const _UtilityAssociationsFilterResultView({
     required this.associationsFilterResult,
-    required this.displayCount,
+    //required this.displayCount,
   });
 
   /// The utility associations filter result to expand.
   final UtilityAssociationsFilterResult associationsFilterResult;
 
   /// Maximum number of associations to display per group.
-  final int displayCount;
+  //final int displayCount;
 
   @override
   _UtilityAssociationsFilterResultViewState createState() =>
@@ -38,21 +38,13 @@ class _UtilityAssociationsFilterResultView extends StatefulWidget {
 
 class _UtilityAssociationsFilterResultViewState
     extends State<_UtilityAssociationsFilterResultView> {
-  late UtilityAssociationsFilterResult associationsFilterResult;
-
-  @override
-  void initState() {
-    associationsFilterResult = widget.associationsFilterResult;
-    super.initState();
-  }
-
   /// Build the [UtilityAssociationFilterResult] detail view.
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          associationsFilterResult.displayTitle,
+          widget.associationsFilterResult.displayTitle,
           style: Theme.of(context).textTheme.titleMedium,
         ),
       ),
@@ -71,29 +63,27 @@ class _UtilityAssociationsFilterResultViewState
   Widget _buildListUtilityAssociationGroupResult() {
     final groupResults = widget.associationsFilterResult.groupResults;
     return Padding(
-      padding: const EdgeInsetsGeometry.symmetric(horizontal: 10),
-      child: SingleChildScrollView(
-        child: ListView.separated(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          padding: EdgeInsets.zero,
-          separatorBuilder: (context, index) {
-            if (index < groupResults.length) {
-              return buildDivider(context);
-            }
-            return const SizedBox.shrink();
-          },
-          itemCount: groupResults.length,
-          itemBuilder: (context, index) {
-            // Get a UtilityAssociationGroupResult
-            final groupResult =
-                widget.associationsFilterResult.groupResults[index];
-            return _UtilityAssociationGroupResultWidget(
-              filterDisplayTitle: associationsFilterResult.displayTitle,
-              utilityAssociationGroupResult: groupResult,
-            );
-          },
-        ),
+      padding: const EdgeInsets.symmetric(horizontal: 10),
+      child: ListView.separated(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        padding: EdgeInsets.zero,
+        separatorBuilder: (context, index) {
+          if (index < groupResults.length) {
+            return _buildDivider(context);
+          }
+          return const SizedBox.shrink();
+        },
+        itemCount: groupResults.length,
+        itemBuilder: (context, index) {
+          // Get a UtilityAssociationGroupResult
+          final groupResult =
+              widget.associationsFilterResult.groupResults[index];
+          return _UtilityAssociationGroupResultWidget(
+            filterDisplayTitle: widget.associationsFilterResult.displayTitle,
+            utilityAssociationGroupResult: groupResult,
+          );
+        },
       ),
     );
   }

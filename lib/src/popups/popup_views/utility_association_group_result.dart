@@ -40,6 +40,9 @@ class _UtilityAssociationGroupResultState
     final title = widget.utilityAssociationGroupResult.name;
     final totalCount =
         widget.utilityAssociationGroupResult.associationResults.length;
+    if (totalCount == 0) {
+      return const SizedBox.shrink();
+    }
     // The first UtilityAssociationResult
     final utilityAssociationResult =
         widget.utilityAssociationGroupResult.associationResults[0];
@@ -75,11 +78,11 @@ class _UtilityAssociationGroupResultState
 
       children: totalCount > 1
           ? [
-              buildDivider(context),
+              _buildDivider(context),
               _UtilityAssociationResultWidget(
                 utilityAssociationResult: utilityAssociationResult,
               ),
-              buildDivider(context),
+              _buildDivider(context),
               buildShowAllWidget(totalCount),
             ]
           : [
@@ -118,7 +121,6 @@ class _UtilityAssociationGroupResultState
   ) {
     // Get a list of UtilityAssociationResult.
     return Scaffold(
-      //appBar: AppBar(title: Text(widget.filterDisplayTitle)),
       body: _AssociationResultSelectionPage(
         groupResult: associationGroupResult,
       ),
