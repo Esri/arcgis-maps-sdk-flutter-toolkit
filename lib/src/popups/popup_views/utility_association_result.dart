@@ -15,9 +15,8 @@
 
 part of '../../../arcgis_maps_toolkit.dart';
 
-///
+
 /// Display a [UtilityAssociationResult].
-///
 class _UtilityAssociationResultWidget extends StatefulWidget {
   const _UtilityAssociationResultWidget({
     required this.utilityAssociationResult,
@@ -62,7 +61,7 @@ class _UtilityAssociationResultState
         context,
         utilityAssociationResult.associatedFeature,
       ),
-      trailing:  const Icon(Icons.chevron_right),
+      trailing: const Icon(Icons.chevron_right),
     );
   }
 
@@ -185,8 +184,10 @@ void showMessage(BuildContext context, ArcGISFeature feature) {
   showDialog<String>(
     context: context,
     builder: (context) => AlertDialog(
-      title: Text('Feature: ObjectId = $oid', 
-      style: Theme.of(context).textTheme.bodyLarge,),
+      title: Text(
+        'Feature: ObjectId = $oid',
+        style: Theme.of(context).textTheme.bodyLarge,
+      ),
       content: Text(
         'This feature association is linked to the original identified one.',
         style: Theme.of(context).textTheme.bodyMedium,

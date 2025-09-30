@@ -16,13 +16,9 @@
 
 part of '../../../arcgis_maps_toolkit.dart';
 
-///
 /// Display a list of [UtilityAssociationResult] with the text search text field.
-///
 class _AssociationResultSelectionPage extends StatefulWidget {
-  const _AssociationResultSelectionPage({
-    required this.groupResult
-  });
+  const _AssociationResultSelectionPage({required this.groupResult});
 
   final UtilityAssociationGroupResult groupResult;
   @override
@@ -86,13 +82,12 @@ class _AssociationResultSelectionPageState
                       itemCount: filteredResults.length,
                       itemBuilder: (context, index) => ListTile(
                         title: Text(filteredResults[index].title),
-                        trailing: IconButton(
-                          onPressed: () {
-                            final feature = filteredResults[index].associatedFeature;
-                            _navigateToAssociationPopupPage(context, feature);
-                          },
-                          icon: const Icon(Icons.chevron_right),
-                        ),
+                        onTap: () {
+                          final feature =
+                              filteredResults[index].associatedFeature;
+                          _navigateToAssociationPopupPage(context, feature);
+                        },
+                        trailing: const Icon(Icons.chevron_right),
                       ),
                     ),
                   ),
