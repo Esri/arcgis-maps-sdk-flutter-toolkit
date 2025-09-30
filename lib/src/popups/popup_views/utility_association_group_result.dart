@@ -40,7 +40,7 @@ class _UtilityAssociationGroupResultState
     final title = widget.utilityAssociationGroupResult.name;
     final totalCount =
         widget.utilityAssociationGroupResult.associationResults.length;
-    // The last UtilityAssociationResult
+    // The first UtilityAssociationResult
     final utilityAssociationResult =
         widget.utilityAssociationGroupResult.associationResults[0];
 
@@ -97,19 +97,17 @@ class _UtilityAssociationGroupResultState
       child: ListTile(
         title: const Text('Show all'),
         subtitle: Text('Total: $total'),
-        trailing: IconButton(
-          icon: const Icon(Icons.list),
-          onPressed: () => {
-            Navigator.push(
-              context,
-              MaterialPageRoute<void>(
-                builder: (_) => buildAssociationSelectionPage(
-                  widget.utilityAssociationGroupResult,
-                ),
+        onTap: () => {
+          Navigator.push(
+            context,
+            MaterialPageRoute<void>(
+              builder: (_) => buildAssociationSelectionPage(
+                widget.utilityAssociationGroupResult,
               ),
             ),
-          },
-        ),
+          ),
+        },
+        trailing: const Icon(Icons.list),
       ),
     );
   }
