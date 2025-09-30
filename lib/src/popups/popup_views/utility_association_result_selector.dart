@@ -81,7 +81,10 @@ class _AssociationResultSelectionPageState
                       },
                       itemCount: filteredResults.length,
                       itemBuilder: (context, index) => ListTile(
-                        title: Text(filteredResults[index].title),
+                        title: Text(
+                          filteredResults[index].title,
+                          style: Theme.of(context).textTheme.titleSmall,
+                        ),
                         onTap: () {
                           final feature =
                               filteredResults[index].associatedFeature;

@@ -152,6 +152,7 @@ bool _isShownPopupGeoElement(ArcGISFeature feature) {
   return geoElement != null;
 }
 
+// Display the association PopupView.
 void _navigateToAssociationPopupPage(
   BuildContext context,
   ArcGISFeature feature,
