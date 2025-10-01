@@ -99,7 +99,7 @@ enum ComponentExample {
       child: ListTile(
         title: Text(title),
         subtitle: Text(subtitle),
-        onTap: () => context.go('/$title')
+        onTap: () => context.go('/$title'),
       ),
     );
   }
