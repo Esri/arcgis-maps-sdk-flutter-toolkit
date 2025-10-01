@@ -59,7 +59,7 @@ class PopupView extends StatefulWidget {
 
   /// The [Popup] object to be displayed.
   final Popup popup;
-  
+
   @override
   State<StatefulWidget> createState() => PopupState();
 }
@@ -173,7 +173,7 @@ class PopupState extends State<PopupView> {
                   );
                 } else if (element is TextPopupElement) {
                   return _TextPopupElementView(textElement: element);
-                } else if (element is UtilityAssociationsPopupElement) {         
+                } else if (element is UtilityAssociationsPopupElement) {
                   return _UtilityAssociationsPopupElementView(
                     geoElement: widget.popup.geoElement,
                     popupElement: element,

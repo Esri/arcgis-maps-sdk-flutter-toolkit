@@ -159,12 +159,14 @@ void _navigateToAssociationPopupPage(
   ArcGISFeature feature,
 ) {
   const routeName = '/$popupRouteName';
-  // If the popup for this feature is the one that is the original one 
+  // If the popup for this feature is the one that is the original one
   // on the navigation stack, pop back to it.
   if (_isShownPopupGeoElement(feature)) {
     if (_isRouteInStack(context, routeName)) {
-      Navigator.of(context, rootNavigator: true)
-          .popUntil(ModalRoute.withName(routeName));
+      Navigator.of(
+        context,
+        rootNavigator: true,
+      ).popUntil(ModalRoute.withName(routeName));
     } else {
       showMessage(context, feature);
     }

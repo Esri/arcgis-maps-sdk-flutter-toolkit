@@ -71,7 +71,7 @@ class _UtilityAssociationsPopupElementViewState
     if (objId != null) {
       _geoElementManager.remove(objId);
     }
-    
+
     super.dispose();
   }
 
