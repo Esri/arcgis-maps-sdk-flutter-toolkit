@@ -15,7 +15,6 @@
 
 part of '../../../arcgis_maps_toolkit.dart';
 
-
 /// Display a [UtilityAssociationResult].
 class _UtilityAssociationResultWidget extends StatefulWidget {
   const _UtilityAssociationResultWidget({
@@ -157,11 +156,16 @@ void _navigateToAssociationPopupPage(
   BuildContext context,
   ArcGISFeature feature,
 ) {
+  // If the popup for this feature is the one that is the original one on the navigation stack,
+  // pop back to it.
   if (_isShownPopupGeoElement(feature)) {
-    // Go to the original PopupView, Show a dialog instead.
-    showMessage(context, feature);
+    if (_isRouteInStack(context, popupRouteName)) {
+      Navigator.of(context).popUntil(ModalRoute.withName(popupRouteName));
+    } else {
+      showMessage(context, feature);
+    }
   } else {
-    // Show a new PopupView.
+    // otherwise, show a new PopupView.
     final popup = feature.toPopup();
     Navigator.push(
       context,
@@ -201,4 +205,16 @@ void showMessage(BuildContext context, ArcGISFeature feature) {
       ],
     ),
   );
+}
+
+/// Checks if a route with the given [name] exists in the navigation stack.
+bool _isRouteInStack(BuildContext context, String name) {
+  var isPresent = false;
+  Navigator.of(context).popUntil((route) {
+    if (route.settings.name == name) {
+      isPresent = true;
+    }
+    return true;
+  });
+  return isPresent;
 }
