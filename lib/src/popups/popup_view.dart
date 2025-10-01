@@ -189,18 +189,6 @@ class PopupState extends State<PopupView> {
   }
 }
 
-/// The constant used to define the root PopupView in the navigation
-/// route. A typical usage:
-///     Navigator.of(context).push(MaterialPageRoute(
-///        settings: const RouteSettings(name: '/$popupRouteName'),
-///        builder: (_) {
-///          return Scaffold(
-///            appBar: AppBar(title: Text(popup.title,)),
-///            body: PopupView(popup: popup),
-///          );
-///     }));
-/// A constant for the name of the initial `PopupView` route.
-///
 /// This is used to assign a name to the route that displays the first `PopupView`.
 /// Naming the route allows for navigating back to it from other pages,
 /// such as from a related utility association popup, using `Navigator.popUntil`.

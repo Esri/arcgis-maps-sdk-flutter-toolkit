@@ -156,11 +156,13 @@ void _navigateToAssociationPopupPage(
   BuildContext context,
   ArcGISFeature feature,
 ) {
-  // If the popup for this feature is the one that is the original one on the navigation stack,
-  // pop back to it.
+  const routeName = '/$popupRouteName';
+  // If the popup for this feature is the one that is the original one 
+  // on the navigation stack, pop back to it.
   if (_isShownPopupGeoElement(feature)) {
-    if (_isRouteInStack(context, popupRouteName)) {
-      Navigator.of(context).popUntil(ModalRoute.withName(popupRouteName));
+    if (_isRouteInStack(context, routeName)) {
+      Navigator.of(context, rootNavigator: true)
+          .popUntil(ModalRoute.withName(routeName));
     } else {
       showMessage(context, feature);
     }
@@ -210,11 +212,12 @@ void showMessage(BuildContext context, ArcGISFeature feature) {
 /// Checks if a route with the given [name] exists in the navigation stack.
 bool _isRouteInStack(BuildContext context, String name) {
   var isPresent = false;
-  Navigator.of(context).popUntil((route) {
+  Navigator.of(context, rootNavigator: true).popUntil((route) {
     if (route.settings.name == name) {
       isPresent = true;
+      return true;
     }
-    return true;
+    return false;
   });
   return isPresent;
 }
