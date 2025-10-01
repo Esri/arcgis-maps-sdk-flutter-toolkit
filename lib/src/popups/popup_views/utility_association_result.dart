@@ -149,7 +149,7 @@ bool _isShownPopupGeoElement(ArcGISFeature feature) {
   final fid = feature.attributes['objectId']?.toString();
   if (fid != null) {
     return _geoElementManager[fid] != null;
-  } 
+  }
   return false;
 }
 
