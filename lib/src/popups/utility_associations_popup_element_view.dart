@@ -61,7 +61,7 @@ class _UtilityAssociationsPopupElementViewState
         );
     final objId = widget.geoElement.attributes['objectId']?.toString();
     if (objId != null) {
-    _geoElementManager[objId] = widget.geoElement;
+      _geoElementManager[objId] = widget.geoElement;
     }
   }
 
