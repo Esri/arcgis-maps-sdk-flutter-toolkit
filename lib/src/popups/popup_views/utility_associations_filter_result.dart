@@ -22,15 +22,12 @@ part of '../../../arcgis_maps_toolkit.dart';
 class _UtilityAssociationsFilterResultView extends StatefulWidget {
   const _UtilityAssociationsFilterResultView({
     required this.associationsFilterResult,
-    //required this.displayCount,
   });
 
   /// The utility associations filter result to expand.
   final UtilityAssociationsFilterResult associationsFilterResult;
 
   /// Maximum number of associations to display per group.
-  //final int displayCount;
-
   @override
   _UtilityAssociationsFilterResultViewState createState() =>
       _UtilityAssociationsFilterResultViewState();
