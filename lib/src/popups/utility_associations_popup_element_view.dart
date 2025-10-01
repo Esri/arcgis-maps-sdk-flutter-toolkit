@@ -59,14 +59,19 @@ class _UtilityAssociationsPopupElementViewState
             );
           },
         );
-    final objId = widget.geoElement.attributes['objectId'].toString();
+    final objId = widget.geoElement.attributes['objectId']?.toString();
+    if (objId != null) {
     _geoElementManager[objId] = widget.geoElement;
+    }
   }
 
   @override
   void dispose() {
-    final objId = widget.geoElement.attributes['objectId'].toString();
-    _geoElementManager.remove(objId);
+    final objId = widget.geoElement.attributes['objectId']?.toString();
+    if (objId != null) {
+      _geoElementManager.remove(objId);
+    }
+    
     super.dispose();
   }
 

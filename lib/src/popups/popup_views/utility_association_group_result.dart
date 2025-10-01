@@ -20,9 +20,7 @@ part of '../../../arcgis_maps_toolkit.dart';
 class _UtilityAssociationGroupResultWidget extends StatefulWidget {
   const _UtilityAssociationGroupResultWidget({
     required this.utilityAssociationGroupResult,
-    required this.filterDisplayTitle,
   });
-  final String filterDisplayTitle;
   final UtilityAssociationGroupResult utilityAssociationGroupResult;
 
   @override

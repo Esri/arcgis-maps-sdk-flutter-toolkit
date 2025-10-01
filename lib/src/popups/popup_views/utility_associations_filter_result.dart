@@ -80,7 +80,6 @@ class _UtilityAssociationsFilterResultViewState
           final groupResult =
               widget.associationsFilterResult.groupResults[index];
           return _UtilityAssociationGroupResultWidget(
-            filterDisplayTitle: widget.associationsFilterResult.displayTitle,
             utilityAssociationGroupResult: groupResult,
           );
         },
@@ -114,7 +113,7 @@ class _UtilityAssociationsFilterResultViewState
       // (x) close the page.
       trailing: IconButton(
         icon: const Icon(Icons.close),
-        onPressed: () => {Navigator.of(context).pop()},
+        onPressed: () => Navigator.of(context).pop(),
         padding: EdgeInsets.zero,
         constraints: const BoxConstraints(),
       ),

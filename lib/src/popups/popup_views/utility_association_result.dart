@@ -146,9 +146,11 @@ extension on ArcGISFeature {
 
 /// Tests if the GeoElement PopupView have been shown.
 bool _isShownPopupGeoElement(ArcGISFeature feature) {
-  final fid = feature.attributes['objectId'].toString();
-  final geoElement = _geoElementManager[fid];
-  return geoElement != null;
+  final fid = feature.attributes['objectId']?.toString();
+  if (fid != null) {
+    return _geoElementManager[fid] != null;
+  } 
+  return false;
 }
 
 // Display the association PopupView.
