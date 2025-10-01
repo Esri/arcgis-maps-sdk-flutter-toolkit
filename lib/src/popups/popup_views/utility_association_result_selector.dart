@@ -33,8 +33,8 @@ class _AssociationResultSelectionPageState
 
   @override
   void initState() {
-    selectAssociationResults = widget.groupResult.associationResults;
     super.initState();
+    selectAssociationResults = widget.groupResult.associationResults;
   }
 
   @override

@@ -98,7 +98,7 @@ class _UtilityAssociationGroupResultState
       child: ListTile(
         title: const Text('Show all'),
         subtitle: Text('Total: $total'),
-        onTap: () => {
+        onTap: () {
           Navigator.push(
             context,
             MaterialPageRoute<void>(
@@ -106,7 +106,7 @@ class _UtilityAssociationGroupResultState
                 widget.utilityAssociationGroupResult,
               ),
             ),
-          ),
+          );
         },
         trailing: const Icon(Icons.list),
       ),

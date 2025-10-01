@@ -68,8 +68,8 @@ class PopupState extends State<PopupView> {
  late Future<List<PopupExpressionEvaluation>> _futurePopupExprEvaluation;
   @override
   void initState() {
+     super.initState();
     _futurePopupExprEvaluation = widget.popup.evaluateExpressions();
-    super.initState();
   }
 
   @override
