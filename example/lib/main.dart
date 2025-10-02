@@ -21,8 +21,6 @@ import 'package:arcgis_maps_toolkit_example/example_overview_map.dart';
 import 'package:arcgis_maps_toolkit_example/example_popup.dart';
 import 'package:flutter/material.dart';
 
-import 'package:go_router/go_router.dart';
-
 void main() {
   // Supply your apiKey using the --dart-define-from-file command line argument.
   const apiKey = String.fromEnvironment('API_KEY');
@@ -34,34 +32,14 @@ void main() {
     ArcGISEnvironment.apiKey = apiKey;
   }
 
-  // Configure routes with GoRouter
-  final GoRouter _router = GoRouter(
-    routes: [
-      GoRoute(
-        path: '/',
-        builder: (context, state) => const ExampleApp(),
-        routes: [
-           GoRoute(
-            path: '/:example',
-            builder: (context, state)  {
-              final title = state.pathParameters['example']!;
-              final example = ComponentExample.values.firstWhere((example) => example.title == title);
-              return example.constructor();
-            },
-           ),
-        ],
-      ),
-    ],
-  );
-
   final colorScheme = ColorScheme.fromSeed(seedColor: Colors.deepPurple);
   runApp(
-    MaterialApp.router(
+    MaterialApp(
       theme: ThemeData(
         colorScheme: colorScheme,
         appBarTheme: AppBarTheme(backgroundColor: colorScheme.inversePrimary),
       ),
-      routerConfig: _router,
+      home: const ExampleApp(),
     ),
   );
 }
@@ -99,7 +77,15 @@ enum ComponentExample {
       child: ListTile(
         title: Text(title),
         subtitle: Text(subtitle),
-        onTap: () => context.go('/$title'),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => constructor(),
+              settings: RouteSettings(name: '/$title')
+            ),
+          );
+        },
       ),
     );
   }
