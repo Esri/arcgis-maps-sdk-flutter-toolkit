@@ -80,10 +80,7 @@ enum ComponentExample {
         onTap: () {
           Navigator.push(
             context,
-            MaterialPageRoute(
-              builder: (_) => constructor(),
-              settings: RouteSettings(name: '/$title')
-            ),
+            MaterialPageRoute(builder: (_) => constructor()),
           );
         },
       ),
