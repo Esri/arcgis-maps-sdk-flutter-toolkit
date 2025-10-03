@@ -30,10 +30,11 @@ class PopupViewNavigatorState extends State<PopupViewNavigator> {
   @override
   void initState() {
     super.initState();
+    final fid = widget.popup.geoElement.attributes['objectId']?.toString();
     _pages.add(
       MaterialPage(
-        key: const ValueKey('PopupViewRoot'),
         child: PopupView(popup: widget.popup),
+        key: ValueKey('PopupView_$fid'),
       ),
     );
   }

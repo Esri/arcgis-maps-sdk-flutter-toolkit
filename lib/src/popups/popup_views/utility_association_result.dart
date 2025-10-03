@@ -154,14 +154,14 @@ void _navigateToAssociationPopupPage(
   // on the navigation stack, pop back to it.
   final fid = feature.attributes['objectId']?.toString() ?? '';
   if (state._isRootPopup(fid)) {
-      state.popupWithKey('PopupViewRoot');
+      state.popupWithKey('PopupView_$fid');
   } else {
     // otherwise, show a new PopupView.
     final popup = feature.toPopup();
     state._push(
       MaterialPage(
         child: buildAssociationPopupPage(popup),
-        key: ValueKey('PopupView_${popup.geoElement.hashCode}'),
+        key: ValueKey('PopupView_$fid'),
       ),
     );
   }
