@@ -158,24 +158,20 @@ void _navigateToAssociationPopupPage(
   BuildContext context,
   ArcGISFeature feature,
 ) {
-  const routeName = '/$popupRouteName';
+  // const routeName = '/$popupRouteName';
+  final state = context.findAncestorStateOfType<PopupViewNavigatorState>()!;
   // If the popup for this feature is the one that is the original one
   // on the navigation stack, pop back to it.
   if (_isShownPopupGeoElement(feature)) {
-    if (_isRouteInStack(context, routeName)) {
-      Navigator.of(
-        context,
-        rootNavigator: true,
-      ).popUntil(ModalRoute.withName(routeName));
-    } else {
-      showMessage(context, feature);
-    }
+      state.popupWithKey('PopupViewRoot');
   } else {
     // otherwise, show a new PopupView.
     final popup = feature.toPopup();
-    Navigator.push(
-      context,
-      MaterialPageRoute<void>(builder: (_) => buildAssociationPopupPage(popup)),
+    state._push(
+      MaterialPage(
+        child: buildAssociationPopupPage(popup),
+        key: ValueKey('PopupView_${popup.geoElement.hashCode}'),
+      ),
     );
   }
 }
@@ -186,42 +182,4 @@ Widget buildAssociationPopupPage(Popup popup) {
     appBar: AppBar(title: Text(popup.title)),
     body: PopupView(popup: popup),
   );
-}
-
-/// Show a dialog to show the feature is identical to the
-/// original identified Popup feature.
-void showMessage(BuildContext context, ArcGISFeature feature) {
-  final oid = feature.attributes['objectId'];
-  showDialog<String>(
-    context: context,
-    builder: (context) => AlertDialog(
-      title: Text(
-        'Feature: ObjectId = $oid',
-        style: Theme.of(context).textTheme.bodyLarge,
-      ),
-      content: Text(
-        'This feature association is linked to the original identified one.',
-        style: Theme.of(context).textTheme.bodyMedium,
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: const Text('OK'),
-        ),
-      ],
-    ),
-  );
-}
-
-/// Checks if a route with the given [name] exists in the navigation stack.
-bool _isRouteInStack(BuildContext context, String name) {
-  var isPresent = false;
-  Navigator.of(context, rootNavigator: true).popUntil((route) {
-    if (route.settings.name == name) {
-      isPresent = true;
-      return true;
-    }
-    return false;
-  });
-  return isPresent;
 }

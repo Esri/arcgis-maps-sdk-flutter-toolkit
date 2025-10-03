@@ -250,10 +250,13 @@ class _AssociationsFilterResultTile extends StatelessWidget {
   }
 
   void routeToFilterResultDetailView(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute<void>(
-        builder: (_) => _UtilityAssociationsFilterResultView(
+    final state = context.findAncestorStateOfType<PopupViewNavigatorState>()!;
+    state._push(
+      MaterialPage<Widget>(
+        key: ValueKey(
+          'UtilityAssociationsFilterResultView_${associationsFilterResult.filter.filterType.name}',
+        ),
+        child:  _UtilityAssociationsFilterResultView(
           associationsFilterResult: associationsFilterResult,
         ),
       ),

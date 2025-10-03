@@ -93,20 +93,23 @@ class _UtilityAssociationGroupResultState
 
   /// Build the showAll tile.
   Widget buildShowAllWidget(int total) {
+    final state = context.findAncestorStateOfType<PopupViewNavigatorState>()!;
     return Padding(
       padding: const EdgeInsets.only(left: 40),
       child: ListTile(
         title: const Text('Show all'),
         subtitle: Text('Total: $total'),
         onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute<void>(
-              builder: (_) => buildAssociationSelectionPage(
+          state._push(
+            MaterialPage(
+              child: buildAssociationSelectionPage(
                 widget.utilityAssociationGroupResult,
               ),
-            ),
-          );
+              key: ValueKey(
+                'UtilityAssociationSelectionPage_${widget.utilityAssociationGroupResult.name}',
+              ),
+            )
+          ); 
         },
         trailing: const Icon(Icons.list),
       ),
