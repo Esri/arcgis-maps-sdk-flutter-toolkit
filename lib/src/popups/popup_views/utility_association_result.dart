@@ -144,25 +144,16 @@ extension on ArcGISFeature {
   }
 }
 
-/// Tests if the GeoElement PopupView have been shown.
-bool _isShownPopupGeoElement(ArcGISFeature feature) {
-  final fid = feature.attributes['objectId']?.toString();
-  if (fid != null) {
-    return _geoElementManager[fid] != null;
-  }
-  return false;
-}
-
 // Display the association PopupView.
 void _navigateToAssociationPopupPage(
   BuildContext context,
   ArcGISFeature feature,
 ) {
-  // const routeName = '/$popupRouteName';
   final state = context.findAncestorStateOfType<PopupViewNavigatorState>()!;
   // If the popup for this feature is the one that is the original one
   // on the navigation stack, pop back to it.
-  if (_isShownPopupGeoElement(feature)) {
+  final fid = feature.attributes['objectId']?.toString() ?? '';
+  if (state._isRootPopup(fid)) {
       state.popupWithKey('PopupViewRoot');
   } else {
     // otherwise, show a new PopupView.

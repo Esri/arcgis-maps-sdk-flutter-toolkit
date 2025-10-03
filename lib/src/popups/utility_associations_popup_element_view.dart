@@ -59,20 +59,6 @@ class _UtilityAssociationsPopupElementViewState
             );
           },
         );
-    final objId = widget.geoElement.attributes['objectId']?.toString();
-    if (objId != null) {
-      _geoElementManager[objId] = widget.geoElement;
-    }
-  }
-
-  @override
-  void dispose() {
-    final objId = widget.geoElement.attributes['objectId']?.toString();
-    if (objId != null) {
-      _geoElementManager.remove(objId);
-    }
-
-    super.dispose();
   }
 
   @override
@@ -283,6 +269,3 @@ Widget _buildDivider(BuildContext context) {
     thickness: Theme.of(context).dividerTheme.thickness ?? 1,
   );
 }
-
-// Manages the identified GeoElement.
-final _geoElementManager = HashMap<String, GeoElement>();

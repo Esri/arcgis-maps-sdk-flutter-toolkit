@@ -33,11 +33,15 @@ class PopupViewNavigatorState extends State<PopupViewNavigator> {
     _pages.add(
       MaterialPage(
         key: const ValueKey('PopupViewRoot'),
-        child: PopupView(
-          popup: widget.popup,
-        ),
+        child: PopupView(popup: widget.popup),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _pages.clear();
+    super.dispose();
   }
 
   @override
@@ -46,7 +50,6 @@ class PopupViewNavigatorState extends State<PopupViewNavigator> {
       pages: List.of(_pages),
       onDidRemovePage: (page) {
         print('onDidRemovePage: $page');
-        
       },
     );
   }
@@ -62,11 +65,17 @@ class PopupViewNavigatorState extends State<PopupViewNavigator> {
       _pages.add(page);
     });
   }
+
   bool _pop() {
     if (_pages.isNotEmpty) {
       setState(_pages.removeLast);
       return true;
     }
     return false;
-  } 
+  }
+
+  /// Tests if the GeoElement PopupView have been shown.
+  bool _isRootPopup(String fid) {
+    return widget.popup.geoElement.attributes['objectId']?.toString() == fid;
+  }
 }
