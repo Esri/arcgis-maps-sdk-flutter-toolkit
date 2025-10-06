@@ -28,14 +28,7 @@ class _AssociationResultSelectionPage extends StatefulWidget {
 
 class _AssociationResultSelectionPageState
     extends State<_AssociationResultSelectionPage> {
-  late List<UtilityAssociationResult> selectAssociationResults;
   final _searchController = TextEditingController();
-
-  @override
-  void initState() {
-    super.initState();
-    selectAssociationResults = widget.groupResult.associationResults;
-  }
 
   @override
   void dispose() {
@@ -63,7 +56,7 @@ class _AssociationResultSelectionPageState
             ValueListenableBuilder<TextEditingValue>(
               valueListenable: _searchController,
               builder: (context, value, child) {
-                final filteredResults = selectAssociationResults
+                final filteredResults = widget.groupResult.associationResults
                     .where(
                       (result) => result.title.toLowerCase().contains(
                         value.text.toLowerCase(),
