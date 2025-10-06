@@ -16,23 +16,16 @@
 part of '../../../arcgis_maps_toolkit.dart';
 
 /// Display a [UtilityAssociationResult].
-class _UtilityAssociationResultWidget extends StatefulWidget {
+class _UtilityAssociationResultWidget extends StatelessWidget {
   const _UtilityAssociationResultWidget({
     required this.utilityAssociationResult,
   });
   final UtilityAssociationResult utilityAssociationResult;
 
   @override
-  State<StatefulWidget> createState() => _UtilityAssociationResultState();
-}
-
-class _UtilityAssociationResultState
-    extends State<_UtilityAssociationResultWidget> {
-
-  @override
   Widget build(BuildContext context) {
     // Get the UtilityAssociation.
-    final utilityAssociate = widget.utilityAssociationResult.association;
+    final utilityAssociate = utilityAssociationResult.association;
     // Get the related property string of the UtilityAssociation.
     final subtitle = getAssociationProperty();
 
@@ -40,7 +33,7 @@ class _UtilityAssociationResultState
       leading: getAssociationTypeIcon(utilityAssociate.associationType),
       // UtilityAssociationResult Title
       title: Text(
-        widget.utilityAssociationResult.title,
+        utilityAssociationResult.title,
         style: Theme.of(context).textTheme.titleSmall,
       ),
       subtitle: Text(
@@ -51,7 +44,7 @@ class _UtilityAssociationResultState
       ),
       onTap: () => _navigateToAssociationPopupPage(
         context,
-        widget.utilityAssociationResult.associatedFeature,
+        utilityAssociationResult.associatedFeature,
       ),
       trailing: const Icon(Icons.chevron_right),
     );
@@ -59,9 +52,9 @@ class _UtilityAssociationResultState
 
   // Get the related association property string of the UtilityAssociation.
   String getAssociationProperty() {
-    final association = widget.utilityAssociationResult.association;
+    final association = utilityAssociationResult.association;
     final type = association.associationType;
-    final feature = widget.utilityAssociationResult.associatedFeature;
+    final feature = utilityAssociationResult.associatedFeature;
     final gid = feature.attributes['GLOBALID'] as Guid;
 
     if (type == UtilityAssociationType.containment &&
