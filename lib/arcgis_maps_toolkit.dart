@@ -53,7 +53,6 @@ part 'src/compass/compass_needle_painter.dart';
 part 'src/overview_map/overview_map.dart';
 // Popup Widget
 part 'src/popups/popup_view.dart';
-part 'src/popups/popup_view_navigator.dart';
 part 'src/popups/attachments_popup_element_view.dart';
 part 'src/popups/fields_popup_element_view.dart';
 part 'src/popups/media_popup_element_view.dart';

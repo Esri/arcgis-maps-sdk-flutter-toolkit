@@ -61,10 +61,87 @@ class PopupView extends StatefulWidget {
   final Popup popup;
 
   @override
-  State<StatefulWidget> createState() => PopupState();
+  State<StatefulWidget> createState() => _PopupViewState();
 }
 
-class PopupState extends State<PopupView> {
+class _PopupViewState extends State<PopupView> {
+  final _pages = <Page<Widget>>[];
+
+  @override
+  void initState() {
+    super.initState();
+    final fid = widget.popup.geoElement.attributes['objectId']?.toString();
+    _pages.add(
+      MaterialPage(
+        child: _PopupViewInternal(popup: widget.popup, onClose: widget.onClose),
+        key: ValueKey('PopupView_$fid'),
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _pages.clear();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Navigator(
+      pages: List.of(_pages),
+      // Handle the back button press to pop the last page.
+      onDidRemovePage: (page) {
+        // If the last page is removed, close the popup view.
+        if (_pages.isEmpty) {
+          if (widget.onClose != null) {
+            widget.onClose!();
+          } else {
+            Navigator.of(context).pop();
+          }
+        }
+      },
+    );
+  }
+
+  void _popupWithKey(String key) {
+    setState(() {
+      _pages.removeWhere((page) => page.key != ValueKey(key));
+    });
+  }
+
+  void _push(Page<Widget> page) {
+    setState(() {
+      _pages.add(page);
+    });
+  }
+
+  bool _pop() {
+    if (_pages.isNotEmpty) {
+      setState(_pages.removeLast);
+      return true;
+    }
+    return false;
+  }
+
+  /// Tests if the GeoElement PopupView have been shown.
+  bool _isRootPopup(String fid) {
+    return widget.popup.geoElement.attributes['objectId']?.toString() == fid;
+  }
+}
+
+class _PopupViewInternal extends StatefulWidget {
+  const _PopupViewInternal({required this.popup, required this.onClose});
+
+  /// The [Popup] object to be displayed.
+  final Popup popup;
+
+  final VoidCallback? onClose;
+
+  @override
+  State<StatefulWidget> createState() => _PopupStateInternal();
+}
+
+class _PopupStateInternal extends State<_PopupViewInternal> {
   late Future<List<PopupExpressionEvaluation>> _futurePopupExprEvaluation;
   @override
   void initState() {
@@ -188,22 +265,3 @@ class PopupState extends State<PopupView> {
     );
   }
 }
-
-/// This is used to assign a name to the route that displays the first `PopupView`.
-/// Naming the route allows for navigating back to it from other pages,
-/// such as from a related utility association popup, using `Navigator.popUntil`.
-///
-/// ### Example
-///
-/// ```dart
-/// Navigator.of(context).push(MaterialPageRoute(
-///   settings: const RouteSettings(name: '/$popupRouteName'),
-///   builder: (_) {
-///     return Scaffold(
-///       appBar: AppBar(title: Text(popup.title)),
-///       body: PopupView(popup: popup),
-///     );
-///   },
-/// ));
-/// ```
-const popupRouteName = 'popupView';

@@ -236,7 +236,7 @@ class _AssociationsFilterResultTile extends StatelessWidget {
   }
 
   void routeToFilterResultDetailView(BuildContext context) {
-    final state = context.findAncestorStateOfType<PopupViewNavigatorState>()!;
+    final state = context.findAncestorStateOfType<_PopupViewState>()!;
     state._push(
       MaterialPage<Widget>(
         key: ValueKey(

@@ -149,12 +149,12 @@ void _navigateToAssociationPopupPage(
   BuildContext context,
   ArcGISFeature feature,
 ) {
-  final state = context.findAncestorStateOfType<PopupViewNavigatorState>()!;
+  final state = context.findAncestorStateOfType<_PopupViewState>()!;
   // If the popup for this feature is the one that is the original one
   // on the navigation stack, pop back to it.
   final fid = feature.attributes['objectId']?.toString() ?? '';
   if (state._isRootPopup(fid)) {
-      state.popupWithKey('PopupView_$fid');
+      state._popupWithKey('PopupView_$fid');
   } else {
     // otherwise, show a new PopupView.
     final popup = feature.toPopup();
@@ -171,6 +171,6 @@ void _navigateToAssociationPopupPage(
 Widget buildAssociationPopupPage(Popup popup) {
   return Scaffold(
     appBar: AppBar(title: Text(popup.title)),
-    body: PopupView(popup: popup),
+    body: _PopupViewInternal(popup: popup, onClose: null),
   );
 }

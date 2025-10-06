@@ -93,7 +93,7 @@ class _UtilityAssociationGroupResultState
 
   /// Build the showAll tile.
   Widget buildShowAllWidget(int total) {
-    final state = context.findAncestorStateOfType<PopupViewNavigatorState>()!;
+    final state = context.findAncestorStateOfType<_PopupViewState>()!;
     return Padding(
       padding: const EdgeInsets.only(left: 40),
       child: ListTile(
