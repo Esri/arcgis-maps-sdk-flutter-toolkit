@@ -102,8 +102,8 @@ class _UtilityAssociationGroupResultState
         onTap: () {
           state._push(
             MaterialPage(
-              child: buildAssociationSelectionPage(
-                widget.utilityAssociationGroupResult,
+              child: _AssociationResultSelectionPage(
+                groupResult: widget.utilityAssociationGroupResult,
               ),
               key: ValueKey(
                 'UtilityAssociationSelectionPage_${widget.utilityAssociationGroupResult.name}',
@@ -116,15 +116,4 @@ class _UtilityAssociationGroupResultState
     );
   }
 
-  /// Build the association selection page
-  Widget buildAssociationSelectionPage(
-    UtilityAssociationGroupResult associationGroupResult,
-  ) {
-    // Get a list of UtilityAssociationResult.
-    return Scaffold(
-      body: _AssociationResultSelectionPage(
-        groupResult: associationGroupResult,
-      ),
-    );
-  }
 }

@@ -38,22 +38,24 @@ class _AssociationResultSelectionPageState
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text(widget.groupResult.name)),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          spacing: 20,
-          children: [
-            TextField(
-              controller: _searchController,
-              decoration: const InputDecoration(
-                labelText: 'Search',
-                border: OutlineInputBorder(),
-              ),
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        children: [
+          Text(
+            widget.groupResult.name,
+            style: Theme.of(context).textTheme.displayMedium,
+          ),
+          TextField(
+            controller: _searchController,
+            decoration: const InputDecoration(
+              labelText: 'Search',
+              border: OutlineInputBorder(),
             ),
+          ),
 
-            ValueListenableBuilder<TextEditingValue>(
+          Expanded(
+            child: ValueListenableBuilder<TextEditingValue>(
               valueListenable: _searchController,
               builder: (context, value, child) {
                 final filteredResults = widget.groupResult.associationResults
@@ -64,31 +66,27 @@ class _AssociationResultSelectionPageState
                     )
                     .toList();
 
-                return Expanded(
-                  child: ListView.separated(
-                    shrinkWrap: true,
-                    separatorBuilder: (context, index) {
-                      return _buildDivider(context);
-                    },
-                    itemCount: filteredResults.length,
-                    itemBuilder: (context, index) => ListTile(
-                      title: Text(
-                        filteredResults[index].title,
-                        style: Theme.of(context).textTheme.titleSmall,
-                      ),
-                      onTap: () {
-                        final feature =
-                            filteredResults[index].associatedFeature;
-                        _navigateToAssociationPopupPage(context, feature);
-                      },
-                      trailing: const Icon(Icons.chevron_right),
+                return ListView.separated(
+                  separatorBuilder: (context, index) {
+                    return _buildDivider(context);
+                  },
+                  itemCount: filteredResults.length,
+                  itemBuilder: (context, index) => ListTile(
+                    title: Text(
+                      filteredResults[index].title,
+                      style: Theme.of(context).textTheme.titleSmall,
                     ),
+                    onTap: () {
+                      final feature = filteredResults[index].associatedFeature;
+                      _navigateToAssociationPopupPage(context, feature);
+                    },
+                    trailing: const Icon(Icons.chevron_right),
                   ),
                 );
               },
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

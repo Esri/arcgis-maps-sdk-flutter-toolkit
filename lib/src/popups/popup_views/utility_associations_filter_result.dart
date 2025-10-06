@@ -79,11 +79,11 @@ class _UtilityAssociationsFilterResultViewState
 
   // Build the navigation header.
   Widget _buildNavigationHeader(BuildContext context) {
+    final state = context.findAncestorStateOfType<_PopupViewState>()!;
     return ListTile(
+      // (^) back to the initial page.
       leading: IconButton(
-        onPressed: () {
-          Navigator.of(context).pop();
-        },
+        onPressed: state._popToRoot,
         icon: const Icon(Icons.arrow_upward),
       ),
       title: Text(
@@ -103,7 +103,7 @@ class _UtilityAssociationsFilterResultViewState
       // (x) close the page.
       trailing: IconButton(
         icon: const Icon(Icons.close),
-        onPressed: () => Navigator.of(context).pop(),
+        onPressed: state._pop,
         padding: EdgeInsets.zero,
         constraints: const BoxConstraints(),
       ),

@@ -203,9 +203,7 @@ class _UtilityAssociationsPopupElementViewState
 /// A view that displays a list of [UtilityAssociationsFilterResult]
 /// and allows navigating to its group results.
 class _AssociationsFilterResultTile extends StatelessWidget {
-  const _AssociationsFilterResultTile({
-    required this.associationsFilterResult,
-  });
+  const _AssociationsFilterResultTile({required this.associationsFilterResult});
   final UtilityAssociationsFilterResult associationsFilterResult;
 
   @override

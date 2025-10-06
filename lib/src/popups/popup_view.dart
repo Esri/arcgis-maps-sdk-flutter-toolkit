@@ -64,17 +64,24 @@ class PopupView extends StatefulWidget {
   State<StatefulWidget> createState() => _PopupViewState();
 }
 
+// State for [PopupView] that manages a stack of pages for pop-up navigation.
+// This state class maintains a list of [Page]s to support navigation
+// within the pop-up view, allowing for pushing and popping of detail pages
+// (such as related records or associations) on top of the root pop-up.
+// It handles back navigation, closing the pop-up, and provides utility methods
+// for navigation and root pop-up checks.
 class _PopupViewState extends State<PopupView> {
   final _pages = <Page<Widget>>[];
+  late String _rootFid;
 
   @override
   void initState() {
     super.initState();
-    final fid = widget.popup.geoElement.attributes['objectId']?.toString();
+    _rootFid = widget.popup.geoElement.attributes['objectId']?.toString() ?? '0';
     _pages.add(
       MaterialPage(
         child: _PopupViewInternal(popup: widget.popup, onClose: widget.onClose),
-        key: ValueKey('PopupView_$fid'),
+        key: ValueKey('PopupView_$_rootFid'),
       ),
     );
   }
@@ -103,18 +110,21 @@ class _PopupViewState extends State<PopupView> {
     );
   }
 
+  // Navigate to a pop-up view with the specified key, removing other pages.
   void _popupWithKey(String key) {
     setState(() {
       _pages.removeWhere((page) => page.key != ValueKey(key));
     });
   }
 
+  // Push a new page onto the navigation stack.
   void _push(Page<Widget> page) {
     setState(() {
       _pages.add(page);
     });
   }
 
+  // Pop the last page from the navigation stack.
   bool _pop() {
     if (_pages.isNotEmpty) {
       setState(_pages.removeLast);
@@ -123,12 +133,18 @@ class _PopupViewState extends State<PopupView> {
     return false;
   }
 
-  /// Tests if the GeoElement PopupView have been shown.
+  // Pop back to the root pop-up view.
+  void _popToRoot() {
+    _popupWithKey('PopupView_$_rootFid');
+  }
+
+  // Tests if the GeoElement PopupView have been shown.
   bool _isRootPopup(String fid) {
-    return widget.popup.geoElement.attributes['objectId']?.toString() == fid;
+    return _rootFid == fid;
   }
 }
 
+// The view that displays the content of a [Popup].
 class _PopupViewInternal extends StatefulWidget {
   const _PopupViewInternal({required this.popup, required this.onClose});
 
@@ -141,6 +157,9 @@ class _PopupViewInternal extends StatefulWidget {
   State<StatefulWidget> createState() => _PopupStateInternal();
 }
 
+/// State for [_PopupViewInternal] that handles the evaluation 
+/// of pop-up expressions
+/// and builds the UI for displaying the pop-up content.
 class _PopupStateInternal extends State<_PopupViewInternal> {
   late Future<List<PopupExpressionEvaluation>> _futurePopupExprEvaluation;
   @override
