@@ -65,26 +65,23 @@ class _AssociationResultSelectionPageState
                     .toList();
 
                 return Expanded(
-                  child: SingleChildScrollView(
-                    child: ListView.separated(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      separatorBuilder: (context, index) {
-                        return _buildDivider(context);
-                      },
-                      itemCount: filteredResults.length,
-                      itemBuilder: (context, index) => ListTile(
-                        title: Text(
-                          filteredResults[index].title,
-                          style: Theme.of(context).textTheme.titleSmall,
-                        ),
-                        onTap: () {
-                          final feature =
-                              filteredResults[index].associatedFeature;
-                          _navigateToAssociationPopupPage(context, feature);
-                        },
-                        trailing: const Icon(Icons.chevron_right),
+                  child: ListView.separated(
+                    shrinkWrap: true,
+                    separatorBuilder: (context, index) {
+                      return _buildDivider(context);
+                    },
+                    itemCount: filteredResults.length,
+                    itemBuilder: (context, index) => ListTile(
+                      title: Text(
+                        filteredResults[index].title,
+                        style: Theme.of(context).textTheme.titleSmall,
                       ),
+                      onTap: () {
+                        final feature =
+                            filteredResults[index].associatedFeature;
+                        _navigateToAssociationPopupPage(context, feature);
+                      },
+                      trailing: const Icon(Icons.chevron_right),
                     ),
                   ),
                 );
