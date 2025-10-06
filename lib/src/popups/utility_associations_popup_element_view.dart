@@ -153,23 +153,18 @@ class _UtilityAssociationsPopupElementViewState
 
     return ListView.separated(
       shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
       itemCount: associationsFilterResults.length,
       separatorBuilder: (context, index) {
-        if (index < (associationsFilterResults.length - 1)) {
-          final filterResult = associationsFilterResults[index + 1];
-          if (filterResult.resultCount > 0) {
-            return _buildDivider(context);
-          }
-        }
-        return const SizedBox.shrink();
+        final filterResult = associationsFilterResults[index + 1];
+        return (filterResult.resultCount > 0)
+            ? _buildDivider(context)
+            : const SizedBox.shrink();
       },
       itemBuilder: (context, index) {
         final filterResult = associationsFilterResults[index];
         if (filterResult.resultCount > 0) {
           return _AssociationsFilterResultTile(
             associationsFilterResult: filterResult,
-            associationDisplayCount: filterResult.resultCount,
           );
         }
         return const SizedBox.shrink();
@@ -210,10 +205,8 @@ class _UtilityAssociationsPopupElementViewState
 class _AssociationsFilterResultTile extends StatelessWidget {
   const _AssociationsFilterResultTile({
     required this.associationsFilterResult,
-    required this.associationDisplayCount,
   });
   final UtilityAssociationsFilterResult associationsFilterResult;
-  final int associationDisplayCount;
 
   @override
   Widget build(BuildContext context) {
@@ -242,7 +235,7 @@ class _AssociationsFilterResultTile extends StatelessWidget {
         key: ValueKey(
           'UtilityAssociationsFilterResultView_${associationsFilterResult.filter.filterType.name}',
         ),
-        child:  _UtilityAssociationsFilterResultView(
+        child: _UtilityAssociationsFilterResultView(
           associationsFilterResult: associationsFilterResult,
         ),
       ),

@@ -27,7 +27,6 @@ class _UtilityAssociationsFilterResultView extends StatefulWidget {
   /// The utility associations filter result to expand.
   final UtilityAssociationsFilterResult associationsFilterResult;
 
-  /// Maximum number of associations to display per group.
   @override
   _UtilityAssociationsFilterResultViewState createState() =>
       _UtilityAssociationsFilterResultViewState();
@@ -65,17 +64,11 @@ class _UtilityAssociationsFilterResultViewState
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
         padding: EdgeInsets.zero,
-        separatorBuilder: (context, index) {
-          if (index < groupResults.length) {
-            return _buildDivider(context);
-          }
-          return const SizedBox.shrink();
-        },
+        separatorBuilder: (context, index) => _buildDivider(context),
         itemCount: groupResults.length,
         itemBuilder: (context, index) {
           // Get a UtilityAssociationGroupResult
-          final groupResult =
-              widget.associationsFilterResult.groupResults[index];
+          final groupResult = groupResults[index];
           return _UtilityAssociationGroupResultWidget(
             utilityAssociationGroupResult: groupResult,
           );
