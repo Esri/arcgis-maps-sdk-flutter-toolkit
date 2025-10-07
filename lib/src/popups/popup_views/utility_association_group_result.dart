@@ -108,12 +108,11 @@ class _UtilityAssociationGroupResultState
               key: ValueKey(
                 'UtilityAssociationSelectionPage_${widget.utilityAssociationGroupResult.name}',
               ),
-            )
-          ); 
+            ),
+          );
         },
         trailing: const Icon(Icons.list),
       ),
     );
   }
-
 }
