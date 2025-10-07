@@ -140,7 +140,7 @@ void _navigateToAssociationPopupPage(
   // on the navigation stack, pop back to it.
   final key = _getPopupViewKey(feature);
   if (state._isExistingPopupPage(key)) {
-      state._popupWithKey(key);
+    state._popupWithKey(key);
   } else {
     // otherwise, show a new PopupView.
     final popup = feature.toPopup();
