@@ -50,15 +50,7 @@ class _UtilityAssociationsPopupElementViewState
     isExpanded = widget.isExpanded;
 
     _fetchAssociationsFuture = widget.popupElement
-        .fetchAssociationsFilterResults()
-        .timeout(
-          const Duration(seconds: 30),
-          onTimeout: () {
-            throw TimeoutException(
-              'The fetchAssociationsFilterResults timed-out',
-            );
-          },
-        );
+        .fetchAssociationsFilterResults();
   }
 
   @override
