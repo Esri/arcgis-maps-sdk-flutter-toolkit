@@ -72,17 +72,14 @@ class PopupView extends StatefulWidget {
 // for navigation and root pop-up checks.
 class _PopupViewState extends State<PopupView> {
   final _pages = <Page<Widget>>[];
-  late String _rootFid;
 
   @override
   void initState() {
     super.initState();
-    _rootFid =
-        widget.popup.geoElement.attributes['objectId']?.toString() ?? '0';
     _pages.add(
       MaterialPage(
         child: _PopupViewInternal(popup: widget.popup, onClose: widget.onClose),
-        key: ValueKey('PopupView_$_rootFid'),
+        key: ValueKey(_getPopupViewKey(widget.popup.geoElement)),
       ),
     );
   }
@@ -101,11 +98,7 @@ class _PopupViewState extends State<PopupView> {
       onDidRemovePage: (page) {
         // If the last page is removed, close the popup view.
         if (_pages.isEmpty) {
-          if (widget.onClose != null) {
-            widget.onClose!();
-          } else {
-            Navigator.of(context).pop();
-          }
+          widget.onClose?.call();
         }
       },
     );
@@ -120,8 +113,16 @@ class _PopupViewState extends State<PopupView> {
 
   // Push a new page onto the navigation stack.
   void _push(Page<Widget> page) {
-    setState(() {
-      _pages.add(page);
+     setState(() {
+      final existingIndex = _pages.indexWhere((p) => p.key == page.key);
+      if (existingIndex != -1) {
+        // Page already present; remove pages above it so it becomes the top.
+        if (existingIndex < _pages.length - 1) {
+          _pages.removeRange(existingIndex + 1, _pages.length);
+        }
+      } else {
+        _pages.add(page);
+      }
     });
   }
 
@@ -134,14 +135,17 @@ class _PopupViewState extends State<PopupView> {
     return false;
   }
 
-  // Pop back to the root pop-up view.
-  void _popToRoot() {
-    _popupWithKey('PopupView_$_rootFid');
+  // Tests if the GeoElement PopupView have been shown.
+  bool _isExistingPopupPage(String key) {
+    return _pages.any((page) => page.key == ValueKey(key));
   }
 
-  // Tests if the GeoElement PopupView have been shown.
-  bool _isRootPopup(String fid) {
-    return _rootFid == fid;
+  void _popToRoot() {
+    if (_pages.length > 1) {
+      setState(() {
+        _pages.removeRange(1, _pages.length);
+      });
+    }
   }
 }
 
@@ -292,4 +296,9 @@ class _PopupStateInternal extends State<_PopupViewInternal> {
       ),
     );
   }
+}
+
+// Generate a unique key for the PopupView based on the GeoElement's objectId.
+String _getPopupViewKey(GeoElement geoElement) {
+  return 'PopupView_${geoElement.attributes['objectId'] ?? '0'}';
 }

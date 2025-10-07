@@ -138,16 +138,16 @@ void _navigateToAssociationPopupPage(
   final state = context.findAncestorStateOfType<_PopupViewState>()!;
   // If the popup for this feature is the one that is the original one
   // on the navigation stack, pop back to it.
-  final fid = feature.attributes['objectId']?.toString() ?? '';
-  if (state._isRootPopup(fid)) {
-      state._popupWithKey('PopupView_$fid');
+  final key = _getPopupViewKey(feature);
+  if (state._isExistingPopupPage(key)) {
+      state._popupWithKey(key);
   } else {
     // otherwise, show a new PopupView.
     final popup = feature.toPopup();
     state._push(
       MaterialPage(
         child: buildAssociationPopupPage(popup),
-        key: ValueKey('PopupView_$fid'),
+        key: ValueKey(key),
       ),
     );
   }
