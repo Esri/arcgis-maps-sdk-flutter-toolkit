@@ -37,14 +37,9 @@ class _UtilityAssociationsFilterResultViewState
   /// Build the [UtilityAssociationFilterResult] detail view.
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          widget.associationsFilterResult.displayTitle,
-          style: Theme.of(context).textTheme.titleMedium,
-        ),
-      ),
-      body: SingleChildScrollView(
+    return Padding(
+      padding: const EdgeInsets.only(top: 20),
+      child: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

@@ -42,9 +42,19 @@ class _AssociationResultSelectionPageState
       padding: const EdgeInsets.all(16),
       child: Column(
         children: [
-          Text(
-            widget.groupResult.name,
-            style: Theme.of(context).textTheme.displayMedium,
+          ListTile(
+            leading: IconButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              icon: const Icon(Icons.arrow_back),
+            ),
+            title: Text(
+              widget.groupResult.name,
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
+            ),
           ),
           TextField(
             controller: _searchController,

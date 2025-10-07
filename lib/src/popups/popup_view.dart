@@ -77,7 +77,8 @@ class _PopupViewState extends State<PopupView> {
   @override
   void initState() {
     super.initState();
-    _rootFid = widget.popup.geoElement.attributes['objectId']?.toString() ?? '0';
+    _rootFid =
+        widget.popup.geoElement.attributes['objectId']?.toString() ?? '0';
     _pages.add(
       MaterialPage(
         child: _PopupViewInternal(popup: widget.popup, onClose: widget.onClose),
@@ -157,7 +158,7 @@ class _PopupViewInternal extends StatefulWidget {
   State<StatefulWidget> createState() => _PopupStateInternal();
 }
 
-/// State for [_PopupViewInternal] that handles the evaluation 
+/// State for [_PopupViewInternal] that handles the evaluation
 /// of pop-up expressions
 /// and builds the UI for displaying the pop-up content.
 class _PopupStateInternal extends State<_PopupViewInternal> {
@@ -166,6 +167,14 @@ class _PopupStateInternal extends State<_PopupViewInternal> {
   void initState() {
     super.initState();
     _futurePopupExprEvaluation = widget.popup.evaluateExpressions();
+  }
+
+  @override
+  void didUpdateWidget(covariant _PopupViewInternal oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.popup != widget.popup) {
+      _futurePopupExprEvaluation = widget.popup.evaluateExpressions();
+    }
   }
 
   @override
@@ -197,9 +206,7 @@ class _PopupStateInternal extends State<_PopupViewInternal> {
                 // it needs to be done before displaying the pop-up elements.
                 future: _futurePopupExprEvaluation,
                 builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.done) {
-                    return _buildElementsView();
-                  } else if (snapshot.hasError) {
+                  if (snapshot.hasError) {
                     return Center(
                       child: Text(
                         'Unable to evaluate pop-up expressions.',
@@ -208,9 +215,11 @@ class _PopupStateInternal extends State<_PopupViewInternal> {
                         ),
                       ),
                     );
-                  } else {
-                    return const Center(child: CircularProgressIndicator());
                   }
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    return _buildElementsView();
+                  }
+                  return const Center(child: CircularProgressIndicator());
                 },
               ),
             ),
