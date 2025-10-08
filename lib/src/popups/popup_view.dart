@@ -39,7 +39,7 @@ part of '../../arcgis_maps_toolkit.dart';
 /// The [PopupView] contains:
 /// * A header section with title defined in the [Popup].
 /// * A body, built using a [Column] and combination of [Card] and [ExpansionTile] widgets, consisting of different types of
-/// pop-up elements, including text (HTML), fields, media, and attachments.
+/// pop-up elements, including text (HTML), fields, media, attachments, and utility network associations.
 ///
 /// A pop-up is usually obtained from an identify result and then a [PopupView] can be created to wrap the pop-up and display its contents in a sized widget, such as a [Dialog] or a [Container]:
 /// ```dart
@@ -50,7 +50,7 @@ part of '../../arcgis_maps_toolkit.dart';
 ///   },
 /// )
 /// ```
-class PopupView extends StatelessWidget {
+class PopupView extends StatefulWidget {
   /// Creates a [PopupView] widget to display a [Popup] with optional `onClose` callback.
   const PopupView({required this.popup, this.onClose, super.key});
 
@@ -59,6 +59,119 @@ class PopupView extends StatelessWidget {
 
   /// The [Popup] object to be displayed.
   final Popup popup;
+
+  @override
+  State<StatefulWidget> createState() => _PopupViewState();
+}
+
+// State for [PopupView] that manages a stack of pages for pop-up navigation.
+// This state class maintains a list of [Page]s to support navigation
+// within the pop-up view, allowing for pushing and popping of detail pages
+// (such as related records or associations) on top of the root pop-up.
+// It handles back navigation, closing the pop-up, and provides utility methods
+// for navigation and root pop-up checks.
+class _PopupViewState extends State<PopupView> {
+  final _pages = <Page<Widget>>[];
+
+  @override
+  void initState() {
+    super.initState();
+    _pages.add(
+      MaterialPage(
+        child: _PopupViewInternal(popup: widget.popup, onClose: widget.onClose),
+        key: ValueKey(_getPopupViewKey(widget.popup.geoElement)),
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    _pages.clear();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Navigator(
+      pages: List.of(_pages),
+      // Handle the back button press to pop the last page.
+      onDidRemovePage: (page) {
+        // If the last page is removed, close the popup view.
+        if (_pages.isEmpty) {
+          widget.onClose?.call();
+        }
+      },
+    );
+  }
+
+  // Navigate to a pop-up view with the specified key, removing other pages.
+  void _popupWithKey(String key) {
+    setState(() {
+      _pages.removeWhere((page) => page.key != ValueKey(key));
+    });
+  }
+
+  // Push a new page onto the navigation stack.
+  void _push(Page<Widget> page) {
+    setState(() {
+      _pages.add(page);
+    });
+  }
+
+  // Pop the last page from the navigation stack.
+  bool _pop() {
+    if (_pages.isNotEmpty) {
+      setState(_pages.removeLast);
+      return true;
+    }
+    return false;
+  }
+
+  // Tests if the GeoElement PopupView have been shown.
+  bool _isExistingPopupPage(String key) {
+    return _pages.any((page) => page.key == ValueKey(key));
+  }
+
+  void _popToRoot() {
+    if (_pages.length > 1) {
+      setState(() {
+        _pages.removeRange(1, _pages.length);
+      });
+    }
+  }
+}
+
+// The view that displays the content of a [Popup].
+class _PopupViewInternal extends StatefulWidget {
+  const _PopupViewInternal({required this.popup, required this.onClose});
+
+  /// The [Popup] object to be displayed.
+  final Popup popup;
+
+  final VoidCallback? onClose;
+
+  @override
+  State<StatefulWidget> createState() => _PopupStateInternal();
+}
+
+/// State for [_PopupViewInternal] that handles the evaluation
+/// of pop-up expressions
+/// and builds the UI for displaying the pop-up content.
+class _PopupStateInternal extends State<_PopupViewInternal> {
+  late Future<List<PopupExpressionEvaluation>> _futurePopupExprEvaluation;
+  @override
+  void initState() {
+    super.initState();
+    _futurePopupExprEvaluation = widget.popup.evaluateExpressions();
+  }
+
+  @override
+  void didUpdateWidget(covariant _PopupViewInternal oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.popup != widget.popup) {
+      _futurePopupExprEvaluation = widget.popup.evaluateExpressions();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -75,8 +188,8 @@ class PopupView extends StatelessWidget {
             _buildTitleWidget(
               style: themeData.textTheme.titleMedium,
               onClosePressed: () {
-                if (onClose != null) {
-                  onClose!();
+                if (widget.onClose != null) {
+                  widget.onClose!();
                 } else {
                   Navigator.of(context).pop();
                 }
@@ -87,11 +200,9 @@ class PopupView extends StatelessWidget {
               child: FutureBuilder(
                 // Evaluate the pop-up expressions asynchronously,
                 // it needs to be done before displaying the pop-up elements.
-                future: popup.evaluateExpressions(),
+                future: _futurePopupExprEvaluation,
                 builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.done) {
-                    return _buildElementsView();
-                  } else if (snapshot.hasError) {
+                  if (snapshot.hasError) {
                     return Center(
                       child: Text(
                         'Unable to evaluate pop-up expressions.',
@@ -100,9 +211,11 @@ class PopupView extends StatelessWidget {
                         ),
                       ),
                     );
-                  } else {
-                    return const Center(child: CircularProgressIndicator());
                   }
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    return _buildElementsView();
+                  }
+                  return const Center(child: CircularProgressIndicator());
                 },
               ),
             ),
@@ -124,7 +237,7 @@ class PopupView extends StatelessWidget {
         children: [
           Expanded(
             child: Text(
-              popup.title,
+              widget.popup.title,
               style: style,
               overflow: TextOverflow.ellipsis,
               maxLines: 2,
@@ -142,8 +255,8 @@ class PopupView extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
       child: Column(
         spacing: 8,
-        children: popup.evaluatedElements.isNotEmpty
-            ? popup.evaluatedElements.map((element) {
+        children: widget.popup.evaluatedElements.isNotEmpty
+            ? widget.popup.evaluatedElements.map((element) {
                 if (element is FieldsPopupElement) {
                   return _FieldsPopupElementView(
                     fieldsElement: element,
@@ -161,6 +274,12 @@ class PopupView extends StatelessWidget {
                   );
                 } else if (element is TextPopupElement) {
                   return _TextPopupElementView(textElement: element);
+                } else if (element is UtilityAssociationsPopupElement) {
+                  return _UtilityAssociationsPopupElementView(
+                    geoElement: widget.popup.geoElement,
+                    popupElement: element,
+                    isExpanded: true,
+                  );
                 } else {
                   return const Text('Element not supported');
                 }
@@ -169,4 +288,9 @@ class PopupView extends StatelessWidget {
       ),
     );
   }
+}
+
+// Generate a unique key for the PopupView based on the GeoElement's objectId.
+String _getPopupViewKey(GeoElement geoElement) {
+  return 'PopupView_${geoElement.attributes['objectId'] ?? '0'}';
 }

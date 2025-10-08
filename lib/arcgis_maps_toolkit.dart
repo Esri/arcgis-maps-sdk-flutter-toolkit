@@ -24,6 +24,7 @@
 library;
 
 import 'dart:async';
+import 'dart:collection';
 import 'dart:io';
 import 'dart:math' as math;
 import 'dart:typed_data';
@@ -56,6 +57,11 @@ part 'src/popups/attachments_popup_element_view.dart';
 part 'src/popups/fields_popup_element_view.dart';
 part 'src/popups/media_popup_element_view.dart';
 part 'src/popups/text_popup_element_view.dart';
+part 'src/popups/utility_associations_popup_element_view.dart';
+part 'src/popups/popup_views/utility_associations_filter_result.dart';
+part 'src/popups/popup_views/utility_association_group_result.dart';
+part 'src/popups/popup_views/utility_association_result.dart';
+part 'src/popups/popup_views/utility_association_result_selector.dart';
 part 'src/popups/popup_views/bar_chart.dart';
 part 'src/popups/popup_views/line_chart.dart';
 part 'src/popups/popup_views/pie_chart.dart';
