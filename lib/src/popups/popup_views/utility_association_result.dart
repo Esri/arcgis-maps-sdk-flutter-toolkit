@@ -122,9 +122,9 @@ class _UtilityAssociationResultWidget extends StatelessWidget {
 
   // Check if the associated feature is the origin feature of the PopupView.
   bool isOriginFeature(BuildContext context, ArcGISFeature feature) {
-    final state = context.findAncestorStateOfType<_PopupViewState>()!;
+    final state = context.findAncestorStateOfType<_PopupViewState>();
     final key = _getPopupViewKey(feature);
-    return state._isExistingPopupPage(key);
+    return state?._isExistingPopupPage(key) ?? false;
   }
 }
 
@@ -150,24 +150,26 @@ void _navigateToAssociationPopupPage(
   BuildContext context,
   ArcGISFeature feature,
 ) {
-  final state = context.findAncestorStateOfType<_PopupViewState>()!;
+  final state = context.findAncestorStateOfType<_PopupViewState>();
   // If the popup for this feature is the one that is the original one
   // on the navigation stack, pop back to it.
   final key = _getPopupViewKey(feature);
-  if (state._isExistingPopupPage(key)) {
-    state._popupWithKey(key);
-  } else {
-    // otherwise, show a new PopupView.
-    final popup = feature.toPopup();
-    state._push(
-      MaterialPage(
-        child: _PopupViewInternal(
-          popup: popup,
-          onClose: state._pop,
-          onHome: state._popToRoot,
+  if (state != null) {
+    if (state._isExistingPopupPage(key) == true) {
+      state._popupWithKey(key);
+    } else {
+      // otherwise, show a new PopupView.
+      final popup = feature.toPopup();
+      state._push(
+        MaterialPage(
+          child: _PopupViewInternal(
+            popup: popup,
+            onClose: state._pop,
+            onHome: state._popToRoot,
+          ),
+          key: ValueKey(key),
         ),
-        key: ValueKey(key),
-      ),
-    );
+      );
+    }
   }
 }
