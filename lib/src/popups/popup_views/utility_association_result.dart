@@ -29,6 +29,11 @@ class _UtilityAssociationResultWidget extends StatelessWidget {
     final utilityAssociate = utilityAssociationResult.association;
     // Get the related property string of the UtilityAssociation.
     final subtitle = getAssociationProperty();
+    // Check if the associated feature is the origin feature of the PopupView.
+    final isOriginFeature = this.isOriginFeature(
+      context,
+      utilityAssociationResult.associatedFeature,
+    );
 
     return ListTile(
       leading: getAssociationTypeIcon(utilityAssociate.associationType),
@@ -47,7 +52,9 @@ class _UtilityAssociationResultWidget extends StatelessWidget {
         context,
         utilityAssociationResult.associatedFeature,
       ),
-      trailing: const Icon(Icons.chevron_right),
+      trailing: isOriginFeature
+          ? const Icon(Icons.arrow_upward)
+          : const Icon(Icons.chevron_right),
     );
   }
 
@@ -112,6 +119,13 @@ class _UtilityAssociationResultWidget extends StatelessWidget {
         return const SizedBox.shrink();
     }
   }
+
+  // Check if the associated feature is the origin feature of the PopupView.
+  bool isOriginFeature(BuildContext context, ArcGISFeature feature) {
+    final state = context.findAncestorStateOfType<_PopupViewState>()!;
+    final key = _getPopupViewKey(feature);
+    return state._isExistingPopupPage(key);
+  }
 }
 
 /// Add a toPopup function to the [ArcGISFeature].
@@ -147,17 +161,13 @@ void _navigateToAssociationPopupPage(
     final popup = feature.toPopup();
     state._push(
       MaterialPage(
-        child: buildAssociationPopupPage(popup),
+        child: _PopupViewInternal(
+          popup: popup,
+          onClose: state._pop,
+          onHome: state._popToRoot,
+        ),
         key: ValueKey(key),
       ),
     );
   }
-}
-
-/// Present the associations Popup in a Scaffold widget.
-Widget buildAssociationPopupPage(Popup popup) {
-  return Scaffold(
-    appBar: AppBar(title: Text(popup.title)),
-    body: _PopupViewInternal(popup: popup, onClose: null),
-  );
 }

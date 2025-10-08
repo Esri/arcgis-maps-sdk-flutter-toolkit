@@ -143,12 +143,16 @@ class _PopupViewState extends State<PopupView> {
 
 // The view that displays the content of a [Popup].
 class _PopupViewInternal extends StatefulWidget {
-  const _PopupViewInternal({required this.popup, required this.onClose});
+  const _PopupViewInternal({required this.popup, this.onClose, this.onHome});
 
   /// The [Popup] object to be displayed.
   final Popup popup;
 
   final VoidCallback? onClose;
+
+  /// An optional callback function that is used in the pop-up for utility network associations.
+  /// it returns to original association regardless of navigation depth.
+  final VoidCallback? onHome;
 
   @override
   State<StatefulWidget> createState() => _PopupStateInternal();
@@ -235,6 +239,13 @@ class _PopupStateInternal extends State<_PopupViewInternal> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
+          Visibility(
+            visible: widget.onHome != null,
+            child: IconButton(
+              icon: const Icon(Icons.arrow_upward),
+              onPressed: widget.onHome,
+            ),
+          ),
           Expanded(
             child: Text(
               widget.popup.title,
