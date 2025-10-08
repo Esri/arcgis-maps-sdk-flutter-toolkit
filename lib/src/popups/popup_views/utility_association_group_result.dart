@@ -106,7 +106,7 @@ class _UtilityAssociationGroupResultState
                 groupResult: widget.utilityAssociationGroupResult,
               ),
               key: ValueKey(
-                'UtilityAssociationSelectionPage_${widget.utilityAssociationGroupResult.name}',
+                'UtilityAssociationSelectionPage_${widget.utilityAssociationGroupResult.hashCode}',
               ),
             ),
           );

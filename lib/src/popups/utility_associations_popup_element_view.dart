@@ -223,7 +223,7 @@ class _AssociationsFilterResultTile extends StatelessWidget {
     state._push(
       MaterialPage<Widget>(
         key: ValueKey(
-          'UtilityAssociationsFilterResultView_${associationsFilterResult.filter.filterType.name}',
+          'UtilityAssociationsFilterResultView_${associationsFilterResult.hashCode}',
         ),
         child: _UtilityAssociationsFilterResultView(
           associationsFilterResult: associationsFilterResult,

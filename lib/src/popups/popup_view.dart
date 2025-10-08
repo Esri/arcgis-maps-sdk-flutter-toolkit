@@ -114,15 +114,7 @@ class _PopupViewState extends State<PopupView> {
   // Push a new page onto the navigation stack.
   void _push(Page<Widget> page) {
     setState(() {
-      final existingIndex = _pages.indexWhere((p) => p.key == page.key);
-      if (existingIndex != -1) {
-        // Page already present; remove pages above it so it becomes the top.
-        if (existingIndex < _pages.length - 1) {
-          _pages.removeRange(existingIndex + 1, _pages.length);
-        }
-      } else {
-        _pages.add(page);
-      }
+      _pages.add(page);
     });
   }
 

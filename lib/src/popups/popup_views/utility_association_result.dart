@@ -100,7 +100,7 @@ class _UtilityAssociationResultWidget extends StatelessWidget {
         );
       case UtilityAssociationType.junctionEdgeObjectConnectivityMidspan:
         return const ImageIcon(
-          AssetImage('$assetsPath/connection-end-middle-24.png'),
+          AssetImage('$assetsPath/connection-middle-24.png'),
           size: 24,
         );
       case UtilityAssociationType.connectivity:
