@@ -25,7 +25,7 @@ part of '../../arcgis_maps_toolkit.dart';
 /// The [Authenticator] will handle many different types of authentication, for example:
 /// * ArcGIS authentication (token and OAuth)
 /// * Integrated Windows Authentication (IWA)
-/// * Client Cerfificate (PKI)
+/// * Client Certificate (PKI)
 /// * If credentials were persisted to the keychain, the authenticator will use those instead of requiring the user to re-enter credentials.
 ///
 /// ## Usage
