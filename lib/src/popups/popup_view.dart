@@ -96,9 +96,13 @@ class _PopupViewState extends State<PopupView> {
       pages: List.of(_pages),
       // Handle the back button press to pop the last page.
       onDidRemovePage: (page) {
-        // If the last page is removed, close the popup view.
         if (_pages.isEmpty) {
-          widget.onClose?.call();
+          // Defer to avoid setState during build of PopupView / Navigator.
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted) {
+              widget.onClose?.call();
+            }
+          });
         }
       },
     );
@@ -120,10 +124,12 @@ class _PopupViewState extends State<PopupView> {
 
   // Pop the last page from the navigation stack.
   bool _pop() {
-    if (_pages.isNotEmpty) {
+    if (_pages.length > 1) {
       setState(_pages.removeLast);
       return true;
     }
+    // At root: treat as close request instead of popping (avoids empty pages list).
+    widget.onClose?.call();
     return false;
   }
 
@@ -192,11 +198,7 @@ class _PopupStateInternal extends State<_PopupViewInternal> {
             _buildTitleWidget(
               style: themeData.textTheme.titleMedium,
               onClosePressed: () {
-                if (widget.onClose != null) {
-                  widget.onClose!();
-                } else {
-                  Navigator.of(context).pop();
-                }
+                widget.onClose?.call();
               },
             ),
             const Divider(),
