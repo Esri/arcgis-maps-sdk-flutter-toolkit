@@ -37,14 +37,20 @@ class _UtilityAssociationsFilterResultViewState
   /// Build the [UtilityAssociationFilterResult] detail view.
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 20),
-      child: SingleChildScrollView(
+    final themeData = _popupViewThemeData;
+    return Theme(
+      data: themeData,
+      child: Container(
+        decoration: BoxDecoration(
+          color: themeData.colorScheme.surface,
+          borderRadius: BorderRadius.circular(12),
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             _buildNavigationHeader(context),
-            _buildListUtilityAssociationGroupResult(),
+            const Divider(),
+            Expanded(child: _buildListUtilityAssociationGroupResult()),
           ],
         ),
       ),
@@ -53,8 +59,8 @@ class _UtilityAssociationsFilterResultViewState
 
   Widget _buildListUtilityAssociationGroupResult() {
     final groupResults = widget.associationsFilterResult.groupResults;
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 10),
+    return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
       child: ListView.separated(
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
@@ -75,32 +81,38 @@ class _UtilityAssociationsFilterResultViewState
   // Build the navigation header.
   Widget _buildNavigationHeader(BuildContext context) {
     final state = context.findAncestorStateOfType<_PopupViewState>()!;
-    return ListTile(
-      // (^) back to the initial page.
-      leading: IconButton(
-        onPressed: state._popToRoot,
-        icon: const Icon(Icons.arrow_upward),
-      ),
-      title: Text(
-        // UtilityAssociationsFilter title
-        widget.associationsFilterResult.filter.title,
-        style: Theme.of(
-          context,
-        ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
-      ),
-      subtitle: Text(
-        // UtilityAssociationsFilter description
-        widget.associationsFilterResult.filter.description,
-        style: Theme.of(
-          context,
-        ).textTheme.bodySmall?.copyWith(color: Colors.grey[600]),
-      ),
-      // (x) close the page.
-      trailing: IconButton(
-        icon: const Icon(Icons.close),
-        onPressed: state._pop,
-        padding: EdgeInsets.zero,
-        constraints: const BoxConstraints(),
+    return Padding(
+      padding: const EdgeInsets.all(12),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          // (^) back to the initial page.
+          IconButton(
+            onPressed: state._popToRoot,
+            icon: const Icon(Icons.arrow_upward),
+          ),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  // UtilityAssociationsFilter title
+                  widget.associationsFilterResult.filter.title,
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+                Text(
+                  // UtilityAssociationsFilter description
+                  widget.associationsFilterResult.filter.description,
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodySmall?.copyWith(color: Colors.grey[600]),
+                ),
+              ],
+            ),
+          ),
+          // (x) close the page.
+          IconButton(icon: const Icon(Icons.close), onPressed: state._pop),
+        ],
       ),
     );
   }
