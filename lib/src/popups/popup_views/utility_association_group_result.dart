@@ -104,7 +104,6 @@ class _UtilityAssociationGroupResultState
             MaterialPage(
               child: _AssociationResultSelectionPage(
                 groupResult: widget.utilityAssociationGroupResult,
-                onClose: state._pop,
               ),
               key: ValueKey(
                 'UtilityAssociationSelectionPage_${widget.utilityAssociationGroupResult.hashCode}',
