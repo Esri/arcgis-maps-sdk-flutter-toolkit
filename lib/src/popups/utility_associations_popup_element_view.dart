@@ -73,20 +73,17 @@ class _UtilityAssociationsPopupElementViewState
           // The UtilityAssociationsFilterResult is ready to retrieve.
           return buildAssociationsPopupElementCard(context);
         } else {
-          return Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              spacing: 20,
-              children: [
-                const Text('Building the UtilityAssociationPopup View'),
-                // Connection state label
-                Text(snapshot.connectionState.name),
-                Center(
-                  child: CircularProgressIndicator(
+          return Card(
+            child: Padding(
+              padding: const EdgeInsets.all(10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(
                     semanticsLabel: widget.popupElement.title,
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           );
         }
