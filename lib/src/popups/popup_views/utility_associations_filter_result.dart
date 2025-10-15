@@ -37,22 +37,18 @@ class _UtilityAssociationsFilterResultViewState
   /// Build the [UtilityAssociationFilterResult] detail view.
   @override
   Widget build(BuildContext context) {
-    final themeData = _popupViewThemeData;
-    return Theme(
-      data: themeData,
-      child: Container(
-        decoration: BoxDecoration(
-          color: themeData.colorScheme.surface,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildNavigationHeader(context),
-            const Divider(),
-            Expanded(child: _buildListUtilityAssociationGroupResult()),
-          ],
-        ),
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildNavigationHeader(context),
+          const Divider(),
+          Expanded(child: _buildListUtilityAssociationGroupResult()),
+        ],
       ),
     );
   }
