@@ -145,6 +145,7 @@ class _UtilityAssociationsPopupElementViewState
 
     return ListView.separated(
       shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
       itemCount: associationsFilterResults.length,
       separatorBuilder: (context, index) {
         final filterResult = associationsFilterResults[index + 1];
