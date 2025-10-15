@@ -76,13 +76,10 @@ class _UtilityAssociationsPopupElementViewState
           return Card(
             child: Padding(
               padding: const EdgeInsets.all(10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CircularProgressIndicator(
-                    semanticsLabel: widget.popupElement.title,
-                  ),
-                ],
+              child: Center(
+                child: CircularProgressIndicator(
+                  semanticsLabel: widget.popupElement.title,
+                ),
               ),
             ),
           );
