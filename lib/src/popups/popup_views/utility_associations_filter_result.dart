@@ -61,11 +61,10 @@ class _UtilityAssociationsFilterResultViewState
     final groupResults = widget.associationsFilterResult.groupResults;
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-      child: ListView.separated(
+      child: ListView.builder(
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
         padding: EdgeInsets.zero,
-        separatorBuilder: (context, index) => _buildDivider(context),
         itemCount: groupResults.length,
         itemBuilder: (context, index) {
           // Get a UtilityAssociationGroupResult
