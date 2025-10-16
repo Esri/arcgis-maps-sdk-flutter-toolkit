@@ -51,9 +51,6 @@ class _UtilityAssociationGroupResultState
           Theme.of(context).cardTheme.color ??
           Theme.of(context).colorScheme.surface,
       child: ExpansionTile(
-        leading: isExpanded
-            ? const Icon(Icons.keyboard_arrow_down_rounded)
-            : const Icon(Icons.keyboard_arrow_right_rounded),
         title: Text(title),
         initiallyExpanded: isExpanded,
         onExpansionChanged: (value) => setState(() => isExpanded = value),
@@ -64,7 +61,7 @@ class _UtilityAssociationGroupResultState
         tilePadding: const EdgeInsets.symmetric(horizontal: 10),
         childrenPadding: const EdgeInsets.all(2),
         // Show a totalCount in a grey circle
-        trailing: Padding(
+        leading: Padding(
           padding: const EdgeInsets.only(right: 10),
           child: SizedBox(
             width: 25,
