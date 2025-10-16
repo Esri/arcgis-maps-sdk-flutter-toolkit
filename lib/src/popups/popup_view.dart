@@ -92,19 +92,22 @@ class _PopupViewState extends State<PopupView> {
 
   @override
   Widget build(BuildContext context) {
-    return Navigator(
-      pages: List.of(_pages),
-      // Handle the back button press to pop the last page.
-      onDidRemovePage: (page) {
-        if (_pages.isEmpty) {
-          // Defer to avoid setState during build of PopupView / Navigator.
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (mounted) {
-              widget.onClose?.call();
-            }
-          });
-        }
-      },
+    return Theme(
+      data: _popupViewThemeData,
+      child: Navigator(
+        pages: List.of(_pages),
+        // Handle the back button press to pop the last page.
+        onDidRemovePage: (page) {
+          if (_pages.isEmpty) {
+            // Defer to avoid setState during build of PopupView / Navigator.
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (mounted) {
+                widget.onClose?.call();
+              }
+            });
+          }
+        },
+      ),
     );
   }
 
@@ -185,48 +188,44 @@ class _PopupStateInternal extends State<_PopupViewInternal> {
 
   @override
   Widget build(BuildContext context) {
-    final themeData = _popupViewThemeData;
-    return Theme(
-      data: themeData,
-      child: Container(
-        decoration: BoxDecoration(
-          color: themeData.colorScheme.surface,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Column(
-          children: [
-            _buildTitleWidget(
-              style: themeData.textTheme.titleMedium,
-              onClosePressed: () {
-                widget.onClose?.call();
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        children: [
+          _buildTitleWidget(
+            style: Theme.of(context).textTheme.titleMedium,
+            onClosePressed: () {
+              widget.onClose?.call();
+            },
+          ),
+          const Divider(),
+          Expanded(
+            child: FutureBuilder(
+              // Evaluate the pop-up expressions asynchronously,
+              // it needs to be done before displaying the pop-up elements.
+              future: _futurePopupExprEvaluation,
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return Center(
+                    child: Text(
+                      'Unable to evaluate pop-up expressions.',
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                        color: Theme.of(context).colorScheme.error,
+                      ),
+                    ),
+                  );
+                }
+                if (snapshot.connectionState == ConnectionState.done) {
+                  return _buildElementsView();
+                }
+                return const Center(child: CircularProgressIndicator());
               },
             ),
-            const Divider(),
-            Expanded(
-              child: FutureBuilder(
-                // Evaluate the pop-up expressions asynchronously,
-                // it needs to be done before displaying the pop-up elements.
-                future: _futurePopupExprEvaluation,
-                builder: (context, snapshot) {
-                  if (snapshot.hasError) {
-                    return Center(
-                      child: Text(
-                        'Unable to evaluate pop-up expressions.',
-                        style: themeData.textTheme.bodyLarge?.copyWith(
-                          color: Theme.of(context).colorScheme.error,
-                        ),
-                      ),
-                    );
-                  }
-                  if (snapshot.connectionState == ConnectionState.done) {
-                    return _buildElementsView();
-                  }
-                  return const Center(child: CircularProgressIndicator());
-                },
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

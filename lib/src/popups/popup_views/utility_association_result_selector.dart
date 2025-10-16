@@ -21,6 +21,7 @@ class _AssociationResultSelectionPage extends StatefulWidget {
   const _AssociationResultSelectionPage({required this.groupResult});
 
   final UtilityAssociationGroupResult groupResult;
+
   @override
   _AssociationResultSelectionPageState createState() =>
       _AssociationResultSelectionPageState();
@@ -38,62 +39,89 @@ class _AssociationResultSelectionPageState
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16),
+    final state = context.findAncestorStateOfType<_PopupViewState>()!;
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: BorderRadius.circular(12),
+      ),
       child: Column(
         children: [
-          ListTile(
-            leading: IconButton(
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-              icon: const Icon(Icons.arrow_back),
-            ),
-            title: Text(
-              widget.groupResult.name,
-              style: Theme.of(
-                context,
-              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
-            ),
-          ),
-          TextField(
-            controller: _searchController,
-            decoration: const InputDecoration(
-              labelText: 'Search',
-              border: OutlineInputBorder(),
-            ),
-          ),
-
-          Expanded(
-            child: ValueListenableBuilder<TextEditingValue>(
-              valueListenable: _searchController,
-              builder: (context, value, child) {
-                final filteredResults = widget.groupResult.associationResults
-                    .where(
-                      (result) => result.title.toLowerCase().contains(
-                        value.text.toLowerCase(),
-                      ),
-                    )
-                    .toList();
-
-                return ListView.separated(
-                  separatorBuilder: (context, index) {
-                    return _buildDivider(context);
-                  },
-                  itemCount: filteredResults.length,
-                  itemBuilder: (context, index) => ListTile(
-                    title: Text(
-                      filteredResults[index].title,
-                      style: Theme.of(context).textTheme.titleSmall,
-                    ),
-                    onTap: () {
-                      final feature = filteredResults[index].associatedFeature;
-                      _navigateToAssociationPopupPage(context, feature);
-                    },
-                    trailing: const Icon(Icons.chevron_right),
+          Padding(
+            padding: const EdgeInsets.all(12),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                IconButton(
+                  onPressed: state._popToRoot,
+                  icon: const Icon(Icons.arrow_upward),
+                ),
+                Expanded(
+                  child: Text(
+                    widget.groupResult.name,
+                    style: Theme.of(context).textTheme.titleMedium,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 2,
                   ),
-                );
-              },
+                ),
+                IconButton(
+                  icon: const Icon(Icons.close),
+                  onPressed: state._pop,
+                ),
+              ],
+            ),
+          ),
+          const Divider(),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+              child: Column(
+                spacing: 8,
+                children: [
+                  TextField(
+                    controller: _searchController,
+                    decoration: const InputDecoration(
+                      labelText: 'Search',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  Expanded(
+                    child: ValueListenableBuilder<TextEditingValue>(
+                      valueListenable: _searchController,
+                      builder: (context, value, child) {
+                        final filteredResults = widget
+                            .groupResult
+                            .associationResults
+                            .where(
+                              (result) => result.title.toLowerCase().contains(
+                                value.text.toLowerCase(),
+                              ),
+                            )
+                            .toList();
+
+                        return ListView.separated(
+                          separatorBuilder: (context, index) {
+                            return _buildDivider(context);
+                          },
+                          itemCount: filteredResults.length,
+                          itemBuilder: (context, index) => ListTile(
+                            title: Text(
+                              filteredResults[index].title,
+                              style: Theme.of(context).textTheme.titleSmall,
+                            ),
+                            onTap: () {
+                              final feature =
+                                  filteredResults[index].associatedFeature;
+                              _navigateToAssociationPopupPage(context, feature);
+                            },
+                            trailing: const Icon(Icons.chevron_right),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
