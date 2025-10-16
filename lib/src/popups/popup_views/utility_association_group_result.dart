@@ -45,49 +45,60 @@ class _UtilityAssociationGroupResultState
     final utilityAssociationResult =
         widget.utilityAssociationGroupResult.associationResults[0];
 
-    return ExpansionTile(
-      leading: isExpanded
-          ? const Icon(Icons.keyboard_arrow_down_rounded)
-          : const Icon(Icons.keyboard_arrow_right_rounded),
-      title: Text(title),
-      initiallyExpanded: isExpanded,
-      onExpansionChanged: (value) => setState(() => isExpanded = value),
-      collapsedShape: const BeveledRectangleBorder(),
-      // Show a totalCount in a grey circle
-      trailing: Padding(
-        padding: const EdgeInsets.only(right: 10),
-        child: SizedBox(
-          width: 25,
-          height: 25,
-          child: DecoratedBox(
-            decoration: ShapeDecoration(
-              shape: const CircleBorder(),
-              color: Colors.grey[300],
-            ),
-            child: Center(
-              child: Text(
-                '$totalCount',
-                style: Theme.of(context).textTheme.labelMedium,
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      color:
+          Theme.of(context).cardTheme.color ??
+          Theme.of(context).colorScheme.surface,
+      child: ExpansionTile(
+        leading: isExpanded
+            ? const Icon(Icons.keyboard_arrow_down_rounded)
+            : const Icon(Icons.keyboard_arrow_right_rounded),
+        title: Text(title),
+        initiallyExpanded: isExpanded,
+        onExpansionChanged: (value) => setState(() => isExpanded = value),
+        collapsedShape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        tilePadding: const EdgeInsets.symmetric(horizontal: 10),
+        childrenPadding: const EdgeInsets.all(2),
+        // Show a totalCount in a grey circle
+        trailing: Padding(
+          padding: const EdgeInsets.only(right: 10),
+          child: SizedBox(
+            width: 25,
+            height: 25,
+            child: DecoratedBox(
+              decoration: ShapeDecoration(
+                shape: const CircleBorder(),
+                color: Colors.grey[300],
+              ),
+              child: Center(
+                child: Text(
+                  '$totalCount',
+                  style: Theme.of(context).textTheme.labelMedium,
+                ),
               ),
             ),
           ),
         ),
-      ),
 
-      children: totalCount > 1
-          ? [
-              _buildDivider(context),
-              _UtilityAssociationResultWidget(
-                utilityAssociationResult: utilityAssociationResult,
-              ),
-              _buildDivider(context),
-              buildShowAllWidget(totalCount),
-            ]
-          : [
-              _UtilityAssociationResultWidget(
-                utilityAssociationResult: utilityAssociationResult,
-              ),
-            ],
+        children: totalCount > 1
+            ? [
+                _buildDivider(context),
+                _UtilityAssociationResultWidget(
+                  utilityAssociationResult: utilityAssociationResult,
+                ),
+                _buildDivider(context),
+                buildShowAllWidget(totalCount),
+              ]
+            : [
+                _UtilityAssociationResultWidget(
+                  utilityAssociationResult: utilityAssociationResult,
+                ),
+              ],
+      ),
     );
   }
 
