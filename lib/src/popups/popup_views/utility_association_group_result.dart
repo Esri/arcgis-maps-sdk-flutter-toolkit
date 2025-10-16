@@ -62,10 +62,10 @@ class _UtilityAssociationGroupResultState
         childrenPadding: const EdgeInsets.all(2),
         // Show a totalCount in a grey circle
         leading: Padding(
-          padding: const EdgeInsets.only(right: 10),
+          padding: const EdgeInsets.only(left: 10),
           child: SizedBox(
-            width: 25,
-            height: 25,
+            width: 30,
+            height: 30,
             child: DecoratedBox(
               decoration: ShapeDecoration(
                 shape: const CircleBorder(),
