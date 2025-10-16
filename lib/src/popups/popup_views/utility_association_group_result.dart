@@ -58,24 +58,21 @@ class _UtilityAssociationGroupResultState
           borderRadius: BorderRadius.circular(8),
         ),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        tilePadding: const EdgeInsets.symmetric(horizontal: 10),
+        tilePadding: const EdgeInsets.fromLTRB(12, 0, 10, 0),
         childrenPadding: const EdgeInsets.all(2),
         // Show a totalCount in a grey circle
-        leading: Padding(
-          padding: const EdgeInsets.only(left: 10),
-          child: SizedBox(
-            width: 30,
-            height: 30,
-            child: DecoratedBox(
-              decoration: ShapeDecoration(
-                shape: const CircleBorder(),
-                color: Colors.grey[300],
-              ),
-              child: Center(
-                child: Text(
-                  '$totalCount',
-                  style: Theme.of(context).textTheme.labelMedium,
-                ),
+        leading: SizedBox(
+          width: 30,
+          height: 30,
+          child: DecoratedBox(
+            decoration: ShapeDecoration(
+              shape: const CircleBorder(),
+              color: Colors.grey[300],
+            ),
+            child: Center(
+              child: Text(
+                '$totalCount',
+                style: Theme.of(context).textTheme.labelMedium,
               ),
             ),
           ),
