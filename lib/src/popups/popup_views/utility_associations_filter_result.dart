@@ -49,7 +49,10 @@ class _UtilityAssociationsFilterResultViewState
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildNavigationHeader(context),
+          _UtilityAssociationHeader(
+            title: widget.associationsFilterResult.filter.title,
+            subtitle: widget.popupTitle,
+          ),
           const Divider(),
           Expanded(child: _buildListUtilityAssociationGroupResult()),
         ],
@@ -73,45 +76,6 @@ class _UtilityAssociationsFilterResultViewState
             utilityAssociationGroupResult: groupResult,
           );
         },
-      ),
-    );
-  }
-
-  // Build the navigation header.
-  Widget _buildNavigationHeader(BuildContext context) {
-    final state = context.findAncestorStateOfType<_PopupViewState>()!;
-    return Padding(
-      padding: const EdgeInsets.all(12),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          // (^) back to the initial page.
-          IconButton(
-            onPressed: state._popToRoot,
-            icon: const Icon(Icons.arrow_upward),
-          ),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  // UtilityAssociationsFilter title
-                  widget.associationsFilterResult.filter.title,
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                Text(
-                  // The Popup's original title
-                  widget.popupTitle,
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodySmall?.copyWith(color: Colors.grey[600]),
-                ),
-              ],
-            ),
-          ),
-          // (x) close the page.
-          IconButton(icon: const Icon(Icons.close), onPressed: state._pop),
-        ],
       ),
     );
   }

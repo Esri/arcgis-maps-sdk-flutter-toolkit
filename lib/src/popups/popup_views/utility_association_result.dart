@@ -162,11 +162,7 @@ void _navigateToAssociationPopupPage(
       final popup = feature.toPopup();
       state._push(
         MaterialPage(
-          child: _PopupViewInternal(
-            popup: popup,
-            onClose: state._pop,
-            onHome: state._popToRoot,
-          ),
+          child: _PopupViewInternal(popup: popup, onClose: state._pop),
           key: ValueKey(key),
         ),
       );

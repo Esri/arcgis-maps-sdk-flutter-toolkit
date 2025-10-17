@@ -16,6 +16,7 @@
 
 part of '../../../arcgis_maps_toolkit.dart';
 
+/// Header widget with title, optional subtitle, and navigation controls.
 class _UtilityAssociationHeader extends StatelessWidget {
   const _UtilityAssociationHeader({required this.title, this.subtitle});
 
@@ -30,12 +31,22 @@ class _UtilityAssociationHeader extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(12),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          // (^) back to the initial page.
-          IconButton(
-            onPressed: state._popToRoot,
-            icon: const Icon(Icons.arrow_upward),
+          // (<) back one step.
+          Visibility(
+            visible: !state.isHome,
+            child: IconButton(
+              onPressed: state._pop,
+              icon: const Icon(Icons.arrow_back),
+            ),
+          ),
+          // (^) exit associations.
+          Visibility(
+            visible: !state.isHome,
+            child: IconButton(
+              onPressed: state._popToRoot,
+              icon: const Icon(Icons.arrow_upward),
+            ),
           ),
           Expanded(
             child: Column(
@@ -57,8 +68,8 @@ class _UtilityAssociationHeader extends StatelessWidget {
               ],
             ),
           ),
-          // (x) close the page.
-          IconButton(icon: const Icon(Icons.close), onPressed: state._pop),
+          // (x) close the popup.
+          IconButton(icon: const Icon(Icons.close), onPressed: state._close),
         ],
       ),
     );

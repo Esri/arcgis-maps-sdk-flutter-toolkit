@@ -39,7 +39,6 @@ class _AssociationResultSelectionPageState
 
   @override
   Widget build(BuildContext context) {
-    final state = context.findAncestorStateOfType<_PopupViewState>()!;
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
@@ -47,30 +46,7 @@ class _AssociationResultSelectionPageState
       ),
       child: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(12),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                IconButton(
-                  onPressed: state._popToRoot,
-                  icon: const Icon(Icons.arrow_upward),
-                ),
-                Expanded(
-                  child: Text(
-                    widget.groupResult.name,
-                    style: Theme.of(context).textTheme.titleMedium,
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 2,
-                  ),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.close),
-                  onPressed: state._pop,
-                ),
-              ],
-            ),
-          ),
+          _UtilityAssociationHeader(title: widget.groupResult.name),
           const Divider(),
           Expanded(
             child: Padding(
