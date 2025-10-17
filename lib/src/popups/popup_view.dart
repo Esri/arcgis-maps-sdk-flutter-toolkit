@@ -290,6 +290,7 @@ class _PopupStateInternal extends State<_PopupViewInternal> {
                   return _UtilityAssociationsPopupElementView(
                     geoElement: widget.popup.geoElement,
                     popupElement: element,
+                    popupTitle: widget.popup.title,
                     isExpanded: true,
                   );
                 } else {

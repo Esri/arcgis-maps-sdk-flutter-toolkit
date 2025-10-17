@@ -80,6 +80,7 @@ ThemeData _popupViewThemeData = ThemeData(
     backgroundColor: Colors.white,
     collapsedBackgroundColor: Colors.white,
   ),
+  listTileTheme: const ListTileThemeData(iconColor: Colors.grey),
   // Used by divider widgets:
   // - below main pop-up title.
   // - between fields in fields section.

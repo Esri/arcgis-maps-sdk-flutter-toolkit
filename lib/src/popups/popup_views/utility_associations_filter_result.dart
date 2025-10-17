@@ -22,10 +22,14 @@ part of '../../../arcgis_maps_toolkit.dart';
 class _UtilityAssociationsFilterResultView extends StatefulWidget {
   const _UtilityAssociationsFilterResultView({
     required this.associationsFilterResult,
+    required this.popupTitle,
   });
 
   /// The utility associations filter result to expand.
   final UtilityAssociationsFilterResult associationsFilterResult;
+
+  /// The title of the popup that contains this popup element.
+  final String popupTitle;
 
   @override
   _UtilityAssociationsFilterResultViewState createState() =>
@@ -57,11 +61,10 @@ class _UtilityAssociationsFilterResultViewState
     final groupResults = widget.associationsFilterResult.groupResults;
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-      child: ListView.separated(
+      child: ListView.builder(
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
         padding: EdgeInsets.zero,
-        separatorBuilder: (context, index) => _buildDivider(context),
         itemCount: groupResults.length,
         itemBuilder: (context, index) {
           // Get a UtilityAssociationGroupResult
@@ -97,8 +100,8 @@ class _UtilityAssociationsFilterResultViewState
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
                 Text(
-                  // UtilityAssociationsFilter description
-                  widget.associationsFilterResult.filter.description,
+                  // The Popup's original title
+                  widget.popupTitle,
                   style: Theme.of(
                     context,
                   ).textTheme.bodySmall?.copyWith(color: Colors.grey[600]),

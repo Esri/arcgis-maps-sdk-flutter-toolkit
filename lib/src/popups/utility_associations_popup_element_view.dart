@@ -22,6 +22,7 @@ class _UtilityAssociationsPopupElementView extends StatefulWidget {
   const _UtilityAssociationsPopupElementView({
     required this.geoElement,
     required this.popupElement,
+    required this.popupTitle,
     this.isExpanded = false,
   });
 
@@ -30,6 +31,9 @@ class _UtilityAssociationsPopupElementView extends StatefulWidget {
 
   /// The utility associations pop-up element to be displayed.
   final UtilityAssociationsPopupElement popupElement;
+
+  /// The title of the popup that contains this popup element.
+  final String popupTitle;
 
   /// A boolean indicating whether the expansion tile should be initially expanded.
   final bool isExpanded;
@@ -152,6 +156,7 @@ class _UtilityAssociationsPopupElementViewState
         if (filterResult.resultCount > 0) {
           return _AssociationsFilterResultTile(
             associationsFilterResult: filterResult,
+            popupTitle: widget.popupTitle,
           );
         }
         return const SizedBox.shrink();
@@ -190,8 +195,12 @@ class _UtilityAssociationsPopupElementViewState
 /// A view that displays a list of [UtilityAssociationsFilterResult]
 /// and allows navigating to its group results.
 class _AssociationsFilterResultTile extends StatelessWidget {
-  const _AssociationsFilterResultTile({required this.associationsFilterResult});
+  const _AssociationsFilterResultTile({
+    required this.associationsFilterResult,
+    required this.popupTitle,
+  });
   final UtilityAssociationsFilterResult associationsFilterResult;
+  final String popupTitle;
 
   @override
   Widget build(BuildContext context) {
@@ -222,6 +231,7 @@ class _AssociationsFilterResultTile extends StatelessWidget {
         ),
         child: _UtilityAssociationsFilterResultView(
           associationsFilterResult: associationsFilterResult,
+          popupTitle: popupTitle,
         ),
       ),
     );
