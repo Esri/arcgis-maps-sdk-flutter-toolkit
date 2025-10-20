@@ -162,7 +162,6 @@ void _navigateToAssociationPopupPage(
       final popup = feature.toPopup();
       state._push(
         MaterialPage(
-          //fixme is this onClose correct? we want it to exit. I don't think it's used.
           child: _PopupViewInternal(popup: popup),
           key: ValueKey(key),
         ),

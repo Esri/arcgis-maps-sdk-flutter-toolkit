@@ -52,12 +52,14 @@ class _UtilityAssociationHeader extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Title.
                 Text(
                   title,
                   style: Theme.of(context).textTheme.titleMedium,
                   overflow: TextOverflow.ellipsis,
                   maxLines: 2,
                 ),
+                // Subtitle (optional).
                 if (subtitle != null)
                   Text(
                     subtitle!,
