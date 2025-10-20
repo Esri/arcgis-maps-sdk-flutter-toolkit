@@ -78,7 +78,7 @@ class _PopupViewState extends State<PopupView> {
     super.initState();
     _pages.add(
       MaterialPage(
-        child: _PopupViewInternal(popup: widget.popup, onClose: widget.onClose),
+        child: _PopupViewInternal(popup: widget.popup),
         key: ValueKey(_getPopupViewKey(widget.popup.geoElement)),
       ),
     );
@@ -160,12 +160,10 @@ class _PopupViewState extends State<PopupView> {
 
 // The view that displays the content of a [Popup].
 class _PopupViewInternal extends StatefulWidget {
-  const _PopupViewInternal({required this.popup, this.onClose});
+  const _PopupViewInternal({required this.popup});
 
   /// The [Popup] object to be displayed.
   final Popup popup;
-
-  final VoidCallback? onClose;
 
   @override
   State<StatefulWidget> createState() => _PopupStateInternal();
