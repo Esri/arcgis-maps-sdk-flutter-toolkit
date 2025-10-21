@@ -60,6 +60,7 @@ part 'src/popups/text_popup_element_view.dart';
 part 'src/popups/utility_associations_popup_element_view.dart';
 part 'src/popups/popup_views/utility_associations_filter_result.dart';
 part 'src/popups/popup_views/utility_association_group_result.dart';
+part 'src/popups/popup_views/utility_association_header.dart';
 part 'src/popups/popup_views/utility_association_result.dart';
 part 'src/popups/popup_views/utility_association_result_selector.dart';
 part 'src/popups/popup_views/bar_chart.dart';

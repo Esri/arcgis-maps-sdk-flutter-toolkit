@@ -155,18 +155,14 @@ void _navigateToAssociationPopupPage(
   // on the navigation stack, pop back to it.
   final key = _getPopupViewKey(feature);
   if (state != null) {
-    if (state._isExistingPopupPage(key) == true) {
+    if (state._isExistingPopupPage(key)) {
       state._popupWithKey(key);
     } else {
       // otherwise, show a new PopupView.
       final popup = feature.toPopup();
       state._push(
         MaterialPage(
-          child: _PopupViewInternal(
-            popup: popup,
-            onClose: state._pop,
-            onHome: state._popToRoot,
-          ),
+          child: _PopupViewInternal(popup: popup),
           key: ValueKey(key),
         ),
       );
