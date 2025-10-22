@@ -53,7 +53,7 @@ class _UtilityAssociationResultWidget extends StatelessWidget {
         utilityAssociationResult.associatedFeature,
       ),
       trailing: isOriginFeature
-          ? const Icon(Icons.arrow_upward)
+          ? const Icon(Icons.keyboard_return)
           : const Icon(Icons.chevron_right),
     );
   }

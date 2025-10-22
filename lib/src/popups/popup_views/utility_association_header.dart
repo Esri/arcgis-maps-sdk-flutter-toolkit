@@ -32,20 +32,26 @@ class _UtilityAssociationHeader extends StatelessWidget {
       padding: const EdgeInsets.all(12),
       child: Row(
         children: [
-          // (<) back one step.
           Visibility(
             visible: !state.isHome,
-            child: IconButton(
-              onPressed: state._pop,
-              icon: const Icon(Icons.arrow_back),
-            ),
-          ),
-          // (^) exit associations.
-          Visibility(
-            visible: !state.isHome,
-            child: IconButton(
-              onPressed: state._popToRoot,
-              icon: const Icon(Icons.arrow_upward),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(0, 0, 8, 0),
+              child: Row(
+                children: [
+                  // (<) back one step.
+                  IconButton(
+                    visualDensity: const VisualDensity(horizontal: -2),
+                    onPressed: state._pop,
+                    icon: const Icon(Icons.chevron_left),
+                  ),
+                  // (^) exit associations.
+                  IconButton(
+                    visualDensity: const VisualDensity(horizontal: -2),
+                    onPressed: state._popToRoot,
+                    icon: const Icon(Icons.keyboard_return),
+                  ),
+                ],
+              ),
             ),
           ),
           Expanded(
@@ -71,7 +77,11 @@ class _UtilityAssociationHeader extends StatelessWidget {
             ),
           ),
           // (x) close the popup.
-          IconButton(icon: const Icon(Icons.close), onPressed: state._close),
+          IconButton(
+            visualDensity: const VisualDensity(horizontal: -2),
+            icon: const Icon(Icons.close),
+            onPressed: state._close,
+          ),
         ],
       ),
     );
