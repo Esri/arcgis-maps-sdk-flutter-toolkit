@@ -151,12 +151,11 @@ void _navigateToAssociationPopupPage(
   ArcGISFeature feature,
 ) {
   final state = context.findAncestorStateOfType<_PopupViewState>();
-  // If the popup for this feature is the one that is the original one
-  // on the navigation stack, pop back to it.
-  final key = _getPopupViewKey(feature);
   if (state != null) {
+    // If the popup for this feature is already on the navigation stack, pop back to it.
+    final key = _getPopupViewKey(feature);
     if (state._isExistingPopupPage(key)) {
-      state._popupWithKey(key);
+      state._popToKey(key);
     } else {
       // otherwise, show a new PopupView.
       final popup = feature.toPopup();
