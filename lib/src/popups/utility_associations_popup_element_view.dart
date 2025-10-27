@@ -26,13 +26,13 @@ class _UtilityAssociationsPopupElementView extends StatefulWidget {
     this.isExpanded = false,
   });
 
-  /// Original geoElement of the popup.
+  /// Original geoElement of the pop-up.
   final GeoElement geoElement;
 
   /// The utility associations pop-up element to be displayed.
   final UtilityAssociationsPopupElement popupElement;
 
-  /// The title of the popup that contains this popup element.
+  /// The title of the pop-up view that contains this pop-up element.
   final String popupTitle;
 
   /// A boolean indicating whether the expansion tile should be initially expanded.
@@ -111,7 +111,7 @@ class _UtilityAssociationsPopupElementViewState
             borderRadius: BorderRadius.circular(8),
           ),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-          // The Popup title and description.
+          // The pop-up title and description.
           title: _PopupElementHeader(
             title: widget.popupElement.displayTitle,
             description: widget.popupElement.description,
@@ -164,7 +164,7 @@ class _UtilityAssociationsPopupElementViewState
     );
   }
 
-  // Build a no-association widget.
+  // Build a no-associations found widget.
   Widget buildNoAssociationsWidget() {
     return Padding(
       padding: const EdgeInsets.all(10),

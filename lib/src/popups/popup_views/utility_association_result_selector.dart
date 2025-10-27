@@ -16,7 +16,7 @@
 
 part of '../../../arcgis_maps_toolkit.dart';
 
-/// Display a list of [UtilityAssociationResult] with the text search text field.
+/// Display a list of [UtilityAssociationResult] with a text field to search the list.
 class _AssociationResultSelectionPage extends StatefulWidget {
   const _AssociationResultSelectionPage({required this.groupResult});
 

@@ -60,7 +60,7 @@ class _UtilityAssociationGroupResultState
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         tilePadding: const EdgeInsets.fromLTRB(12, 0, 10, 0),
         childrenPadding: const EdgeInsets.all(2),
-        // Show a totalCount in a grey circle
+        // Show a totalCount in a grey circle.
         leading: SizedBox(
           width: 30,
           height: 30,
