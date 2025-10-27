@@ -33,6 +33,7 @@ part of '../../arcgis_maps_toolkit.dart';
 /// * Supports elements containing Arcade expression and automatically evaluates expressions.
 /// * Displays media (images and charts) full-screen.
 /// * Supports hyperlinks in text, media, and fields elements.
+/// * Supports navigating through associations in a utility network.
 ///
 /// ## Usage
 ///
