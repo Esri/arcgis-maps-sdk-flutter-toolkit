@@ -112,11 +112,15 @@ class _PopupViewState extends State<PopupView> {
     );
   }
 
-  // Navigate to a pop-up view with the specified key, removing other pages.
-  void _popupWithKey(String key) {
-    setState(() {
-      _pages.removeWhere((page) => page.key != ValueKey(key));
-    });
+  // Navigate to the pop-up view with the specified key, removing later pages.
+  void _popToKey(String key) {
+    final valueKey = ValueKey(key);
+    final index = _pages.indexWhere((page) => page.key == valueKey);
+    if (index != -1 && index < _pages.length - 1) {
+      setState(() {
+        _pages.removeRange(index + 1, _pages.length);
+      });
+    }
   }
 
   // Push a new page onto the navigation stack.

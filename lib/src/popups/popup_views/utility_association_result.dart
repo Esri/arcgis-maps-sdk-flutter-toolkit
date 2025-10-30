@@ -37,7 +37,7 @@ class _UtilityAssociationResultWidget extends StatelessWidget {
 
     return ListTile(
       leading: getAssociationTypeIcon(utilityAssociate.associationType),
-      // UtilityAssociationResult Title.
+      // UtilityAssociationResult Title
       title: Text(
         utilityAssociationResult.title,
         style: Theme.of(context).textTheme.titleSmall,
@@ -128,7 +128,7 @@ class _UtilityAssociationResultWidget extends StatelessWidget {
   }
 }
 
-/// Add a toPopup function on [ArcGISFeature].
+/// Add a toPopup function to the [ArcGISFeature].
 extension on ArcGISFeature {
   Popup toPopup() {
     var popupDefinition = featureTable?.popupDefinition;
@@ -151,12 +151,11 @@ void _navigateToAssociationPopupPage(
   ArcGISFeature feature,
 ) {
   final state = context.findAncestorStateOfType<_PopupViewState>();
-  // If the pop-up for this feature is the one that is the original one
-  // on the navigation stack, pop back to it.
-  final key = _getPopupViewKey(feature);
   if (state != null) {
+    // If the popup for this feature is already on the navigation stack, pop back to it.
+    final key = _getPopupViewKey(feature);
     if (state._isExistingPopupPage(key)) {
-      state._popupWithKey(key);
+      state._popToKey(key);
     } else {
       // otherwise, show a new PopupView.
       final popup = feature.toPopup();
