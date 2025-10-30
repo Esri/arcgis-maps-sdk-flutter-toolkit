@@ -152,12 +152,12 @@ void _navigateToAssociationPopupPage(
 ) {
   final state = context.findAncestorStateOfType<_PopupViewState>();
   if (state != null) {
-    // If the popup for this feature is already on the navigation stack, pop back to it.
+    // If the pop-up for this feature is already on the navigation stack, pop back to it.
     final key = _getPopupViewKey(feature);
     if (state._isExistingPopupPage(key)) {
       state._popToKey(key);
     } else {
-      // otherwise, show a new PopupView.
+      // Otherwise, show a new PopupView.
       final popup = feature.toPopup();
       state._push(
         MaterialPage(
