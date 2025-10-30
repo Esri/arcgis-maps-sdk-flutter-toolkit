@@ -28,7 +28,7 @@ class _UtilityAssociationsFilterResultView extends StatefulWidget {
   /// The utility associations filter result to expand.
   final UtilityAssociationsFilterResult associationsFilterResult;
 
-  /// The title of the popup that contains this popup element.
+  /// The title of the pop-up that contains this pop-up element.
   final String popupTitle;
 
   @override
@@ -38,7 +38,7 @@ class _UtilityAssociationsFilterResultView extends StatefulWidget {
 
 class _UtilityAssociationsFilterResultViewState
     extends State<_UtilityAssociationsFilterResultView> {
-  /// Build the [UtilityAssociationFilterResult] detail view.
+  /// Build the [UtilityAssociationsFilterResult] detail view.
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -70,7 +70,7 @@ class _UtilityAssociationsFilterResultViewState
         padding: EdgeInsets.zero,
         itemCount: groupResults.length,
         itemBuilder: (context, index) {
-          // Get a UtilityAssociationGroupResult
+          // Get a UtilityAssociationGroupResult.
           final groupResult = groupResults[index];
           return _UtilityAssociationGroupResultWidget(
             utilityAssociationGroupResult: groupResult,
