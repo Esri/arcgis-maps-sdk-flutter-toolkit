@@ -41,6 +41,7 @@ API reference for each of the toolkit components can be found via the ArcGIS Map
 
 # Additional resources
 
+* View ArcGIS Maps SDK for Flutter Toolkit on: [pub.dev]((https://pub.dev/packages/arcgis_maps_toolkit)) | [Github](https://github.com/ArcGIS/arcgis-maps-sdk-flutter-toolkit)
 * New to ArcGIS? Explore our documentation: [Guide](https://developers.arcgis.com/flutter) | [API Reference](https://links.esri.com/flutter-api-ref)
 * Got a question? Ask the community on our [forum](https://links.esri.com/flutter-community).
 
