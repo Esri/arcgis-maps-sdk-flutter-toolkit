@@ -97,4 +97,14 @@ ThemeData _popupViewThemeData = ThemeData(
   iconTheme: const IconThemeData(color: Colors.grey),
   // Used by fullscreen dialog e.g. when an image or chart is tapped.
   appBarTheme: const AppBarTheme(),
+  inputDecorationTheme: const InputDecorationThemeData(
+    labelStyle: TextStyle(color: Colors.black),
+    focusedBorder: OutlineInputBorder(),
+    border: OutlineInputBorder(),
+  ),
+  textSelectionTheme: TextSelectionThemeData(
+    selectionColor: Colors.blue[200],
+    cursorColor: Colors.blue,
+    selectionHandleColor: Colors.blue,
+  ),
 );

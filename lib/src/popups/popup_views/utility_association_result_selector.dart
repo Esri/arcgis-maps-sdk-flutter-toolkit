@@ -56,10 +56,7 @@ class _AssociationResultSelectionPageState
                 children: [
                   TextField(
                     controller: _searchController,
-                    decoration: const InputDecoration(
-                      labelText: 'Search',
-                      border: OutlineInputBorder(),
-                    ),
+                    decoration: const InputDecoration(labelText: 'Search'),
                   ),
                   Expanded(
                     child: ValueListenableBuilder<TextEditingValue>(
