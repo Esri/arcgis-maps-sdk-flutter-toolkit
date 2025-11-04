@@ -76,11 +76,14 @@ class _UtilityAssociationHeader extends StatelessWidget {
               ],
             ),
           ),
-          // (x) close the popup.
-          IconButton(
-            visualDensity: const VisualDensity(horizontal: -2),
-            icon: const Icon(Icons.close),
-            onPressed: state._close,
+          Visibility(
+            visible: state.hasClose,
+            // (x) close the popup.
+            child: IconButton(
+              visualDensity: const VisualDensity(horizontal: -2),
+              icon: const Icon(Icons.close),
+              onPressed: state._close,
+            ),
           ),
         ],
       ),

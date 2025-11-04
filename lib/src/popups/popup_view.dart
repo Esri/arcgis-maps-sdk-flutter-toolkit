@@ -55,7 +55,10 @@ class PopupView extends StatefulWidget {
   /// Creates a [PopupView] widget to display a [Popup] with optional `onClose` callback.
   const PopupView({required this.popup, this.onClose, super.key});
 
-  /// An optional callback function that is called when the [PopupView] is closed. By default, it closes the view.
+  /// An optional callback function that is called when the "close" button is tapped.
+  ///
+  /// The callback should handle dismissing the containing widget or perform the necessary state changes to close the pop-up.
+  /// If not provided, the close button will not be shown.
   final VoidCallback? onClose;
 
   /// The [Popup] object to be displayed.
@@ -140,6 +143,9 @@ class _PopupViewState extends State<PopupView> {
     // At root: treat as close request instead of popping (avoids empty pages list).
     widget.onClose?.call();
   }
+
+  // Whether the PopupView has an onClose callback.
+  bool get hasClose => widget.onClose != null;
 
   // Signal to parent to close the PopupView.
   void _close() {
