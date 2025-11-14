@@ -2,8 +2,8 @@
 
 ### Enhancements to PopupView
 
-* Support for navigating through associations in a utility network has been added in this release. This integrates the newly exposed `UtilityAssociationsPopupElement` API with the toolkit component.
-* To enable this change, the main `PopupView` is now wrapped in a `Navigator` widget. No behavior changes are expected to existing apps using the `PopupView` from the `arcgis_maps_toolkit` package on pub.dev. However this may need to be taken into account if any custom implementations of the `PopupView` are updated.
+* This release includes support for navigating through utility network associations. It uses the newly available `UtilityAssociationsPopupElement` API with the toolkit component.
+* To enable this change, the main `PopupView` is now wrapped in a `Navigator` widget. No behavior changes are expected to existing apps using the `PopupView` from the `arcgis_maps_toolkit` package on pub.dev. However, if you maintain custom implementations of the `PopupView` and wish to update, you may need to review them to take into account of this change.
 
 ## 200.8.0+4672
 
