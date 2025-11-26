@@ -46,6 +46,8 @@ part 'src/authenticator/authenticator_certificate_required.dart';
 part 'src/authenticator/authenticator_certificate_password.dart';
 part 'src/authenticator/authenticator_login.dart';
 part 'src/authenticator/authenticator_trust.dart';
+// Building Explorer Widget
+part 'src/building_explorer/building_explorer.dart';
 // Compass Widget
 part 'src/compass/compass.dart';
 part 'src/compass/compass_needle_painter.dart';
