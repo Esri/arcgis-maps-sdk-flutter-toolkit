@@ -36,10 +36,51 @@ class _BuildingExplorerState extends State<BuildingExplorer> {
   // The currently selected floor.
   var _selectedFloor = 'All';
 
+  // A listing of all floors in the building scene layer.
+  var _floorList = <String>[];
+
+  @override
+  void initState() {
+    super.initState();
+
+    _initFloorList();
+  }
+
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
-    throw UnimplementedError();
+    return Column(
+      children: [
+        _BuildingFloorLevelSelector(
+          floorList: _floorList,
+          selectedFloor: _selectedFloor,
+          onChanged: onFloorChanged,
+        ),
+        const Divider(),
+        const Text('Categories:'),
+        _BuildingSublayerSelector(
+          buildingSceneLayer: widget.buildingSceneLayer,
+          fullModelSublayerName: widget.fullModelSublayerName,
+        ),
+      ],
+    );
+  }
+
+  Future<void> _initFloorList() async {
+    // Get the floor listing from the statistics.
+    final statistics = await widget.buildingSceneLayer.fetchStatistics();
+    if (statistics['BldgLevel'] != null) {
+      final floorList = <String>[];
+      floorList.addAll(statistics['BldgLevel']!.mostFrequentValues);
+      floorList.sort((a, b) => int.parse(b).compareTo(int.parse(a)));
+      setState(() {
+        _floorList = floorList;
+      });
+    }
+  }
+
+  void onFloorChanged(String floor) {
+    setState(() => _selectedFloor = floor);
+    updateFloorFilters();
   }
 
   // Utility function to update the building filters based on the selected floor.
@@ -71,101 +112,5 @@ class _BuildingExplorerState extends State<BuildingExplorer> {
 
     // Apply the filter to the building scene layer.
     widget.buildingSceneLayer.activeFilter = buildingFilter;
-  }
-}
-
-// Widget to list and select building floor.
-class _FloorLevelSelector extends StatelessWidget {
-  const _FloorLevelSelector({
-    required this.floorList,
-    required this.selectedFloor,
-    required this.onChanged,
-  });
-
-  final List<String> floorList;
-  final String selectedFloor;
-  final ValueChanged<String> onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    final options = ['All', ...floorList];
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        const Text('Floor:'),
-        DropdownButton<String>(
-          value: selectedFloor,
-          items: options
-              .map(
-                (value) => DropdownMenuItem(value: value, child: Text(value)),
-              )
-              .toList(),
-          onChanged: (value) {
-            if (value != null) onChanged(value);
-          },
-        ),
-      ],
-    );
-  }
-}
-
-// Widget to show and select building sublayers.
-class _SublayerSelector extends StatefulWidget {
-  const _SublayerSelector({
-    required this.buildingSceneLayer,
-    required this.fullModelSublayerName,
-  });
-  final BuildingSceneLayer buildingSceneLayer;
-  final String fullModelSublayerName;
-
-  @override
-  State<_SublayerSelector> createState() => _SublayerSelectorState();
-}
-
-class _SublayerSelectorState extends State<_SublayerSelector> {
-  @override
-  Widget build(BuildContext context) {
-    final fullModelSublayer =
-        widget.buildingSceneLayer.sublayers.firstWhere(
-              (sublayer) => sublayer.name == 'Full Model',
-            )
-            as BuildingGroupSublayer;
-    final categorySublayers = fullModelSublayer.sublayers;
-    return SizedBox(
-      height: 200,
-      child: ListView(
-        children: categorySublayers.map((categorySublayer) {
-          final componentSublayers =
-              (categorySublayer as BuildingGroupSublayer).sublayers;
-          return ExpansionTile(
-            title: Row(
-              children: [
-                Text(categorySublayer.name),
-                const Spacer(),
-                Checkbox(
-                  value: categorySublayer.isVisible,
-                  onChanged: (val) {
-                    setState(() {
-                      categorySublayer.isVisible = val ?? false;
-                    });
-                  },
-                ),
-              ],
-            ),
-            children: componentSublayers.map((componentSublayer) {
-              return CheckboxListTile(
-                title: Text(componentSublayer.name),
-                value: componentSublayer.isVisible,
-                onChanged: (val) {
-                  setState(() {
-                    componentSublayer.isVisible = val ?? false;
-                  });
-                },
-              );
-            }).toList(),
-          );
-        }).toList(),
-      ),
-    );
   }
 }
