@@ -47,7 +47,7 @@ class _BuildingFloorLevelSelectorState
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: [
-        const Text('Floor:'),
+        const Text('Select Level:'),
         DropdownButton<String>(
           value: _selectedFloor,
           items: options

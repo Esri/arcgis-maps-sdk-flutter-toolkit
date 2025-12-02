@@ -43,6 +43,7 @@ class _ExampleBuildingExplorerState extends State<ExampleBuildingExplorer> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(title: const Text('Building Explorer')),
       body: SafeArea(
         top: false,
         left: false,
@@ -70,11 +71,28 @@ class _ExampleBuildingExplorerState extends State<ExampleBuildingExplorer> {
           ],
         ),
       ),
-      // Bottom sheet that displays the building filter settings.
       bottomSheet: _settingsVisible
           ? SizedBox(
-              height: 300,
-              child: BuildingExplorer(buildingSceneLayer: _buildingSceneLayer),
+              height: 400,
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      IconButton(
+                        onPressed: () =>
+                            setState(() => _settingsVisible = false),
+                        icon: const Icon(Icons.close),
+                      ),
+                    ],
+                  ),
+                  Expanded(
+                    child: BuildingExplorer(
+                      buildingSceneLayer: _buildingSceneLayer,
+                    ),
+                  ),
+                ],
+              ),
             )
           : null,
     );

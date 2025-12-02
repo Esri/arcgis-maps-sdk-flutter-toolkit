@@ -37,11 +37,19 @@ class _BuildingExplorerState extends State<BuildingExplorer> {
   Widget build(BuildContext context) {
     return Column(
       children: [
+        Text(
+          widget.buildingSceneLayer.name,
+          style: Theme.of(context).textTheme.headlineSmall,
+        ),
+        const Divider(),
         _BuildingFloorLevelSelector(
           buildingSceneLayer: widget.buildingSceneLayer,
         ),
         const Divider(),
-        const Text('Disciplines & Categories:'),
+        Text(
+          'Disciplines & Categories:',
+          style: Theme.of(context).textTheme.bodyLarge,
+        ),
         Expanded(
           child: _BuildingSublayerSelector(
             buildingSceneLayer: widget.buildingSceneLayer,
