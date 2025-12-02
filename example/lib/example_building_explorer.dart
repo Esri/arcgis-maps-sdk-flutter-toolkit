@@ -73,7 +73,7 @@ class _ExampleBuildingExplorerState extends State<ExampleBuildingExplorer> {
       // Bottom sheet that displays the building filter settings.
       bottomSheet: _settingsVisible
           ? SizedBox(
-              height: 200,
+              height: 300,
               child: BuildingExplorer(buildingSceneLayer: _buildingSceneLayer),
             )
           : null,
