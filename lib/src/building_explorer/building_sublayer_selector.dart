@@ -62,6 +62,7 @@ class _BuildingSublayerSelectorState extends State<_BuildingSublayerSelector> {
             return CheckboxListTile(
               title: Text(componentSublayer.name),
               value: componentSublayer.isVisible,
+              enabled: categorySublayer.isVisible,
               onChanged: (val) {
                 setState(() {
                   componentSublayer.isVisible = val ?? false;

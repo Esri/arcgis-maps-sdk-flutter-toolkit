@@ -41,7 +41,7 @@ class _BuildingExplorerState extends State<BuildingExplorer> {
           buildingSceneLayer: widget.buildingSceneLayer,
         ),
         const Divider(),
-        const Text('Categories:'),
+        const Text('Disciplines & Categories:'),
         Expanded(
           child: _BuildingSublayerSelector(
             buildingSceneLayer: widget.buildingSceneLayer,
