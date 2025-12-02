@@ -44,20 +44,24 @@ class _BuildingFloorLevelSelectorState
   @override
   Widget build(BuildContext context) {
     final options = ['All', ..._floorList];
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        const Text('Select Level:'),
-        DropdownButton<String>(
-          value: _selectedFloor,
-          items: options
-              .map(
-                (value) => DropdownMenuItem(value: value, child: Text(value)),
-              )
-              .toList(),
-          onChanged: onFloorChanged,
-        ),
-      ],
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(15, 0, 20, 0),
+      child: Row(
+        // mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          Text('Select Level:', style: Theme.of(context).textTheme.bodyLarge),
+          const Spacer(),
+          DropdownButton<String>(
+            value: _selectedFloor,
+            items: options
+                .map(
+                  (value) => DropdownMenuItem(value: value, child: Text(value)),
+                )
+                .toList(),
+            onChanged: onFloorChanged,
+          ),
+        ],
+      ),
     );
   }
 
