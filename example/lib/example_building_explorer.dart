@@ -37,9 +37,6 @@ class _ExampleBuildingExplorerState extends State<ExampleBuildingExplorer> {
   // Building scene layer that will be filtered. Set after the WebScene is loaded.
   late final BuildingSceneLayer _buildingSceneLayer;
 
-  // Flag to show or hide the settings pane.
-  var _settingsVisible = false;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -62,7 +59,7 @@ class _ExampleBuildingExplorerState extends State<ExampleBuildingExplorer> {
                 Center(
                   // Button to show the building filter settings sheet.
                   child: ElevatedButton(
-                    onPressed: () => setState(() => _settingsVisible = true),
+                    onPressed: showBuildingExplorerModal,
                     child: const Text('Building Filter Settings'),
                   ),
                 ),
@@ -71,30 +68,39 @@ class _ExampleBuildingExplorerState extends State<ExampleBuildingExplorer> {
           ],
         ),
       ),
-      bottomSheet: _settingsVisible
-          ? SizedBox(
-              height: 400,
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      IconButton(
-                        onPressed: () =>
-                            setState(() => _settingsVisible = false),
-                        icon: const Icon(Icons.close),
-                      ),
-                    ],
-                  ),
-                  Expanded(
-                    child: BuildingExplorer(
-                      buildingSceneLayer: _buildingSceneLayer,
+    );
+  }
+
+  void showBuildingExplorerModal() {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          height: 400, // Define the height of the bottom sheet
+          color: Colors.white,
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    IconButton(
+                      onPressed: () => Navigator.pop(context),
+                      icon: const Icon(Icons.close),
                     ),
+                  ],
+                ),
+                Expanded(
+                  child: BuildingExplorer(
+                    buildingSceneLayer: _buildingSceneLayer,
                   ),
-                ],
-              ),
-            )
-          : null,
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 
