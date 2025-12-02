@@ -20,12 +20,10 @@ class BuildingExplorer extends StatefulWidget {
   const BuildingExplorer({
     required this.buildingSceneLayer,
     super.key,
-    this.overviewSublayerName = 'Overview',
     this.fullModelSublayerName = 'Full Model',
   });
 
   final BuildingSceneLayer buildingSceneLayer;
-  final String overviewSublayerName;
   final String fullModelSublayerName;
 
   @override
