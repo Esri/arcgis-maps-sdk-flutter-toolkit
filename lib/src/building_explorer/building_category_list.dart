@@ -16,10 +16,10 @@
 
 part of '../../arcgis_maps_toolkit.dart';
 
-class BuildingExplorer extends StatelessWidget {
-  const BuildingExplorer({
+class BuildingCategoryList extends StatelessWidget {
+  const BuildingCategoryList({
     required this.buildingSceneLayer,
-    this.fullModelSublayerName = 'Full Model',
+    required this.fullModelSublayerName,
     super.key,
   });
 
@@ -28,26 +28,23 @@ class BuildingExplorer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Text(
-          buildingSceneLayer.name,
-          style: Theme.of(context).textTheme.headlineSmall,
-        ),
-        const Divider(),
-        _BuildingFloorLevelSelector(buildingSceneLayer: buildingSceneLayer),
-        const Divider(),
-        Text(
-          'Disciplines & Categories:',
-          style: Theme.of(context).textTheme.bodyLarge,
-        ),
-        Expanded(
-          child: BuildingCategoryList(
-            buildingSceneLayer: buildingSceneLayer,
-            fullModelSublayerName: fullModelSublayerName,
-          ),
-        ),
-      ],
+    final fullModelGroupSublayer = buildingSceneLayer.sublayers
+        .whereType<BuildingGroupSublayer>()
+        .where((sublayer) => sublayer.name == 'Full Model')
+        .firstOrNull;
+
+    final categoryGroupSublayers =
+        fullModelGroupSublayer?.sublayers.whereType<BuildingGroupSublayer>() ??
+        [];
+
+    return ListView.builder(
+      itemCount: categoryGroupSublayers.length,
+      itemBuilder: (context, index) {
+        final categoryGroupSublayer = categoryGroupSublayers.elementAt(index);
+        return BuildingCategorySelector(
+          buildingCategory: categoryGroupSublayer,
+        );
+      },
     );
   }
 }

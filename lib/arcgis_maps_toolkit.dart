@@ -47,9 +47,10 @@ part 'src/authenticator/authenticator_certificate_password.dart';
 part 'src/authenticator/authenticator_login.dart';
 part 'src/authenticator/authenticator_trust.dart';
 // Building Explorer Widget
+part 'src/building_explorer/building_category_list.dart';
+part 'src/building_explorer/building_category_selector.dart';
 part 'src/building_explorer/building_explorer.dart';
 part 'src/building_explorer/building_floor_level_selector.dart';
-part 'src/building_explorer/building_sublayer_selector.dart';
 // Compass Widget
 part 'src/compass/compass.dart';
 part 'src/compass/compass_needle_painter.dart';

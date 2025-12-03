@@ -35,7 +35,7 @@ class _ExampleBuildingExplorerState extends State<ExampleBuildingExplorer> {
   final _localSceneViewController = ArcGISLocalSceneView.createController();
 
   // Building scene layer that will be filtered. Set after the WebScene is loaded.
-  late final BuildingSceneLayer _buildingSceneLayer;
+  BuildingSceneLayer? _buildingSceneLayer;
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +59,9 @@ class _ExampleBuildingExplorerState extends State<ExampleBuildingExplorer> {
                 Center(
                   // Button to show the building filter settings sheet.
                   child: ElevatedButton(
-                    onPressed: showBuildingExplorerModal,
+                    onPressed: _buildingSceneLayer != null
+                        ? showBuildingExplorerModal
+                        : null,
                     child: const Text('Building Filter Settings'),
                   ),
                 ),
@@ -74,7 +76,7 @@ class _ExampleBuildingExplorerState extends State<ExampleBuildingExplorer> {
   void showBuildingExplorerModal() {
     showModalBottomSheet(
       context: context,
-      builder: (BuildContext context) {
+      builder: (context) {
         return Container(
           height: 400, // Define the height of the bottom sheet
           color: Colors.white,
@@ -93,7 +95,7 @@ class _ExampleBuildingExplorerState extends State<ExampleBuildingExplorer> {
                 ),
                 Expanded(
                   child: BuildingExplorer(
-                    buildingSceneLayer: _buildingSceneLayer,
+                    buildingSceneLayer: _buildingSceneLayer!,
                   ),
                 ),
               ],
@@ -115,9 +117,11 @@ class _ExampleBuildingExplorerState extends State<ExampleBuildingExplorer> {
     await scene.load();
 
     // Get the BuildingSceneLayer from the webmap.
-    _buildingSceneLayer = scene.operationalLayers
-        .whereType<BuildingSceneLayer>()
-        .first;
+    final buildingSceneLayers = scene.operationalLayers
+        .whereType<BuildingSceneLayer>();
+    if (buildingSceneLayers.isNotEmpty) {
+      setState(() => _buildingSceneLayer = buildingSceneLayers.first);
+    }
 
     // Apply the scene to the local scene view controller.
     _localSceneViewController.arcGISScene = scene;

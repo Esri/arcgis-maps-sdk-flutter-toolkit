@@ -47,11 +47,10 @@ class _BuildingFloorLevelSelectorState
     return Padding(
       padding: const EdgeInsets.fromLTRB(15, 0, 20, 0),
       child: Row(
-        // mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           Text('Select Level:', style: Theme.of(context).textTheme.bodyLarge),
           const Spacer(),
-          DropdownButton<String>(
+          DropdownButton(
             value: _selectedFloor,
             items: options
                 .map(
@@ -71,7 +70,11 @@ class _BuildingFloorLevelSelectorState
     if (statistics['BldgLevel'] != null) {
       final floorList = <String>[];
       floorList.addAll(statistics['BldgLevel']!.mostFrequentValues);
-      floorList.sort((a, b) => int.parse(b).compareTo(int.parse(a)));
+      floorList.sort((a, b) {
+        final intA = int.tryParse(a) ?? 0;
+        final intB = int.tryParse(b) ?? 0;
+        return intB.compareTo(intA);
+      });
       setState(() {
         _floorList = floorList;
       });
