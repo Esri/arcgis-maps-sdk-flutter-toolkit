@@ -20,19 +20,44 @@ class BuildingExplorer extends StatelessWidget {
   const BuildingExplorer({
     required this.buildingSceneLayer,
     this.fullModelSublayerName = 'Full Model',
+    this.onClose,
     super.key,
   });
 
+  // BuildingSceneLayer that this widget explores
   final BuildingSceneLayer buildingSceneLayer;
+
+  // Name of the full model group sublayer
   final String fullModelSublayerName;
+
+  // Optional onClose callback. If set, a close IconButton will appear to the
+  //right of the widget title.
+  final VoidCallback? onClose;
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Text(
-          buildingSceneLayer.name,
-          style: Theme.of(context).textTheme.headlineSmall,
+        Stack(
+          alignment: Alignment.center,
+          children: [
+            // Centered title
+            Text(
+              buildingSceneLayer.name,
+              style: Theme.of(context).textTheme.headlineSmall,
+              textAlign: TextAlign.center,
+            ),
+            // Right-justified icon button
+            if (onClose != null)
+              Align(
+                alignment: Alignment.centerRight,
+                child: IconButton(
+                  icon: const Icon(Icons.close),
+                  onPressed: onClose,
+                  tooltip: 'Close',
+                ),
+              ),
+          ],
         ),
         const Divider(),
         _BuildingFloorLevelSelector(buildingSceneLayer: buildingSceneLayer),

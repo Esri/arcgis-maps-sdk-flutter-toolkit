@@ -81,24 +81,9 @@ class _ExampleBuildingExplorerState extends State<ExampleBuildingExplorer> {
           height: 400, // Define the height of the bottom sheet
           color: Colors.white,
           child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    IconButton(
-                      onPressed: () => Navigator.pop(context),
-                      icon: const Icon(Icons.close),
-                    ),
-                  ],
-                ),
-                Expanded(
-                  child: BuildingExplorer(
-                    buildingSceneLayer: _buildingSceneLayer!,
-                  ),
-                ),
-              ],
+            child: BuildingExplorer(
+              buildingSceneLayer: _buildingSceneLayer!,
+              onClose: () => Navigator.pop(context),
             ),
           ),
         );
