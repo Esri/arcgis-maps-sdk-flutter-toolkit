@@ -108,11 +108,11 @@ class OverviewMap extends StatefulWidget {
   }
 
   /// A function that provides the [GeoViewController] of the target map. This should return the same controller that is provided to the
-  /// corresponding [ArcGISMapView] or [ArcGISSceneView].
+  /// corresponding [ArcGISMapView], [ArcGISSceneView], or [ArcGISLocalSceneView].
   final GeoViewController Function() controllerProvider;
 
   /// The alignment of the overview map within the parent widget. Defaults to [Alignment.topRight]. The overview map should generally be placed
-  /// in a [Stack] on top of the corresponding [ArcGISMapView] or [ArcGISSceneView].
+  /// in a [Stack] on top of the corresponding [ArcGISMapView], [ArcGISSceneView], or [ArcGISLocalSceneView].
   final Alignment alignment;
 
   /// The padding around the overview map. Defaults to 10 pixels on all sides.
@@ -123,7 +123,7 @@ class OverviewMap extends StatefulWidget {
 
   /// The symbol used to represent the current viewpoint.
   /// - For [ArcGISMapView]: a [SimpleFillSymbol] is used to draw the visible area.
-  /// - For [ArcGISSceneView]: a [SimpleMarkerSymbol] is used to draw the current viewpoint's center.
+  /// - For [ArcGISSceneView] or [ArcGISLocalSceneView]: a [SimpleMarkerSymbol] is used to draw the current viewpoint's center.
   final ArcGISSymbol? symbol;
 
   /// The map to use as the overview map. Defaults to a map with the ArcGIS Topographic basemap style.
@@ -215,8 +215,8 @@ class _OverviewMapState extends State<OverviewMap> {
     Geometry? sceneGeometry;
 
     switch (_controller) {
-      case ArcGISMapViewController(visibleArea: final visibleArea):
-        geometry = visibleArea;
+      case final ArcGISMapViewController controller:
+        geometry = controller.visibleArea;
       case ArcGISSceneViewController():
       case ArcGISLocalSceneViewController():
         sceneGeometry = viewpoint.targetGeometry;

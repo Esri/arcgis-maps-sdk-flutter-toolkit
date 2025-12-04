@@ -29,26 +29,25 @@ void main() {
     ArcGISEnvironment.apiKey = apiKey;
   }
 
-  runApp(const MaterialApp(home: ExampleOverviewMapWithLocalScene()));
+  runApp(const MaterialApp(home: ExampleCompassLocalScene()));
 }
 
-class ExampleOverviewMapWithLocalScene extends StatefulWidget {
-  const ExampleOverviewMapWithLocalScene({super.key});
+class ExampleCompassLocalScene extends StatefulWidget {
+  const ExampleCompassLocalScene({super.key});
 
   @override
-  State<ExampleOverviewMapWithLocalScene> createState() =>
-      _ExampleOverviewMapWithLocalSceneState();
+  State<ExampleCompassLocalScene> createState() =>
+      _ExampleCompassLocalSceneState();
 }
 
-class _ExampleOverviewMapWithLocalSceneState
-    extends State<ExampleOverviewMapWithLocalScene> {
+class _ExampleCompassLocalSceneState extends State<ExampleCompassLocalScene> {
   // Create a local scene view controller.
   final _localSceneViewController = ArcGISLocalSceneView.createController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('OverviewMap with Local Scene')),
+      appBar: AppBar(title: const Text('Compass Local Scene')),
       body: Stack(
         children: [
           // Add a local scene view to the widget tree and set a controller.
@@ -56,12 +55,9 @@ class _ExampleOverviewMapWithLocalSceneState
             controllerProvider: () => _localSceneViewController,
             onLocalSceneViewReady: onLocalSceneViewReady,
           ),
-          // Create an overview map and display on top of the local scene view in a stack.
-          // Pass the overview map the corresponding local scene view controller.
-          OverviewMap(
-            controllerProvider: () => _localSceneViewController,
-            map: ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic),
-          ),
+          // Create a compass and display on top of the local scene view in a stack.
+          // Pass the compass the corresponding local scene view controller.
+          Compass(controllerProvider: () => _localSceneViewController),
         ],
       ),
     );
