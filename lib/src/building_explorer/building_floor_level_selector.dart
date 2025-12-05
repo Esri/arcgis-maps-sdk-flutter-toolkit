@@ -34,11 +34,19 @@ class _BuildingFloorLevelSelectorState
   // A listing of all floors in the building scene layer.
   var _floorList = <String>[];
 
+  // Name constants
+  final _filterName = 'Floor filter';
+  final _floorBlockName = 'solid block';
+  final _xrayBlockName = 'xray block';
+  final _buildingLevelAttribute = 'BldgLevel';
+
   @override
   void initState() {
     super.initState();
 
-    _initFloorList();
+    // Get the floor listing from the layer statistics, then look for a
+    //currently selected floor level.
+    _initFloorList().then((value) => _initSelectedFloor());
   }
 
   @override
@@ -67,9 +75,9 @@ class _BuildingFloorLevelSelectorState
   Future<void> _initFloorList() async {
     // Get the floor listing from the statistics.
     final statistics = await widget.buildingSceneLayer.fetchStatistics();
-    if (statistics['BldgLevel'] != null) {
+    if (statistics[_buildingLevelAttribute] != null) {
       final floorList = <String>[];
-      floorList.addAll(statistics['BldgLevel']!.mostFrequentValues);
+      floorList.addAll(statistics[_buildingLevelAttribute]!.mostFrequentValues);
       floorList.sort((a, b) {
         final intA = int.tryParse(a) ?? 0;
         final intB = int.tryParse(b) ?? 0;
@@ -78,6 +86,23 @@ class _BuildingFloorLevelSelectorState
       setState(() {
         _floorList = floorList;
       });
+    }
+  }
+
+  void _initSelectedFloor() {
+    final activeFilter = widget.buildingSceneLayer.activeFilter;
+    if (activeFilter != null) {
+      if (activeFilter.name == _filterName) {
+        // Get the selected floor from the where clause of the solid filter block.
+        final floorBlock = activeFilter.blocks
+            .where((block) => block.title == _floorBlockName)
+            .firstOrNull;
+        if (floorBlock != null) {
+          setState(
+            () => _selectedFloor = floorBlock.whereClause.split(' ').last,
+          );
+        }
+      }
     }
   }
 
@@ -99,17 +124,17 @@ class _BuildingFloorLevelSelectorState
     // Build a building filter to show the selected floor and an xray view of the floors below.
     // Floors above the selected floor are not shown at all.
     final buildingFilter = BuildingFilter(
-      name: 'Floor filter',
+      name: _filterName,
       description: 'Show selected floor and xray filter for lower floors.',
       blocks: [
         BuildingFilterBlock(
-          title: 'solid block',
-          whereClause: 'BldgLevel = $_selectedFloor',
+          title: _floorBlockName,
+          whereClause: '$_buildingLevelAttribute = $_selectedFloor',
           mode: BuildingSolidFilterMode(),
         ),
         BuildingFilterBlock(
-          title: 'xray block',
-          whereClause: 'BldgLevel < $_selectedFloor',
+          title: _xrayBlockName,
+          whereClause: '$_buildingLevelAttribute < $_selectedFloor',
           mode: BuildingXrayFilterMode(),
         ),
       ],
