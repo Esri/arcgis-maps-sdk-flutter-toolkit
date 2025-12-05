@@ -57,7 +57,6 @@ part of '../../arcgis_maps_toolkit.dart';
 ///     );
 ///   }
 /// ```
-
 class BuildingExplorer extends StatelessWidget {
   const BuildingExplorer({
     required this.buildingSceneLayer,
@@ -66,14 +65,13 @@ class BuildingExplorer extends StatelessWidget {
     super.key,
   });
 
-  // BuildingSceneLayer that this widget explores
+  /// BuildingSceneLayer that this widget explores
   final BuildingSceneLayer buildingSceneLayer;
 
-  // Name of the full model group sublayer
+  /// Name of the full model group sublayer
   final String fullModelSublayerName;
 
-  // Optional onClose callback. If set, a close IconButton will appear to the
-  // right of the widget title.
+  /// Optional onClose callback. If set, a close [IconButton] will appear at the top right of the widget.
   final VoidCallback? onClose;
 
   @override
@@ -83,13 +81,13 @@ class BuildingExplorer extends StatelessWidget {
         Stack(
           alignment: Alignment.center,
           children: [
-            // Centered title
+            // Building scene layer name centered
             Text(
               buildingSceneLayer.name,
               style: Theme.of(context).textTheme.headlineSmall,
               textAlign: TextAlign.center,
             ),
-            // Right-justified icon button
+            // Right-justified close icon button
             if (onClose != null)
               Align(
                 alignment: Alignment.centerRight,
