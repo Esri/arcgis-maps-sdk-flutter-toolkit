@@ -45,8 +45,8 @@ class _BuildingFloorLevelSelectorState
     super.initState();
 
     // Get the floor listing from the layer statistics, then look for a
-    //currently selected floor level.
-    _initFloorList().then((value) => _initSelectedFloor());
+    // currently selected floor level.
+    _initFloorList().then((_) => _initSelectedFloor());
   }
 
   @override
@@ -56,7 +56,7 @@ class _BuildingFloorLevelSelectorState
       padding: const EdgeInsets.fromLTRB(15, 0, 20, 0),
       child: Row(
         children: [
-          Text('Select Level:', style: Theme.of(context).textTheme.bodyLarge),
+          Text('Level:', style: Theme.of(context).textTheme.bodyLarge),
           const Spacer(),
           DropdownButton(
             value: _selectedFloor,

@@ -16,11 +16,10 @@
 
 part of '../../arcgis_maps_toolkit.dart';
 
-class BuildingCategoryList extends StatelessWidget {
-  const BuildingCategoryList({
+class _BuildingCategoryList extends StatelessWidget {
+  const _BuildingCategoryList({
     required this.buildingSceneLayer,
     required this.fullModelSublayerName,
-    super.key,
   });
 
   final BuildingSceneLayer buildingSceneLayer;
@@ -34,14 +33,16 @@ class BuildingCategoryList extends StatelessWidget {
         .firstOrNull;
 
     final categoryGroupSublayers =
-        fullModelGroupSublayer?.sublayers.whereType<BuildingGroupSublayer>() ??
+        fullModelGroupSublayer?.sublayers
+            .whereType<BuildingGroupSublayer>()
+            .toList() ??
         [];
 
     return ListView.builder(
       itemCount: categoryGroupSublayers.length,
       itemBuilder: (context, index) {
-        final categoryGroupSublayer = categoryGroupSublayers.elementAt(index);
-        return BuildingCategorySelector(
+        final categoryGroupSublayer = categoryGroupSublayers[index];
+        return _BuildingCategorySelector(
           buildingCategory: categoryGroupSublayer,
         );
       },

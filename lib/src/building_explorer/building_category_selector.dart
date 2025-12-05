@@ -16,8 +16,8 @@
 
 part of '../../arcgis_maps_toolkit.dart';
 
-class BuildingCategorySelector extends StatefulWidget {
-  const BuildingCategorySelector({required this.buildingCategory, super.key});
+class _BuildingCategorySelector extends StatefulWidget {
+  const _BuildingCategorySelector({required this.buildingCategory});
 
   final BuildingGroupSublayer buildingCategory;
 
@@ -25,7 +25,7 @@ class BuildingCategorySelector extends StatefulWidget {
   State<StatefulWidget> createState() => _BuildingCategorySelectorState();
 }
 
-class _BuildingCategorySelectorState extends State<BuildingCategorySelector> {
+class _BuildingCategorySelectorState extends State<_BuildingCategorySelector> {
   @override
   Widget build(BuildContext context) {
     final componentSublayers = widget.buildingCategory.sublayers;

@@ -31,7 +31,7 @@ class BuildingExplorer extends StatelessWidget {
   final String fullModelSublayerName;
 
   // Optional onClose callback. If set, a close IconButton will appear to the
-  //right of the widget title.
+  // right of the widget title.
   final VoidCallback? onClose;
 
   @override
@@ -67,7 +67,7 @@ class BuildingExplorer extends StatelessWidget {
           style: Theme.of(context).textTheme.bodyLarge,
         ),
         Expanded(
-          child: BuildingCategoryList(
+          child: _BuildingCategoryList(
             buildingSceneLayer: buildingSceneLayer,
             fullModelSublayerName: fullModelSublayerName,
           ),
