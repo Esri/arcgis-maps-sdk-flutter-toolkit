@@ -16,6 +16,48 @@
 
 part of '../../arcgis_maps_toolkit.dart';
 
+/// A widget that enables a user to explore a building model in a [BuildingSceneLayer].
+///
+/// # Overview
+/// The Building Explorer widget provides a tool for users to browse the floors and sublayers of a building scene layer. The widget can highlight specified floors and show or hide building features of different categories and subcategories.
+///
+/// ## Features
+/// Features of the Building Explorer widget include:
+/// * Showing the name of the layer as the title of the widget.
+/// * Selecting a level of the building to highlight in the view.
+///     * The selected level and all of the features of the level are rendered normally.
+///     * Levels above are hidden.
+///     * Levels below are given an Xray style.
+/// * Visibility of building feature categories and subcategories can be toggled on and off.
+/// * The widget can present a close button when provided with an onClose callback function.
+///
+/// ## Usage
+/// A [BuildingExplorer] widget is created with the following parameters:
+/// * buildingSceneLayer: The [BuildingSceneLayer] that this widget will be exploring
+/// * fullModelSublayerName: An optional [String] that is the name of the full model sublayer. Default is “Full Model”.
+/// * onClose: An optional callback that is called when the close button of the widget is tapped. If a callback is not provided, the close button will be hidden.
+///
+/// One use case is to wrap the [BuildingExplorer] in a [BottomSheet]
+/// ```dart
+///   void showBuildingExplorerModal() {
+///     showModalBottomSheet(
+///       context: context,
+///       builder: (context) {
+///         return Container(
+///           height: 400,
+///           color: Colors.white,
+///           child: Center(
+///             child: BuildingExplorer(
+///               buildingSceneLayer: _buildingSceneLayer!,
+///               onClose: () => Navigator.pop(context),
+///             ),
+///           ),
+///         );
+///       },
+///     );
+///   }
+/// ```
+
 class BuildingExplorer extends StatelessWidget {
   const BuildingExplorer({
     required this.buildingSceneLayer,
