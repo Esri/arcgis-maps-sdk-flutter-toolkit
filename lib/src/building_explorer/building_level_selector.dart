@@ -16,27 +16,26 @@
 
 part of '../../arcgis_maps_toolkit.dart';
 
-class _BuildingFloorLevelSelector extends StatefulWidget {
-  const _BuildingFloorLevelSelector({required this.buildingSceneLayer});
+class _BuildingLevelSelector extends StatefulWidget {
+  const _BuildingLevelSelector({required this.buildingSceneLayer});
 
   final BuildingSceneLayer buildingSceneLayer;
 
   @override
-  State<StatefulWidget> createState() => _BuildingFloorLevelSelectorState();
+  State<StatefulWidget> createState() => _BuildingLevelSelectorState();
 }
 
-// Widget to list and select building floor.
-class _BuildingFloorLevelSelectorState
-    extends State<_BuildingFloorLevelSelector> {
-  // The currently selected floor.
-  var _selectedFloor = 'All';
+// Widget to list and select building level.
+class _BuildingLevelSelectorState extends State<_BuildingLevelSelector> {
+  // The currently selected level.
+  var _selectedLevel = 'All';
 
-  // A listing of all floors in the building scene layer.
-  var _floorList = <String>[];
+  // A listing of all levels in the building scene layer.
+  var _levelList = <String>[];
 
   // Name constants
-  final _filterName = 'Floor filter';
-  final _floorBlockName = 'solid block';
+  final _filterName = 'Level filter';
+  final _levelBlockName = 'solid block';
   final _xrayBlockName = 'xray block';
   final _buildingLevelAttribute = 'BldgLevel';
 
@@ -44,14 +43,14 @@ class _BuildingFloorLevelSelectorState
   void initState() {
     super.initState();
 
-    // Get the floor listing from the layer statistics, then look for a
-    // currently selected floor level.
-    _initFloorList().then((_) => _initSelectedFloor());
+    // Get the level listing from the layer statistics, then look for a
+    // currently selected level level.
+    _initLevelList().then((_) => _initSelectedLevel());
   }
 
   @override
   Widget build(BuildContext context) {
-    final options = ['All', ..._floorList];
+    final options = ['All', ..._levelList];
     return Padding(
       padding: const EdgeInsets.fromLTRB(15, 0, 20, 0),
       child: Row(
@@ -59,82 +58,82 @@ class _BuildingFloorLevelSelectorState
           Text('Level:', style: Theme.of(context).textTheme.bodyLarge),
           const Spacer(),
           DropdownButton(
-            value: _selectedFloor,
+            value: _selectedLevel,
             items: options
                 .map(
                   (value) => DropdownMenuItem(value: value, child: Text(value)),
                 )
                 .toList(),
-            onChanged: onFloorChanged,
+            onChanged: onLevelChanged,
           ),
         ],
       ),
     );
   }
 
-  Future<void> _initFloorList() async {
-    // Get the floor listing from the statistics.
+  Future<void> _initLevelList() async {
+    // Get the level listing from the statistics.
     final statistics = await widget.buildingSceneLayer.fetchStatistics();
     if (statistics[_buildingLevelAttribute] != null) {
-      final floorList = <String>[];
-      floorList.addAll(statistics[_buildingLevelAttribute]!.mostFrequentValues);
-      floorList.sort((a, b) {
+      final levelList = <String>[];
+      levelList.addAll(statistics[_buildingLevelAttribute]!.mostFrequentValues);
+      levelList.sort((a, b) {
         final intA = int.tryParse(a) ?? 0;
         final intB = int.tryParse(b) ?? 0;
         return intB.compareTo(intA);
       });
       setState(() {
-        _floorList = floorList;
+        _levelList = levelList;
       });
     }
   }
 
-  void _initSelectedFloor() {
+  void _initSelectedLevel() {
     final activeFilter = widget.buildingSceneLayer.activeFilter;
     if (activeFilter != null) {
       if (activeFilter.name == _filterName) {
-        // Get the selected floor from the where clause of the solid filter block.
-        final floorBlock = activeFilter.blocks
-            .where((block) => block.title == _floorBlockName)
+        // Get the selected level from the where clause of the solid filter block.
+        final levelBlock = activeFilter.blocks
+            .where((block) => block.title == _levelBlockName)
             .firstOrNull;
-        if (floorBlock != null) {
+        if (levelBlock != null) {
           setState(
-            () => _selectedFloor = floorBlock.whereClause.split(' ').last,
+            () => _selectedLevel = levelBlock.whereClause.split(' ').last,
           );
         }
       }
     }
   }
 
-  void onFloorChanged(String? floor) {
-    if (floor == null) return;
+  void onLevelChanged(String? level) {
+    if (level == null) return;
 
-    setState(() => _selectedFloor = floor);
-    updateFloorFilters();
+    setState(() => _selectedLevel = level);
+    updateLevelFilters();
   }
 
-  // Utility function to update the building filters based on the selected floor.
-  void updateFloorFilters() {
-    if (_selectedFloor == 'All') {
-      // No filtering applied if 'All' floors are selected.
+  // Utility function to update the building filters based on the selected level.
+  void updateLevelFilters() {
+    if (_selectedLevel == 'All') {
+      // No filtering applied if 'All' levels are selected.
       widget.buildingSceneLayer.activeFilter = null;
       return;
     }
 
-    // Build a building filter to show the selected floor and an xray view of the floors below.
-    // Floors above the selected floor are not shown at all.
+    // Build a building filter to show the selected level and an xray view of the levels below.
+    // levels above the selected level are not shown at all.
     final buildingFilter = BuildingFilter(
       name: _filterName,
-      description: 'Show selected floor and xray filter for lower floors.',
+      description: 'Show selected level and xray filter for lower levels.',
       blocks: [
         BuildingFilterBlock(
-          title: _floorBlockName,
-          whereClause: '$_buildingLevelAttribute = $_selectedFloor',
+          title: _levelBlockName,
+          whereClause: '$_buildingLevelAttribute = $_selectedLevel',
           mode: BuildingSolidFilterMode(),
         ),
         BuildingFilterBlock(
           title: _xrayBlockName,
-          whereClause: '$_buildingLevelAttribute < $_selectedFloor',
+          whereClause: '$_buildingLevelAttribute < $_selectedLevel',
           mode: BuildingXrayFilterMode(),
         ),
       ],

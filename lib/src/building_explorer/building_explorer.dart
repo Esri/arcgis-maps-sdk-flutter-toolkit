@@ -19,7 +19,7 @@ part of '../../arcgis_maps_toolkit.dart';
 /// A widget that enables a user to explore a building model in a [BuildingSceneLayer].
 ///
 /// # Overview
-/// The Building Explorer widget provides a tool for users to browse the floors and sublayers of a building scene layer. The widget can highlight specified floors and show or hide building features of different categories and subcategories.
+/// The Building Explorer widget provides a tool for users to browse the levels and sublayers of a building scene layer. The widget can highlight specified levels and show or hide building features of different categories and subcategories.
 ///
 /// ## Features
 /// Features of the Building Explorer widget include:
@@ -37,25 +37,14 @@ part of '../../arcgis_maps_toolkit.dart';
 /// * fullModelSublayerName: An optional [String] that is the name of the full model sublayer. Default is “Full Model”.
 /// * onClose: An optional callback that is called when the close button of the widget is tapped. If a callback is not provided, the close button will be hidden.
 ///
-/// One use case is to wrap the [BuildingExplorer] in a [BottomSheet]
+/// The widget can be inserted into a widget tree by calling the constructor and supplying a [BuildlingSceneLayer].
 /// ```dart
-///   void showBuildingExplorerModal() {
-///     showModalBottomSheet(
-///       context: context,
-///       builder: (context) {
-///         return Container(
-///           height: 400,
-///           color: Colors.white,
-///           child: Center(
-///             child: BuildingExplorer(
-///               buildingSceneLayer: _buildingSceneLayer!,
-///               onClose: () => Navigator.pop(context),
-///             ),
-///           ),
-///         );
-///       },
-///     );
-///   }
+/// ...
+///   BuildingExplorer(
+///     buildingSceneLayer: _buildingSceneLayer!,
+///     onClose: () => Navigator.pop(context),
+///   ),
+/// ...
 /// ```
 class BuildingExplorer extends StatelessWidget {
   const BuildingExplorer({
@@ -100,7 +89,7 @@ class BuildingExplorer extends StatelessWidget {
           ],
         ),
         const Divider(),
-        _BuildingFloorLevelSelector(buildingSceneLayer: buildingSceneLayer),
+        _BuildingLevelSelector(buildingSceneLayer: buildingSceneLayer),
         const Divider(),
         Text(
           'Disciplines & Categories:',
