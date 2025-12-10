@@ -37,6 +37,8 @@ class _ExampleBuildingExplorerState extends State<ExampleBuildingExplorer> {
   // Building scene layer that will be filtered. Set after the WebScene is loaded.
   BuildingSceneLayer? _buildingSceneLayer;
 
+  bool _showBottomSheet = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -60,7 +62,7 @@ class _ExampleBuildingExplorerState extends State<ExampleBuildingExplorer> {
                   // Button to show the building filter settings sheet.
                   child: ElevatedButton(
                     onPressed: _buildingSceneLayer != null
-                        ? showBuildingExplorerModal
+                        ? () => setState(() => _showBottomSheet = true)
                         : null,
                     child: const Text('Building Filter Settings'),
                   ),
@@ -70,24 +72,20 @@ class _ExampleBuildingExplorerState extends State<ExampleBuildingExplorer> {
           ],
         ),
       ),
+      bottomSheet: _showBottomSheet ? showBuildingExplorerModal(context) : null,
     );
   }
 
-  void showBuildingExplorerModal() {
-    showModalBottomSheet(
-      context: context,
-      builder: (context) {
-        return Container(
-          height: 400, // Define the height of the bottom sheet
-          color: Colors.white,
-          child: Center(
-            child: BuildingExplorer(
-              buildingSceneLayer: _buildingSceneLayer!,
-              onClose: () => Navigator.pop(context),
-            ),
-          ),
-        );
-      },
+  Widget showBuildingExplorerModal(BuildContext context) {
+    return Container(
+      height: 400, // Define the height of the bottom sheet
+      color: Colors.white,
+      child: Center(
+        child: BuildingExplorer(
+          buildingSceneLayer: _buildingSceneLayer!,
+          onClose: () => setState(() => _showBottomSheet = false),
+        ),
+      ),
     );
   }
 
