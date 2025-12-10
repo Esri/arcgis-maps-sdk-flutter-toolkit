@@ -56,9 +56,9 @@ part of '../../arcgis_maps_toolkit.dart';
 ///   }
 /// ```
 ///
-/// During application sign-out, you should revoke all tokens and clear all credentials from the credential stores. 
-/// Use [Authenticator.clearCredentials()] and [Authenticator.revokeOAuthTokens()], as required.
-/// In addition, consider also clearing the HTTP cache, using [ArcGISEnvironment.httpClient.cache.evictAll()], to prevent cached responses from being accessed without the credentials that were used to originally fetch them.
+/// During application sign-out, you should revoke all tokens and clear all credentials from the credential stores.
+/// Use [Authenticator.clearCredentials] and [Authenticator.revokeOAuthTokens], as required.
+/// In addition, consider also clearing the HTTP cache, using `ArcGISEnvironment.httpClient.cache.evictAll()`, to prevent cached responses from being accessed without the credentials that were used to originally fetch them.
 ///
 /// ## More information
 /// To learn more about using OAuth with ArcGIS accounts, see:
