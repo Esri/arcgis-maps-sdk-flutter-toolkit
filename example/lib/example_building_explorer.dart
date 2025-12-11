@@ -82,7 +82,7 @@ class _ExampleBuildingExplorerState extends State<ExampleBuildingExplorer> {
       color: Colors.white,
       child: Center(
         child: BuildingExplorer(
-          buildingSceneLayer: _buildingSceneLayer!,
+          localScene: _localSceneViewController.arcGISScene!,
           onClose: () => setState(() => _showBottomSheet = false),
         ),
       ),

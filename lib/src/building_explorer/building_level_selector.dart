@@ -49,6 +49,18 @@ class _BuildingLevelSelectorState extends State<_BuildingLevelSelector> {
   }
 
   @override
+  void didUpdateWidget(_BuildingLevelSelector oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    // Reset the state variables
+    _selectedLevel = 'All';
+    _levelList = <String>[];
+
+    // Get the state for the new BuidlingSceneLayer
+    _initLevelList().then((_) => _initSelectedLevel());
+  }
+
+  @override
   Widget build(BuildContext context) {
     final options = ['All', ..._levelList];
     return Padding(
