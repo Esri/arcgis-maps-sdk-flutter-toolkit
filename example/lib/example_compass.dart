@@ -16,6 +16,7 @@
 
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_toolkit_example/example_compass_custom.dart';
+import 'package:arcgis_maps_toolkit_example/example_compass_local_scene.dart';
 import 'package:arcgis_maps_toolkit_example/example_compass_map.dart';
 import 'package:arcgis_maps_toolkit_example/example_compass_scene.dart';
 import 'package:flutter/material.dart';
@@ -53,6 +54,11 @@ enum CompassExample {
     'Compass Scene',
     'Example of compass used with a scene. Default styling.',
     ExampleCompassScene.new,
+  ),
+  compassLocalScene(
+    'Compass Local Scene',
+    'Example of compass used with a local scene. Default styling.',
+    ExampleCompassLocalScene.new,
   ),
   compassCustom(
     'Compass Custom',
