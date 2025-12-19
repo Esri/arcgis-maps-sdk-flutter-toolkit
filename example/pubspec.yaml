@@ -17,6 +17,14 @@ dev_dependencies:
   flutter_lints: ^5.0.0
   flutter_test:
     sdk: flutter
+  patrol: ^4.0.1
 
 flutter:
   uses-material-design: true
+
+patrol:
+  app_name: arcgis_maps_toolkit_example
+  android:
+    package_name: com.esri.arcgis_maps_toolkit_example
+  ios:
+    bundle_id: com.esri.arcgisMapsToolkitExample

@@ -34,8 +34,8 @@ target 'Runner' do
   pod 'arcgis_maps_ffi', :podspec => '../arcgis_maps_core/ios/arcgis_maps_ffi.podspec'
 
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
-  target 'RunnerTests' do
-    inherit! :search_paths
+  target 'RunnerUITests' do
+    inherit! :complete
   end
 end
 
