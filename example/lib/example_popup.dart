@@ -19,6 +19,7 @@ import 'dart:async';
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_toolkit/arcgis_maps_toolkit.dart';
 import 'package:flutter/material.dart';
+import 'package:widgetbook_annotation/widgetbook_annotation.dart' as widgetbook;
 
 void main() {
   // Supply your apiKey using the --dart-define-from-file command line argument.
@@ -34,8 +35,19 @@ void main() {
   runApp(const MaterialApp(home: PopupExample()));
 }
 
+@widgetbook.UseCase(
+  name: 'PopupView',
+  type: PopupExample,
+  path: '[PopupView]',
+)
+Widget defaultPopupUseCase(BuildContext context) {
+  return const PopupExample();
+}
+
 class PopupExample extends StatefulWidget {
-  const PopupExample({super.key});
+  const PopupExample({this.webMapUri = 'https://www.arcgis.com/home/item.html?id=9f3a674e998f461580006e626611f9ad', super.key});
+
+  final String webMapUri;
 
   @override
   State<PopupExample> createState() => _PopupExampleState();
@@ -68,7 +80,7 @@ class _PopupExampleState extends State<PopupExample> {
     final webmapContainingPopups = ArcGISMap.withItem(
       PortalItem.withUri(
         Uri.parse(
-          'https://www.arcgis.com/home/item.html?id=9f3a674e998f461580006e626611f9ad',
+          widget.webMapUri,
         ),
       )!,
     );

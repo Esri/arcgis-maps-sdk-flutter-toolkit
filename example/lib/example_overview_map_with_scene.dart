@@ -17,7 +17,7 @@
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_toolkit/arcgis_maps_toolkit.dart';
 import 'package:flutter/material.dart';
-
+import 'package:widgetbook_annotation/widgetbook_annotation.dart' as widgetbook;
 void main() {
   // Supply your apiKey using the --dart-define-from-file command line argument.
   const apiKey = String.fromEnvironment('API_KEY');
@@ -32,6 +32,14 @@ void main() {
   runApp(const MaterialApp(home: ExampleOverviewMapWithScene()));
 }
 
+@widgetbook.UseCase(
+  name: 'OverviewMap (scene)',
+  type: ExampleOverviewMapWithScene,
+  path: '[OverviewMap]/OverviewMap',
+)
+Widget defaultOverviewMapWithSceneUseCase(BuildContext context) {
+  return const ExampleOverviewMapWithScene();
+}
 class ExampleOverviewMapWithScene extends StatefulWidget {
   const ExampleOverviewMapWithScene({super.key});
 

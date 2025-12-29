@@ -17,6 +17,8 @@
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_toolkit/arcgis_maps_toolkit.dart';
 import 'package:flutter/material.dart';
+import 'package:widgetbook_annotation/widgetbook_annotation.dart' as widgetbook;
+
 
 void main() {
   // Supply your apiKey using the --dart-define-from-file command line argument.
@@ -32,6 +34,14 @@ void main() {
   runApp(const MaterialApp(home: ExampleCompassCustom()));
 }
 
+@widgetbook.UseCase(
+  name: 'Compass (custom)',
+  type: ExampleCompassCustom,
+  path: '[Compass]/Compass',
+)
+Widget defaultCompassCustomUseCase(BuildContext context) {
+  return const ExampleCompassCustom();
+}
 class ExampleCompassCustom extends StatefulWidget {
   const ExampleCompassCustom({super.key});
 

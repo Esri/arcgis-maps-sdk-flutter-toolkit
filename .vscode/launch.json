@@ -10,8 +10,23 @@
             "request": "launch",
             "templateFor": "example/lib/",
             "toolArgs": [
-                "--dart-define-from-file=env.json"
+                "--dart-define-from-file=../../flutter/arcgis_maps/test/env.json"
             ],
+        },
+        {
+            "name": "Widgetbook",
+            "type": "dart",
+            "request": "launch",
+            "program": "example/lib/widget_book/main_widgetbook.dart",
+            "toolArgs": [
+               "--dart-define-from-file=../../flutter/arcgis_maps/test/env.json"
+            ]
+        },
+        {
+            "name": "Compass Needle Preview (Android)",
+            "type": "dart",
+            "request": "launch",
+            "program": "example/lib/main_compass_preview.dart"
         },
         {
             "name": "Run example app with API key access token (profile)",

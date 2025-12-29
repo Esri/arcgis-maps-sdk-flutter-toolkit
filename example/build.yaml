@@ -1,0 +1,8 @@
+targets:
+  $default:
+    builders:
+      widgetbook_generator:use_case_builder:
+        enabled: true
+      widgetbook_generator:app_builder:
+        enabled: true
+

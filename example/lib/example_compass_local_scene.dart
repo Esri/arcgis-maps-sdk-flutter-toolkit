@@ -17,6 +17,7 @@
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_toolkit/arcgis_maps_toolkit.dart';
 import 'package:flutter/material.dart';
+import 'package:widgetbook_annotation/widgetbook_annotation.dart' as widgetbook;
 
 void main() {
   // Supply your apiKey using the --dart-define-from-file command line argument.
@@ -32,6 +33,14 @@ void main() {
   runApp(const MaterialApp(home: ExampleCompassLocalScene()));
 }
 
+@widgetbook.UseCase(
+  name: 'Compass (local scene)',
+  type: ExampleCompassLocalScene,
+  path: '[Compass]/Compass',
+)
+ExampleCompassLocalScene defaultCompassLocalSceneUseCase(BuildContext context) {
+  return const ExampleCompassLocalScene();
+}
 class ExampleCompassLocalScene extends StatefulWidget {
   const ExampleCompassLocalScene({super.key});
 
