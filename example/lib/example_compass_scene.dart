@@ -42,7 +42,7 @@ class ExampleCompassScene extends StatefulWidget {
 @widgetbook.UseCase(
   name: 'Compass (scene)',
   type:  ExampleCompassScene,
-  path: '[Compass]/Compass',
+  path: '[Compass]',
 )
 Widget defaultCompassSceneUseCase(BuildContext context) {
   return const ExampleCompassScene();

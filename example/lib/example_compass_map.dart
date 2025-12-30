@@ -35,7 +35,7 @@ void main() {
 @widgetbook.UseCase(
   name: 'Compass (map)',
   type: ExampleCompassMap,
-  path: '[Compass]/Compass',
+  path: '[Compass]',
 )
 Widget defaultCompassMapUseCase(BuildContext context) {
   return const ExampleCompassMap();

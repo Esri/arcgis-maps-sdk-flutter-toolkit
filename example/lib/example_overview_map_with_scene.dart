@@ -35,7 +35,7 @@ void main() {
 @widgetbook.UseCase(
   name: 'OverviewMap (scene)',
   type: ExampleOverviewMapWithScene,
-  path: '[OverviewMap]/OverviewMap',
+  path: '[OverviewMap]',
 )
 Widget defaultOverviewMapWithSceneUseCase(BuildContext context) {
   return const ExampleOverviewMapWithScene();

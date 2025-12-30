@@ -17,29 +17,34 @@
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_toolkit/arcgis_maps_toolkit.dart';
 import 'package:flutter/material.dart';
-import 'package:widgetbook_annotation/widgetbook_annotation.dart' as widgetbook;
+import 'package:widgetbook_annotation/widgetbook_annotation.dart' as widgetbook show UseCase;
 
 void main() {
   runApp(const MaterialApp(home: ExampleAuthenticator()));
 }
 
+enum _AuthenticationType { oauth, token }
+
 @widgetbook.UseCase(
   name: 'Authenticator',
   type: ExampleAuthenticator,
-  path: '[Authenticator]/Authenticator',
+  path: '[Authenticator]',
 )
 Widget defaultAuthenticatorUseCase(BuildContext context) {
+
   return const ExampleAuthenticator();
 }
-class ExampleAuthenticator extends StatefulWidget {
-  const ExampleAuthenticator({super.key});
 
+class ExampleAuthenticator extends StatefulWidget {
+  const ExampleAuthenticator({
+    super.key,
+  });
   @override
   State<ExampleAuthenticator> createState() => _ExampleAuthenticatorState();
 }
 
 // Which authentication type to use.
-enum _AuthenticationType { oauth, token }
+// Public enum moved to src/authentication_type.dart.
 
 // Whether the map is loaded or not.
 enum _MapState { unloaded, loaded }
@@ -52,7 +57,7 @@ class _ExampleAuthenticatorState extends State<ExampleAuthenticator> {
   final _emptyMap = ArcGISMap(spatialReference: SpatialReference.wgs84);
 
   // Holds the selected authentication type.
-  var _authenticationType = _AuthenticationType.oauth;
+  late _AuthenticationType _authenticationType;
 
   // Current map state.
   var _mapState = _MapState.unloaded;
@@ -65,6 +70,12 @@ class _ExampleAuthenticatorState extends State<ExampleAuthenticator> {
       redirectUri: Uri.parse('my-ags-flutter-app://auth'),
     ),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    _authenticationType = _AuthenticationType.oauth;
+  }
 
   @override
   Widget build(BuildContext context) {

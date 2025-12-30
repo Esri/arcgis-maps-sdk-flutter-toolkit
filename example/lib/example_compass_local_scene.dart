@@ -36,7 +36,7 @@ void main() {
 @widgetbook.UseCase(
   name: 'Compass (local scene)',
   type: ExampleCompassLocalScene,
-  path: '[Compass]/Compass',
+  path: '[Compass]',
 )
 ExampleCompassLocalScene defaultCompassLocalSceneUseCase(BuildContext context) {
   return const ExampleCompassLocalScene();

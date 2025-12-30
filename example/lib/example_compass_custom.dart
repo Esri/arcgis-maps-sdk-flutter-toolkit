@@ -17,8 +17,8 @@
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_toolkit/arcgis_maps_toolkit.dart';
 import 'package:flutter/material.dart';
+import 'package:widgetbook/widgetbook.dart' as widgetbook;
 import 'package:widgetbook_annotation/widgetbook_annotation.dart' as widgetbook;
-
 
 void main() {
   // Supply your apiKey using the --dart-define-from-file command line argument.
@@ -37,13 +37,56 @@ void main() {
 @widgetbook.UseCase(
   name: 'Compass (custom)',
   type: ExampleCompassCustom,
-  path: '[Compass]/Compass',
+  path: '[Compass]',
 )
 Widget defaultCompassCustomUseCase(BuildContext context) {
-  return const ExampleCompassCustom();
+  return ExampleCompassCustom(
+    size: context.knobs.int.slider(
+      label: 'Size',
+      initialValue: 80,
+      min: 10,
+      max: 200,
+    ),
+    automaticallyHides: context.knobs.boolean(label: 'Automatically Hides'),
+    compassColor: context.knobs.color(
+      label: 'Compass Color',
+      initialValue: Colors.purple,
+    ),
+    compassIcon: context.knobs.object.segmented<IconData>(
+      label: 'Compass Icon',
+      options: const [
+        Icons.arrow_circle_up,
+        Icons.navigation,
+        Icons.arrow_upward,
+      ],
+      initialOption: Icons.arrow_circle_up,
+      labelBuilder: (value) {
+        if (value == Icons.arrow_circle_up) {
+          return 'Circle Up';
+        } else if (value == Icons.navigation) {
+          return 'Navigation';
+        } else if (value == Icons.arrow_upward) {
+          return 'Arrow Upward';
+        } else {
+          return 'Unknown';
+        }
+      },
+    ),
+  );
 }
+
 class ExampleCompassCustom extends StatefulWidget {
-  const ExampleCompassCustom({super.key});
+  const ExampleCompassCustom({
+    super.key,
+    this.size = 80,
+    this.automaticallyHides = false,
+    this.compassColor = Colors.purple,
+    this.compassIcon = Icons.arrow_circle_up,
+  });
+  final int size;
+  final bool automaticallyHides;
+  final Color compassColor;
+  final IconData compassIcon;
 
   @override
   State<ExampleCompassCustom> createState() => _ExampleCompassCustomState();
@@ -70,21 +113,21 @@ class _ExampleCompassCustomState extends State<ExampleCompassCustom> {
           Compass(
             controllerProvider: () => _mapViewController,
             // Optionally, always show the compass. Defaults to true, which hides the compass when the map is oriented north.
-            automaticallyHides: false,
+            automaticallyHides: widget.automaticallyHides,
             // Optionally, apply an alternative alignment. Default is top right.
             alignment: Alignment.centerLeft,
             // Optionally, apply custom padding. Default is 10.
             padding: const EdgeInsets.all(40),
             // Optionally, set the size of the compass icon. Default is 50.
-            size: 80,
+            size: widget.size.toDouble(),
             // Optionally, apply a custom icon builder to style the icon representing the compass.
             // See the other examples for the default compass style.
             iconBuilder: (context, size, angleRadians) => Transform.rotate(
               angle: angleRadians,
               child: Icon(
-                Icons.arrow_circle_up,
+                widget.compassIcon,
                 size: size,
-                color: Colors.purple,
+                color: widget.compassColor,
               ),
             ),
           ),
