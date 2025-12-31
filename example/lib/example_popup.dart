@@ -19,6 +19,7 @@ import 'dart:async';
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_toolkit/arcgis_maps_toolkit.dart';
 import 'package:flutter/material.dart';
+import 'package:widgetbook/widgetbook.dart';
 import 'package:widgetbook_annotation/widgetbook_annotation.dart' as widgetbook;
 
 void main() {
@@ -41,7 +42,27 @@ void main() {
   path: '[PopupView]',
 )
 Widget defaultPopupUseCase(BuildContext context) {
-  return const PopupExample();
+  return PopupExample(
+    webMapUri: context.knobs.object.dropdown<String>(
+      label: 'Web Map URI',
+      options: [
+        'https://www.arcgis.com/home/item.html?id=9f3a674e998f461580006e626611f9ad',
+        'https://www.arcgis.com/home/item.html?id=83e4cfcdcdaa497280318db3f4c17db7',
+      ],
+      initialOption:
+          'https://www.arcgis.com/home/item.html?id=9f3a674e998f461580006e626611f9ad',
+      labelBuilder: (value) {
+        if (value.endsWith('9f3a674e998f461580006e626611f9ad')) {
+            return 'Popups -  California peaks';
+          } else if (value.endsWith('83e4cfcdcdaa497280318db3f4c17db7')) {
+            return 'Popups - Video/Photo';
+          } else {
+            return 'Unknown Web Map';
+        }
+      },
+    ),
+        
+  );
 }
 
 class PopupExample extends StatefulWidget {
