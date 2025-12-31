@@ -72,6 +72,43 @@ Widget defaultCompassCustomUseCase(BuildContext context) {
         }
       },
     ),
+    padding: EdgeInsets.all(
+      context.knobs.int.slider(
+        label: 'Padding',
+        initialValue: 40,
+        min: 0,
+        max: 100,
+      ).toDouble(),
+    ),
+    alignment: context.knobs.object.dropdown<Alignment>(
+      label: 'Alignment',
+      options: const [
+        Alignment.topLeft,
+        Alignment.topRight,
+        Alignment.bottomLeft,
+        Alignment.bottomRight,      
+        Alignment.centerLeft,
+        Alignment.centerRight,
+      ],
+      initialOption: Alignment.centerLeft,
+      labelBuilder: (value) {
+        if (value == Alignment.topLeft) {
+          return 'Top Left';
+        } else if (value == Alignment.topRight) {
+          return 'Top Right';
+        } else if (value == Alignment.bottomLeft) {
+          return 'Bottom Left';
+        } else if (value == Alignment.bottomRight) {
+          return 'Bottom Right';
+        } else if (value == Alignment.centerLeft) {
+          return 'Center Left';
+        } else if (value == Alignment.centerRight) {
+          return 'Center Right';
+        } else {
+          return 'Unknown';
+        }
+      },
+    ),
   );
 }
 
@@ -82,11 +119,15 @@ class ExampleCompassCustom extends StatefulWidget {
     this.automaticallyHides = false,
     this.compassColor = Colors.purple,
     this.compassIcon = Icons.arrow_circle_up,
+    this.padding = const EdgeInsets.all(40),
+    this.alignment = Alignment.centerLeft,
   });
   final int size;
   final bool automaticallyHides;
   final Color compassColor;
   final IconData compassIcon;
+  final EdgeInsets padding;
+  final Alignment alignment;
 
   @override
   State<ExampleCompassCustom> createState() => _ExampleCompassCustomState();
@@ -115,9 +156,9 @@ class _ExampleCompassCustomState extends State<ExampleCompassCustom> {
             // Optionally, always show the compass. Defaults to true, which hides the compass when the map is oriented north.
             automaticallyHides: widget.automaticallyHides,
             // Optionally, apply an alternative alignment. Default is top right.
-            alignment: Alignment.centerLeft,
+            alignment: widget.alignment,
             // Optionally, apply custom padding. Default is 10.
-            padding: const EdgeInsets.all(40),
+            padding: widget.padding,
             // Optionally, set the size of the compass icon. Default is 50.
             size: widget.size.toDouble(),
             // Optionally, apply a custom icon builder to style the icon representing the compass.
