@@ -13,15 +13,7 @@
                 "--dart-define-from-file=../../flutter/arcgis_maps/test/env.json"
             ],
         },
-        {
-            "name": "Widgetbook",
-            "type": "dart",
-            "request": "launch",
-            "program": "example/lib/widget_book/main_widgetbook.dart",
-            "toolArgs": [
-               "--dart-define-from-file=../../flutter/arcgis_maps/test/env.json"
-            ]
-        },
+       
         {
             "name": "Compass Needle Preview (Android)",
             "type": "dart",
@@ -47,6 +39,16 @@
             "toolArgs": [
                 "--dart-define-from-file=env.json"
             ],
-        }
+        },
+        {
+            "name": "Run widgetbook with API key access token (release)",
+            "type": "dart",
+            "flutterMode": "release",
+            "request": "launch",
+            "program": "example/lib/widget_book/widgetbook.dart",
+            "toolArgs": [
+               "--dart-define-from-file=../../flutter/arcgis_maps/test/env.json"
+            ]
+        },
     ]
 }

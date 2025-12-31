@@ -16,6 +16,7 @@
 
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_toolkit/arcgis_maps_toolkit.dart';
+import 'package:arcgis_maps_toolkit_example/widget_book/common_util.dart';
 import 'package:flutter/material.dart';
 import 'package:widgetbook/widgetbook.dart' as widgetbook;
 import 'package:widgetbook_annotation/widgetbook_annotation.dart' as widgetbook;
@@ -73,42 +74,13 @@ Widget defaultCompassCustomUseCase(BuildContext context) {
       },
     ),
     padding: EdgeInsets.all(
-      context.knobs.int.slider(
+      context.knobs.double.slider(
         label: 'Padding',
         initialValue: 40,
-        min: 0,
         max: 100,
-      ).toDouble(),
+      ),
     ),
-    alignment: context.knobs.object.dropdown<Alignment>(
-      label: 'Alignment',
-      options: const [
-        Alignment.topLeft,
-        Alignment.topRight,
-        Alignment.bottomLeft,
-        Alignment.bottomRight,      
-        Alignment.centerLeft,
-        Alignment.centerRight,
-      ],
-      initialOption: Alignment.centerLeft,
-      labelBuilder: (value) {
-        if (value == Alignment.topLeft) {
-          return 'Top Left';
-        } else if (value == Alignment.topRight) {
-          return 'Top Right';
-        } else if (value == Alignment.bottomLeft) {
-          return 'Bottom Left';
-        } else if (value == Alignment.bottomRight) {
-          return 'Bottom Right';
-        } else if (value == Alignment.centerLeft) {
-          return 'Center Left';
-        } else if (value == Alignment.centerRight) {
-          return 'Center Right';
-        } else {
-          return 'Unknown';
-        }
-      },
-    ),
+    alignment: alignmentKnob(context)
   );
 }
 

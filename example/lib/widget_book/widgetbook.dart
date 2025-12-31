@@ -15,10 +15,9 @@
 //
 
 import 'package:arcgis_maps/arcgis_maps.dart';
-// Import generated Widgetbook directories (created by widgetbook_generator).
-import 'package:arcgis_maps_toolkit_example/widget_book/main_widgetbook.directories.g.dart';
+// generated Widgetbook directories (created by widgetbook_generator).
+import 'package:arcgis_maps_toolkit_example/widget_book/widgetbook.directories.g.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:widgetbook/widgetbook.dart';
 import 'package:widgetbook_annotation/widgetbook_annotation.dart' as widgetbook;
 
@@ -49,31 +48,12 @@ class _WidgetbookApp extends StatelessWidget {
       darkTheme: ThemeData.dark(),
       addons: [
         ViewportAddon(Viewports.all),
-        AlignmentAddon(),
-        LocalizationAddon(
-          locales: const [
-            Locale('en'),
-            Locale('es'),
-            Locale('fr'),
-            Locale('de'),
-            Locale('ja'),
-          ],
-          localizationsDelegates: const [
-            GlobalMaterialLocalizations.delegate,
-            GlobalWidgetsLocalizations.delegate,
-            GlobalCupertinoLocalizations.delegate,
-          ],
-          initialLocale: const Locale('en'),
-        ),
+        AlignmentAddon(),       
       ],
       // Use the auto-generated directory tree from annotations.
       directories: directories,
-      // Option A: Set a custom home page shown when no use-case is selected.
+      // Set a custom home page shown when no use-case is selected.
       home: const _WidgetbookHome(),
-      // Option B: Jump directly to a specific use-case on startup.
-      // To use, run on web and copy the URL query (e.g., '?path=compass/compass-custom').
-      // initialRoute: '?path=compass/compass-custom',
-      // Optional: add localization, addons etc. later.
     );
   }
 }

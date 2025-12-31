@@ -23,28 +23,37 @@ void main() {
   runApp(const MaterialApp(home: ExampleAuthenticator()));
 }
 
-enum _AuthenticationType { oauth, token }
+enum AuthenticationType { oauth, token }
 
 @widgetbook.UseCase(
-  name: 'Authenticator',
+  name: 'Authenticator(oauth)',
   type: ExampleAuthenticator,
   path: '[Authenticator]',
 )
-Widget defaultAuthenticatorUseCase(BuildContext context) {
+Widget authenticatorOAuthUseCase(BuildContext context) {
+  return const ExampleAuthenticator(widgetbook: true);
+}
 
-  return const ExampleAuthenticator();
+@widgetbook.UseCase(
+  name: 'Authenticator(token)',
+  type: ExampleAuthenticator,
+  path: '[Authenticator]',
+)
+Widget authenticatorTokenUseCase(BuildContext context) {
+  return const ExampleAuthenticator(type: AuthenticationType.token, widgetbook: true);
 }
 
 class ExampleAuthenticator extends StatefulWidget {
   const ExampleAuthenticator({
     super.key,
+    this.type = AuthenticationType.oauth,
+    this.widgetbook = false,
   });
+  final AuthenticationType type;
+  final bool widgetbook;
   @override
   State<ExampleAuthenticator> createState() => _ExampleAuthenticatorState();
 }
-
-// Which authentication type to use.
-// Public enum moved to src/authentication_type.dart.
 
 // Whether the map is loaded or not.
 enum _MapState { unloaded, loaded }
@@ -57,7 +66,7 @@ class _ExampleAuthenticatorState extends State<ExampleAuthenticator> {
   final _emptyMap = ArcGISMap(spatialReference: SpatialReference.wgs84);
 
   // Holds the selected authentication type.
-  late _AuthenticationType _authenticationType;
+  late AuthenticationType _authenticationType;
 
   // Current map state.
   var _mapState = _MapState.unloaded;
@@ -74,7 +83,7 @@ class _ExampleAuthenticatorState extends State<ExampleAuthenticator> {
   @override
   void initState() {
     super.initState();
-    _authenticationType = _AuthenticationType.oauth;
+    _authenticationType = widget.type;
   }
 
   @override
@@ -91,7 +100,7 @@ class _ExampleAuthenticatorState extends State<ExampleAuthenticator> {
               // Add an Authenticator widget to handle authentication challenges.
               child: Authenticator(
                 oAuthUserConfigurations:
-                    _authenticationType == _AuthenticationType.oauth
+                    _authenticationType == AuthenticationType.oauth
                     ? _oAuthUserConfigurations
                     : [],
                 // Add a map view as the child to the Authenticator, and set a controller.
@@ -106,21 +115,24 @@ class _ExampleAuthenticatorState extends State<ExampleAuthenticator> {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 // Toggle between OAuth and Token authentication.
-                SegmentedButton(
-                  segments: const [
-                    ButtonSegment(
-                      value: _AuthenticationType.oauth,
-                      label: Text('OAuth'),
-                    ),
-                    ButtonSegment(
-                      value: _AuthenticationType.token,
-                      label: Text('Token'),
-                    ),
-                  ],
-                  selected: {_authenticationType},
-                  onSelectionChanged: (selection) {
-                    setState(() => _authenticationType = selection.first);
-                  },
+                Visibility(
+                  visible: !widget.widgetbook,
+                  child: SegmentedButton(
+                    segments: const [
+                      ButtonSegment(
+                        value: AuthenticationType.oauth,
+                        label: Text('OAuth'),
+                      ),
+                      ButtonSegment(
+                        value: AuthenticationType.token,
+                        label: Text('Token'),
+                      ),
+                    ],
+                    selected: {_authenticationType},
+                    onSelectionChanged: (selection) {
+                      setState(() => _authenticationType = selection.first);
+                    },
+                  ),
                 ),
                 // Load or unload the map. Loading the map will trigger an
                 // authentication challenge. Unloading the map will additionally

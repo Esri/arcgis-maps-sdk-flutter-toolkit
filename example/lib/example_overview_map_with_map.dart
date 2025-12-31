@@ -16,8 +16,11 @@
 
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_toolkit/arcgis_maps_toolkit.dart';
+import 'package:arcgis_maps_toolkit_example/widget_book/common_util.dart';
 import 'package:flutter/material.dart';
+import 'package:widgetbook/widgetbook.dart';
 import 'package:widgetbook_annotation/widgetbook_annotation.dart' as widgetbook;
+
 void main() {
   // Supply your apiKey using the --dart-define-from-file command line argument.
   const apiKey = String.fromEnvironment('API_KEY');
@@ -33,15 +36,72 @@ void main() {
 }
 
 @widgetbook.UseCase(
-  name: 'OverviewMap (map)',
+  name: 'OverviewMap (map custom)',
   type: ExampleOverviewMapWithMap,
   path: '[OverviewMap]',
 )
 Widget defaultOverviewMapWithMapUseCase(BuildContext context) {
-  return const ExampleOverviewMapWithMap();
+  return ExampleOverviewMapWithMap(
+    alignment: alignmentKnob(context),
+    padding: EdgeInsets.all(
+      context.knobs.double.slider(label: 'Padding', initialValue: 10, max: 100),
+    ),
+    scaleFactor: context.knobs.double.slider(
+      label: 'Scale Factor',
+      initialValue: 25,
+      min: 1,
+      max: 100,
+    ),
+    outlineColor: context.knobs.color(
+      label: 'Outline Color',
+      initialValue: Colors.red,
+    ),
+    outlineWidth: context.knobs.double.slider(
+      label: 'Outline Width',
+      initialValue: 1,
+      min: 1,
+      max: 10,
+    ),
+    map: context.knobs.object.segmented<ArcGISMap>(
+      label: 'Overview Map',
+      options: [
+        ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic),
+        ArcGISMap.withBasemapStyle(BasemapStyle.arcGISImagery),
+        ArcGISMap.withBasemapStyle(BasemapStyle.arcGISStreets),
+      ],
+      initialOption: ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic),
+      labelBuilder: (value) {
+        final lastSegment = value.basemap?.uri.toString().split('/').last;
+        if (lastSegment == 'topographic') {
+          return 'Topographic';
+        } else if (lastSegment == 'imagery') {
+          return 'Imagery';
+        } else if (lastSegment == 'streets') {
+          return 'Streets';
+        } else {
+          return 'Unknown';
+        }
+      },
+    ),
+  );
 }
+
 class ExampleOverviewMapWithMap extends StatefulWidget {
-  const ExampleOverviewMapWithMap({super.key});
+  const ExampleOverviewMapWithMap({
+    super.key,
+    this.alignment = Alignment.bottomRight,
+    this.padding = const EdgeInsets.all(10),
+    this.scaleFactor = 25,
+    this.outlineColor = Colors.red,
+    this.outlineWidth = 1,
+    this.map,
+  });
+  final Alignment alignment;
+  final EdgeInsets padding;
+  final double scaleFactor;
+  final Color outlineColor;
+  final double outlineWidth;
+  final ArcGISMap? map;
 
   @override
   State<ExampleOverviewMapWithMap> createState() =>
@@ -65,7 +125,20 @@ class _ExampleOverviewMapWithMapState extends State<ExampleOverviewMapWithMap> {
           ),
           // Create an overview map and display on top of the map view in a stack.
           // Pass the overview map the corresponding map view controller.
-          OverviewMap(controllerProvider: () => _mapViewController),
+          OverviewMap(
+            controllerProvider: () => _mapViewController,
+            alignment: widget.alignment,
+            padding: widget.padding,
+            scaleFactor: widget.scaleFactor,
+            symbol: SimpleFillSymbol(
+              color: Colors.transparent,
+              outline: SimpleLineSymbol(
+                color: widget.outlineColor,
+                width: widget.outlineWidth,
+              ),
+            ),
+            map: widget.map,
+          ),
         ],
       ),
     );
