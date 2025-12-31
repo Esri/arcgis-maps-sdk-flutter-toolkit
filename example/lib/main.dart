@@ -16,6 +16,7 @@
 
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_toolkit_example/example_authenticator.dart';
+import 'package:arcgis_maps_toolkit_example/example_basemap_gallery.dart';
 import 'package:arcgis_maps_toolkit_example/example_compass.dart';
 import 'package:arcgis_maps_toolkit_example/example_overview_map.dart';
 import 'package:arcgis_maps_toolkit_example/example_popup.dart';
@@ -54,6 +55,11 @@ enum ComponentExample {
     'Compass',
     'Visualizes current rotation of map/scene and resets the rotation to north on tap',
     ExampleCompass.new,
+  ),
+  basemapGallery(
+    'BasemapGallery',
+    'Browse basemaps and apply the selection to a map',
+    ExampleBasemapGallery.new,
   ),
   overviewMap(
     'OverviewMap',
