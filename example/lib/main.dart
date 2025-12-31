@@ -51,15 +51,15 @@ enum ComponentExample {
     'Handles authentication challenges',
     ExampleAuthenticator.new,
   ),
-  compass(
-    'Compass',
-    'Visualizes current rotation of map/scene and resets the rotation to north on tap',
-    ExampleCompass.new,
-  ),
   basemapGallery(
     'BasemapGallery',
     'Browse basemaps and apply the selection to a map',
     ExampleBasemapGallery.new,
+  ),
+  compass(
+    'Compass',
+    'Visualizes current rotation of map/scene and resets the rotation to north on tap',
+    ExampleCompass.new,
   ),
   overviewMap(
     'OverviewMap',
