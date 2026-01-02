@@ -32,11 +32,13 @@ void main() {
   runApp(const MaterialApp(home: ExampleOverviewMapWithScene()));
 }
 
+// Define a use case for widgetbook for the overview map with scene example.
 @widgetbook.UseCase(
   name: 'OverviewMap (scene)',
   type: ExampleOverviewMapWithScene,
   path: '[OverviewMap]',
 )
+
 Widget defaultOverviewMapWithSceneUseCase(BuildContext context) {
   return const ExampleOverviewMapWithScene();
 }

@@ -25,6 +25,7 @@ void main() {
 
 enum AuthenticationType { oauth, token }
 
+// Define a use case for OAuth authentication.
 @widgetbook.UseCase(
   name: 'Authenticator(oauth)',
   type: ExampleAuthenticator,
@@ -34,6 +35,7 @@ Widget authenticatorOAuthUseCase(BuildContext context) {
   return const ExampleAuthenticator(widgetbook: true);
 }
 
+// Define a use case for Token authentication.
 @widgetbook.UseCase(
   name: 'Authenticator(token)',
   type: ExampleAuthenticator,

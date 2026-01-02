@@ -33,11 +33,13 @@ void main() {
   runApp(const MaterialApp(home: ExampleCompassLocalScene()));
 }
 
+// Define a use case for widgetbook for the local scene compass example.
 @widgetbook.UseCase(
   name: 'Compass (local scene)',
   type: ExampleCompassLocalScene,
   path: '[Compass]',
 )
+
 ExampleCompassLocalScene defaultCompassLocalSceneUseCase(BuildContext context) {
   return const ExampleCompassLocalScene();
 }

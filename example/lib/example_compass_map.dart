@@ -32,11 +32,14 @@ void main() {
 
   runApp(const MaterialApp(home: ExampleCompassMap()));
 }
+
+// Define a use case for widgetbook for the map compass example.
 @widgetbook.UseCase(
   name: 'Compass (map)',
   type: ExampleCompassMap,
   path: '[Compass]',
 )
+
 Widget defaultCompassMapUseCase(BuildContext context) {
   return const ExampleCompassMap();
 }

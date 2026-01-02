@@ -36,6 +36,7 @@ void main() {
   runApp(const MaterialApp(home: PopupExample()));
 }
 
+// Define a use case for widgetbook for the popup view example.
 @widgetbook.UseCase(
   name: 'PopupView',
   type: PopupExample,

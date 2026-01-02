@@ -35,6 +35,7 @@ void main() {
   runApp(const MaterialApp(home: ExampleOverviewMapWithMap()));
 }
 
+// Define a use case for widgetbook for the overview map with map example.
 @widgetbook.UseCase(
   name: 'OverviewMap (map custom)',
   type: ExampleOverviewMapWithMap,

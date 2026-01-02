@@ -39,6 +39,7 @@ class ExampleCompassScene extends StatefulWidget {
   State<ExampleCompassScene> createState() => _ExampleCompassSceneState();
 }
 
+// Define a use case for widgetbook for the scene compass example.
 @widgetbook.UseCase(
   name: 'Compass (scene)',
   type:  ExampleCompassScene,
