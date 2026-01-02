@@ -71,7 +71,7 @@ class _ExampleBasemapGalleryState extends State<ExampleBasemapGallery> {
     _controller = BasemapGalleryController.withItems(
       geoModel: _map,
       basemaps: galleryItems,
-    )..setViewStyle(BasemapGalleryViewStyle.grid);
+    )..setViewStyle(BasemapGalleryViewStyle.list);
   }
 
   @override
@@ -138,29 +138,19 @@ class _ExampleBasemapGalleryState extends State<ExampleBasemapGallery> {
             children: [
               Padding(
                 padding: const EdgeInsets.fromLTRB(12, 12, 12, 6),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: ValueListenableBuilder<BasemapGalleryItem?>(
-                        valueListenable: _controller.currentBasemapNotifier,
-                        builder: (context, currentItem, _) {
-                          final name = currentItem?.name ?? '';
-                          return Text(
-                            name.isEmpty
-                                ? 'Select a basemap'
-                                : 'Selected: $name',
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: Theme.of(context).textTheme.titleMedium,
-                          );
-                        },
-                      ),
-                    ),
-                    TextButton(
-                      onPressed: () => Navigator.of(context).pop(),
-                      child: const Text('Done'),
-                    ),
-                  ],
+                child: ValueListenableBuilder<BasemapGalleryItem?>(
+                  valueListenable: _controller.currentBasemapNotifier,
+                  builder: (context, currentItem, _) {
+                    final name = currentItem?.name ?? '';
+                    return Text(
+                      name.isEmpty
+                          ? 'Select a basemap'
+                          : 'Selected: $name',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.titleMedium,
+                    );
+                  },
                 ),
               ),
               const Divider(height: 1),
