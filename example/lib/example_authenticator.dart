@@ -32,7 +32,7 @@ enum AuthenticationType { oauth, token }
   path: '[Authenticator]',
 )
 Widget authenticatorOAuthUseCase(BuildContext context) {
-  return const ExampleAuthenticator(widgetbook: true);
+  return const ExampleAuthenticator(title: 'Authenticator (oauth)', widgetbook: true);
 }
 
 // Define a use case for Token authentication.
@@ -42,16 +42,18 @@ Widget authenticatorOAuthUseCase(BuildContext context) {
   path: '[Authenticator]',
 )
 Widget authenticatorTokenUseCase(BuildContext context) {
-  return const ExampleAuthenticator(type: AuthenticationType.token, widgetbook: true);
+  return const ExampleAuthenticator(type: AuthenticationType.token, title: 'Authenticator (token)', widgetbook: true);
 }
 
 class ExampleAuthenticator extends StatefulWidget {
   const ExampleAuthenticator({
     super.key,
     this.type = AuthenticationType.oauth,
+    this.title = 'Authenticator',
     this.widgetbook = false,
   });
   final AuthenticationType type;
+  final String title;
   final bool widgetbook;
   @override
   State<ExampleAuthenticator> createState() => _ExampleAuthenticatorState();
@@ -92,7 +94,7 @@ class _ExampleAuthenticatorState extends State<ExampleAuthenticator> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar: AppBar(title: const Text('Authenticator')),
+      appBar: AppBar(title: Text(widget.title)),
       body: SafeArea(
         left: false,
         right: false,
