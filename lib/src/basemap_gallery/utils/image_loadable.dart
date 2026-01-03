@@ -20,8 +20,8 @@ part of '../../../arcgis_maps_toolkit.dart';
 ///
 /// This utility does not trigger network activity on its own. If the
 /// `LoadableImage` is not already loaded, this returns `null`.
-final class LoadableImageUtils {
-  const LoadableImageUtils._();
+final class _LoadableImageUtils {
+  const _LoadableImageUtils._();
 
   /// Returns an [ImageProvider] if [loadableImage] is already loaded.
   ///
