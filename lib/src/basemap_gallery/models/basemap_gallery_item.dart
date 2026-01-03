@@ -167,7 +167,7 @@ final class BasemapGalleryItem with ChangeNotifier {
           await firstLayer.load();
         }
       } on Object {
-        // We'll treat this as unknown/noMatch depending on inputs.
+        _spatialReference = null;
       }
     }
 
