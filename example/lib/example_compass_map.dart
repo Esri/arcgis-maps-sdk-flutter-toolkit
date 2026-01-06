@@ -16,9 +16,11 @@
 
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_toolkit/arcgis_maps_toolkit.dart';
+import 'package:arcgis_maps_toolkit_example/widget_book/compass_delegate.dart';
 import 'package:flutter/material.dart';
 
 import 'package:widgetbook_annotation/widgetbook_annotation.dart' as widgetbook;
+
 void main() {
   // Supply your apiKey using the --dart-define-from-file command line argument.
   const apiKey = String.fromEnvironment('API_KEY');
@@ -39,12 +41,15 @@ void main() {
   type: ExampleCompassMap,
   path: '[Compass]',
 )
-
 Widget defaultCompassMapUseCase(BuildContext context) {
-  return const ExampleCompassMap();
+  return ExampleCompassMap(delegate: createCompassKnobHost(context));
 }
+
 class ExampleCompassMap extends StatefulWidget {
-  const ExampleCompassMap({super.key});
+  const ExampleCompassMap({super.key, this.delegate});
+
+  /// Optional delegate providing configuration for the Compass widget.
+  final CompassKnobHost? delegate;
 
   @override
   State<ExampleCompassMap> createState() => _ExampleCompassMapState();
@@ -66,8 +71,11 @@ class _ExampleCompassMapState extends State<ExampleCompassMap> {
             onMapViewReady: onMapViewReady,
           ),
           // Create a compass and display on top of the map view in a stack.
-          // Pass the compass the corresponding map view controller.
-          Compass(controllerProvider: () => _mapViewController),
+          // Prefer the delegate factory if provided, otherwise fall back to defaults.
+          widget.delegate?.createCompass(
+                controllerProvider: () => _mapViewController,
+              ) ??
+              Compass(controllerProvider: () => _mapViewController),
         ],
       ),
     );

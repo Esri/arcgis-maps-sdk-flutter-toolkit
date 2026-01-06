@@ -16,9 +16,8 @@
 
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_toolkit/arcgis_maps_toolkit.dart';
-import 'package:arcgis_maps_toolkit_example/widget_book/common_util.dart';
+import 'package:arcgis_maps_toolkit_example/widget_book/compass_delegate.dart';
 import 'package:flutter/material.dart';
-import 'package:widgetbook/widgetbook.dart' as widgetbook;
 import 'package:widgetbook_annotation/widgetbook_annotation.dart' as widgetbook;
 
 void main() {
@@ -32,74 +31,26 @@ void main() {
     ArcGISEnvironment.apiKey = apiKey;
   }
 
-  runApp(const MaterialApp(home: ExampleCompassCustom()));
+  runApp(
+    const MaterialApp(home: ExampleCompassCustom(delegate: CompassKnobHost())),
+  );
 }
 
+// Define a use case for the custom compass example.
+// This use case allows for interactive adjustment of the compass properties
+// using Widgetbook knobs.
 @widgetbook.UseCase(
   name: 'Compass (custom)',
   type: ExampleCompassCustom,
   path: '[Compass]',
 )
 Widget defaultCompassCustomUseCase(BuildContext context) {
-  return ExampleCompassCustom(
-    size: context.knobs.int.slider(
-      label: 'Size',
-      initialValue: 80,
-      min: 10,
-      max: 200,
-    ),
-    automaticallyHides: context.knobs.boolean(label: 'Automatically Hides'),
-    compassColor: context.knobs.color(
-      label: 'Compass Color',
-      initialValue: Colors.purple,
-    ),
-    compassIcon: context.knobs.object.segmented<IconData>(
-      label: 'Compass Icon',
-      options: const [
-        Icons.arrow_circle_up,
-        Icons.navigation,
-        Icons.arrow_upward,
-      ],
-      initialOption: Icons.arrow_circle_up,
-      labelBuilder: (value) {
-        if (value == Icons.arrow_circle_up) {
-          return 'Circle Up';
-        } else if (value == Icons.navigation) {
-          return 'Navigation';
-        } else if (value == Icons.arrow_upward) {
-          return 'Arrow Upward';
-        } else {
-          return 'Unknown';
-        }
-      },
-    ),
-    padding: EdgeInsets.all(
-      context.knobs.double.slider(
-        label: 'Padding',
-        initialValue: 40,
-        max: 100,
-      ),
-    ),
-    alignment: alignmentKnob(context)
-  );
+  return ExampleCompassCustom(delegate: createCompassKnobHost(context));
 }
 
 class ExampleCompassCustom extends StatefulWidget {
-  const ExampleCompassCustom({
-    super.key,
-    this.size = 80,
-    this.automaticallyHides = false,
-    this.compassColor = Colors.purple,
-    this.compassIcon = Icons.arrow_circle_up,
-    this.padding = const EdgeInsets.all(40),
-    this.alignment = Alignment.centerLeft,
-  });
-  final int size;
-  final bool automaticallyHides;
-  final Color compassColor;
-  final IconData compassIcon;
-  final EdgeInsets padding;
-  final Alignment alignment;
+  const ExampleCompassCustom({super.key, this.delegate});
+  final CompassKnobHost? delegate;
 
   @override
   State<ExampleCompassCustom> createState() => _ExampleCompassCustomState();
@@ -108,6 +59,11 @@ class ExampleCompassCustom extends StatefulWidget {
 class _ExampleCompassCustomState extends State<ExampleCompassCustom> {
   // Create a map view controller.
   final _mapViewController = ArcGISMapView.createController();
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -123,27 +79,25 @@ class _ExampleCompassCustomState extends State<ExampleCompassCustom> {
           // Create a compass and display on top of the map view in a stack.
           // Pass the compass the corresponding map view controller.
           // This compass implementation amends default properties, such as alignment and icon style.
-          Compass(
-            controllerProvider: () => _mapViewController,
-            // Optionally, always show the compass. Defaults to true, which hides the compass when the map is oriented north.
-            automaticallyHides: widget.automaticallyHides,
-            // Optionally, apply an alternative alignment. Default is top right.
-            alignment: widget.alignment,
-            // Optionally, apply custom padding. Default is 10.
-            padding: widget.padding,
-            // Optionally, set the size of the compass icon. Default is 50.
-            size: widget.size.toDouble(),
-            // Optionally, apply a custom icon builder to style the icon representing the compass.
-            // See the other examples for the default compass style.
-            iconBuilder: (context, size, angleRadians) => Transform.rotate(
-              angle: angleRadians,
-              child: Icon(
-                widget.compassIcon,
-                size: size,
-                color: widget.compassColor,
+          // Create the compass via the delegate factory for consistency.
+          widget.delegate?.createCompass(
+                controllerProvider: () => _mapViewController,
+              ) ??
+              Compass(
+                controllerProvider: () => _mapViewController,
+                automaticallyHides: false,
+                alignment: Alignment.centerLeft,
+                padding: const EdgeInsets.all(40),
+                size: 80,
+                iconBuilder: (context, size, angleRadians) => Transform.rotate(
+                  angle: angleRadians,
+                  child: Icon(
+                    Icons.arrow_circle_up,
+                    size: size,
+                    color: Colors.purple,
+                  ),
+                ),
               ),
-            ),
-          ),
         ],
       ),
     );

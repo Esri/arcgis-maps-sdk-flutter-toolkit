@@ -16,6 +16,7 @@
 
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_toolkit/arcgis_maps_toolkit.dart';
+import 'package:arcgis_maps_toolkit_example/widget_book/overviewmap_delegate.dart';
 import 'package:flutter/material.dart';
 import 'package:widgetbook_annotation/widgetbook_annotation.dart' as widgetbook;
 
@@ -39,12 +40,17 @@ void main() {
   type: ExampleOverviewMapWithLocalScene,
   path: '[OverviewMap]',
 )
-
 Widget defaultOverviewMapWithLocalSceneUseCase(BuildContext context) {
-  return const ExampleOverviewMapWithLocalScene();
+  return ExampleOverviewMapWithLocalScene(
+    delegate: createOverviewMapWithKnobs(context),
+  );
 }
+
 class ExampleOverviewMapWithLocalScene extends StatefulWidget {
-  const ExampleOverviewMapWithLocalScene({super.key});
+  const ExampleOverviewMapWithLocalScene({super.key, this.delegate});
+
+  /// Optional delegate providing configuration for the OverviewMap widget.
+  final OverviewMapKnobsHost? delegate;
 
   @override
   State<ExampleOverviewMapWithLocalScene> createState() =>
@@ -68,11 +74,14 @@ class _ExampleOverviewMapWithLocalSceneState
             onLocalSceneViewReady: onLocalSceneViewReady,
           ),
           // Create an overview map and display on top of the local scene view in a stack.
-          // Pass the overview map the corresponding local scene view controller.
-          OverviewMap(
-            controllerProvider: () => _localSceneViewController,
-            map: ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic),
-          ),
+          // Prefer the delegate factory if provided, otherwise fall back to defaults.
+          widget.delegate?.createOverviewMap(
+                controllerProvider: () => _localSceneViewController,
+              ) ??
+              OverviewMap(
+                controllerProvider: () => _localSceneViewController,
+                map: ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic),
+              ),
         ],
       ),
     );

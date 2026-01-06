@@ -16,8 +16,10 @@
 
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_toolkit/arcgis_maps_toolkit.dart';
+import 'package:arcgis_maps_toolkit_example/widget_book/compass_delegate.dart';
 import 'package:flutter/material.dart';
 import 'package:widgetbook_annotation/widgetbook_annotation.dart' as widgetbook;
+
 void main() {
   // Supply your apiKey using the --dart-define-from-file command line argument.
   const apiKey = String.fromEnvironment('API_KEY');
@@ -33,7 +35,10 @@ void main() {
 }
 
 class ExampleCompassScene extends StatefulWidget {
-  const ExampleCompassScene({super.key});
+  const ExampleCompassScene({super.key, this.delegate});
+
+  /// Optional delegate providing configuration for the Compass widget.
+  final CompassKnobHost? delegate;
 
   @override
   State<ExampleCompassScene> createState() => _ExampleCompassSceneState();
@@ -42,11 +47,11 @@ class ExampleCompassScene extends StatefulWidget {
 // Define a use case for widgetbook for the scene compass example.
 @widgetbook.UseCase(
   name: 'Compass (scene)',
-  type:  ExampleCompassScene,
+  type: ExampleCompassScene,
   path: '[Compass]',
 )
 Widget defaultCompassSceneUseCase(BuildContext context) {
-  return const ExampleCompassScene();
+  return ExampleCompassScene(delegate: createCompassKnobHost(context));
 }
 
 class _ExampleCompassSceneState extends State<ExampleCompassScene> {
@@ -65,8 +70,11 @@ class _ExampleCompassSceneState extends State<ExampleCompassScene> {
             onSceneViewReady: onSceneViewReady,
           ),
           // Create a compass and display on top of the scene view in a stack.
-          // Pass the compass the corresponding scene view controller.
-          Compass(controllerProvider: () => _sceneViewController),
+          // Prefer the delegate factory if provided, otherwise fall back to defaults.
+          widget.delegate?.createCompass(
+                controllerProvider: () => _sceneViewController,
+              ) ??
+              Compass(controllerProvider: () => _sceneViewController),
         ],
       ),
     );

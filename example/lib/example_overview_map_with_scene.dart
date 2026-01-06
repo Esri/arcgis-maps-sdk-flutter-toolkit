@@ -16,8 +16,10 @@
 
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_toolkit/arcgis_maps_toolkit.dart';
+import 'package:arcgis_maps_toolkit_example/widget_book/overviewmap_delegate.dart';
 import 'package:flutter/material.dart';
 import 'package:widgetbook_annotation/widgetbook_annotation.dart' as widgetbook;
+
 void main() {
   // Supply your apiKey using the --dart-define-from-file command line argument.
   const apiKey = String.fromEnvironment('API_KEY');
@@ -38,12 +40,17 @@ void main() {
   type: ExampleOverviewMapWithScene,
   path: '[OverviewMap]',
 )
-
 Widget defaultOverviewMapWithSceneUseCase(BuildContext context) {
-  return const ExampleOverviewMapWithScene();
+  return ExampleOverviewMapWithScene(
+    delegate: createOverviewMapWithKnobs(context),
+  );
 }
+
 class ExampleOverviewMapWithScene extends StatefulWidget {
-  const ExampleOverviewMapWithScene({super.key});
+  const ExampleOverviewMapWithScene({super.key, this.delegate});
+
+  /// Optional delegate providing configuration for the OverviewMap widget.
+  final OverviewMapKnobsHost? delegate;
 
   @override
   State<ExampleOverviewMapWithScene> createState() =>
@@ -67,11 +74,14 @@ class _ExampleOverviewMapWithSceneState
             onSceneViewReady: onSceneViewReady,
           ),
           // Create an overview map and display on top of the scene view in a stack.
-          // Pass the overview map the corresponding scene view controller.
-          OverviewMap(
-            controllerProvider: () => _sceneViewController,
-            map: ArcGISMap.withBasemapStyle(BasemapStyle.arcGISImageryStandard),
-          ),
+          // Prefer the delegate factory if provided, otherwise fall back to defaults.
+          widget.delegate?.createOverviewMap(
+                controllerProvider: () => _sceneViewController,
+              ) ??
+              OverviewMap(
+                controllerProvider: () => _sceneViewController,
+                map: ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic),
+              ),
         ],
       ),
     );

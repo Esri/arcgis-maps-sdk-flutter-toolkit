@@ -16,6 +16,7 @@
 
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_toolkit/arcgis_maps_toolkit.dart';
+import 'package:arcgis_maps_toolkit_example/widget_book/compass_delegate.dart';
 import 'package:flutter/material.dart';
 import 'package:widgetbook_annotation/widgetbook_annotation.dart' as widgetbook;
 
@@ -39,12 +40,15 @@ void main() {
   type: ExampleCompassLocalScene,
   path: '[Compass]',
 )
-
 ExampleCompassLocalScene defaultCompassLocalSceneUseCase(BuildContext context) {
-  return const ExampleCompassLocalScene();
+  return ExampleCompassLocalScene(delegate: createCompassKnobHost(context));
 }
+
 class ExampleCompassLocalScene extends StatefulWidget {
-  const ExampleCompassLocalScene({super.key});
+  const ExampleCompassLocalScene({super.key, this.delegate});
+
+  /// Optional delegate providing configuration for the Compass widget.
+  final CompassKnobHost? delegate;
 
   @override
   State<ExampleCompassLocalScene> createState() =>
@@ -67,8 +71,11 @@ class _ExampleCompassLocalSceneState extends State<ExampleCompassLocalScene> {
             onLocalSceneViewReady: onLocalSceneViewReady,
           ),
           // Create a compass and display on top of the local scene view in a stack.
-          // Pass the compass the corresponding local scene view controller.
-          Compass(controllerProvider: () => _localSceneViewController),
+          // Prefer the delegate factory if provided, otherwise fall back to defaults.
+          widget.delegate?.createCompass(
+                controllerProvider: () => _localSceneViewController,
+              ) ??
+              Compass(controllerProvider: () => _localSceneViewController),
         ],
       ),
     );

@@ -1,5 +1,5 @@
 //
-// Copyright 2025 Esri
+// Copyright 2026 Esri
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -17,6 +17,7 @@
 import 'package:flutter/material.dart';
 import 'package:widgetbook/widgetbook.dart';
 
+// Common utility functions for creating knobs used in multiple widgetbook delegates.
 Alignment alignmentKnob(BuildContext context) =>
  context.knobs.object.dropdown<Alignment>(
       label: 'Alignment',
@@ -28,7 +29,7 @@ Alignment alignmentKnob(BuildContext context) =>
         Alignment.centerLeft,
         Alignment.centerRight,
       ],
-      initialOption: Alignment.centerLeft,
+      initialOption: Alignment.topRight,
       labelBuilder: (value) {
         if (value == Alignment.topLeft) {
           return 'Top Left';
