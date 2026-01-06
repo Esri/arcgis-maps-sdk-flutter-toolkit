@@ -50,7 +50,7 @@ Widget defaultPopupUseCase(BuildContext context) {
           'https://www.arcgis.com/home/item.html?id=9f3a674e998f461580006e626611f9ad',
       labelBuilder: (value) {
         if (value.endsWith('9f3a674e998f461580006e626611f9ad')) {
-          return 'Popups -  California peaks';
+          return 'Popups - California peaks';
         } else if (value.endsWith('83e4cfcdcdaa497280318db3f4c17db7')) {
           return 'Popups - Video/Photo';
         } else {
