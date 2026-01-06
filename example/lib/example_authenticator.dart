@@ -17,7 +17,9 @@
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_toolkit/arcgis_maps_toolkit.dart';
 import 'package:flutter/material.dart';
-import 'package:widgetbook_annotation/widgetbook_annotation.dart' as widgetbook show UseCase;
+import 'package:widgetbook_annotation/widgetbook_annotation.dart'
+    as widgetbook
+    show UseCase;
 
 void main() {
   runApp(const MaterialApp(home: ExampleAuthenticator()));
@@ -32,7 +34,10 @@ enum AuthenticationType { oauth, token }
   path: '[Authenticator]',
 )
 Widget authenticatorOAuthUseCase(BuildContext context) {
-  return const ExampleAuthenticator(title: 'Authenticator (oauth)', widgetbook: true);
+  return const ExampleAuthenticator(
+    title: 'Authenticator (oauth)',
+    widgetbook: true,
+  );
 }
 
 // Define a use case for Token authentication.
@@ -42,7 +47,11 @@ Widget authenticatorOAuthUseCase(BuildContext context) {
   path: '[Authenticator]',
 )
 Widget authenticatorTokenUseCase(BuildContext context) {
-  return const ExampleAuthenticator(type: AuthenticationType.token, title: 'Authenticator (token)', widgetbook: true);
+  return const ExampleAuthenticator(
+    type: AuthenticationType.token,
+    title: 'Authenticator (token)',
+    widgetbook: true,
+  );
 }
 
 class ExampleAuthenticator extends StatefulWidget {

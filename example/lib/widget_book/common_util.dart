@@ -12,20 +12,20 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-// 
- 
+//
+
 import 'package:flutter/material.dart';
 import 'package:widgetbook/widgetbook.dart';
 
 // Common utility functions for creating knobs used in multiple widgetbook delegates.
 Alignment alignmentKnob(BuildContext context) =>
- context.knobs.object.dropdown<Alignment>(
+    context.knobs.object.dropdown<Alignment>(
       label: 'Alignment',
       options: const [
         Alignment.topLeft,
         Alignment.topRight,
         Alignment.bottomLeft,
-        Alignment.bottomRight,      
+        Alignment.bottomRight,
         Alignment.centerLeft,
         Alignment.centerRight,
       ],
@@ -46,5 +46,5 @@ Alignment alignmentKnob(BuildContext context) =>
         } else {
           return 'Unknown';
         }
-      }
-  );
+      },
+    );

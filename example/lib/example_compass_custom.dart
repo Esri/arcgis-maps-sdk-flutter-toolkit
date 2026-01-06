@@ -31,9 +31,7 @@ void main() {
     ArcGISEnvironment.apiKey = apiKey;
   }
 
-  runApp(
-    const MaterialApp(home: ExampleCompassCustom()),
-  );
+  runApp(const MaterialApp(home: ExampleCompassCustom()));
 }
 
 // Define a use case for the custom compass example.
@@ -59,11 +57,6 @@ class ExampleCompassCustom extends StatefulWidget {
 class _ExampleCompassCustomState extends State<ExampleCompassCustom> {
   // Create a map view controller.
   final _mapViewController = ArcGISMapView.createController();
-
-  @override
-  void initState() {
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {

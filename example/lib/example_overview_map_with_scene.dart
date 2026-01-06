@@ -80,7 +80,9 @@ class _ExampleOverviewMapWithSceneState
               ) ??
               OverviewMap(
                 controllerProvider: () => _sceneViewController,
-                map: ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic),
+                map: ArcGISMap.withBasemapStyle(
+                  BasemapStyle.arcGISImageryStandard,
+                ),
               ),
         ],
       ),

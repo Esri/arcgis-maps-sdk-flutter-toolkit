@@ -75,10 +75,7 @@ class _ExampleOverviewMapWithMapState extends State<ExampleOverviewMapWithMap> {
           widget.delegate?.createOverviewMap(
                 controllerProvider: () => _mapViewController,
               ) ??
-              OverviewMap(
-                controllerProvider: () => _mapViewController,
-                map: ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic),
-              ),
+              OverviewMap(controllerProvider: () => _mapViewController),
         ],
       ),
     );

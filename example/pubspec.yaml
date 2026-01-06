@@ -7,7 +7,7 @@ environment:
   sdk: '>=3.10.4 <4.0.0'
 
 dependencies:
-  arcgis_maps: 300.0.0
+  arcgis_maps: ^300.0.0
   arcgis_maps_toolkit:
     path: ../
   flutter:

@@ -37,11 +37,7 @@ void main() {
 }
 
 // Define a use case for widgetbook for the popup view example.
-@widgetbook.UseCase(
-  name: 'PopupView',
-  type: PopupExample,
-  path: '[PopupView]',
-)
+@widgetbook.UseCase(name: 'PopupView', type: PopupExample, path: '[PopupView]')
 Widget defaultPopupUseCase(BuildContext context) {
   return PopupExample(
     webMapUri: context.knobs.object.dropdown<String>(
@@ -54,20 +50,23 @@ Widget defaultPopupUseCase(BuildContext context) {
           'https://www.arcgis.com/home/item.html?id=9f3a674e998f461580006e626611f9ad',
       labelBuilder: (value) {
         if (value.endsWith('9f3a674e998f461580006e626611f9ad')) {
-            return 'Popups -  California peaks';
-          } else if (value.endsWith('83e4cfcdcdaa497280318db3f4c17db7')) {
-            return 'Popups - Video/Photo';
-          } else {
-            return 'Unknown Web Map';
+          return 'Popups -  California peaks';
+        } else if (value.endsWith('83e4cfcdcdaa497280318db3f4c17db7')) {
+          return 'Popups - Video/Photo';
+        } else {
+          return 'Unknown Web Map';
         }
       },
     ),
-        
   );
 }
 
 class PopupExample extends StatefulWidget {
-  const PopupExample({this.webMapUri = 'https://www.arcgis.com/home/item.html?id=9f3a674e998f461580006e626611f9ad', super.key});
+  const PopupExample({
+    this.webMapUri =
+        'https://www.arcgis.com/home/item.html?id=9f3a674e998f461580006e626611f9ad',
+    super.key,
+  });
 
   final String webMapUri;
 
@@ -100,11 +99,7 @@ class _PopupExampleState extends State<PopupExample> {
   void onMapViewReady() {
     // Configure a webmap containing popups and set to the map view controller.
     final webmapContainingPopups = ArcGISMap.withItem(
-      PortalItem.withUri(
-        Uri.parse(
-          widget.webMapUri,
-        ),
-      )!,
+      PortalItem.withUri(Uri.parse(widget.webMapUri))!,
     );
     _mapViewController.arcGISMap = webmapContainingPopups;
   }
