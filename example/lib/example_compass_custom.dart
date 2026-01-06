@@ -32,7 +32,7 @@ void main() {
   }
 
   runApp(
-    const MaterialApp(home: ExampleCompassCustom(delegate: CompassKnobHost())),
+    const MaterialApp(home: ExampleCompassCustom()),
   );
 }
 
