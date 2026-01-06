@@ -10,7 +10,7 @@
             "request": "launch",
             "templateFor": "example/lib/",
             "toolArgs": [
-                "--dart-define-from-file=../../flutter/arcgis_maps/test/env.json"
+                "--dart-define-from-file=env.json"
             ],
         },
        
@@ -43,11 +43,11 @@
         {
             "name": "Run widgetbook with API key access token (release)",
             "type": "dart",
-            "flutterMode": "release",
+            "flutterMode": "debug",
             "request": "launch",
             "program": "example/lib/widget_book/widgetbook.dart",
             "toolArgs": [
-               "--dart-define-from-file=../../flutter/arcgis_maps/test/env.json"
+               "--dart-define-from-file=env.json"
             ]
         },
     ]
