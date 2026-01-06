@@ -13,13 +13,6 @@
                 "--dart-define-from-file=env.json"
             ],
         },
-       
-        {
-            "name": "Compass Needle Preview (Android)",
-            "type": "dart",
-            "request": "launch",
-            "program": "example/lib/main_compass_preview.dart"
-        },
         {
             "name": "Run example app with API key access token (profile)",
             "type": "dart",
