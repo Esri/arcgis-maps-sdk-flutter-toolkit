@@ -14,9 +14,9 @@
 // limitations under the License.
 //
 
-import 'package:arcgis_maps_toolkit_example/widget_book/common_util.dart';
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_toolkit/arcgis_maps_toolkit.dart';
+import 'package:arcgis_maps_toolkit_example/widget_book/common_util.dart';
 import 'package:flutter/material.dart';
 import 'package:widgetbook/widgetbook.dart';
 
