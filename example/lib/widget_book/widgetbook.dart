@@ -46,10 +46,7 @@ class _WidgetbookApp extends StatelessWidget {
     return Widgetbook.material(
       lightTheme: ThemeData.light(),
       darkTheme: ThemeData.dark(),
-      addons: [
-        ViewportAddon(Viewports.all),
-        AlignmentAddon(),       
-      ],
+      addons: [ViewportAddon(Viewports.all), AlignmentAddon()],
       // Use the auto-generated directory tree from annotations.
       directories: directories,
       // Set a custom home page shown when no use-case is selected.
