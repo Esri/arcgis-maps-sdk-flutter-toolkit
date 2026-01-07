@@ -137,18 +137,8 @@ final class BasemapGalleryController with ChangeNotifier {
 
     final gm = _geoModel;
     if (gm != null) {
-      try {
-        await gm.load();
-      } on Object {
-        // If loading fails, still allow selection attempt; basemap apply may
-        // surface errors through the basemap's own load.
-      }
-
-      try {
-        await item.updateSpatialReferenceStatus(gm.actualSpatialReference);
-      } on Object {
-        // If we cannot determine status, proceed.
-      }
+      await gm.load();
+      await item.updateSpatialReferenceStatus(gm.actualSpatialReference);
 
       if (item.spatialReferenceStatus ==
           BasemapGalleryItemSpatialReferenceStatus.noMatch) {
