@@ -36,7 +36,7 @@ final class BasemapGalleryController with ChangeNotifier {
   /// If [portal] is valid, the controller fetches portal basemaps asynchronously
   /// and copies them into [gallery].
   ///
-  BasemapGalleryController.withPortal({GeoModel? geoModel, Portal? portal})
+  BasemapGalleryController.withPortal(Portal portal, {GeoModel? geoModel})
     : _geoModel = geoModel,
       _portal = portal,
       _isPortalProvidedByUser = true {
@@ -71,14 +71,12 @@ final class BasemapGalleryController with ChangeNotifier {
   bool _isFetchingBasemaps = false;
   Object? _fetchBasemapsError;
 
-  final ValueNotifier<_SpatialReferenceMismatchError?>
-  spatialReferenceMismatchErrorNotifier =
+  final spatialReferenceMismatchErrorNotifier =
       ValueNotifier<_SpatialReferenceMismatchError?>(null);
 
-  final ValueNotifier<BasemapGalleryItem?> currentBasemapNotifier =
-      ValueNotifier<BasemapGalleryItem?>(null);
+  final currentBasemapNotifier = ValueNotifier<BasemapGalleryItem?>(null);
 
-  final StreamController<Basemap> _currentBasemapChangedController =
+  final _currentBasemapChangedController =
       StreamController<Basemap>.broadcast();
 
   /// The associated geo model.
