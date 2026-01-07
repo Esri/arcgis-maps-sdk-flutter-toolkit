@@ -71,7 +71,7 @@ final class BasemapGalleryItem with ChangeNotifier {
 
   set name(String value) {
     _nameWasExplicitlySet = true;
-    _resolvedName = value.trim().isEmpty ? 'Untitled Basemap' : value;
+    _resolvedName = value.isEmpty ? 'Untitled Basemap' : value;
   }
 
   /// Thumbnail displayed in the gallery.
@@ -174,8 +174,10 @@ final class BasemapGalleryItem with ChangeNotifier {
   void _recomputeDerivedFields({bool preserveExplicitName = false}) {
     final item = _basemap.item;
 
-    final overrideTooltip = _tooltipOverride?.trim();
-    final tooltipFromItem = item?.description.trim();
+    final overrideTooltip = _thumbnailOverride == null
+        ? _tooltipOverride
+        : _tooltipOverride;
+    final tooltipFromItem = item?.description;
 
     _resolvedTooltip = (overrideTooltip != null && overrideTooltip.isNotEmpty)
         ? overrideTooltip
@@ -186,9 +188,9 @@ final class BasemapGalleryItem with ChangeNotifier {
     _resolvedThumbnail = _thumbnailOverride ?? item?.thumbnail;
 
     if (!preserveExplicitName || !_nameWasExplicitlySet) {
-      final basemapName = _basemap.name.trim();
-      final itemTitle = item?.title.trim();
-      final itemName = item?.name.trim();
+      final basemapName = _basemap.name;
+      final itemTitle = item?.title;
+      final itemName = item?.name;
 
       _resolvedName = basemapName.isNotEmpty
           ? basemapName
