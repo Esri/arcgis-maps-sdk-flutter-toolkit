@@ -143,9 +143,7 @@ class _ExampleBasemapGalleryState extends State<ExampleBasemapGallery> {
                   builder: (context, currentItem, _) {
                     final name = currentItem?.name ?? '';
                     return Text(
-                      name.isEmpty
-                          ? 'Select a basemap'
-                          : 'Selected: $name',
+                      name.isEmpty ? 'Select a basemap' : 'Selected: $name',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: Theme.of(context).textTheme.titleMedium,

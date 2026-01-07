@@ -433,10 +433,10 @@ final class _BasemapTile extends StatelessWidget {
           ],
         ),
         if (item.hasError)
-          const Positioned(
+          Positioned(
             top: -6,
             right: -6,
-            child: Icon(Icons.error, color: Colors.red),
+            child: Icon(Icons.error, color: theme.colorScheme.error),
           ),
       ],
     );
