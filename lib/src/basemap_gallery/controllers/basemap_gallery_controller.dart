@@ -25,8 +25,7 @@ final class BasemapGalleryController with ChangeNotifier {
   /// typically require an API key or named-user authentication.
   BasemapGalleryController({GeoModel? geoModel})
     : _geoModel = geoModel,
-      _portal = null,
-      _isPortalProvidedByUser = false {
+      _portal = null {
     _initFromGeoModel();
     unawaited(_populateDefaultBasemaps());
   }
@@ -38,8 +37,7 @@ final class BasemapGalleryController with ChangeNotifier {
   ///
   BasemapGalleryController.withPortal(Portal portal, {GeoModel? geoModel})
     : _geoModel = geoModel,
-      _portal = portal,
-      _isPortalProvidedByUser = true {
+      _portal = portal {
     _initFromGeoModel();
     unawaited(_populateFromPortal());
   }
@@ -49,8 +47,7 @@ final class BasemapGalleryController with ChangeNotifier {
     required List<BasemapGalleryItem> items,
     GeoModel? geoModel,
   }) : _geoModel = geoModel,
-       _portal = null,
-       _isPortalProvidedByUser = false {
+       _portal = null {
     _initFromGeoModel();
 
     if (items.isEmpty) {
@@ -67,7 +64,7 @@ final class BasemapGalleryController with ChangeNotifier {
 
   GeoModel? _geoModel;
   final Portal? _portal;
-  final bool _isPortalProvidedByUser;
+  // Removed portal-provided flag; basemap is assigned directly without cloning.
 
   BasemapGalleryViewStyle _viewStyle = BasemapGalleryViewStyle.automatic;
 
@@ -157,10 +154,7 @@ final class BasemapGalleryController with ChangeNotifier {
     currentBasemapNotifier.value = item;
 
     if (gm != null) {
-      // Clone unless the basemap originated from a user-provided portal.
-      gm.basemap = _isPortalProvidedByUser
-          ? item.basemap
-          : item.basemap.clone();
+      gm.basemap = item.basemap;
     }
 
     _currentBasemapChangedController.add(item.basemap);
