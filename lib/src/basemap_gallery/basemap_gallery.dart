@@ -117,8 +117,6 @@ final class _BasemapGalleryState extends State<BasemapGallery> {
     final error = widget.controller.spatialReferenceMismatchErrorNotifier.value;
     if (error == null) return;
 
-    widget.controller.clearSpatialReferenceMismatchError();
-
     final message = _spatialReferenceMismatchMessage(error);
     await showDialog<void>(
       context: context,

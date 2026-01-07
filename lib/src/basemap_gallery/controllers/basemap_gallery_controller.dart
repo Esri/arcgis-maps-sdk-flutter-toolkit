@@ -167,11 +167,6 @@ final class BasemapGalleryController with ChangeNotifier {
     notifyListeners();
   }
 
-  /// Clears the current spatial reference mismatch error.
-  void clearSpatialReferenceMismatchError() {
-    spatialReferenceMismatchErrorNotifier.value = null;
-  }
-
   /// Adds an item to the gallery.
   void addItem(BasemapGalleryItem item) {
     _gallery = List<BasemapGalleryItem>.unmodifiable(<BasemapGalleryItem>[
