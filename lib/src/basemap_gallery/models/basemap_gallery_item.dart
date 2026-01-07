@@ -30,22 +30,6 @@ final class BasemapGalleryItem with ChangeNotifier {
     unawaited(_loadBasemapAndThumbnailIfNeeded());
   }
 
-  /// Construct with Basemap + overrides.
-  ///
-  /// If provided `thumbnail`/`tooltip` overrides are invalid, falls back to the
-  /// basemap's associated [Item] (thumbnail/description).
-  ///
-  BasemapGalleryItem.withOverrides({
-    required Basemap basemap,
-    LoadableImage? thumbnail,
-    String? tooltip,
-  }) : _basemap = basemap,
-       _thumbnailOverride = thumbnail,
-       _tooltipOverride = tooltip {
-    _recomputeDerivedFields();
-    unawaited(_loadBasemapAndThumbnailIfNeeded());
-  }
-
   Basemap _basemap;
 
   final LoadableImage? _thumbnailOverride;

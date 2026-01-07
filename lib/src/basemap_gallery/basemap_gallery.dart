@@ -157,7 +157,9 @@ final class _BasemapGalleryState extends State<BasemapGallery> {
     );
   }
 
-  String _spatialReferenceMismatchMessage(SpatialReferenceMismatchError error) {
+  String _spatialReferenceMismatchMessage(
+    _SpatialReferenceMismatchError error,
+  ) {
     final basemapSr = error.basemapSpatialReference;
     final geoModelSr = error.geoModelSpatialReference;
 
