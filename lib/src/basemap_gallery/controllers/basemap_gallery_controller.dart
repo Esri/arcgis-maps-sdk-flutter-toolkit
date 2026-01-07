@@ -279,7 +279,7 @@ final class _SpatialReferenceMismatchError {
   final SpatialReference? geoModelSpatialReference;
 }
 
-extension BasemapGalleryGeoModelExtensions on GeoModel {
+extension on GeoModel {
   /// The spatial reference used for basemap compatibility checks.
   ///
   /// For [ArcGISScene], if the scene view tiling scheme is web mercator,
