@@ -90,8 +90,6 @@ final class _BasemapGalleryState extends State<BasemapGallery> {
   @override
   void initState() {
     super.initState();
-    widget.controller.addListener(_onControllerChanged);
-    widget.controller.currentBasemapNotifier.addListener(_onControllerChanged);
     widget.controller.spatialReferenceMismatchErrorNotifier.addListener(
       _onSpatialReferenceMismatchErrorChanged,
     );
@@ -101,16 +99,8 @@ final class _BasemapGalleryState extends State<BasemapGallery> {
   void didUpdateWidget(covariant BasemapGallery oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.controller != widget.controller) {
-      oldWidget.controller.removeListener(_onControllerChanged);
-      oldWidget.controller.currentBasemapNotifier.removeListener(
-        _onControllerChanged,
-      );
       oldWidget.controller.spatialReferenceMismatchErrorNotifier.removeListener(
         _onSpatialReferenceMismatchErrorChanged,
-      );
-      widget.controller.addListener(_onControllerChanged);
-      widget.controller.currentBasemapNotifier.addListener(
-        _onControllerChanged,
       );
       widget.controller.spatialReferenceMismatchErrorNotifier.addListener(
         _onSpatialReferenceMismatchErrorChanged,
@@ -120,18 +110,10 @@ final class _BasemapGalleryState extends State<BasemapGallery> {
 
   @override
   void dispose() {
-    widget.controller.removeListener(_onControllerChanged);
-    widget.controller.currentBasemapNotifier.removeListener(
-      _onControllerChanged,
-    );
     widget.controller.spatialReferenceMismatchErrorNotifier.removeListener(
       _onSpatialReferenceMismatchErrorChanged,
     );
     super.dispose();
-  }
-
-  void _onControllerChanged() {
-    if (mounted) setState(() {});
   }
 
   Future<void> _onSpatialReferenceMismatchErrorChanged() async {
@@ -178,35 +160,40 @@ final class _BasemapGalleryState extends State<BasemapGallery> {
 
   @override
   Widget build(BuildContext context) {
-    final controller = widget.controller;
+    return AnimatedBuilder(
+      animation: widget.controller,
+      builder: (context, _) {
+        final controller = widget.controller;
 
-    if (controller.isFetchingBasemaps && controller.gallery.isEmpty) {
-      return Padding(
-        padding: widget.padding,
-        child: const Center(child: CircularProgressIndicator()),
-      );
-    }
+        if (controller.isFetchingBasemaps && controller.gallery.isEmpty) {
+          return Padding(
+            padding: widget.padding,
+            child: const Center(child: CircularProgressIndicator()),
+          );
+        }
 
-    return Padding(
-      padding: widget.padding,
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          final style = controller.viewStyle;
+        return Padding(
+          padding: widget.padding,
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final style = controller.viewStyle;
 
-          final useGrid = switch (style) {
-            BasemapGalleryViewStyle.grid => true,
-            BasemapGalleryViewStyle.list => false,
-            BasemapGalleryViewStyle.automatic =>
-              constraints.maxWidth >=
-                  widget.gridMinTileWidth * 2 + widget.gridSpacing,
-          };
+              final useGrid = switch (style) {
+                BasemapGalleryViewStyle.grid => true,
+                BasemapGalleryViewStyle.list => false,
+                BasemapGalleryViewStyle.automatic =>
+                  constraints.maxWidth >=
+                      widget.gridMinTileWidth * 2 + widget.gridSpacing,
+              };
 
-          if (useGrid) {
-            return _buildGrid(constraints.maxWidth);
-          }
-          return _buildList();
-        },
-      ),
+              if (useGrid) {
+                return _buildGrid(constraints.maxWidth);
+              }
+              return _buildList();
+            },
+          ),
+        );
+      },
     );
   }
 
@@ -214,6 +201,7 @@ final class _BasemapGalleryState extends State<BasemapGallery> {
     final items = widget.controller.gallery;
     final spacing = widget.gridSpacing;
 
+    // Calculate number of columns based on available width.
     final crossAxisCount = (width / (widget.gridMinTileWidth + spacing))
         .floor()
         .clamp(2, 6);
