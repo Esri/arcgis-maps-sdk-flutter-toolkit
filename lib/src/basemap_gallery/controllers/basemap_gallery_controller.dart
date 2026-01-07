@@ -71,9 +71,9 @@ final class BasemapGalleryController with ChangeNotifier {
   bool _isFetchingBasemaps = false;
   Object? _fetchBasemapsError;
 
-  final ValueNotifier<SpatialReferenceMismatchError?>
+  final ValueNotifier<_SpatialReferenceMismatchError?>
   spatialReferenceMismatchErrorNotifier =
-      ValueNotifier<SpatialReferenceMismatchError?>(null);
+      ValueNotifier<_SpatialReferenceMismatchError?>(null);
 
   final ValueNotifier<BasemapGalleryItem?> currentBasemapNotifier =
       ValueNotifier<BasemapGalleryItem?>(null);
@@ -143,7 +143,7 @@ final class BasemapGalleryController with ChangeNotifier {
       if (item.spatialReferenceStatus ==
           BasemapGalleryItemSpatialReferenceStatus.noMatch) {
         spatialReferenceMismatchErrorNotifier.value =
-            SpatialReferenceMismatchError(
+            _SpatialReferenceMismatchError(
               basemapSpatialReference: item.spatialReference,
               geoModelSpatialReference: gm.actualSpatialReference,
             );
@@ -268,10 +268,9 @@ final class BasemapGalleryController with ChangeNotifier {
   }
 }
 
-/// An error describing a spatial reference mismatch between a geo model and a
-/// basemap.
-final class SpatialReferenceMismatchError {
-  const SpatialReferenceMismatchError({
+/// An error describing a spatial reference mismatch between a geo model and a basemap.
+final class _SpatialReferenceMismatchError {
+  const _SpatialReferenceMismatchError({
     required this.basemapSpatialReference,
     required this.geoModelSpatialReference,
   });
