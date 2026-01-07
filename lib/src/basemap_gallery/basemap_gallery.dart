@@ -60,7 +60,6 @@ final class BasemapGallery extends StatefulWidget {
     this.padding = const EdgeInsets.all(8),
     this.gridMinTileWidth = 120,
     this.gridSpacing = 8,
-    this.scrollController,
     this.onItemSelected,
   });
 
@@ -75,9 +74,6 @@ final class BasemapGallery extends StatefulWidget {
 
   /// Spacing between grid tiles.
   final double gridSpacing;
-
-  /// Optional scroll controller.
-  final ScrollController? scrollController;
 
   /// Optional callback invoked when an item is selected.
   final ValueChanged<BasemapGalleryItem>? onItemSelected;
@@ -207,7 +203,7 @@ final class _BasemapGalleryState extends State<BasemapGallery> {
         .clamp(2, 6);
 
     return GridView.builder(
-      controller: widget.scrollController,
+      primary: true,
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: crossAxisCount,
         mainAxisSpacing: spacing,
@@ -233,7 +229,7 @@ final class _BasemapGalleryState extends State<BasemapGallery> {
     final items = widget.controller.gallery;
 
     return ListView.separated(
-      controller: widget.scrollController,
+      primary: true,
       itemCount: items.length,
       separatorBuilder: (_, __) => const SizedBox(height: 8),
       itemBuilder: (context, index) {
