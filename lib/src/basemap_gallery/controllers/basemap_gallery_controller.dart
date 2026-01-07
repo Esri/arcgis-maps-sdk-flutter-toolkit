@@ -66,7 +66,7 @@ final class BasemapGalleryController with ChangeNotifier {
 
   BasemapGalleryViewStyle _viewStyle = BasemapGalleryViewStyle.automatic;
 
-  late List<BasemapGalleryItem> _gallery = const [];
+  List<BasemapGalleryItem> _gallery = const [];
 
   bool _isFetchingBasemaps = false;
   Object? _fetchBasemapsError;
