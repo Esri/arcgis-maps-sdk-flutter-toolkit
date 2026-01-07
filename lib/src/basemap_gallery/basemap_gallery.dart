@@ -390,7 +390,7 @@ final class _BasemapTile extends StatelessWidget {
   }
 
   Widget _buildThumbnail(BuildContext context, {required BoxFit fit}) {
-    final base = LoadableImageUtils.thumbnailOrPlaceholder(
+    final base = _LoadableImageUtils.thumbnailOrPlaceholder(
       thumbnail: item.thumbnail,
       fit: fit,
     );
