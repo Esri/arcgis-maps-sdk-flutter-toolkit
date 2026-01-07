@@ -116,12 +116,12 @@ class _ExampleBasemapGalleryState extends State<ExampleBasemapGallery> {
 
     return identifiers
         .map((id) {
-          final uri = Uri.parse('https://www.arcgis.com/home/item.html?id=$id');
-          final portalItem = PortalItem.withUri(uri);
-          if (portalItem == null) return null;
+          final portalItem = PortalItem.withPortalAndItemId(
+            portal: Portal.arcGISOnline(),
+            itemId: id,
+          );
           return BasemapGalleryItem(basemap: Basemap.withItem(portalItem));
         })
-        .whereType<BasemapGalleryItem>()
         .toList(growable: false);
   }
 
