@@ -54,10 +54,15 @@ final class BasemapGalleryController with ChangeNotifier {
     _initFromGeoModel();
 
     if (items.isEmpty) {
-      unawaited(_populateDefaultBasemaps());
-    } else {
-      _gallery = List<BasemapGalleryItem>.unmodifiable(items.toList());
+      throw ArgumentError.value(
+        items,
+        'items',
+        'BasemapGalleryController.withItems requires a non-empty list. '
+            'Use the unnamed BasemapGalleryController() constructor for defaults.',
+      );
     }
+
+    _gallery = List<BasemapGalleryItem>.unmodifiable(items.toList());
   }
 
   GeoModel? _geoModel;
