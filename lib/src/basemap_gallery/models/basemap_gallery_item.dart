@@ -166,14 +166,12 @@ final class BasemapGalleryItem with ChangeNotifier {
         if (firstLayer != null && firstLayer.loadStatus != LoadStatus.loaded) {
           await firstLayer.load();
         }
+
+        _spatialReference = firstLayer?.spatialReference;
       } on Object {
         _spatialReference = null;
       }
     }
-
-    _spatialReference = _basemap.baseLayers.isNotEmpty
-        ? _basemap.baseLayers.first.spatialReference
-        : null;
 
     if (referenceSpatialReference == null) {
       _spatialReferenceStatus =
