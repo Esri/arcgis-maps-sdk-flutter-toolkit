@@ -64,8 +64,6 @@ final class BasemapGalleryController with ChangeNotifier {
 
   GeoModel? _geoModel;
   final Portal? _portal;
-  // Removed portal-provided flag; basemap is assigned directly without cloning.
-
   BasemapGalleryViewStyle _viewStyle = BasemapGalleryViewStyle.automatic;
 
   List<BasemapGalleryItem> _gallery = const [];
@@ -111,7 +109,7 @@ final class BasemapGalleryController with ChangeNotifier {
   /// Current view style.
   BasemapGalleryViewStyle get viewStyle => _viewStyle;
 
-  /// Stream emitting the selected [Basemap] whenever selection changes.
+  /// Stream emitting the current [Basemap] whenever selection changes.
   Stream<Basemap> get onCurrentBasemapChanged =>
       _currentBasemapChangedController.stream;
 
