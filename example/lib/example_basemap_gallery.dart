@@ -70,7 +70,7 @@ class _ExampleBasemapGalleryState extends State<ExampleBasemapGallery> {
 
     _controller = BasemapGalleryController.withItems(
       geoModel: _map,
-      basemaps: galleryItems,
+      items: galleryItems,
     )..setViewStyle(BasemapGalleryViewStyle.grid);
   }
 

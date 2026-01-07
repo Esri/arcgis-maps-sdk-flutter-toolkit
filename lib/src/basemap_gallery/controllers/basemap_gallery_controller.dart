@@ -46,17 +46,17 @@ final class BasemapGalleryController with ChangeNotifier {
 
   /// Creates a gallery using provided [basemaps].
   BasemapGalleryController.withItems({
-    required List<BasemapGalleryItem> basemaps,
+    required List<BasemapGalleryItem> items,
     GeoModel? geoModel,
   }) : _geoModel = geoModel,
        _portal = null,
        _isPortalProvidedByUser = false {
     _initFromGeoModel();
 
-    if (basemaps.isEmpty) {
+    if (items.isEmpty) {
       unawaited(_populateDefaultBasemaps());
     } else {
-      _gallery = List<BasemapGalleryItem>.unmodifiable(basemaps.toList());
+      _gallery = List<BasemapGalleryItem>.unmodifiable(items.toList());
     }
   }
 
