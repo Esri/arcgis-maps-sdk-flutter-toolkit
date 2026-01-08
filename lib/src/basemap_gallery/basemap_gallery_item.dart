@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-part of '../../../arcgis_maps_toolkit.dart';
+part of '../../arcgis_maps_toolkit.dart';
 
 /// An element in a basemap gallery.
 ///

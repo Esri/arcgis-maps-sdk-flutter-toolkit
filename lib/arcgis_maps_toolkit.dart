@@ -73,9 +73,9 @@ part 'src/popups/popup_views/common_utils.dart';
 part 'src/popups/theme/theme_data.dart';
 // Basemap Gallery Widget
 part 'src/basemap_gallery/basemap_gallery.dart';
-part 'src/basemap_gallery/controllers/basemap_gallery_controller.dart';
-part 'src/basemap_gallery/enums/basemap_gallery_view_style.dart';
-part 'src/basemap_gallery/models/basemap_gallery_item.dart';
+part 'src/basemap_gallery/basemap_gallery_controller.dart';
+part 'src/basemap_gallery/basemap_gallery_view_style.dart';
+part 'src/basemap_gallery/basemap_gallery_item.dart';
 part 'src/basemap_gallery/utils/image_loadable.dart';
 
 part 'src/template_widget.dart';
