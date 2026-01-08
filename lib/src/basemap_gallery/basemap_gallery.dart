@@ -280,11 +280,9 @@ final class _BasemapGalleryState extends State<BasemapGallery> {
   }
 }
 
-/// Internal tile for a basemap item; shows thumbnail, name,
-/// selection outline, and load/error state.
+/// Tile for a basemap item; shows thumbnail, name, selection outline, and load/error state.
 final class _BasemapTile extends StatelessWidget {
-  /// Creates a tile for [item]. Tap is disabled while loading.
-  /// Use [dense] for compact list styling.
+  /// Creates a tile for the basemap gallery item. Tap is disabled while loading.
   const _BasemapTile({
     required this.item,
     required this.isSelected,
