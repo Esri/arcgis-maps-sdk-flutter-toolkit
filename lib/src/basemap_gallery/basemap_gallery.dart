@@ -63,19 +63,22 @@ final class BasemapGallery extends StatefulWidget {
     this.onItemSelected,
   });
 
-  /// The controller driving this view.
+  /// The [controller] driving this view.
   final BasemapGalleryController controller;
 
-  /// Outer padding.
+  /// Outer [padding]. Defaults to `EdgeInsets.all(8)`.
   final EdgeInsetsGeometry padding;
 
-  /// Minimum width of a grid tile.
+  /// Minimum grid tile width (logical px). Defaults to `120`.
   final double gridMinTileWidth;
 
-  /// Spacing between grid tiles.
+  /// Grid tile spacing (logical px). Defaults to `8`.
   final double gridSpacing;
 
-  /// Optional callback invoked when an item is selected.
+  /// Called when a basemap is tapped.
+  /// Not called for loading/error items. Selection may show a
+  /// spatial reference mismatch dialog. For applied selection, listen to
+  /// [BasemapGalleryController.currentBasemapNotifier].
   final ValueChanged<BasemapGalleryItem>? onItemSelected;
 
   @override
