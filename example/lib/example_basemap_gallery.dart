@@ -155,10 +155,7 @@ class _ExampleBasemapGalleryState extends State<ExampleBasemapGallery> {
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.all(8),
-                  child: BasemapGallery(
-                    controller: _controller,
-                    gridMinTileWidth: 80,
-                  ),
+                  child: BasemapGallery(controller: _controller),
                 ),
               ),
             ],

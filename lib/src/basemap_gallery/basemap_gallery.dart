@@ -57,29 +57,26 @@ final class BasemapGallery extends StatefulWidget {
   const BasemapGallery({
     required this.controller,
     super.key,
-    this.padding = const EdgeInsets.all(8),
-    this.gridMinTileWidth = 120,
-    this.gridSpacing = 8,
-    this.onItemSelected,
+    this.currentBasemapChanged,
   });
 
   /// The [controller] driving this view.
   final BasemapGalleryController controller;
 
-  /// Outer [padding]. Defaults to `EdgeInsets.all(8)`.
-  final EdgeInsetsGeometry padding;
+  /// Default outer padding.
+  static const EdgeInsetsGeometry _padding = EdgeInsets.all(8);
 
-  /// Minimum grid tile width (logical px). Defaults to `120`.
-  final double gridMinTileWidth;
+  /// Default minimum grid tile width (logical px).
+  static const double _gridMinTileWidth = 120;
 
-  /// Grid tile spacing (logical px). Defaults to `8`.
-  final double gridSpacing;
+  /// Default grid tile spacing (logical px).
+  static const double _gridSpacing = 8;
 
   /// Called when a basemap is tapped.
   /// Not called for loading/error items. Selection may show a
   /// spatial reference mismatch dialog. For applied selection, listen to
   /// [BasemapGalleryController.currentBasemapNotifier].
-  final ValueChanged<BasemapGalleryItem>? onItemSelected;
+  final ValueChanged<BasemapGalleryItem>? currentBasemapChanged;
 
   @override
   State<BasemapGallery> createState() => _BasemapGalleryState();
@@ -163,14 +160,14 @@ final class _BasemapGalleryState extends State<BasemapGallery> {
         final controller = widget.controller;
 
         if (controller.isFetchingBasemaps && controller.gallery.isEmpty) {
-          return Padding(
-            padding: widget.padding,
-            child: const Center(child: CircularProgressIndicator()),
+          return const Padding(
+            padding: BasemapGallery._padding,
+            child: Center(child: CircularProgressIndicator()),
           );
         }
 
         return Padding(
-          padding: widget.padding,
+          padding: BasemapGallery._padding,
           child: LayoutBuilder(
             builder: (context, constraints) {
               final style = controller.viewStyle;
@@ -180,7 +177,8 @@ final class _BasemapGalleryState extends State<BasemapGallery> {
                 BasemapGalleryViewStyle.list => false,
                 BasemapGalleryViewStyle.automatic =>
                   constraints.maxWidth >=
-                      widget.gridMinTileWidth * 2 + widget.gridSpacing,
+                      BasemapGallery._gridMinTileWidth * 2 +
+                          BasemapGallery._gridSpacing,
               };
 
               if (useGrid) {
@@ -196,12 +194,14 @@ final class _BasemapGalleryState extends State<BasemapGallery> {
 
   Widget _buildGrid(double width) {
     final items = widget.controller.gallery;
-    final spacing = widget.gridSpacing;
+    const spacing = BasemapGallery._gridSpacing;
 
     // Calculate number of columns based on available width.
-    final crossAxisCount = (width / (widget.gridMinTileWidth + spacing))
-        .floor()
-        .clamp(2, 6);
+    final crossAxisCount =
+        (width / (BasemapGallery._gridMinTileWidth + spacing)).floor().clamp(
+          2,
+          6,
+        );
 
     return GridView.builder(
       primary: true,
@@ -276,7 +276,7 @@ final class _BasemapGalleryState extends State<BasemapGallery> {
     }
 
     unawaited(widget.controller.select(item));
-    widget.onItemSelected?.call(item);
+    widget.currentBasemapChanged?.call(item);
   }
 }
 
@@ -293,10 +293,13 @@ final class _BasemapTile extends StatelessWidget {
 
   /// Gallery item backing this tile.
   final BasemapGalleryItem item;
+
   /// Whether this item is currently selected.
   final bool isSelected;
+
   /// Called when the tile is tapped (if enabled).
   final VoidCallback onTap;
+
   /// Compact list style when `true`; grid style when `false`.
   final bool dense;
 
