@@ -14,7 +14,7 @@
 // limitations under the License.
 //
 
-part of '../../../arcgis_maps_toolkit.dart';
+part of '../../arcgis_maps_toolkit.dart';
 
 // The view style of the basemap gallery.
 enum BasemapGalleryViewStyle {
