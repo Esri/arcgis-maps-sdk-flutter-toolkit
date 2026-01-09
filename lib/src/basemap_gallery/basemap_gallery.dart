@@ -224,7 +224,7 @@ final class _BasemapGalleryState extends State<BasemapGallery> {
           key: ValueKey(item.basemap),
           item: item,
           isSelected: _isSelected(item),
-          onTap: () => _select(item),
+          onTap: () => unawaited(_select(item)),
           dense: false,
         );
       },
@@ -237,14 +237,14 @@ final class _BasemapGalleryState extends State<BasemapGallery> {
     return ListView.separated(
       primary: true,
       itemCount: items.length,
-      separatorBuilder: (_, __) => const SizedBox(height: 8),
+      separatorBuilder: (_, _) => const SizedBox(height: 8),
       itemBuilder: (context, index) {
         final item = items[index];
         return _BasemapTile(
           key: ValueKey(item.basemap),
           item: item,
           isSelected: _isSelected(item),
-          onTap: () => _select(item),
+          onTap: () => unawaited(_select(item)),
           dense: true,
         );
       },
@@ -258,7 +258,7 @@ final class _BasemapGalleryState extends State<BasemapGallery> {
         current.name == item.name;
   }
 
-  void _select(BasemapGalleryItem item) {
+  Future<void> _select(BasemapGalleryItem item) async {
     if (item._isBasemapLoading) return;
 
     if (item._loadBasemapError != null) {
@@ -280,13 +280,11 @@ final class _BasemapGalleryState extends State<BasemapGallery> {
       return;
     }
 
-    unawaited(() async {
-      await widget.controller._select(item);
-      final current = widget.controller._currentBasemapItem;
-      if (current == null) return;
-      if (!identical(current.basemap, item.basemap)) return;
-      widget.onCurrentBasemapChanged?.call(current.basemap);
-    }());
+    await widget.controller._select(item);
+    final current = widget.controller._currentBasemapItem;
+    if (current == null) return;
+    if (!identical(current.basemap, item.basemap)) return;
+    widget.onCurrentBasemapChanged?.call(current.basemap);
   }
 }
 
