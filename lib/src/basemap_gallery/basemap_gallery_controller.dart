@@ -17,7 +17,7 @@
 part of '../../arcgis_maps_toolkit.dart';
 
 /// Controls the state and behavior of a [BasemapGallery].
-final class BasemapGalleryController with ChangeNotifier {
+final class BasemapGalleryController {
   /// Creates a gallery with default basemaps.
   ///
   /// If no custom items or portal is provided, this controller loads ArcGIS
@@ -96,32 +96,30 @@ final class BasemapGalleryController with ChangeNotifier {
   set geoModel(GeoModel? value) {
     _geoModel = value;
     _initFromGeoModel();
-    notifyListeners();
   }
 
   /// The portal used for basemaps when constructed with a portal.
   Portal? get portal => _portal;
 
+  /// Called after a basemap selection is applied.
+  ValueChanged<Basemap>? onCurrentBasemapChanged;
+
   /// The currently applied basemap on the associated [GeoModel].
-  BasemapGalleryItem? get currentBasemap => _currentBasemapNotifier.value;
+  Basemap? get currentBasemap => _currentBasemapNotifier.value?.basemap;
+
+  BasemapGalleryItem? get _currentBasemapItem => _currentBasemapNotifier.value;
 
   /// The list of basemaps visible in the gallery.
   List<BasemapGalleryItem> get gallery => _galleryNotifier.value;
 
-  /// True while basemap items are being fetched from a portal.
-  bool get isFetchingBasemaps => _isFetchingBasemapsNotifier.value;
-
-  /// Error (if any) from fetching basemaps.
-  Object? get fetchBasemapsError => _fetchBasemapsErrorNotifier.value;
+  bool get _isFetchingBasemaps => _isFetchingBasemapsNotifier.value;
 
   /// Current view style.
   BasemapGalleryViewStyle get viewStyle => _viewStyleNotifier.value;
 
-  /// Updates the view style.
-  void setViewStyle(BasemapGalleryViewStyle style) {
+  set viewStyle(BasemapGalleryViewStyle style) {
     if (_viewStyleNotifier.value == style) return;
     _viewStyleNotifier.value = style;
-    notifyListeners();
   }
 
   /// Selects a basemap item.
@@ -131,7 +129,7 @@ final class BasemapGalleryController with ChangeNotifier {
   /// - Check spatial reference compatibility when a [GeoModel] is provided.
   /// - Update [currentBasemap], synchronize [GeoModel.basemap], and emit on
   ///   [onCurrentBasemapChanged] when selection succeeds.
-  Future<void> select(BasemapGalleryItem item) async {
+  Future<void> _select(BasemapGalleryItem item) async {
     if (item._isBasemapLoading) return;
     if (item._loadBasemapError != null) return;
 
@@ -159,30 +157,10 @@ final class BasemapGalleryController with ChangeNotifier {
       gm.basemap = item.basemap;
     }
 
-    notifyListeners();
-  }
-
-  /// Adds an item to the gallery.
-  void addItem(BasemapGalleryItem item) {
-    final current = _galleryNotifier.value;
-    _galleryNotifier.value = List<BasemapGalleryItem>.unmodifiable(
-      <BasemapGalleryItem>[...current, item],
-    );
-    notifyListeners();
-  }
-
-  /// Removes an item from the gallery.
-  bool removeItem(BasemapGalleryItem item) {
-    final current = _galleryNotifier.value;
-    final next = current.toList()..remove(item);
-    if (next.length == current.length) return false;
-    _galleryNotifier.value = List<BasemapGalleryItem>.unmodifiable(next);
-    notifyListeners();
-    return true;
+    onCurrentBasemapChanged?.call(item.basemap);
   }
 
   /// Disposes resources.
-  @override
   void dispose() {
     _viewStyleNotifier.dispose();
     _galleryNotifier.dispose();
@@ -190,7 +168,6 @@ final class BasemapGalleryController with ChangeNotifier {
     _fetchBasemapsErrorNotifier.dispose();
     _currentBasemapNotifier.dispose();
     _spatialReferenceMismatchErrorNotifier.dispose();
-    super.dispose();
   }
 
   void _initFromGeoModel() {
@@ -219,7 +196,6 @@ final class BasemapGalleryController with ChangeNotifier {
 
     _isFetchingBasemapsNotifier.value = true;
     _fetchBasemapsErrorNotifier.value = null;
-    notifyListeners();
 
     try {
       if (p.loadStatus == LoadStatus.notLoaded) {
@@ -234,7 +210,6 @@ final class BasemapGalleryController with ChangeNotifier {
       _galleryNotifier.value = const [];
     } finally {
       _isFetchingBasemapsNotifier.value = false;
-      notifyListeners();
     }
   }
 
@@ -242,7 +217,6 @@ final class BasemapGalleryController with ChangeNotifier {
     _isFetchingBasemapsNotifier.value = true;
     _fetchBasemapsErrorNotifier.value = null;
     _galleryNotifier.value = const [];
-    notifyListeners();
 
     // Load developer basemaps from ArcGIS Online by default (API-key metered basemaps).
     final portal = Portal.arcGISOnline();
@@ -260,7 +234,6 @@ final class BasemapGalleryController with ChangeNotifier {
       _galleryNotifier.value = const [];
     } finally {
       _isFetchingBasemapsNotifier.value = false;
-      notifyListeners();
     }
   }
 }

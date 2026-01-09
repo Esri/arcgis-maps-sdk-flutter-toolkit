@@ -164,7 +164,7 @@ final class _BasemapGalleryState extends State<BasemapGallery> {
     return AnimatedBuilder(
       animation: controller._galleryListenable,
       builder: (context, _) {
-        if (controller.isFetchingBasemaps && controller.gallery.isEmpty) {
+        if (controller._isFetchingBasemaps && controller.gallery.isEmpty) {
           return const Padding(
             padding: BasemapGallery._padding,
             child: Center(child: CircularProgressIndicator()),
@@ -252,7 +252,7 @@ final class _BasemapGalleryState extends State<BasemapGallery> {
   }
 
   bool _isSelected(BasemapGalleryItem item) {
-    final current = widget.controller.currentBasemap;
+    final current = widget.controller._currentBasemapItem;
     if (current == null) return false;
     return identical(current.basemap, item.basemap) ||
         current.name == item.name;
@@ -281,8 +281,8 @@ final class _BasemapGalleryState extends State<BasemapGallery> {
     }
 
     unawaited(() async {
-      await widget.controller.select(item);
-      final current = widget.controller.currentBasemap;
+      await widget.controller._select(item);
+      final current = widget.controller._currentBasemapItem;
       if (current == null) return;
       if (!identical(current.basemap, item.basemap)) return;
       widget.onCurrentBasemapChanged?.call(current.basemap);
