@@ -59,25 +59,25 @@ final class BasemapGalleryController with ChangeNotifier {
       );
     }
 
-    _gallery = List<BasemapGalleryItem>.unmodifiable(items.toList());
+    _galleryNotifier.value = List<BasemapGalleryItem>.unmodifiable(
+      items.toList(),
+    );
   }
 
   GeoModel? _geoModel;
   final Portal? _portal;
-  BasemapGalleryViewStyle _viewStyle = BasemapGalleryViewStyle.automatic;
+  final _viewStyleNotifier = ValueNotifier<BasemapGalleryViewStyle>(
+    BasemapGalleryViewStyle.automatic,
+  );
 
-  List<BasemapGalleryItem> _gallery = const [];
+  final _galleryNotifier = ValueNotifier<List<BasemapGalleryItem>>(const []);
+  final _isFetchingBasemapsNotifier = ValueNotifier<bool>(false);
+  final _fetchBasemapsErrorNotifier = ValueNotifier<Object?>(null);
 
-  bool _isFetchingBasemaps = false;
-  Object? _fetchBasemapsError;
-
-  final spatialReferenceMismatchErrorNotifier =
+  final _spatialReferenceMismatchErrorNotifier =
       ValueNotifier<_SpatialReferenceMismatchError?>(null);
 
-  final currentBasemapNotifier = ValueNotifier<BasemapGalleryItem?>(null);
-
-  final _currentBasemapChangedController =
-      StreamController<Basemap>.broadcast();
+  final _currentBasemapNotifier = ValueNotifier<BasemapGalleryItem?>(null);
 
   /// The associated geo model.
   ///
@@ -95,28 +95,24 @@ final class BasemapGalleryController with ChangeNotifier {
   Portal? get portal => _portal;
 
   /// The currently applied basemap on the associated [GeoModel].
-  BasemapGalleryItem? get currentBasemap => currentBasemapNotifier.value;
+  BasemapGalleryItem? get currentBasemap => _currentBasemapNotifier.value;
 
   /// The list of basemaps visible in the gallery.
-  List<BasemapGalleryItem> get gallery => _gallery;
+  List<BasemapGalleryItem> get gallery => _galleryNotifier.value;
 
   /// True while basemap items are being fetched from a portal.
-  bool get isFetchingBasemaps => _isFetchingBasemaps;
+  bool get isFetchingBasemaps => _isFetchingBasemapsNotifier.value;
 
   /// Error (if any) from fetching basemaps.
-  Object? get fetchBasemapsError => _fetchBasemapsError;
+  Object? get fetchBasemapsError => _fetchBasemapsErrorNotifier.value;
 
   /// Current view style.
-  BasemapGalleryViewStyle get viewStyle => _viewStyle;
-
-  /// Stream emitting the current [Basemap] whenever selection changes.
-  Stream<Basemap> get onCurrentBasemapChanged =>
-      _currentBasemapChangedController.stream;
+  BasemapGalleryViewStyle get viewStyle => _viewStyleNotifier.value;
 
   /// Updates the view style.
   void setViewStyle(BasemapGalleryViewStyle style) {
-    if (_viewStyle == style) return;
-    _viewStyle = style;
+    if (_viewStyleNotifier.value == style) return;
+    _viewStyleNotifier.value = style;
     notifyListeners();
   }
 
@@ -131,7 +127,7 @@ final class BasemapGalleryController with ChangeNotifier {
     if (item.isBasemapLoading) return;
     if (item.loadBasemapError != null) return;
 
-    spatialReferenceMismatchErrorNotifier.value = null;
+    _spatialReferenceMismatchErrorNotifier.value = null;
 
     final gm = _geoModel;
     if (gm != null) {
@@ -140,7 +136,7 @@ final class BasemapGalleryController with ChangeNotifier {
 
       if (item.spatialReferenceStatus ==
           BasemapGalleryItemSpatialReferenceStatus.noMatch) {
-        spatialReferenceMismatchErrorNotifier.value =
+        _spatialReferenceMismatchErrorNotifier.value =
             _SpatialReferenceMismatchError(
               basemapSpatialReference: item.spatialReference,
               geoModelSpatialReference: gm.actualSpatialReference,
@@ -149,30 +145,30 @@ final class BasemapGalleryController with ChangeNotifier {
       }
     }
 
-    currentBasemapNotifier.value = item;
+    _currentBasemapNotifier.value = item;
 
     if (gm != null) {
       gm.basemap = item.basemap;
     }
 
-    _currentBasemapChangedController.add(item.basemap);
     notifyListeners();
   }
 
   /// Adds an item to the gallery.
   void addItem(BasemapGalleryItem item) {
-    _gallery = List<BasemapGalleryItem>.unmodifiable(<BasemapGalleryItem>[
-      ..._gallery,
-      item,
-    ]);
+    final current = _galleryNotifier.value;
+    _galleryNotifier.value = List<BasemapGalleryItem>.unmodifiable(
+      <BasemapGalleryItem>[...current, item],
+    );
     notifyListeners();
   }
 
   /// Removes an item from the gallery.
   bool removeItem(BasemapGalleryItem item) {
-    final next = _gallery.toList()..remove(item);
-    if (next.length == _gallery.length) return false;
-    _gallery = List<BasemapGalleryItem>.unmodifiable(next);
+    final current = _galleryNotifier.value;
+    final next = current.toList()..remove(item);
+    if (next.length == current.length) return false;
+    _galleryNotifier.value = List<BasemapGalleryItem>.unmodifiable(next);
     notifyListeners();
     return true;
   }
@@ -180,9 +176,12 @@ final class BasemapGalleryController with ChangeNotifier {
   /// Disposes resources.
   @override
   void dispose() {
-    currentBasemapNotifier.dispose();
-    spatialReferenceMismatchErrorNotifier.dispose();
-    _currentBasemapChangedController.close();
+    _viewStyleNotifier.dispose();
+    _galleryNotifier.dispose();
+    _isFetchingBasemapsNotifier.dispose();
+    _fetchBasemapsErrorNotifier.dispose();
+    _currentBasemapNotifier.dispose();
+    _spatialReferenceMismatchErrorNotifier.dispose();
     super.dispose();
   }
 
@@ -198,7 +197,7 @@ final class BasemapGalleryController with ChangeNotifier {
 
       final basemap = gm.basemap;
       if (basemap != null) {
-        currentBasemapNotifier.value = BasemapGalleryItem(basemap: basemap);
+        _currentBasemapNotifier.value = BasemapGalleryItem(basemap: basemap);
       }
     }
   }
@@ -206,12 +205,12 @@ final class BasemapGalleryController with ChangeNotifier {
   Future<void> _populateFromPortal() async {
     final p = _portal;
     if (p == null) {
-      _gallery = const [];
+      _galleryNotifier.value = const [];
       return;
     }
 
-    _isFetchingBasemaps = true;
-    _fetchBasemapsError = null;
+    _isFetchingBasemapsNotifier.value = true;
+    _fetchBasemapsErrorNotifier.value = null;
     notifyListeners();
 
     try {
@@ -219,22 +218,22 @@ final class BasemapGalleryController with ChangeNotifier {
         await p.load();
       }
       final basemaps = await p.basemaps();
-      _gallery = List<BasemapGalleryItem>.unmodifiable(
+      _galleryNotifier.value = List<BasemapGalleryItem>.unmodifiable(
         basemaps.map((b) => BasemapGalleryItem(basemap: b)).toList(),
       );
     } on Object catch (e) {
-      _fetchBasemapsError = e;
-      _gallery = const [];
+      _fetchBasemapsErrorNotifier.value = e;
+      _galleryNotifier.value = const [];
     } finally {
-      _isFetchingBasemaps = false;
+      _isFetchingBasemapsNotifier.value = false;
       notifyListeners();
     }
   }
 
   Future<void> _populateDefaultBasemaps() async {
-    _isFetchingBasemaps = true;
-    _fetchBasemapsError = null;
-    _gallery = const [];
+    _isFetchingBasemapsNotifier.value = true;
+    _fetchBasemapsErrorNotifier.value = null;
+    _galleryNotifier.value = const [];
     notifyListeners();
 
     // Load developer basemaps from ArcGIS Online by default (API-key metered basemaps).
@@ -245,14 +244,14 @@ final class BasemapGalleryController with ChangeNotifier {
         await portal.load();
       }
       final basemaps = await portal.developerBasemaps();
-      _gallery = List<BasemapGalleryItem>.unmodifiable(
+      _galleryNotifier.value = List<BasemapGalleryItem>.unmodifiable(
         basemaps.map((b) => BasemapGalleryItem(basemap: b)).toList(),
       );
     } on Object catch (e) {
-      _fetchBasemapsError = e;
-      _gallery = const [];
+      _fetchBasemapsErrorNotifier.value = e;
+      _galleryNotifier.value = const [];
     } finally {
-      _isFetchingBasemaps = false;
+      _isFetchingBasemapsNotifier.value = false;
       notifyListeners();
     }
   }

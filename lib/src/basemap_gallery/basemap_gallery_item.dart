@@ -21,11 +21,31 @@ part of '../../arcgis_maps_toolkit.dart';
 /// Fallback rules:
 /// - If `thumbnail`/`tooltip` overrides are provided and valid, they are used.
 /// - Otherwise, fall back to the basemap's associated [Item] (if present).
-final class BasemapGalleryItem with ChangeNotifier {
+final class BasemapGalleryItem {
+  /// Creates a [BasemapGalleryItem] with a [Basemap].
+  ///
+  /// If the [Basemap] has an associated [Item] with a thumbnail and
+  /// description, they are used for [thumbnail] and [tooltip].
   BasemapGalleryItem({required Basemap basemap})
     : _basemap = basemap,
       _thumbnailOverride = null,
       _tooltipOverride = null {
+    _recomputeDerivedFields();
+    unawaited(_loadBasemapAndThumbnailIfNeeded());
+  }
+
+  /// Creates a [BasemapGalleryItem] with optional thumbnail and tooltip
+  /// overrides.
+  ///
+  /// If [thumbnail] or [tooltip] are not provided (or are empty for [tooltip]),
+  /// values from the basemap's associated [Item] are used as fallbacks.
+  BasemapGalleryItem.withOverrides(
+    Basemap basemap, {
+    LoadableImage? thumbnail,
+    String? tooltip,
+  }) : _basemap = basemap,
+       _thumbnailOverride = thumbnail,
+       _tooltipOverride = tooltip {
     _recomputeDerivedFields();
     unawaited(_loadBasemapAndThumbnailIfNeeded());
   }
@@ -35,16 +55,16 @@ final class BasemapGalleryItem with ChangeNotifier {
   final LoadableImage? _thumbnailOverride;
   final String? _tooltipOverride;
 
-  late LoadableImage? _resolvedThumbnail;
-  late String? _resolvedTooltip;
-  late String _resolvedName;
-
-  bool _isBasemapLoading = true;
-  Object? _loadBasemapError;
-
-  SpatialReference? _spatialReference;
-  BasemapGalleryItemSpatialReferenceStatus _spatialReferenceStatus =
-      BasemapGalleryItemSpatialReferenceStatus.unknown;
+  final _nameNotifier = ValueNotifier<String>('');
+  final _thumbnailNotifier = ValueNotifier<LoadableImage?>(null);
+  final _tooltipNotifier = ValueNotifier<String?>(null);
+  final _isBasemapLoadingNotifier = ValueNotifier<bool>(true);
+  final _loadBasemapErrorNotifier = ValueNotifier<Object?>(null);
+  final _spatialReferenceNotifier = ValueNotifier<SpatialReference?>(null);
+  final _spatialReferenceStatusNotifier =
+      ValueNotifier<BasemapGalleryItemSpatialReferenceStatus>(
+        BasemapGalleryItemSpatialReferenceStatus.unknown,
+      );
 
   bool _nameWasExplicitlySet = false;
 
@@ -54,11 +74,11 @@ final class BasemapGalleryItem with ChangeNotifier {
   set basemap(Basemap value) {
     _basemap = value;
     _recomputeDerivedFields(preserveExplicitName: true);
-    _isBasemapLoading = true;
-    _loadBasemapError = null;
-    _spatialReference = null;
-    _spatialReferenceStatus = BasemapGalleryItemSpatialReferenceStatus.unknown;
-    notifyListeners();
+    _isBasemapLoadingNotifier.value = true;
+    _loadBasemapErrorNotifier.value = null;
+    _spatialReferenceNotifier.value = null;
+    _spatialReferenceStatusNotifier.value =
+        BasemapGalleryItemSpatialReferenceStatus.unknown;
     unawaited(_loadBasemapAndThumbnailIfNeeded());
   }
 
@@ -67,58 +87,56 @@ final class BasemapGalleryItem with ChangeNotifier {
   /// Defaults to `basemap.name`, then `basemap.item?.title`, then
   /// `basemap.item?.name`, and finally `"Untitled Basemap"`.
   ///
-  String get name => _resolvedName;
+  String get name => _nameNotifier.value;
 
   set name(String value) {
     _nameWasExplicitlySet = true;
-    _resolvedName = value.isEmpty ? 'Untitled Basemap' : value;
+    _nameNotifier.value = value.isEmpty ? 'Untitled Basemap' : value;
   }
 
   /// Thumbnail displayed in the gallery.
-  LoadableImage? get thumbnail => _resolvedThumbnail;
+  LoadableImage? get thumbnail => _thumbnailNotifier.value;
 
   /// Tooltip used in the gallery.
-  String? get tooltip => _resolvedTooltip;
+  String? get tooltip => _tooltipNotifier.value;
 
   /// True while the basemap or its thumbnail/spatial reference are loading.
-  bool get isBasemapLoading => _isBasemapLoading;
+  bool get isBasemapLoading => _isBasemapLoadingNotifier.value;
 
   /// Error generated while loading the basemap/thumbnail, if any.
-  Object? get loadBasemapError => _loadBasemapError;
+  Object? get loadBasemapError => _loadBasemapErrorNotifier.value;
 
   /// Spatial reference of the basemap (derived from the first base layer).
-  SpatialReference? get spatialReference => _spatialReference;
+  SpatialReference? get spatialReference => _spatialReferenceNotifier.value;
 
   /// Spatial reference status relative to a reference spatial reference.
   BasemapGalleryItemSpatialReferenceStatus get spatialReferenceStatus =>
-      _spatialReferenceStatus;
+      _spatialReferenceStatusNotifier.value;
 
   /// True when the item has a load error or spatial reference mismatch.
   bool get hasError =>
-      _loadBasemapError != null ||
-      _spatialReferenceStatus ==
+      _loadBasemapErrorNotifier.value != null ||
+      _spatialReferenceStatusNotifier.value ==
           BasemapGalleryItemSpatialReferenceStatus.noMatch;
 
   Future<void> _loadBasemapAndThumbnailIfNeeded() async {
     // If the basemap is already loaded, just ensure derived properties are
     // consistent.
     if (_basemap.loadStatus == LoadStatus.loaded) {
-      _isBasemapLoading = false;
+      _isBasemapLoadingNotifier.value = false;
       _recomputeDerivedFields(preserveExplicitName: true);
-      notifyListeners();
       return;
     }
 
-    _isBasemapLoading = true;
-    _loadBasemapError = null;
-    notifyListeners();
+    _isBasemapLoadingNotifier.value = true;
+    _loadBasemapErrorNotifier.value = null;
 
     String? error;
     try {
       await _basemap.load();
 
       // If we have a thumbnail (override or from the basemap's item), load it.
-      final thumb = _resolvedThumbnail;
+      final thumb = _thumbnailNotifier.value;
       if (thumb != null && thumb.loadStatus != LoadStatus.loaded) {
         await thumb.load();
       }
@@ -127,9 +145,8 @@ final class BasemapGalleryItem with ChangeNotifier {
     }
 
     _recomputeDerivedFields(preserveExplicitName: true);
-    _loadBasemapError = error;
-    _isBasemapLoading = false;
-    notifyListeners();
+    _loadBasemapErrorNotifier.value = error;
+    _isBasemapLoadingNotifier.value = false;
   }
 
   /// Updates [spatialReferenceStatus] by loading the first base layer and
@@ -140,9 +157,8 @@ final class BasemapGalleryItem with ChangeNotifier {
     // Only compute status for loaded basemaps.
     if (_basemap.loadStatus != LoadStatus.loaded) return;
 
-    if (_spatialReference == null) {
-      _isBasemapLoading = true;
-      notifyListeners();
+    if (_spatialReferenceNotifier.value == null) {
+      _isBasemapLoadingNotifier.value = true;
       try {
         final firstLayer = _basemap.baseLayers.isNotEmpty
             ? _basemap.baseLayers.first
@@ -151,48 +167,47 @@ final class BasemapGalleryItem with ChangeNotifier {
           await firstLayer.load();
         }
 
-        _spatialReference = firstLayer?.spatialReference;
+        _spatialReferenceNotifier.value = firstLayer?.spatialReference;
       } on Object {
-        _spatialReference = null;
+        _spatialReferenceNotifier.value = null;
       }
     }
 
     if (referenceSpatialReference == null) {
-      _spatialReferenceStatus =
+      _spatialReferenceStatusNotifier.value =
           BasemapGalleryItemSpatialReferenceStatus.unknown;
-    } else if (_spatialReference == referenceSpatialReference) {
-      _spatialReferenceStatus = BasemapGalleryItemSpatialReferenceStatus.match;
+    } else if (_spatialReferenceNotifier.value == referenceSpatialReference) {
+      _spatialReferenceStatusNotifier.value =
+          BasemapGalleryItemSpatialReferenceStatus.match;
     } else {
-      _spatialReferenceStatus =
+      _spatialReferenceStatusNotifier.value =
           BasemapGalleryItemSpatialReferenceStatus.noMatch;
     }
 
-    _isBasemapLoading = false;
-    notifyListeners();
+    _isBasemapLoadingNotifier.value = false;
   }
 
   void _recomputeDerivedFields({bool preserveExplicitName = false}) {
     final item = _basemap.item;
 
-    final overrideTooltip = _thumbnailOverride == null
-        ? _tooltipOverride
-        : _tooltipOverride;
+    final overrideTooltip = _tooltipOverride;
     final tooltipFromItem = item?.description;
 
-    _resolvedTooltip = (overrideTooltip != null && overrideTooltip.isNotEmpty)
+    _tooltipNotifier.value =
+        (overrideTooltip != null && overrideTooltip.isNotEmpty)
         ? overrideTooltip
         : (tooltipFromItem != null && tooltipFromItem.isNotEmpty
               ? tooltipFromItem
               : null);
 
-    _resolvedThumbnail = _thumbnailOverride ?? item?.thumbnail;
+    _thumbnailNotifier.value = _thumbnailOverride ?? item?.thumbnail;
 
     if (!preserveExplicitName || !_nameWasExplicitlySet) {
       final basemapName = _basemap.name;
       final itemTitle = item?.title;
       final itemName = item?.name;
 
-      _resolvedName = basemapName.isNotEmpty
+      _nameNotifier.value = basemapName.isNotEmpty
           ? basemapName
           : (itemTitle != null && itemTitle.isNotEmpty)
           ? itemTitle
@@ -200,6 +215,16 @@ final class BasemapGalleryItem with ChangeNotifier {
           ? itemName
           : 'Untitled Basemap';
     }
+  }
+
+  void dispose() {
+    _nameNotifier.dispose();
+    _thumbnailNotifier.dispose();
+    _tooltipNotifier.dispose();
+    _isBasemapLoadingNotifier.dispose();
+    _loadBasemapErrorNotifier.dispose();
+    _spatialReferenceNotifier.dispose();
+    _spatialReferenceStatusNotifier.dispose();
   }
 
   @override

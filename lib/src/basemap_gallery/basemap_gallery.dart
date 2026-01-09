@@ -57,7 +57,7 @@ final class BasemapGallery extends StatefulWidget {
   const BasemapGallery({
     required this.controller,
     super.key,
-    this.currentBasemapChanged,
+    this.onCurrentBasemapChanged,
   });
 
   /// The [controller] driving this view.
@@ -67,16 +67,16 @@ final class BasemapGallery extends StatefulWidget {
   static const EdgeInsetsGeometry _padding = EdgeInsets.all(8);
 
   /// Default minimum grid tile width.
-  static const double _gridMinTileWidth = 120;
+  static const double _gridMinTileWidth = 80;
 
   /// Default grid tile spacing.
   static const double _gridSpacing = 8;
 
-  /// Called when a basemap is tapped.
+  /// [onCurrentBasemapChanged] is called when a basemap is tapped.
   /// Not called for loading/error items. Selection may show a
   /// spatial reference mismatch dialog. For applied selection, listen to
-  /// [BasemapGalleryController.currentBasemapNotifier].
-  final ValueChanged<BasemapGalleryItem>? currentBasemapChanged;
+  /// [BasemapGalleryController.currentBasemap].
+  final ValueChanged<Basemap>? onCurrentBasemapChanged;
 
   @override
   State<BasemapGallery> createState() => _BasemapGalleryState();
@@ -86,7 +86,7 @@ final class _BasemapGalleryState extends State<BasemapGallery> {
   @override
   void initState() {
     super.initState();
-    widget.controller.spatialReferenceMismatchErrorNotifier.addListener(
+    widget.controller._spatialReferenceMismatchErrorNotifier.addListener(
       _onSpatialReferenceMismatchErrorChanged,
     );
   }
@@ -95,10 +95,9 @@ final class _BasemapGalleryState extends State<BasemapGallery> {
   void didUpdateWidget(covariant BasemapGallery oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.controller != widget.controller) {
-      oldWidget.controller.spatialReferenceMismatchErrorNotifier.removeListener(
-        _onSpatialReferenceMismatchErrorChanged,
-      );
-      widget.controller.spatialReferenceMismatchErrorNotifier.addListener(
+      oldWidget.controller._spatialReferenceMismatchErrorNotifier
+          .removeListener(_onSpatialReferenceMismatchErrorChanged);
+      widget.controller._spatialReferenceMismatchErrorNotifier.addListener(
         _onSpatialReferenceMismatchErrorChanged,
       );
     }
@@ -106,7 +105,7 @@ final class _BasemapGalleryState extends State<BasemapGallery> {
 
   @override
   void dispose() {
-    widget.controller.spatialReferenceMismatchErrorNotifier.removeListener(
+    widget.controller._spatialReferenceMismatchErrorNotifier.removeListener(
       _onSpatialReferenceMismatchErrorChanged,
     );
     super.dispose();
@@ -114,7 +113,8 @@ final class _BasemapGalleryState extends State<BasemapGallery> {
 
   Future<void> _onSpatialReferenceMismatchErrorChanged() async {
     if (!mounted) return;
-    final error = widget.controller.spatialReferenceMismatchErrorNotifier.value;
+    final error =
+        widget.controller._spatialReferenceMismatchErrorNotifier.value;
     if (error == null) return;
 
     final message = _spatialReferenceMismatchMessage(error);
@@ -154,11 +154,18 @@ final class _BasemapGalleryState extends State<BasemapGallery> {
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: widget.controller,
-      builder: (context, _) {
-        final controller = widget.controller;
+    final controller = widget.controller;
 
+    final itemListenable = Listenable.merge(<Listenable>[
+      controller._galleryNotifier,
+      controller._isFetchingBasemapsNotifier,
+      controller._viewStyleNotifier,
+      controller._currentBasemapNotifier,
+    ]);
+
+    return AnimatedBuilder(
+      animation: itemListenable,
+      builder: (context, _) {
         if (controller.isFetchingBasemaps && controller.gallery.isEmpty) {
           return const Padding(
             padding: BasemapGallery._padding,
@@ -275,8 +282,13 @@ final class _BasemapGalleryState extends State<BasemapGallery> {
       return;
     }
 
-    unawaited(widget.controller.select(item));
-    widget.currentBasemapChanged?.call(item);
+    unawaited(() async {
+      await widget.controller.select(item);
+      final current = widget.controller.currentBasemap;
+      if (current == null) return;
+      if (!identical(current.basemap, item.basemap)) return;
+      widget.onCurrentBasemapChanged?.call(current.basemap);
+    }());
   }
 }
 
@@ -305,8 +317,16 @@ final class _BasemapTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final itemListenable = Listenable.merge(<Listenable>[
+      item._nameNotifier,
+      item._thumbnailNotifier,
+      item._isBasemapLoadingNotifier,
+      item._loadBasemapErrorNotifier,
+      item._spatialReferenceStatusNotifier,
+    ]);
+
     return AnimatedBuilder(
-      animation: item,
+      animation: itemListenable,
       builder: (context, _) {
         final isEnabled = !item.isBasemapLoading;
 

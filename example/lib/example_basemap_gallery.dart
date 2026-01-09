@@ -138,9 +138,10 @@ class _ExampleBasemapGalleryState extends State<ExampleBasemapGallery> {
             children: [
               Padding(
                 padding: const EdgeInsets.fromLTRB(12, 12, 12, 6),
-                child: ValueListenableBuilder<BasemapGalleryItem?>(
-                  valueListenable: _controller.currentBasemapNotifier,
-                  builder: (context, currentItem, _) {
+                child: AnimatedBuilder(
+                  animation: _controller,
+                  builder: (context, _) {
+                    final currentItem = _controller.currentBasemap;
                     final name = currentItem?.name ?? '';
                     return Text(
                       name.isEmpty ? 'Select a basemap' : 'Selected: $name',
@@ -155,7 +156,17 @@ class _ExampleBasemapGalleryState extends State<ExampleBasemapGallery> {
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.all(8),
-                  child: BasemapGallery(controller: _controller),
+                  child: BasemapGallery(
+                    controller: _controller,
+                    onCurrentBasemapChanged: (basemap) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Basemap changed to: ${basemap.name}'),
+                          duration: const Duration(seconds: 2),
+                        ),
+                      );
+                    },
+                  ),
                 ),
               ),
             ],
