@@ -114,10 +114,11 @@ class _ExampleBasemapGalleryState extends State<ExampleBasemapGallery> {
       '3a8d410a4a034a2ba9738bb0860d68c4', // incorrect portal item type
     ];
 
+    final portal = Portal.arcGISOnline();
     return identifiers
         .map((id) {
           final portalItem = PortalItem.withPortalAndItemId(
-            portal: Portal.arcGISOnline(),
+            portal: portal,
             itemId: id,
           );
           return BasemapGalleryItem(basemap: Basemap.withItem(portalItem));
