@@ -14,8 +14,6 @@
 // limitations under the License.
 //
 
-import 'dart:async';
-
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_toolkit/arcgis_maps_toolkit.dart';
 import 'package:flutter/material.dart';
@@ -50,6 +48,7 @@ class _ExampleBasemapGalleryState extends State<ExampleBasemapGallery> {
   final _mapViewController = ArcGISMapView.createController();
 
   late final ArcGISMap _map;
+  final _selectedBasemapName = ValueNotifier<String>('');
   late final BasemapGalleryController _controller;
 
   @override
@@ -71,11 +70,17 @@ class _ExampleBasemapGalleryState extends State<ExampleBasemapGallery> {
     _controller = BasemapGalleryController.withItems(
       geoModel: _map,
       items: galleryItems,
-    )..setViewStyle(BasemapGalleryViewStyle.grid);
+    )..viewStyle = BasemapGalleryViewStyle.grid;
+
+    _selectedBasemapName.value = _controller.currentBasemap?.name ?? '';
+    _controller.onCurrentBasemapChanged = (basemap) {
+      _selectedBasemapName.value = basemap.name;
+    };
   }
 
   @override
   void dispose() {
+    _selectedBasemapName.dispose();
     _controller.dispose();
     super.dispose();
   }
@@ -139,18 +144,14 @@ class _ExampleBasemapGalleryState extends State<ExampleBasemapGallery> {
             children: [
               Padding(
                 padding: const EdgeInsets.fromLTRB(12, 12, 12, 6),
-                child: AnimatedBuilder(
-                  animation: _controller,
-                  builder: (context, _) {
-                    final currentItem = _controller.currentBasemap;
-                    final name = currentItem?.name ?? '';
-                    return Text(
-                      name.isEmpty ? 'Select a basemap' : 'Selected: $name',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: Theme.of(context).textTheme.titleMedium,
-                    );
-                  },
+                child: ValueListenableBuilder<String>(
+                  valueListenable: _selectedBasemapName,
+                  builder: (context, name, _) => Text(
+                    name.isEmpty ? 'Select a basemap' : 'Selected: $name',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
                 ),
               ),
               const Divider(height: 1),
