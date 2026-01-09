@@ -246,17 +246,16 @@ class _OverviewMapState extends State<OverviewMap> {
 
   // Returns a default symbol based on the type of GeoView.
   ArcGISSymbol _defaultSymbolFor(GeoViewController controller) {
-    final theme = Theme.of(context);
     switch (controller) {
       case ArcGISMapViewController():
         return SimpleFillSymbol(
           color: Colors.transparent,
-          outline: SimpleLineSymbol(color: theme.colorScheme.error),
+          outline: SimpleLineSymbol(color: Colors.red),
         );
       default:
         return SimpleMarkerSymbol(
           style: SimpleMarkerSymbolStyle.cross,
-          color: theme.colorScheme.error,
+          color: Colors.red,
           size: 20,
         );
     }
