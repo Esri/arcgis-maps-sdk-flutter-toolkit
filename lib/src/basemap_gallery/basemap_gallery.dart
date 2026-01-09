@@ -66,10 +66,10 @@ final class BasemapGallery extends StatefulWidget {
   /// Default outer padding.
   static const EdgeInsetsGeometry _padding = EdgeInsets.all(8);
 
-  /// Default minimum grid tile width (logical px).
+  /// Default minimum grid tile width.
   static const double _gridMinTileWidth = 120;
 
-  /// Default grid tile spacing (logical px).
+  /// Default grid tile spacing.
   static const double _gridSpacing = 8;
 
   /// Called when a basemap is tapped.
