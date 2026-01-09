@@ -49,7 +49,12 @@ part of '../../../arcgis_maps_toolkit.dart';
 ///
 /// @override
 /// Widget build(BuildContext context) {
-///   return BasemapGallery(controller: _controller);
+///   return BasemapGallery(
+///     controller: _controller,
+///     onCurrentBasemapChanged: (basemap) {
+///       debugPrint('Selected basemap: ${basemap.name}');
+///     },
+///   );
 /// }
 /// ```
 final class BasemapGallery extends StatefulWidget {
@@ -156,15 +161,8 @@ final class _BasemapGalleryState extends State<BasemapGallery> {
   Widget build(BuildContext context) {
     final controller = widget.controller;
 
-    final itemListenable = Listenable.merge(<Listenable>[
-      controller._galleryNotifier,
-      controller._isFetchingBasemapsNotifier,
-      controller._viewStyleNotifier,
-      controller._currentBasemapNotifier,
-    ]);
-
     return AnimatedBuilder(
-      animation: itemListenable,
+      animation: controller._galleryListenable,
       builder: (context, _) {
         if (controller.isFetchingBasemaps && controller.gallery.isEmpty) {
           return const Padding(
@@ -317,16 +315,8 @@ final class _BasemapTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final itemListenable = Listenable.merge(<Listenable>[
-      item._nameNotifier,
-      item._thumbnailNotifier,
-      item._isBasemapLoadingNotifier,
-      item._loadBasemapErrorNotifier,
-      item._spatialReferenceStatusNotifier,
-    ]);
-
     return AnimatedBuilder(
-      animation: itemListenable,
+      animation: item._tileListenable,
       builder: (context, _) {
         final isEnabled = !item.isBasemapLoading;
 

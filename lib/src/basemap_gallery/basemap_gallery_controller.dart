@@ -42,7 +42,7 @@ final class BasemapGalleryController with ChangeNotifier {
     unawaited(_populateFromPortal());
   }
 
-  /// Creates a gallery using provided [basemaps].
+  /// Creates a gallery using provided [items].
   BasemapGalleryController.withItems({
     required List<BasemapGalleryItem> items,
     GeoModel? geoModel,
@@ -78,6 +78,14 @@ final class BasemapGalleryController with ChangeNotifier {
       ValueNotifier<_SpatialReferenceMismatchError?>(null);
 
   final _currentBasemapNotifier = ValueNotifier<BasemapGalleryItem?>(null);
+
+  late final Listenable _galleryListenable = Listenable.merge(<Listenable>[
+    _galleryNotifier,
+    _isFetchingBasemapsNotifier,
+    _fetchBasemapsErrorNotifier,
+    _viewStyleNotifier,
+    _currentBasemapNotifier,
+  ]);
 
   /// The associated geo model.
   ///

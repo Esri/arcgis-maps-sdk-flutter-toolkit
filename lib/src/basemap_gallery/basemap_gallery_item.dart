@@ -66,6 +66,15 @@ final class BasemapGalleryItem {
         BasemapGalleryItemSpatialReferenceStatus.unknown,
       );
 
+  late final Listenable _tileListenable = Listenable.merge(<Listenable>[
+    _nameNotifier,
+    _thumbnailNotifier,
+    _tooltipNotifier,
+    _isBasemapLoadingNotifier,
+    _loadBasemapErrorNotifier,
+    _spatialReferenceStatusNotifier,
+  ]);
+
   bool _nameWasExplicitlySet = false;
 
   /// The basemap this item represents.
