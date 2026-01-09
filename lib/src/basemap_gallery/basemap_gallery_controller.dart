@@ -132,21 +132,21 @@ final class BasemapGalleryController with ChangeNotifier {
   /// - Update [currentBasemap], synchronize [GeoModel.basemap], and emit on
   ///   [onCurrentBasemapChanged] when selection succeeds.
   Future<void> select(BasemapGalleryItem item) async {
-    if (item.isBasemapLoading) return;
-    if (item.loadBasemapError != null) return;
+    if (item._isBasemapLoading) return;
+    if (item._loadBasemapError != null) return;
 
     _spatialReferenceMismatchErrorNotifier.value = null;
 
     final gm = _geoModel;
     if (gm != null) {
       await gm.load();
-      await item.updateSpatialReferenceStatus(gm.actualSpatialReference);
+      await item._updateSpatialReferenceStatus(gm.actualSpatialReference);
 
-      if (item.spatialReferenceStatus ==
+      if (item._spatialReferenceStatus ==
           BasemapGalleryItemSpatialReferenceStatus.noMatch) {
         _spatialReferenceMismatchErrorNotifier.value =
             _SpatialReferenceMismatchError(
-              basemapSpatialReference: item.spatialReference,
+              basemapSpatialReference: item._spatialReference,
               geoModelSpatialReference: gm.actualSpatialReference,
             );
         return;

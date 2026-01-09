@@ -259,15 +259,15 @@ final class _BasemapGalleryState extends State<BasemapGallery> {
   }
 
   void _select(BasemapGalleryItem item) {
-    if (item.isBasemapLoading) return;
+    if (item._isBasemapLoading) return;
 
-    if (item.loadBasemapError != null) {
+    if (item._loadBasemapError != null) {
       unawaited(
         showDialog<void>(
           context: context,
           builder: (context) => AlertDialog(
             title: const Text('Error loading basemap.'),
-            content: Text(item.loadBasemapError.toString()),
+            content: Text(item._loadBasemapError.toString()),
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(context).pop(),
@@ -318,7 +318,7 @@ final class _BasemapTile extends StatelessWidget {
     return AnimatedBuilder(
       animation: item._tileListenable,
       builder: (context, _) {
-        final isEnabled = !item.isBasemapLoading;
+        final isEnabled = !item._isBasemapLoading;
 
         final tile = InkWell(
           borderRadius: BorderRadius.circular(6),
@@ -334,7 +334,7 @@ final class _BasemapTile extends StatelessWidget {
           enabled: isEnabled,
           label: item.name,
           child: Tooltip(
-            message: item.name,
+            message: item.tooltip ?? item.name,
             waitDuration: const Duration(milliseconds: 500),
             child: tile,
           ),
@@ -402,7 +402,7 @@ final class _BasemapTile extends StatelessWidget {
     );
 
     final theme = Theme.of(context);
-    final showSelectedOutline = isSelected && !item.hasError;
+    final showSelectedOutline = isSelected && !item._hasError;
 
     return Stack(
       fit: StackFit.expand,
@@ -413,7 +413,7 @@ final class _BasemapTile extends StatelessWidget {
           clipBehavior: Clip.none,
           children: [
             base,
-            if (item.isBasemapLoading)
+            if (item._isBasemapLoading)
               const Center(
                 child: SizedBox.square(
                   dimension: 20,
@@ -436,7 +436,7 @@ final class _BasemapTile extends StatelessWidget {
               ),
           ],
         ),
-        if (item.hasError)
+        if (item._hasError)
           Positioned(
             top: -6,
             right: -6,
