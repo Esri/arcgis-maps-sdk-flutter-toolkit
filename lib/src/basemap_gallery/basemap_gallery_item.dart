@@ -22,25 +22,12 @@ part of '../../arcgis_maps_toolkit.dart';
 /// - If `thumbnail`/`tooltip` overrides are provided and valid, they are used.
 /// - Otherwise, fall back to the basemap's associated [Item] (if present).
 final class BasemapGalleryItem {
-  /// Creates a [BasemapGalleryItem] with a [Basemap].
-  ///
-  /// If the [Basemap] has an associated [Item] with a thumbnail and
-  /// description, they are used for [thumbnail] and [tooltip].
-  BasemapGalleryItem({required Basemap basemap})
-    : _basemap = basemap,
-      _thumbnailOverride = null,
-      _tooltipOverride = null {
-    _recomputeDerivedFields();
-    unawaited(_loadBasemapAndThumbnailIfNeeded());
-  }
-
-  /// Creates a [BasemapGalleryItem] with optional thumbnail and tooltip
-  /// overrides.
+  /// Creates a [BasemapGalleryItem].
   ///
   /// If [thumbnail] or [tooltip] are not provided (or are empty for [tooltip]),
   /// values from the basemap's associated [Item] are used as fallbacks.
-  BasemapGalleryItem.withOverrides(
-    Basemap basemap, {
+  BasemapGalleryItem({
+    required Basemap basemap,
     LoadableImage? thumbnail,
     String? tooltip,
   }) : _basemap = basemap,
