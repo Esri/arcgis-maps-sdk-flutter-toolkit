@@ -11,7 +11,6 @@
 
 ### New Toolkit Components
 * Authenticator
-* BasemapGallery
 * Compass
 * OverviewMap
 * PopupView
