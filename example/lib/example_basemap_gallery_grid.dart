@@ -14,8 +14,6 @@
 // limitations under the License.
 //
 
-import 'dart:async';
-
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_toolkit/arcgis_maps_toolkit.dart';
 import 'package:flutter/material.dart';
