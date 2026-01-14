@@ -47,7 +47,6 @@ class _ExampleBasemapGalleryGridState extends State<ExampleBasemapGalleryGrid> {
 
   late final ArcGISMap _map;
   late final BasemapGalleryController _controller;
-  StreamSubscription<Basemap>? _currentBasemapChangedSub;
 
   @override
   void initState() {
@@ -69,7 +68,6 @@ class _ExampleBasemapGalleryGridState extends State<ExampleBasemapGalleryGrid> {
 
   @override
   void dispose() {
-    _currentBasemapChangedSub?.cancel();
     _controller.dispose();
     super.dispose();
   }
