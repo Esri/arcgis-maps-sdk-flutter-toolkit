@@ -45,25 +45,21 @@ part of '../../../arcgis_maps_toolkit.dart';
 ///   super.initState();
 ///   _map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);
 ///   _controller = BasemapGalleryController(geoModel: _map);
+///   _controller.onCurrentBasemapChanged.listen((basemap) {
+///     debugPrint('Selected basemap: ${basemap.name}');
+///   });
 /// }
 ///
 /// @override
 /// Widget build(BuildContext context) {
 ///   return BasemapGallery(
 ///     controller: _controller,
-///     onCurrentBasemapChanged: (basemap) {
-///       debugPrint('Selected basemap: ${basemap.name}');
-///     },
 ///   );
 /// }
 /// ```
 final class BasemapGallery extends StatefulWidget {
   /// Creates a [BasemapGallery] widget.
-  const BasemapGallery({
-    required this.controller,
-    super.key,
-    this.onCurrentBasemapChanged,
-  });
+  const BasemapGallery({required this.controller, super.key});
 
   /// The [controller] driving this view.
   final BasemapGalleryController controller;
@@ -76,12 +72,6 @@ final class BasemapGallery extends StatefulWidget {
 
   /// Default grid tile spacing.
   static const double _gridSpacing = 8;
-
-  /// [onCurrentBasemapChanged] is called when a basemap is tapped.
-  /// Not called for loading/error items. Selection may show a
-  /// spatial reference mismatch dialog. For applied selection, listen to
-  /// [BasemapGalleryController.currentBasemap].
-  final ValueChanged<Basemap>? onCurrentBasemapChanged;
 
   @override
   State<BasemapGallery> createState() => _BasemapGalleryState();
@@ -204,12 +194,13 @@ final class _BasemapGalleryState extends State<BasemapGallery> {
     // Calculate number of columns based on available width.
     final crossAxisCount =
         (width / (BasemapGallery._gridMinTileWidth + spacing)).floor().clamp(
-          2,
+          1,
           6,
         );
 
     return GridView.builder(
       primary: true,
+      clipBehavior: Clip.none,
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: crossAxisCount,
         mainAxisSpacing: spacing,
@@ -236,6 +227,7 @@ final class _BasemapGalleryState extends State<BasemapGallery> {
 
     return ListView.separated(
       primary: true,
+      clipBehavior: Clip.none,
       itemCount: items.length,
       separatorBuilder: (_, _) => const SizedBox(height: 8),
       itemBuilder: (context, index) {
@@ -252,7 +244,7 @@ final class _BasemapGalleryState extends State<BasemapGallery> {
   }
 
   bool _isSelected(BasemapGalleryItem item) {
-    final current = widget.controller._currentBasemapItem;
+    final current = widget.controller.currentBasemap;
     if (current == null) return false;
     return identical(current.basemap, item.basemap) ||
         current.name == item.name;
@@ -281,10 +273,6 @@ final class _BasemapGalleryState extends State<BasemapGallery> {
     }
 
     await widget.controller._select(item);
-    final current = widget.controller._currentBasemapItem;
-    if (current == null) return;
-    if (!identical(current.basemap, item.basemap)) return;
-    widget.onCurrentBasemapChanged?.call(current.basemap);
   }
 }
 
@@ -345,51 +333,138 @@ final class _BasemapTile extends StatelessWidget {
     const titleAreaHeight = 50.0;
     final style = Theme.of(context).textTheme.bodySmall;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Expanded(child: _buildThumbnail(context, fit: BoxFit.cover)),
-        SizedBox(
-          height: titleAreaHeight,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            child: Align(
-              alignment: Alignment.topCenter,
-              child: Text(
-                item.name,
-                textAlign: TextAlign.center,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: style,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // If the tile is extremely small (e.g., a forced grid in a very narrow
+        // container), we don't render the fixed-height title area.
+        final showTitle = constraints.maxHeight >= titleAreaHeight + 24;
+        if (!showTitle) {
+          return _buildThumbnail(context, fit: BoxFit.cover);
+        }
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(child: _buildThumbnail(context, fit: BoxFit.cover)),
+            SizedBox(
+              height: titleAreaHeight,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                child: Align(
+                  alignment: Alignment.topCenter,
+                  child: Text(
+                    item.name,
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: style,
+                  ),
+                ),
               ),
             ),
-          ),
-        ),
-      ],
+          ],
+        );
+      },
     );
   }
 
   Widget _buildListContent(BuildContext context) {
-    return Row(
-      children: [
-        SizedBox(
-          width: 96,
-          height: 72,
-          child: _buildThumbnail(context, fit: BoxFit.cover),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 12),
-            child: Text(
-              item.name,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: Theme.of(context).textTheme.titleMedium,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final maxWidth = constraints.maxWidth;
+
+        const minThumbWidth = 40.0;
+        const maxThumbWidth = 96.0;
+        const spacerWidth = 12.0;
+        const minHorizontalTextWidth = 80.0;
+        const minWidthForTitle = 56.0;
+
+        // Responsive thumbnail width for very narrow containers.
+        final preferred = maxWidth * 0.45;
+        final thumbWidth = preferred
+            .clamp(minThumbWidth, maxThumbWidth)
+            .clamp(0.0, maxWidth);
+
+        final showSpacer = maxWidth >= thumbWidth + spacerWidth + 40;
+
+        final availableTextWidth =
+            maxWidth - thumbWidth - (showSpacer ? spacerWidth : 0);
+        final useVerticalLayout =
+            maxWidth < minThumbWidth + minHorizontalTextWidth;
+
+        if (useVerticalLayout) {
+          final showTitle = maxWidth >= minWidthForTitle;
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              AspectRatio(
+                aspectRatio: 4 / 3,
+                child: _buildThumbnail(context, fit: BoxFit.cover),
+              ),
+              if (showTitle)
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: Text(
+                    item.name,
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ),
+            ],
+          );
+        }
+
+        // If we can render horizontally but the remaining width would be too
+        // small for readable text, fall back to vertical layout.
+        if (availableTextWidth < minHorizontalTextWidth) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              AspectRatio(
+                aspectRatio: 4 / 3,
+                child: _buildThumbnail(context, fit: BoxFit.cover),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                child: Text(
+                  item.name,
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+              ),
+            ],
+          );
+        }
+
+        return Row(
+          children: [
+            SizedBox(
+              width: thumbWidth,
+              child: AspectRatio(
+                // Matches the previous 96x72 thumbnail sizing.
+                aspectRatio: 4 / 3,
+                child: _buildThumbnail(context, fit: BoxFit.cover),
+              ),
             ),
-          ),
-        ),
-      ],
+            if (showSpacer) const SizedBox(width: spacerWidth),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                child: Text(
+                  item.name,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -436,8 +511,8 @@ final class _BasemapTile extends StatelessWidget {
         ),
         if (item._hasError)
           Positioned(
-            top: -6,
-            right: -6,
+            top: -4,
+            right: -4,
             child: Icon(Icons.error, color: theme.colorScheme.error),
           ),
       ],
