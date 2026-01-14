@@ -78,6 +78,8 @@ final class BasemapGalleryController {
       ValueNotifier<_SpatialReferenceMismatchError?>(null);
 
   final _currentBasemapNotifier = ValueNotifier<BasemapGalleryItem?>(null);
+  final _currentBasemapChangedController =
+      StreamController<Basemap>.broadcast();
 
   late final Listenable _galleryListenable = Listenable.merge(<Listenable>[
     _galleryNotifier,
@@ -101,13 +103,16 @@ final class BasemapGalleryController {
   /// The portal used for basemaps when constructed with a portal.
   Portal? get portal => _portal;
 
-  /// Called after a basemap selection is applied.
-  ValueChanged<Basemap>? onCurrentBasemapChanged;
-
   /// The currently applied basemap on the associated [GeoModel].
-  Basemap? get currentBasemap => _currentBasemapNotifier.value?.basemap;
+  ///
+  /// This may be a basemap which does not exist in the gallery.
+  BasemapGalleryItem? get currentBasemap => _currentBasemapNotifier.value;
 
-  BasemapGalleryItem? get _currentBasemapItem => _currentBasemapNotifier.value;
+  /// Event invoked when the currently selected basemap changes.
+  ///
+  /// This only updates when the user selects a new basemap from the gallery.
+  Stream<Basemap> get onCurrentBasemapChanged =>
+      _currentBasemapChangedController.stream;
 
   /// The list of basemaps visible in the gallery.
   List<BasemapGalleryItem> get gallery => _galleryNotifier.value;
@@ -157,7 +162,7 @@ final class BasemapGalleryController {
       gm.basemap = item.basemap;
     }
 
-    onCurrentBasemapChanged?.call(item.basemap);
+    _currentBasemapChangedController.add(item.basemap);
   }
 
   /// Disposes resources.
@@ -167,6 +172,7 @@ final class BasemapGalleryController {
     _isFetchingBasemapsNotifier.dispose();
     _fetchBasemapsErrorNotifier.dispose();
     _currentBasemapNotifier.dispose();
+    _currentBasemapChangedController.close();
     _spatialReferenceMismatchErrorNotifier.dispose();
   }
 
