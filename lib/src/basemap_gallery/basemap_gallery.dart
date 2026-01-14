@@ -445,7 +445,6 @@ final class _BasemapTile extends StatelessWidget {
             SizedBox(
               width: thumbWidth,
               child: AspectRatio(
-                // Matches the previous 96x72 thumbnail sizing.
                 aspectRatio: 4 / 3,
                 child: _buildThumbnail(context, fit: BoxFit.cover),
               ),
