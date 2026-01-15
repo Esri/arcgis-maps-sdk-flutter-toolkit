@@ -74,7 +74,7 @@ class _ExampleBasemapGalleryGridState extends State<ExampleBasemapGalleryGrid> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('BasemapGallery (Grid)')),
-      drawer: Drawer(
+      endDrawer: Drawer(
         child: SafeArea(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
