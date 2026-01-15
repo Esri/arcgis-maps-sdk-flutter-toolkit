@@ -45,9 +45,6 @@ part of '../../../arcgis_maps_toolkit.dart';
 ///   super.initState();
 ///   _map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);
 ///   _controller = BasemapGalleryController(geoModel: _map);
-///   _controller.onCurrentBasemapChanged.listen((basemap) {
-///     debugPrint('Selected basemap: ${basemap.name}');
-///   });
 /// }
 ///
 /// @override
@@ -200,7 +197,6 @@ final class _BasemapGalleryState extends State<BasemapGallery> {
 
     return GridView.builder(
       primary: true,
-      clipBehavior: Clip.none,
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: crossAxisCount,
         mainAxisSpacing: spacing,
@@ -227,7 +223,6 @@ final class _BasemapGalleryState extends State<BasemapGallery> {
 
     return ListView.separated(
       primary: true,
-      clipBehavior: Clip.none,
       itemCount: items.length,
       separatorBuilder: (_, _) => const SizedBox(height: 8),
       itemBuilder: (context, index) {
@@ -320,7 +315,7 @@ final class _BasemapTile extends StatelessWidget {
           enabled: isEnabled,
           label: item.name,
           child: Tooltip(
-            message: item.tooltip ?? item.name,
+            message: item.name,
             waitDuration: const Duration(milliseconds: 500),
             child: tile,
           ),
@@ -482,7 +477,6 @@ final class _BasemapTile extends StatelessWidget {
       children: [
         Stack(
           fit: StackFit.expand,
-          clipBehavior: Clip.none,
           children: [
             base,
             if (item._isBasemapLoading)
@@ -511,7 +505,7 @@ final class _BasemapTile extends StatelessWidget {
         if (item._hasError)
           Positioned(
             top: -4,
-            right: -4,
+            right: -2,
             child: Icon(Icons.error, color: theme.colorScheme.error),
           ),
       ],
