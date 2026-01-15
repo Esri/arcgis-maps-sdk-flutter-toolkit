@@ -44,8 +44,8 @@ class ExampleBasemapGalleryList extends StatefulWidget {
 }
 
 class _ExampleBasemapGalleryListState extends State<ExampleBasemapGalleryList> {
-  static const _maxListWidth = 120.0;
-  static const _listHeight = 480.0;
+  static const _maxListWidth = 300.0;
+  static const _listHeight = 340.0;
 
   final _mapViewController = ArcGISMapView.createController();
 
