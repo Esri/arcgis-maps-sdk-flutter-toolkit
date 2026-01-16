@@ -104,7 +104,7 @@ final class BasemapGalleryController {
   Portal? get portal => _portal;
 
   /// The currently applied basemap on the associated [GeoModel].
-  BasemapGalleryItem? get currentBasemap => _currentBasemapNotifier.value;
+  Basemap? get currentBasemap => _currentBasemapNotifier.value?.basemap;
 
   /// Event invoked when the currently selected basemap changes.
   ///

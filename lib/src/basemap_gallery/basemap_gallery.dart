@@ -208,7 +208,7 @@ final class _BasemapGalleryState extends State<BasemapGallery> {
       itemBuilder: (context, index) {
         final item = items[index];
         return _BasemapTile(
-          key: ValueKey(item.basemap),
+          key: ValueKey(item._basemap),
           item: item,
           isSelected: _isSelected(item),
           onTap: () => unawaited(_select(item)),
@@ -228,7 +228,7 @@ final class _BasemapGalleryState extends State<BasemapGallery> {
       itemBuilder: (context, index) {
         final item = items[index];
         return _BasemapTile(
-          key: ValueKey(item.basemap),
+          key: ValueKey(item._basemap),
           item: item,
           isSelected: _isSelected(item),
           onTap: () => unawaited(_select(item)),
@@ -241,7 +241,7 @@ final class _BasemapGalleryState extends State<BasemapGallery> {
   bool _isSelected(BasemapGalleryItem item) {
     final current = widget.controller.currentBasemap;
     if (current == null) return false;
-    return identical(current.basemap, item.basemap) ||
+    return identical(current, item.basemap) ||
         current.name == item.name;
   }
 
