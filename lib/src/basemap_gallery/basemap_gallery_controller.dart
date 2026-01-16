@@ -224,18 +224,13 @@ final class BasemapGalleryController {
     }
   }
 
-  /// Fetches basemaps using the same control-flow as the Swift toolkit:
+  /// Fetches basemaps from the given [portal].
   ///
-  /// 1) Start with an empty list.
-  /// 2) If the current geoModel is a Scene, append the portal's 3D basemaps.
-  /// 3) Append exactly one 2D basemap set:
-  ///    - developer basemaps when [useDeveloperBasemaps] is true
-  ///    - otherwise the portal's basemaps
-  ///
-  /// Note: the Swift toolkit also has a vector-basemap branch based on portal
-  /// info. The Flutter SDK used by this toolkit does not currently expose a
-  /// `vectorBasemaps` API or an equivalent `usesVectorBasemaps` flag, so this
-  /// method uses `basemaps()` for the non-developer 2D set.
+  /// The returned list includes:
+  /// - 3D basemaps when the current [GeoModel] is an [ArcGISScene].
+  /// - Exactly one 2D basemap set:
+  ///   - developer basemaps when [useDeveloperBasemaps] is true
+  ///   - otherwise the portal's standard basemaps.
   Future<List<Basemap>> _fetchBasemaps({
     required Portal portal,
     required bool useDeveloperBasemaps,
