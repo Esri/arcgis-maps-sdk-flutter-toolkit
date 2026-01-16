@@ -29,21 +29,23 @@ void main() {
     ArcGISEnvironment.apiKey = apiKey;
   }
 
-  runApp(const MaterialApp(home: ExampleBasemapGalleryList()));
+  runApp(const MaterialApp(home: ExampleBasemapGalleryMapList()));
 }
 
-/// Toolkit BasemapGallery example (list view style) shown as a narrow panel.
+/// Toolkit BasemapGallery example (map + list view style) shown as a narrow
+/// panel.
 ///
 /// Tap the top-right icon to toggle the panel.
-class ExampleBasemapGalleryList extends StatefulWidget {
-  const ExampleBasemapGalleryList({super.key});
+class ExampleBasemapGalleryMapList extends StatefulWidget {
+  const ExampleBasemapGalleryMapList({super.key});
 
   @override
-  State<ExampleBasemapGalleryList> createState() =>
-      _ExampleBasemapGalleryListState();
+  State<ExampleBasemapGalleryMapList> createState() =>
+      _ExampleBasemapGalleryMapListState();
 }
 
-class _ExampleBasemapGalleryListState extends State<ExampleBasemapGalleryList> {
+class _ExampleBasemapGalleryMapListState
+    extends State<ExampleBasemapGalleryMapList> {
   static const _maxListWidth = 300.0;
   static const _listHeight = 340.0;
 
@@ -106,7 +108,7 @@ class _ExampleBasemapGalleryListState extends State<ExampleBasemapGalleryList> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('BasemapGallery (List)'),
+        title: const Text('BasemapGallery (Map List)'),
         actions: [
           IconButton(
             icon: const Icon(Icons.layers_outlined),

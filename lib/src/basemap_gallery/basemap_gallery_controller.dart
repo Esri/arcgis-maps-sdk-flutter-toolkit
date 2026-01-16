@@ -88,7 +88,7 @@ final class BasemapGalleryController {
   final bool _usesCustomItems;
 
   final _viewStyleNotifier = ValueNotifier<BasemapGalleryViewStyle>(
-    BasemapGalleryViewStyle.automatic,
+    BasemapGalleryViewStyle.grid,
   );
 
   final _galleryNotifier = ValueNotifier<List<BasemapGalleryItem>>(const []);

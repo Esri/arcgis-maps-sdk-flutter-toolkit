@@ -15,11 +15,10 @@
 //
 
 import 'package:arcgis_maps/arcgis_maps.dart';
-import 'package:arcgis_maps_toolkit_example/example_basemap_gallery_automatic.dart';
-import 'package:arcgis_maps_toolkit_example/example_basemap_gallery_grid.dart';
-import 'package:arcgis_maps_toolkit_example/example_basemap_gallery_list.dart';
-import 'package:arcgis_maps_toolkit_example/example_basemap_gallery_scene_defaults_grid.dart';
+import 'package:arcgis_maps_toolkit_example/example_basemap_gallery_map_grid.dart';
+import 'package:arcgis_maps_toolkit_example/example_basemap_gallery_map_list.dart';
 import 'package:arcgis_maps_toolkit_example/example_basemap_gallery_scene_grid.dart';
+import 'package:arcgis_maps_toolkit_example/example_basemap_gallery_scene_list.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -46,30 +45,25 @@ void main() {
 }
 
 enum BasemapGalleryExample {
-  automatic(
-    'BasemapGallery Automatic',
-    'Example using BasemapGalleryViewStyle.automatic with an ArcGISScene (includes 3D basemaps).',
-    ExampleBasemapGalleryAutomatic.new,
+  mapGrid(
+    'BasemapGallery for a map (grid layout)',
+    'Example of showing the default basemaps in a grid and applying one to a map.',
+    ExampleBasemapGalleryMapGrid.new,
   ),
-  grid(
-    'BasemapGallery Grid',
-    'Example using BasemapGalleryViewStyle.grid.',
-    ExampleBasemapGalleryGrid.new,
-  ),
-  list(
-    'BasemapGallery List',
-    'Example using BasemapGalleryViewStyle.list.',
-    ExampleBasemapGalleryList.new,
+  mapList(
+    'BasemapGallery for a map (list layout)',
+    'Example of showing a list of basemaps from a portal and applying one to a map.',
+    ExampleBasemapGalleryMapList.new,
   ),
   sceneGrid(
-    'BasemapGallery Scene Custom Items Grid',
-    'Example using ArcGISScene with custom portal-item basemaps (2D items; no basemaps3D).',
+    'BasemapGallery for a scene (grid layout)',
+    'Example of showing the default basemaps in a grid and applying one to a scene (includes 3D basemaps).',
     ExampleBasemapGallerySceneGrid.new,
   ),
-  sceneDefaultsGrid(
-    'BasemapGallery Scene Defaults Grid',
-    'Example using ArcGISScene with default basemap sources (includes 3D basemaps).',
-    ExampleBasemapGallerySceneDefaultsGrid.new,
+  sceneList(
+    'BasemapGallery for a scene (list layout)',
+    'Example of showing a list of basemaps from a portal. 2D items only (no 3D basemaps).',
+    ExampleBasemapGallerySceneList.new,
   );
 
   const BasemapGalleryExample(this.title, this.subtitle, this.constructor);

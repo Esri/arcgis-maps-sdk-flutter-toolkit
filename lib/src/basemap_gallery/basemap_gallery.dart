@@ -47,8 +47,7 @@ part of '../../../arcgis_maps_toolkit.dart';
 /// controller.
 ///
 /// ## Features
-/// * Displays basemaps as a grid, list, or automatically switches based on
-///   available width.
+/// * Displays basemaps as a grid or a list.
 /// * Shows selection state and exposes selection events via the controller.
 ///
 /// ## Usage
@@ -186,10 +185,6 @@ final class _BasemapGalleryState extends State<BasemapGallery> {
               final useGrid = switch (style) {
                 BasemapGalleryViewStyle.grid => true,
                 BasemapGalleryViewStyle.list => false,
-                BasemapGalleryViewStyle.automatic =>
-                  constraints.maxWidth >=
-                      BasemapGallery._gridMinTileWidth * 2 +
-                          BasemapGallery._gridSpacing,
               };
 
               if (useGrid) {

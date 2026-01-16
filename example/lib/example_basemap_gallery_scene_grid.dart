@@ -62,35 +62,10 @@ class _ExampleBasemapGallerySceneGridState
         scale: 1000000,
       );
 
-    final galleryItems = _makeBasemapGalleryItems();
-
-    _controller = BasemapGalleryController.withItems(
-      geoModel: _scene,
-      items: galleryItems,
-    )..viewStyle = BasemapGalleryViewStyle.grid;
-  }
-
-  List<BasemapGalleryItem> _makeBasemapGalleryItems() {
-    // These are portal item IDs that create 2D basemap items. This example is
-    // intended to exercise basemap-item loading and error handling (SR mismatch
-    // and wrong item type), not to demonstrate basemaps3D().
-    const identifiers = <String>[
-      '46a87c20f09e4fc48fa3c38081e0cae6',
-      'f33a34de3a294590ab48f246e99958c9',
-      '52bdc7ab7fb044d98add148764eaa30a', // mismatched spatial reference
-      '3a8d410a4a034a2ba9738bb0860d68c4', // incorrect portal item type
-    ];
-
-    final portal = Portal.arcGISOnline();
-    return identifiers
-        .map((id) {
-          final portalItem = PortalItem.withPortalAndItemId(
-            portal: portal,
-            itemId: id,
-          );
-          return BasemapGalleryItem(basemap: Basemap.withItem(portalItem));
-        })
-        .toList(growable: false);
+    // Default controller: for scenes this loads developerBasemaps() +
+    // basemaps3D() from ArcGIS Online.
+    _controller = BasemapGalleryController(geoModel: _scene)
+      ..viewStyle = BasemapGalleryViewStyle.grid;
   }
 
   @override

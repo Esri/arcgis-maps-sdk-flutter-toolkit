@@ -29,29 +29,29 @@ void main() {
     ArcGISEnvironment.apiKey = apiKey;
   }
 
-  runApp(const MaterialApp(home: ExampleBasemapGalleryAutomatic()));
+  runApp(const MaterialApp(home: ExampleBasemapGallerySceneList()));
 }
 
-class ExampleBasemapGalleryAutomatic extends StatefulWidget {
-  const ExampleBasemapGalleryAutomatic({super.key});
+class ExampleBasemapGallerySceneList extends StatefulWidget {
+  const ExampleBasemapGallerySceneList({super.key});
 
   @override
-  State<ExampleBasemapGalleryAutomatic> createState() =>
-      _ExampleBasemapGalleryAutomaticState();
+  State<ExampleBasemapGallerySceneList> createState() =>
+      _ExampleBasemapGallerySceneListState();
 }
 
-class _ExampleBasemapGalleryAutomaticState
-    extends State<ExampleBasemapGalleryAutomatic> {
-  final _mapViewController = ArcGISMapView.createController();
+class _ExampleBasemapGallerySceneListState
+    extends State<ExampleBasemapGallerySceneList> {
+  final _sceneViewController = ArcGISSceneView.createController();
 
-  late final ArcGISMap _map;
+  late final ArcGISScene _scene;
   late final BasemapGalleryController _controller;
 
   @override
   void initState() {
     super.initState();
 
-    _map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISImagery)
+    _scene = ArcGISScene.withBasemapStyle(BasemapStyle.arcGISImagery)
       ..initialViewpoint = Viewpoint.fromCenter(
         ArcGISPoint(
           x: -93.258133,
@@ -64,41 +64,9 @@ class _ExampleBasemapGalleryAutomaticState
     final galleryItems = _makeBasemapGalleryItems();
 
     _controller = BasemapGalleryController.withItems(
-      geoModel: _map,
+      geoModel: _scene,
       items: galleryItems,
-    )..viewStyle = BasemapGalleryViewStyle.automatic;
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('BasemapGallery (Automatic)'),
-        actions: [
-          IconButton(
-            tooltip: 'Show basemap gallery',
-            icon: const Icon(Icons.layers_outlined),
-            onPressed: _showBasemapGallery,
-          ),
-        ],
-      ),
-      body: _buildMapPane(),
-    );
-  }
-
-  Widget _buildMapPane() {
-    return ArcGISMapView(
-      controllerProvider: () => _mapViewController,
-      onMapViewReady: () {
-        _mapViewController.arcGISMap = _map;
-      },
-    );
+    )..viewStyle = BasemapGalleryViewStyle.list;
   }
 
   List<BasemapGalleryItem> _makeBasemapGalleryItems() {
@@ -121,6 +89,34 @@ class _ExampleBasemapGalleryAutomaticState
         .toList(growable: false);
   }
 
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('BasemapGallery (Scene List)'),
+        actions: [
+          IconButton(
+            tooltip: 'Basemap Gallery',
+            icon: const Icon(Icons.layers_outlined),
+            onPressed: _showBasemapGallery,
+          ),
+        ],
+      ),
+      body: ArcGISSceneView(
+        controllerProvider: () => _sceneViewController,
+        onSceneViewReady: () {
+          _sceneViewController.arcGISScene = _scene;
+        },
+      ),
+    );
+  }
+
   Future<void> _showBasemapGallery() async {
     await showModalBottomSheet<void>(
       context: context,
@@ -129,9 +125,38 @@ class _ExampleBasemapGalleryAutomaticState
       builder: (context) {
         return FractionallySizedBox(
           heightFactor: 0.75,
-          child: Padding(
-            padding: const EdgeInsets.all(8),
-            child: BasemapGallery(controller: _controller),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Row(
+                children: [
+                  const Expanded(
+                    child: Padding(
+                      padding: EdgeInsets.fromLTRB(16, 12, 16, 8),
+                      child: Text(
+                        'Basemap Gallery',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    tooltip: 'Close',
+                    icon: const Icon(Icons.close),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                ],
+              ),
+              const Divider(height: 1),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: BasemapGallery(controller: _controller),
+                ),
+              ),
+            ],
           ),
         );
       },
