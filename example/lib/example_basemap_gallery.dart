@@ -18,6 +18,8 @@ import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_toolkit_example/example_basemap_gallery_automatic.dart';
 import 'package:arcgis_maps_toolkit_example/example_basemap_gallery_grid.dart';
 import 'package:arcgis_maps_toolkit_example/example_basemap_gallery_list.dart';
+import 'package:arcgis_maps_toolkit_example/example_basemap_gallery_scene_defaults_grid.dart';
+import 'package:arcgis_maps_toolkit_example/example_basemap_gallery_scene_grid.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -46,7 +48,7 @@ void main() {
 enum BasemapGalleryExample {
   automatic(
     'BasemapGallery Automatic',
-    'Example using BasemapGalleryViewStyle.automatic.',
+    'Example using BasemapGalleryViewStyle.automatic with an ArcGISScene (includes 3D basemaps).',
     ExampleBasemapGalleryAutomatic.new,
   ),
   grid(
@@ -58,6 +60,16 @@ enum BasemapGalleryExample {
     'BasemapGallery List',
     'Example using BasemapGalleryViewStyle.list.',
     ExampleBasemapGalleryList.new,
+  ),
+  sceneGrid(
+    'BasemapGallery Scene Custom Items Grid',
+    'Example using ArcGISScene with custom portal-item basemaps (2D items; no basemaps3D).',
+    ExampleBasemapGallerySceneGrid.new,
+  ),
+  sceneDefaultsGrid(
+    'BasemapGallery Scene Defaults Grid',
+    'Example using ArcGISScene with default basemap sources (includes 3D basemaps).',
+    ExampleBasemapGallerySceneDefaultsGrid.new,
   );
 
   const BasemapGalleryExample(this.title, this.subtitle, this.constructor);

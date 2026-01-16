@@ -23,6 +23,25 @@ part of '../../../arcgis_maps_toolkit.dart';
 /// basemaps and apply a selection to a connected [GeoModel] (such as an
 /// [ArcGISMap] or [ArcGISScene]) via a [BasemapGalleryController].
 ///
+/// Basemaps may come from ArcGIS Online, a user-defined [Portal], or a
+/// caller-provided list (for example, a list of [Basemap] objects mapped to
+/// [BasemapGalleryItem]). If the connected [GeoModel] is an [ArcGISScene], the
+/// controller can include 3D basemaps in addition to 2D basemaps.
+///
+/// ## 3D basemaps support
+/// - When the controller is fetching from a portal (default or portal mode) and
+///   the connected [GeoModel] is an [ArcGISScene], it also fetches
+///   [Portal.basemaps3D].
+/// - When custom items are provided via
+///   [BasemapGalleryController.withItems], the controller does not automatically
+///   fetch 3D basemaps; the gallery displays exactly what is provided.
+/// - The gallery overlays a "3D" badge when a basemap contains an
+///   [ArcGISSceneLayer] in its base layers.
+///
+/// The component also enforces spatial reference compatibility before applying
+/// a basemap. For [ArcGISScene], compatibility uses a special-case spatial
+/// reference when the scene view tiling scheme is web mercator.
+///
 /// The basemaps shown in the gallery are provided by the controller (defaults,
 /// a portal, or custom items), and the current selection is tracked by the
 /// controller.
@@ -300,13 +319,14 @@ final class _BasemapTile extends StatelessWidget {
       animation: item._tileListenable,
       builder: (context, _) {
         final isEnabled = !item._isBasemapLoading;
+        final show3DBadge = item.basemap._is3D;
 
         final tile = InkWell(
           borderRadius: BorderRadius.circular(6),
           onTap: isEnabled ? onTap : null,
           child: dense
-              ? _buildListContent(context)
-              : _buildGridContent(context),
+              ? _buildListContent(context, show3DBadge: show3DBadge)
+              : _buildGridContent(context, show3DBadge: show3DBadge),
         );
 
         return Semantics(
@@ -324,7 +344,7 @@ final class _BasemapTile extends StatelessWidget {
     );
   }
 
-  Widget _buildGridContent(BuildContext context) {
+  Widget _buildGridContent(BuildContext context, {required bool show3DBadge}) {
     const titleAreaHeight = 50.0;
     final style = Theme.of(context).textTheme.bodySmall;
 
@@ -334,13 +354,23 @@ final class _BasemapTile extends StatelessWidget {
         // container), we don't render the fixed-height title area.
         final showTitle = constraints.maxHeight >= titleAreaHeight + 24;
         if (!showTitle) {
-          return _buildThumbnail(context, fit: BoxFit.cover);
+          return _buildThumbnail(
+            context,
+            fit: BoxFit.cover,
+            show3DBadge: show3DBadge,
+          );
         }
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Expanded(child: _buildThumbnail(context, fit: BoxFit.cover)),
+            Expanded(
+              child: _buildThumbnail(
+                context,
+                fit: BoxFit.cover,
+                show3DBadge: show3DBadge,
+              ),
+            ),
             SizedBox(
               height: titleAreaHeight,
               child: Padding(
@@ -363,7 +393,7 @@ final class _BasemapTile extends StatelessWidget {
     );
   }
 
-  Widget _buildListContent(BuildContext context) {
+  Widget _buildListContent(BuildContext context, {required bool show3DBadge}) {
     return LayoutBuilder(
       builder: (context, constraints) {
         final maxWidth = constraints.maxWidth;
@@ -394,7 +424,11 @@ final class _BasemapTile extends StatelessWidget {
             children: [
               AspectRatio(
                 aspectRatio: 4 / 3,
-                child: _buildThumbnail(context, fit: BoxFit.cover),
+                child: _buildThumbnail(
+                  context,
+                  fit: BoxFit.cover,
+                  show3DBadge: show3DBadge,
+                ),
               ),
               if (showTitle)
                 Padding(
@@ -419,7 +453,11 @@ final class _BasemapTile extends StatelessWidget {
             children: [
               AspectRatio(
                 aspectRatio: 4 / 3,
-                child: _buildThumbnail(context, fit: BoxFit.cover),
+                child: _buildThumbnail(
+                  context,
+                  fit: BoxFit.cover,
+                  show3DBadge: show3DBadge,
+                ),
               ),
               Padding(
                 padding: const EdgeInsets.symmetric(vertical: 8),
@@ -441,7 +479,11 @@ final class _BasemapTile extends StatelessWidget {
               width: thumbWidth,
               child: AspectRatio(
                 aspectRatio: 4 / 3,
-                child: _buildThumbnail(context, fit: BoxFit.cover),
+                child: _buildThumbnail(
+                  context,
+                  fit: BoxFit.cover,
+                  show3DBadge: show3DBadge,
+                ),
               ),
             ),
             if (showSpacer) const SizedBox(width: spacerWidth),
@@ -462,7 +504,11 @@ final class _BasemapTile extends StatelessWidget {
     );
   }
 
-  Widget _buildThumbnail(BuildContext context, {required BoxFit fit}) {
+  Widget _buildThumbnail(
+    BuildContext context, {
+    required BoxFit fit,
+    required bool show3DBadge,
+  }) {
     final base = _LoadableImageUtils.thumbnailOrPlaceholder(
       thumbnail: item.thumbnail,
       fit: fit,
@@ -508,7 +554,33 @@ final class _BasemapTile extends StatelessWidget {
             right: -2,
             child: Icon(Icons.error, color: theme.colorScheme.error),
           ),
+        if (show3DBadge)
+          Positioned(
+            top: 6,
+            left: 6,
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                color: theme.colorScheme.surface,
+                borderRadius: BorderRadius.circular(6),
+                border: Border.all(color: theme.colorScheme.outline),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                child: Text(
+                  '3D',
+                  style: theme.textTheme.labelSmall?.copyWith(
+                    color: theme.colorScheme.onSurface,
+                  ),
+                ),
+              ),
+            ),
+          ),
       ],
     );
   }
+}
+
+extension on Basemap {
+  /// Whether this basemap supports 3D visualization.
+  bool get _is3D => baseLayers.any((layer) => layer is ArcGISSceneLayer);
 }

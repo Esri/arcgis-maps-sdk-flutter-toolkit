@@ -21,11 +21,14 @@ final class BasemapGalleryController {
   /// Creates a gallery with default basemaps.
   ///
   /// If no custom items or portal is provided, this controller loads ArcGIS
-  /// Online's developer basemaps by default. These basemaps are secured and
-  /// typically require an API key or named-user authentication.
+  /// Online's developer basemaps by default.
+  ///
+  /// If the [geoModel] is an [ArcGISScene], 3D basemaps from
+  /// [Portal.basemaps3D] are also included.
   BasemapGalleryController({GeoModel? geoModel})
     : _geoModel = geoModel,
-      _portal = null {
+      _portal = null,
+      _usesCustomItems = false {
     _initFromGeoModel();
     unawaited(_populateDefaultBasemaps());
   }
@@ -35,19 +38,35 @@ final class BasemapGalleryController {
   /// If [portal] is valid, the controller fetches portal basemaps asynchronously
   /// and copies them into [gallery].
   ///
+  /// If the [geoModel] is an [ArcGISScene], 3D basemaps from
+  /// [Portal.basemaps3D] are also included.
+  ///
   BasemapGalleryController.withPortal(Portal portal, {GeoModel? geoModel})
     : _geoModel = geoModel,
-      _portal = portal {
+      _portal = portal,
+      _usesCustomItems = false {
     _initFromGeoModel();
     unawaited(_populateFromPortal());
   }
 
   /// Creates a gallery using provided [items].
+  ///
+  /// This can be used to display basemaps from any source, including a caller-
+  /// provided list of [Basemap] objects by mapping them to gallery items:
+  ///
+  /// ```dart
+  /// final items = basemaps.map((b) => BasemapGalleryItem(basemap: b)).toList();
+  /// final controller = BasemapGalleryController.withItems(items: items);
+  /// ```
+  ///
+  /// Note: when using custom [items], the controller does not automatically add
+  /// portal 3D basemaps; include any desired 3D basemaps in [items].
   BasemapGalleryController.withItems({
     required List<BasemapGalleryItem> items,
     GeoModel? geoModel,
   }) : _geoModel = geoModel,
-       _portal = null {
+       _portal = null,
+       _usesCustomItems = true {
     _initFromGeoModel();
 
     if (items.isEmpty) {
@@ -66,6 +85,8 @@ final class BasemapGalleryController {
 
   GeoModel? _geoModel;
   final Portal? _portal;
+  final bool _usesCustomItems;
+
   final _viewStyleNotifier = ValueNotifier<BasemapGalleryViewStyle>(
     BasemapGalleryViewStyle.automatic,
   );
@@ -96,8 +117,21 @@ final class BasemapGalleryController {
   GeoModel? get geoModel => _geoModel;
 
   set geoModel(GeoModel? value) {
+    final old = _geoModel;
+    if (identical(old, value)) return;
+
     _geoModel = value;
     _initFromGeoModel();
+
+    if (_usesCustomItems) return;
+
+    // If the GeoModel changes after construction, refresh the gallery so the
+    // correct 2D/3D basemap sources are used.
+    if (_portal != null) {
+      unawaited(_populateFromPortal());
+    } else {
+      unawaited(_populateDefaultBasemaps());
+    }
   }
 
   /// The portal used for basemaps when constructed with a portal.
@@ -191,6 +225,42 @@ final class BasemapGalleryController {
     }
   }
 
+  /// Fetches basemaps using the same control-flow as the Swift toolkit:
+  ///
+  /// 1) Start with an empty list.
+  /// 2) If the current geoModel is a Scene, append the portal's 3D basemaps.
+  /// 3) Append exactly one 2D basemap set:
+  ///    - developer basemaps when [useDeveloperBasemaps] is true
+  ///    - otherwise the portal's basemaps
+  ///
+  /// Note: the Swift toolkit also has a vector-basemap branch based on portal
+  /// info. The Flutter SDK used by this toolkit does not currently expose a
+  /// `vectorBasemaps` API or an equivalent `usesVectorBasemaps` flag, so this
+  /// method uses `basemaps()` for the non-developer 2D set.
+  Future<List<Basemap>> _fetchBasemaps({
+    required Portal portal,
+    required bool useDeveloperBasemaps,
+  }) async {
+    if (portal.loadStatus == LoadStatus.notLoaded) {
+      await portal.load();
+    }
+
+    final basemaps = <Basemap>[];
+
+    final gm = _geoModel;
+    if (gm is ArcGISScene) {
+      basemaps.addAll(await portal.basemaps3D());
+    }
+
+    if (useDeveloperBasemaps) {
+      basemaps.addAll(await portal.developerBasemaps());
+    } else {
+      basemaps.addAll(await portal.basemaps());
+    }
+
+    return List<Basemap>.unmodifiable(basemaps);
+  }
+
   Future<void> _populateFromPortal() async {
     final p = _portal;
     if (p == null) {
@@ -202,10 +272,10 @@ final class BasemapGalleryController {
     _fetchBasemapsErrorNotifier.value = null;
 
     try {
-      if (p.loadStatus == LoadStatus.notLoaded) {
-        await p.load();
-      }
-      final basemaps = await p.basemaps();
+      final basemaps = await _fetchBasemaps(
+        portal: p,
+        useDeveloperBasemaps: false,
+      );
       _galleryNotifier.value = List<BasemapGalleryItem>.unmodifiable(
         basemaps.map((b) => BasemapGalleryItem(basemap: b)).toList(),
       );
@@ -222,14 +292,14 @@ final class BasemapGalleryController {
     _fetchBasemapsErrorNotifier.value = null;
     _galleryNotifier.value = const [];
 
-    // Load developer basemaps from ArcGIS Online by default (API-key metered basemaps).
+    // Load developer basemaps from ArcGIS Online by default.
     final portal = Portal.arcGISOnline();
 
     try {
-      if (portal.loadStatus == LoadStatus.notLoaded) {
-        await portal.load();
-      }
-      final basemaps = await portal.developerBasemaps();
+      final basemaps = await _fetchBasemaps(
+        portal: portal,
+        useDeveloperBasemaps: true,
+      );
       _galleryNotifier.value = List<BasemapGalleryItem>.unmodifiable(
         basemaps.map((b) => BasemapGalleryItem(basemap: b)).toList(),
       );
