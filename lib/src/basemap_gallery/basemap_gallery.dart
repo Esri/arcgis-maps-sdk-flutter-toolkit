@@ -504,8 +504,10 @@ final class _BasemapTile extends StatelessWidget {
         if (item._hasError)
           Positioned(
             top: -4,
-            right: -2,
-            child: Icon(Icons.error, color: theme.colorScheme.error),
+            right: -4,
+            child: IgnorePointer(
+              child: Icon(Icons.error, color: theme.colorScheme.error),
+            ),
           ),
       ],
     );
