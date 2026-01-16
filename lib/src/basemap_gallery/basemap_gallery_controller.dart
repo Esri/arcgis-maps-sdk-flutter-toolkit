@@ -117,8 +117,7 @@ final class BasemapGalleryController {
   GeoModel? get geoModel => _geoModel;
 
   set geoModel(GeoModel? value) {
-    final old = _geoModel;
-    if (identical(old, value)) return;
+    if (identical(_geoModel, value)) return;
 
     _geoModel = value;
     _initFromGeoModel();
