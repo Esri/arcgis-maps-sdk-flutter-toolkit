@@ -241,8 +241,7 @@ final class _BasemapGalleryState extends State<BasemapGallery> {
   bool _isSelected(BasemapGalleryItem item) {
     final current = widget.controller.currentBasemap;
     if (current == null) return false;
-    return identical(current, item.basemap) ||
-        current.name == item.name;
+    return identical(current, item.basemap) || current.name == item.name;
   }
 
   Future<void> _select(BasemapGalleryItem item) async {
