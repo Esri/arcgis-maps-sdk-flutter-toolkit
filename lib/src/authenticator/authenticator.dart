@@ -121,6 +121,8 @@ class _AuthenticatorState extends State<Authenticator>
         NetworkAuthenticationChallengeHandler {
   var _errorMessage = '';
 
+  final _recentNetworkChallenges = <_NetworkChallengeResult>[];
+
   @override
   void initState() {
     super.initState();
@@ -215,6 +217,10 @@ class _AuthenticatorState extends State<Authenticator>
   }
 
   void _tokenLogin(ArcGISAuthenticationChallenge challenge) {
+    if (_hasRecentFailedNtlmChallenge(challenge)) {
+      return;
+    }
+
     // Show an _AuthenticatorLogin dialog, which will answer the challenge.
     showDialog<void>(
       context: context,
@@ -242,16 +248,69 @@ class _AuthenticatorState extends State<Authenticator>
       case DigestAuthenticationChallenge():
       case NtlmAuthenticationChallenge():
         // Show an _AuthenticatorLogin dialog, which will answer the challenge.
-        await showDialog<void>(
+        final loginResult = await showDialog<bool>(
           context: context,
           builder: (context) => _AuthenticatorLogin(
             challenge: _NetworkLoginChallenge(challenge),
             logger: widget.logger,
           ),
         );
+        _recordNetworkChallengeResult(challenge, loginResult);
       case ClientCertificateAuthenticationChallenge():
         await _clientCertificateWorkflow(challenge);
     }
+  }
+
+  void _recordNetworkChallengeResult(
+    NetworkAuthenticationChallenge challenge,
+    bool? loginResult,
+  ) {
+    // Record the result of the challenge.
+    _recentNetworkChallenges.add(
+      _NetworkChallengeResult(challenge: challenge, loginResult: loginResult),
+    );
+
+    // Keep only the last 20 challenges.
+    while (_recentNetworkChallenges.length > 20) {
+      _recentNetworkChallenges.removeAt(0);
+    }
+  }
+
+  /// There is a bug in the SDK that causes spurious ArcGIS challenges to happen if an NTLM
+  /// challenge is handled with continueAndFail(). We should not prompt the user for these
+  /// challenges. These challenges should be allowed to fail.
+  bool _hasRecentFailedNtlmChallenge(ArcGISAuthenticationChallenge challenge) {
+    final host = challenge.requestUri.host;
+
+    // Find recent NTLM challenges for the same host.
+    final matchingNtlmChallenges = _recentNetworkChallenges.where(
+      (result) =>
+          result.challenge is NtlmAuthenticationChallenge &&
+          result.challenge.host == host,
+    );
+
+    // The most recent challenge was dismissed (did not provide credentials and did not cancel).
+    final hasDismissedChallenge =
+        matchingNtlmChallenges.isNotEmpty &&
+        matchingNtlmChallenges.last.loginResult == null;
+
+    // There were 5 or more attempts to provide credentials, which must have failed.
+    final has5Attempts =
+        matchingNtlmChallenges
+            .where((result) => result.loginResult ?? false)
+            .length >=
+        5;
+
+    // This was a spurious challenge if either condition is true.
+    if (hasDismissedChallenge || has5Attempts) {
+      challenge.continueAndFail();
+      widget.logger?.call(
+        'Automatically failing spurious ArcGIS challenge for host $host',
+      );
+      return true;
+    }
+
+    return false;
   }
 
   Future<void> _clientCertificateWorkflow(
@@ -293,4 +352,14 @@ class _AuthenticatorState extends State<Authenticator>
           _AuthenticatorCertificatePassword(challenge: challenge, file: file),
     );
   }
+}
+
+class _NetworkChallengeResult {
+  const _NetworkChallengeResult({
+    required this.challenge,
+    required this.loginResult,
+  });
+
+  final NetworkAuthenticationChallenge challenge;
+  final bool? loginResult;
 }
