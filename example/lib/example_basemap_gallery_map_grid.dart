@@ -29,18 +29,19 @@ void main() {
     ArcGISEnvironment.apiKey = apiKey;
   }
 
-  runApp(const MaterialApp(home: ExampleBasemapGalleryGrid()));
+  runApp(const MaterialApp(home: ExampleBasemapGalleryMapGrid()));
 }
 
-class ExampleBasemapGalleryGrid extends StatefulWidget {
-  const ExampleBasemapGalleryGrid({super.key});
+class ExampleBasemapGalleryMapGrid extends StatefulWidget {
+  const ExampleBasemapGalleryMapGrid({super.key});
 
   @override
-  State<ExampleBasemapGalleryGrid> createState() =>
-      _ExampleBasemapGalleryGridState();
+  State<ExampleBasemapGalleryMapGrid> createState() =>
+      _ExampleBasemapGalleryMapGridState();
 }
 
-class _ExampleBasemapGalleryGridState extends State<ExampleBasemapGalleryGrid> {
+class _ExampleBasemapGalleryMapGridState
+    extends State<ExampleBasemapGalleryMapGrid> {
   final _mapViewController = ArcGISMapView.createController();
 
   late final ArcGISMap _map;
@@ -73,7 +74,7 @@ class _ExampleBasemapGalleryGridState extends State<ExampleBasemapGalleryGrid> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('BasemapGallery (Grid)')),
+      appBar: AppBar(title: const Text('BasemapGallery (Map Grid)')),
       endDrawer: Drawer(
         child: SafeArea(
           child: Column(
