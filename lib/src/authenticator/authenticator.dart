@@ -73,6 +73,7 @@ class Authenticator extends StatefulWidget {
     super.key,
     this.child,
     this.oAuthUserConfigurations = const [],
+    this.logger,
   });
 
   /// An optional child widget.
@@ -88,6 +89,9 @@ class Authenticator extends StatefulWidget {
   /// will be prompted to sign in using a username and password to obtain a
   /// [TokenCredential].
   final List<OAuthUserConfiguration> oAuthUserConfigurations;
+
+  /// An optional callback to log messages from the Authenticator.
+  final void Function(String)? logger;
 
   /// Revoke all OAuth tokens. The returned [Future] completes when all tokens
   /// have been successfully revoked.
@@ -133,10 +137,14 @@ class _AuthenticatorState extends State<Authenticator>
       manager.arcGISAuthenticationChallengeHandler = this;
       manager.networkAuthenticationChallengeHandler = this;
     }
+
+    widget.logger?.call('Authenticator initState');
   }
 
   @override
   void dispose() {
+    widget.logger?.call('Authenticator dispose');
+
     if (_errorMessage.isEmpty) {
       ArcGISEnvironment
               .authenticationManager
@@ -164,6 +172,8 @@ class _AuthenticatorState extends State<Authenticator>
   void handleArcGISAuthenticationChallenge(
     ArcGISAuthenticationChallenge challenge,
   ) {
+    widget.logger?.call('Handling ${challenge.runtimeType} challenge');
+
     // If an OAuth configuration matches, use it. Else use token login.
     final configuration = widget.oAuthUserConfigurations
         .where(
@@ -208,8 +218,10 @@ class _AuthenticatorState extends State<Authenticator>
     // Show an _AuthenticatorLogin dialog, which will answer the challenge.
     showDialog<void>(
       context: context,
-      builder: (context) =>
-          _AuthenticatorLogin(challenge: _ArcGISLoginChallenge(challenge)),
+      builder: (context) => _AuthenticatorLogin(
+        challenge: _ArcGISLoginChallenge(challenge),
+        logger: widget.logger,
+      ),
     );
   }
 
@@ -217,6 +229,8 @@ class _AuthenticatorState extends State<Authenticator>
   FutureOr<void> handleNetworkAuthenticationChallenge(
     NetworkAuthenticationChallenge challenge,
   ) async {
+    widget.logger?.call('Handling ${challenge.runtimeType} challenge');
+
     switch (challenge) {
       case ServerTrustAuthenticationChallenge():
         // Show an _AuthenticatorTrust dialog, which will answer the challenge.
@@ -230,8 +244,10 @@ class _AuthenticatorState extends State<Authenticator>
         // Show an _AuthenticatorLogin dialog, which will answer the challenge.
         await showDialog<void>(
           context: context,
-          builder: (context) =>
-              _AuthenticatorLogin(challenge: _NetworkLoginChallenge(challenge)),
+          builder: (context) => _AuthenticatorLogin(
+            challenge: _NetworkLoginChallenge(challenge),
+            logger: widget.logger,
+          ),
         );
       case ClientCertificateAuthenticationChallenge():
         await _clientCertificateWorkflow(challenge);

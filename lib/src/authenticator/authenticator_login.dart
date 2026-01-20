@@ -21,6 +21,7 @@ part of '../../arcgis_maps_toolkit.dart';
 sealed class _LoginChallenge {
   // Common functionality to be overridden in the type-specific classes.
   int get previousFailureCount;
+  String get type;
   String get host;
   String? get realm;
   void continueAndFail();
@@ -34,6 +35,9 @@ class _ArcGISLoginChallenge extends _LoginChallenge {
 
   @override
   int get previousFailureCount => challenge.previousFailureCount;
+
+  @override
+  String get type => 'ArcGIS';
 
   @override
   String get host => challenge.requestUri.host;
@@ -55,6 +59,22 @@ class _NetworkLoginChallenge extends _LoginChallenge {
 
   @override
   int get previousFailureCount => challenge.previousFailureCount;
+
+  @override
+  String get type {
+    switch (challenge) {
+      case BasicAuthenticationChallenge():
+        return 'Basic';
+      case DigestAuthenticationChallenge():
+        return 'Digest';
+      case NtlmAuthenticationChallenge():
+        return 'NTLM';
+      default:
+        throw UnsupportedError(
+          'Unsupported NetworkAuthenticationChallenge type: ${challenge.runtimeType}',
+        );
+    }
+  }
 
   @override
   String get host => challenge.host;
@@ -81,9 +101,11 @@ class _NetworkLoginChallenge extends _LoginChallenge {
 // A dialog that prompts the user to log in with a username and password and
 // answers the given challenge with a TokenCredential.
 class _AuthenticatorLogin extends StatefulWidget {
-  const _AuthenticatorLogin({required this.challenge});
+  const _AuthenticatorLogin({required this.challenge, this.logger});
 
   final _LoginChallenge challenge;
+
+  final void Function(String)? logger;
 
   @override
   State<_AuthenticatorLogin> createState() => _AuthenticatorLoginState();
@@ -109,12 +131,25 @@ class _AuthenticatorLoginState extends State<_AuthenticatorLogin> {
         _errorMessage = 'Invalid credentials. Please try again.';
       }
     }
+
+    widget.logger?.call(
+      'Presenting _AuthenticatorLogin for ${widget.challenge.type} challenge from ${widget.challenge.host}',
+    );
   }
 
   @override
   void dispose() {
-    // If the widget was dismissed without a result, the challenge should fail.
-    if (_loginResult == null) widget.challenge.continueAndFail();
+    switch (_loginResult) {
+      case null:
+        // If the widget was dismissed without a result, the challenge should fail.
+        widget.challenge.continueAndFail();
+
+        widget.logger?.call('_AuthenticatorLogin dismissed without a result.');
+      case true:
+        widget.logger?.call('_AuthenticatorLogin provided credentials.');
+      case false:
+        widget.logger?.call('_AuthenticatorLogin canceled.');
+    }
 
     // Text editing controllers must be disposed.
     _usernameController.dispose();
@@ -142,9 +177,16 @@ class _AuthenticatorLoginState extends State<_AuthenticatorLogin> {
               ),
               // Show the host that is requiring authentication.
               Text(widget.challenge.host),
-              // Show realm (if applicable).
-              if (widget.challenge.realm != null)
-                Text('Realm: ${widget.challenge.realm}'),
+              Row(
+                spacing: 5,
+                children: [
+                  // Show the challenge type (NTLM, Basic, Digest, ArcGIS).
+                  Text(widget.challenge.type),
+                  // Show realm (if applicable).
+                  if (widget.challenge.realm != null)
+                    Text('Realm: ${widget.challenge.realm}'),
+                ],
+              ),
               // Text fields for the username and password.
               TextField(
                 controller: _usernameController,
