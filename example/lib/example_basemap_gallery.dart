@@ -15,7 +15,10 @@
 //
 
 import 'package:arcgis_maps/arcgis_maps.dart';
-import 'package:arcgis_maps_toolkit/arcgis_maps_toolkit.dart';
+import 'package:arcgis_maps_toolkit_example/example_basemap_gallery_map_grid.dart';
+import 'package:arcgis_maps_toolkit_example/example_basemap_gallery_map_list.dart';
+import 'package:arcgis_maps_toolkit_example/example_basemap_gallery_scene_grid.dart';
+import 'package:arcgis_maps_toolkit_example/example_basemap_gallery_scene_list.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -29,152 +32,75 @@ void main() {
     ArcGISEnvironment.apiKey = apiKey;
   }
 
-  runApp(const MaterialApp(home: ExampleBasemapGallery()));
+  final colorScheme = ColorScheme.fromSeed(seedColor: Colors.deepPurple);
+  runApp(
+    MaterialApp(
+      theme: ThemeData(
+        colorScheme: colorScheme,
+        appBarTheme: AppBarTheme(backgroundColor: colorScheme.inversePrimary),
+      ),
+      home: const ExampleBasemapGallery(),
+    ),
+  );
 }
 
-// Toolkit BasemapGallery example:
-// - Provide a custom list of basemap portal items.
-// - Include a mismatched spatial reference basemap and an incorrect portal
-//   item type to demonstrate error handling.
+enum BasemapGalleryExample {
+  mapGrid(
+    'BasemapGallery for a map (grid layout)',
+    'Example of showing the default basemaps in a grid and applying one to a map.',
+    ExampleBasemapGalleryMapGrid.new,
+  ),
+  mapList(
+    'BasemapGallery for a map (list layout)',
+    'Example of showing a list of basemaps from a portal and applying one to a map.',
+    ExampleBasemapGalleryMapList.new,
+  ),
+  sceneGrid(
+    'BasemapGallery for a scene (grid layout)',
+    'Example of showing the default basemaps in a grid and applying one to a scene (includes 3D basemaps).',
+    ExampleBasemapGallerySceneGrid.new,
+  ),
+  sceneList(
+    'BasemapGallery for a scene (list layout)',
+    'Example of showing a list of basemaps from a portal. 2D items only (no 3D basemaps).',
+    ExampleBasemapGallerySceneList.new,
+  );
 
-class ExampleBasemapGallery extends StatefulWidget {
+  const BasemapGalleryExample(this.title, this.subtitle, this.constructor);
+
+  final String title;
+  final String subtitle;
+  final Widget Function({Key? key}) constructor;
+
+  Card buildCard(BuildContext context) {
+    return Card(
+      child: ListTile(
+        title: Text(title),
+        subtitle: Text(subtitle),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => constructor()),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class ExampleBasemapGallery extends StatelessWidget {
   const ExampleBasemapGallery({super.key});
-
-  @override
-  State<ExampleBasemapGallery> createState() => _ExampleBasemapGalleryState();
-}
-
-class _ExampleBasemapGalleryState extends State<ExampleBasemapGallery> {
-  final _mapViewController = ArcGISMapView.createController();
-
-  late final ArcGISMap _map;
-  final _selectedBasemapName = ValueNotifier<String>('');
-  late final BasemapGalleryController _controller;
-
-  @override
-  void initState() {
-    super.initState();
-
-    _map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISImagery)
-      ..initialViewpoint = Viewpoint.fromCenter(
-        ArcGISPoint(
-          x: -93.258133,
-          y: 44.986656,
-          spatialReference: SpatialReference.wgs84,
-        ),
-        scale: 1000000,
-      );
-
-    final galleryItems = _makeBasemapGalleryItems();
-
-    _controller = BasemapGalleryController.withItems(
-      geoModel: _map,
-      items: galleryItems,
-    )..viewStyle = BasemapGalleryViewStyle.grid;
-
-    _selectedBasemapName.value = _controller.currentBasemap?.name ?? '';
-    _controller.onCurrentBasemapChanged = (basemap) {
-      _selectedBasemapName.value = basemap.name;
-    };
-  }
-
-  @override
-  void dispose() {
-    _selectedBasemapName.dispose();
-    _controller.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('BasemapGallery'),
-        actions: [
-          IconButton(
-            tooltip: 'Show basemap gallery',
-            icon: const Icon(Icons.layers_outlined),
-            onPressed: _showBasemapGallerySheet,
-          ),
-        ],
+      appBar: AppBar(title: const Text('BasemapGallery')),
+      body: ListView.builder(
+        padding: const EdgeInsets.all(10),
+        itemCount: BasemapGalleryExample.values.length,
+        itemBuilder: (context, index) =>
+            BasemapGalleryExample.values[index].buildCard(context),
       ),
-      body: _buildMapPane(),
-    );
-  }
-
-  Widget _buildMapPane() {
-    return ArcGISMapView(
-      controllerProvider: () => _mapViewController,
-      onMapViewReady: () {
-        _mapViewController.arcGISMap = _map;
-      },
-    );
-  }
-
-  List<BasemapGalleryItem> _makeBasemapGalleryItems() {
-    const identifiers = <String>[
-      '46a87c20f09e4fc48fa3c38081e0cae6',
-      'f33a34de3a294590ab48f246e99958c9',
-      '52bdc7ab7fb044d98add148764eaa30a', // mismatched spatial reference
-      '3a8d410a4a034a2ba9738bb0860d68c4', // incorrect portal item type
-    ];
-
-    final portal = Portal.arcGISOnline();
-    return identifiers
-        .map((id) {
-          final portalItem = PortalItem.withPortalAndItemId(
-            portal: portal,
-            itemId: id,
-          );
-          return BasemapGalleryItem(basemap: Basemap.withItem(portalItem));
-        })
-        .toList(growable: false);
-  }
-
-  Future<void> _showBasemapGallerySheet() async {
-    await showModalBottomSheet<void>(
-      context: context,
-      useSafeArea: true,
-      isScrollControlled: true,
-      builder: (context) {
-        return FractionallySizedBox(
-          heightFactor: 0.75,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(12, 12, 12, 6),
-                child: ValueListenableBuilder<String>(
-                  valueListenable: _selectedBasemapName,
-                  builder: (context, name, _) => Text(
-                    name.isEmpty ? 'Select a basemap' : 'Selected: $name',
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.titleMedium,
-                  ),
-                ),
-              ),
-              const Divider(height: 1),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: BasemapGallery(
-                    controller: _controller,
-                    onCurrentBasemapChanged: (basemap) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('Basemap changed to: ${basemap.name}'),
-                          duration: const Duration(seconds: 2),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ),
-            ],
-          ),
-        );
-      },
     );
   }
 }

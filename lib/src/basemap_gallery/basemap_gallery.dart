@@ -23,13 +23,31 @@ part of '../../../arcgis_maps_toolkit.dart';
 /// basemaps and apply a selection to a connected [GeoModel] (such as an
 /// [ArcGISMap] or [ArcGISScene]) via a [BasemapGalleryController].
 ///
+/// Basemaps may come from ArcGIS Online, a user-defined [Portal], or a
+/// caller-provided list (for example, a list of [Basemap] objects mapped to
+/// [BasemapGalleryItem]). If the connected [GeoModel] is an [ArcGISScene], the
+/// controller can include 3D basemaps in addition to 2D basemaps.
+///
+/// ## 3D basemaps support
+/// - When the controller is fetching from a portal (default or portal mode) and
+///   the connected [GeoModel] is an [ArcGISScene], it also fetches
+///   [Portal.basemaps3D].
+/// - When custom items are provided via
+///   [BasemapGalleryController.withItems], the controller does not automatically
+///   fetch 3D basemaps; the gallery displays exactly what is provided.
+/// - The gallery overlays a "3D" badge when a basemap contains an
+///   [ArcGISSceneLayer] in its base layers.
+///
+/// The component also enforces spatial reference compatibility before applying
+/// a basemap. For [ArcGISScene], compatibility uses a special-case spatial
+/// reference when the scene view tiling scheme is web mercator.
+///
 /// The basemaps shown in the gallery are provided by the controller (defaults,
 /// a portal, or custom items), and the current selection is tracked by the
 /// controller.
 ///
 /// ## Features
-/// * Displays basemaps as a grid, list, or automatically switches based on
-///   available width.
+/// * Displays basemaps as a grid or a list.
 /// * Shows selection state and exposes selection events via the controller.
 ///
 /// ## Usage
@@ -51,19 +69,12 @@ part of '../../../arcgis_maps_toolkit.dart';
 /// Widget build(BuildContext context) {
 ///   return BasemapGallery(
 ///     controller: _controller,
-///     onCurrentBasemapChanged: (basemap) {
-///       debugPrint('Selected basemap: ${basemap.name}');
-///     },
 ///   );
 /// }
 /// ```
 final class BasemapGallery extends StatefulWidget {
   /// Creates a [BasemapGallery] widget.
-  const BasemapGallery({
-    required this.controller,
-    super.key,
-    this.onCurrentBasemapChanged,
-  });
+  const BasemapGallery({required this.controller, super.key});
 
   /// The [controller] driving this view.
   final BasemapGalleryController controller;
@@ -76,12 +87,6 @@ final class BasemapGallery extends StatefulWidget {
 
   /// Default grid tile spacing.
   static const double _gridSpacing = 8;
-
-  /// [onCurrentBasemapChanged] is called when a basemap is tapped.
-  /// Not called for loading/error items. Selection may show a
-  /// spatial reference mismatch dialog. For applied selection, listen to
-  /// [BasemapGalleryController.currentBasemap].
-  final ValueChanged<Basemap>? onCurrentBasemapChanged;
 
   @override
   State<BasemapGallery> createState() => _BasemapGalleryState();
@@ -180,10 +185,6 @@ final class _BasemapGalleryState extends State<BasemapGallery> {
               final useGrid = switch (style) {
                 BasemapGalleryViewStyle.grid => true,
                 BasemapGalleryViewStyle.list => false,
-                BasemapGalleryViewStyle.automatic =>
-                  constraints.maxWidth >=
-                      BasemapGallery._gridMinTileWidth * 2 +
-                          BasemapGallery._gridSpacing,
               };
 
               if (useGrid) {
@@ -204,7 +205,7 @@ final class _BasemapGalleryState extends State<BasemapGallery> {
     // Calculate number of columns based on available width.
     final crossAxisCount =
         (width / (BasemapGallery._gridMinTileWidth + spacing)).floor().clamp(
-          2,
+          1,
           6,
         );
 
@@ -221,7 +222,7 @@ final class _BasemapGalleryState extends State<BasemapGallery> {
       itemBuilder: (context, index) {
         final item = items[index];
         return _BasemapTile(
-          key: ValueKey(item.basemap),
+          key: ValueKey(item._basemap),
           item: item,
           isSelected: _isSelected(item),
           onTap: () => unawaited(_select(item)),
@@ -241,7 +242,7 @@ final class _BasemapGalleryState extends State<BasemapGallery> {
       itemBuilder: (context, index) {
         final item = items[index];
         return _BasemapTile(
-          key: ValueKey(item.basemap),
+          key: ValueKey(item._basemap),
           item: item,
           isSelected: _isSelected(item),
           onTap: () => unawaited(_select(item)),
@@ -252,10 +253,9 @@ final class _BasemapGalleryState extends State<BasemapGallery> {
   }
 
   bool _isSelected(BasemapGalleryItem item) {
-    final current = widget.controller._currentBasemapItem;
+    final current = widget.controller.currentBasemap;
     if (current == null) return false;
-    return identical(current.basemap, item.basemap) ||
-        current.name == item.name;
+    return identical(current, item.basemap) || current.name == item.name;
   }
 
   Future<void> _select(BasemapGalleryItem item) async {
@@ -281,10 +281,6 @@ final class _BasemapGalleryState extends State<BasemapGallery> {
     }
 
     await widget.controller._select(item);
-    final current = widget.controller._currentBasemapItem;
-    if (current == null) return;
-    if (!identical(current.basemap, item.basemap)) return;
-    widget.onCurrentBasemapChanged?.call(current.basemap);
   }
 }
 
@@ -317,13 +313,14 @@ final class _BasemapTile extends StatelessWidget {
       animation: item._tileListenable,
       builder: (context, _) {
         final isEnabled = !item._isBasemapLoading;
+        final show3DBadge = item.basemap._is3D;
 
         final tile = InkWell(
           borderRadius: BorderRadius.circular(6),
           onTap: isEnabled ? onTap : null,
           child: dense
-              ? _buildListContent(context)
-              : _buildGridContent(context),
+              ? _buildListContent(context, show3DBadge: show3DBadge)
+              : _buildGridContent(context, show3DBadge: show3DBadge),
         );
 
         return Semantics(
@@ -332,7 +329,7 @@ final class _BasemapTile extends StatelessWidget {
           enabled: isEnabled,
           label: item.name,
           child: Tooltip(
-            message: item.tooltip ?? item.name,
+            message: item.name,
             waitDuration: const Duration(milliseconds: 500),
             child: tile,
           ),
@@ -341,59 +338,171 @@ final class _BasemapTile extends StatelessWidget {
     );
   }
 
-  Widget _buildGridContent(BuildContext context) {
+  Widget _buildGridContent(BuildContext context, {required bool show3DBadge}) {
     const titleAreaHeight = 50.0;
     final style = Theme.of(context).textTheme.bodySmall;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Expanded(child: _buildThumbnail(context, fit: BoxFit.cover)),
-        SizedBox(
-          height: titleAreaHeight,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            child: Align(
-              alignment: Alignment.topCenter,
-              child: Text(
-                item.name,
-                textAlign: TextAlign.center,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: style,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // If the tile is extremely small (e.g., a forced grid in a very narrow
+        // container), we don't render the fixed-height title area.
+        final showTitle = constraints.maxHeight >= titleAreaHeight + 24;
+        if (!showTitle) {
+          return _buildThumbnail(
+            context,
+            fit: BoxFit.cover,
+            show3DBadge: show3DBadge,
+          );
+        }
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(
+              child: _buildThumbnail(
+                context,
+                fit: BoxFit.cover,
+                show3DBadge: show3DBadge,
               ),
             ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildListContent(BuildContext context) {
-    return Row(
-      children: [
-        SizedBox(
-          width: 96,
-          height: 72,
-          child: _buildThumbnail(context, fit: BoxFit.cover),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 12),
-            child: Text(
-              item.name,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-              style: Theme.of(context).textTheme.titleMedium,
+            SizedBox(
+              height: titleAreaHeight,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                child: Align(
+                  alignment: Alignment.topCenter,
+                  child: Text(
+                    item.name,
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: style,
+                  ),
+                ),
+              ),
             ),
-          ),
-        ),
-      ],
+          ],
+        );
+      },
     );
   }
 
-  Widget _buildThumbnail(BuildContext context, {required BoxFit fit}) {
+  Widget _buildListContent(BuildContext context, {required bool show3DBadge}) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final maxWidth = constraints.maxWidth;
+
+        const minThumbWidth = 40.0;
+        const maxThumbWidth = 96.0;
+        const spacerWidth = 12.0;
+        const minHorizontalTextWidth = 80.0;
+        const minWidthForTitle = 56.0;
+
+        // Responsive thumbnail width for very narrow containers.
+        final preferred = maxWidth * 0.45;
+        final thumbWidth = preferred
+            .clamp(minThumbWidth, maxThumbWidth)
+            .clamp(0.0, maxWidth);
+
+        final showSpacer = maxWidth >= thumbWidth + spacerWidth + 40;
+
+        final availableTextWidth =
+            maxWidth - thumbWidth - (showSpacer ? spacerWidth : 0);
+        final useVerticalLayout =
+            maxWidth < minThumbWidth + minHorizontalTextWidth;
+
+        if (useVerticalLayout) {
+          final showTitle = maxWidth >= minWidthForTitle;
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              AspectRatio(
+                aspectRatio: 4 / 3,
+                child: _buildThumbnail(
+                  context,
+                  fit: BoxFit.cover,
+                  show3DBadge: show3DBadge,
+                ),
+              ),
+              if (showTitle)
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: Text(
+                    item.name,
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ),
+            ],
+          );
+        }
+
+        // If we can render horizontally but the remaining width would be too
+        // small for readable text, fall back to vertical layout.
+        if (availableTextWidth < minHorizontalTextWidth) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              AspectRatio(
+                aspectRatio: 4 / 3,
+                child: _buildThumbnail(
+                  context,
+                  fit: BoxFit.cover,
+                  show3DBadge: show3DBadge,
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                child: Text(
+                  item.name,
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+              ),
+            ],
+          );
+        }
+
+        return Row(
+          children: [
+            SizedBox(
+              width: thumbWidth,
+              child: AspectRatio(
+                aspectRatio: 4 / 3,
+                child: _buildThumbnail(
+                  context,
+                  fit: BoxFit.cover,
+                  show3DBadge: show3DBadge,
+                ),
+              ),
+            ),
+            if (showSpacer) const SizedBox(width: spacerWidth),
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                child: Text(
+                  item.name,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildThumbnail(
+    BuildContext context, {
+    required BoxFit fit,
+    required bool show3DBadge,
+  }) {
     final base = _LoadableImageUtils.thumbnailOrPlaceholder(
       thumbnail: item.thumbnail,
       fit: fit,
@@ -408,7 +517,6 @@ final class _BasemapTile extends StatelessWidget {
       children: [
         Stack(
           fit: StackFit.expand,
-          clipBehavior: Clip.none,
           children: [
             base,
             if (item._isBasemapLoading)
@@ -436,11 +544,39 @@ final class _BasemapTile extends StatelessWidget {
         ),
         if (item._hasError)
           Positioned(
-            top: -6,
-            right: -6,
-            child: Icon(Icons.error, color: theme.colorScheme.error),
+            top: -4,
+            right: -4,
+            child: IgnorePointer(
+              child: Icon(Icons.error, color: theme.colorScheme.error),
+            ),
+          ),
+        if (show3DBadge)
+          Positioned(
+            top: 6,
+            left: 6,
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                color: theme.colorScheme.surface,
+                borderRadius: BorderRadius.circular(6),
+                border: Border.all(color: theme.colorScheme.outline),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                child: Text(
+                  '3D',
+                  style: theme.textTheme.labelSmall?.copyWith(
+                    color: theme.colorScheme.onSurface,
+                  ),
+                ),
+              ),
+            ),
           ),
       ],
     );
   }
+}
+
+extension on Basemap {
+  /// Whether this basemap supports 3D visualization.
+  bool get _is3D => baseLayers.any((layer) => layer is ArcGISSceneLayer);
 }

@@ -18,8 +18,6 @@ part of '../../arcgis_maps_toolkit.dart';
 
 // The view style of the basemap gallery.
 enum BasemapGalleryViewStyle {
-  // Display as a grid when width allows; otherwise display as a list.
-  automatic,
   // Display as a grid.
   grid,
   // Display as a list.

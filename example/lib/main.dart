@@ -53,7 +53,7 @@ enum ComponentExample {
   ),
   basemapGallery(
     'BasemapGallery',
-    'Browse basemaps and apply the selection to a map',
+    'Browse basemaps and apply the selection to a map/scene',
     ExampleBasemapGallery.new,
   ),
   compass(
