@@ -16,59 +16,52 @@
 
 part of '../../../arcgis_maps_toolkit.dart';
 
-/// The [BasemapGallery] widget displays a gallery of basemap thumbnails.
+/// The [BasemapGallery] is a widget that displays a collection of basemaps from ArcGIS Online,
+/// a user-defined portal, or an array of [BasemapGalleryItem] objects.
 ///
 /// # Overview
-/// [BasemapGallery] is a UI component that lets a user browse a collection of
-/// basemaps and apply a selection to a connected [GeoModel] (such as an
-/// [ArcGISMap] or [ArcGISScene]) via a [BasemapGalleryController].
+/// When a new [Basemap] is selected from the [BaemapGallery] and a [GeoModel] ([ArcGISMap]/[ArcGISScene]) was provided
+/// when the basemap gallery was created, the basemap of the map/scene is replaced with the
+/// basemap in the gallery.
 ///
-/// Basemaps may come from ArcGIS Online, a user-defined [Portal], or a
-/// caller-provided list (for example, a list of [Basemap] objects mapped to
-/// [BasemapGalleryItem]). If the connected [GeoModel] is an [ArcGISScene], the
-/// controller can include 3D basemaps in addition to 2D basemaps.
+/// # Features
+/// * Displays a name and thumbnail for each basemap.
+/// * Can be configured to use a list or grid layout.
+/// * Displays basemaps from a portal or a custom collection. If neither a custom portal or array of basemaps is provided,
+/// the list of basemaps will be loaded from ArcGIS Online.
+/// * If the connected geo model is an [ArcGISScene], it also fetches [Portal.basemaps3D] and overlays a "3D" badge when a basemap contains an
+/// [ArcGISSceneLayer] in its base layers.
+/// * If a map/scene is provided to the [BasemapGallery], selecting an item in the gallery will set that basemap on the map/scene.
+/// * Selecting a basemap with a spatial reference that does not match that of the geo model will display an error.
+/// It will also display an error if a provided basemap cannot be loaded.
 ///
-/// ## 3D basemaps support
-/// - When the controller is fetching from a portal (default or portal mode) and
-///   the connected [GeoModel] is an [ArcGISScene], it also fetches
-///   [Portal.basemaps3D].
-/// - When custom items are provided via
-///   [BasemapGalleryController.withItems], the controller does not automatically
-///   fetch 3D basemaps; the gallery displays exactly what is provided.
-/// - The gallery overlays a "3D" badge when a basemap contains an
-///   [ArcGISSceneLayer] in its base layers.
-///
-/// The component also enforces spatial reference compatibility before applying
-/// a basemap. For [ArcGISScene], compatibility uses a special-case spatial
-/// reference when the scene view tiling scheme is web mercator.
-///
-/// The basemaps shown in the gallery are provided by the controller (defaults,
-/// a portal, or custom items), and the current selection is tracked by the
-/// controller.
-///
-/// ## Features
-/// * Displays basemaps as a grid or a list.
-/// * Shows selection state and exposes selection events via the controller.
+
 ///
 /// ## Usage
-/// Provide a [BasemapGalleryController] and place the gallery in your widget
-/// tree.
+/// When constructing a [BasemapGallery] widget, provide a [BasemapGalleryController].
+/// The basemaps shown in the gallery are provided by the controller (defaults, a portal, or custom items), and the current selection is tracked by the controller.
+/// Provide an optional [GeoModel] to the controller to link it up the [BasemapGallery] and automatically update the basemap shown in the view.
+///
+/// Display the [BasemapGallery] contents in a widget, such as a [Dialog], a [Drawer], or another sized widget in the widget tree such as a [Container].
+/// The visibility of the basemap gallery can be controlled within the application. See our example implementations for more information.
+///
+/// Example construction of a [BasemapGallery] and [BasemapGalleryController] using an [ArcGISMap] with default basemaps from ArcGIS Online.
 ///
 /// ```dart
+/// late final BasemapGalleryController _basemapGalleryController;
 /// late final ArcGISMap _map;
-/// late final BasemapGalleryController _controller;
 ///
 /// @override
 /// void initState() {
 ///   super.initState();
 ///   _map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);
-///   _controller = BasemapGalleryController(geoModel: _map);
+///   _basemapGalleryController = BasemapGalleryController(geoModel: _map);
 /// }
 ///
 /// @override
 /// Widget build(BuildContext context) {
 ///   return BasemapGallery(
-///     controller: _controller,
+///     controller: _basemapGalleryController,
 ///   );
 /// }
 /// ```
