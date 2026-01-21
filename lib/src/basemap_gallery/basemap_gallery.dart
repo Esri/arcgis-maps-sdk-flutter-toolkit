@@ -40,6 +40,7 @@ part of '../../../arcgis_maps_toolkit.dart';
 /// ## Usage
 /// When constructing a [BasemapGallery] widget, provide a [BasemapGalleryController].
 /// The basemaps shown in the gallery are provided by the controller (defaults, a portal, or custom items), and the current selection is tracked by the controller.
+/// The [BasemapGalleryController] should be disposed of when no longer required.
 /// Provide an optional [GeoModel] to the controller to link it up the [BasemapGallery] and automatically update the basemap shown in the view.
 ///
 /// Display the [BasemapGallery] contents in a widget, such as a [Dialog], a [Drawer], or another sized widget in the widget tree such as a [Container].
@@ -59,17 +60,24 @@ part of '../../../arcgis_maps_toolkit.dart';
 /// }
 ///
 /// @override
+/// void dispose() {
+///    _basemapGalleryController.dispose();
+///    super.dispose();
+/// }
+///
+/// @override
 /// Widget build(BuildContext context) {
 ///   return BasemapGallery(
 ///     controller: _basemapGalleryController,
 ///   );
 /// }
+///
 /// ```
 final class BasemapGallery extends StatefulWidget {
   /// Creates a [BasemapGallery] widget.
   const BasemapGallery({required this.controller, super.key});
 
-  /// The [controller] driving this view.
+  /// The controller for the basemap gallery which controls the state and behavior of the associated [BasemapGallery].
   final BasemapGalleryController controller;
 
   /// Default outer padding.
