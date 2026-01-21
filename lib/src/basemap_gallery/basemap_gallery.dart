@@ -20,7 +20,7 @@ part of '../../../arcgis_maps_toolkit.dart';
 /// a user-defined portal, or an array of [BasemapGalleryItem] objects.
 ///
 /// # Overview
-/// When a new [Basemap] is selected from the [BaemapGallery] and a [GeoModel] ([ArcGISMap]/[ArcGISScene]) was provided
+/// When a new [Basemap] is selected from the [BasemapGallery] and a [GeoModel] ([ArcGISMap]/[ArcGISScene]) was provided
 /// when the basemap gallery was created, the basemap of the map/scene is replaced with the
 /// basemap in the gallery.
 ///
