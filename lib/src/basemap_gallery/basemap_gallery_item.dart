@@ -18,14 +18,14 @@ part of '../../arcgis_maps_toolkit.dart';
 
 /// An element in a basemap gallery.
 ///
-/// Fallback rules:
-/// - If `thumbnail`/`tooltip` overrides are provided and valid, they are used.
-/// - Otherwise, fall back to the basemap's associated [Item] (if present).
+/// If a [thumbnail] and [tooltip] are provided and valid, they are used.
+/// Otherwise if a [Basemap] has an associated [Item] with a valid thumbnail and description,
+/// these are used as a fallback.
 final class BasemapGalleryItem {
-  /// Creates a [BasemapGalleryItem].
+  /// Creates a [BasemapGalleryItem] from the provided basemap.
   ///
-  /// If [thumbnail] or [tooltip] are not provided (or are empty for [tooltip]),
-  /// values from the basemap's associated [Item] are used as fallbacks.
+  /// If [thumbnail] or [tooltip] are not provided or are invalid,
+  /// values from the basemap's associated [Item] are used (if present and valid).
   BasemapGalleryItem({
     required Basemap basemap,
     LoadableImage? thumbnail,
@@ -62,7 +62,7 @@ final class BasemapGalleryItem {
     _spatialReferenceStatusNotifier,
   ]);
 
-  /// The basemap for this gallery item.
+  /// The basemap this gallery item represents.
   Basemap get basemap => _basemap;
 
   /// The name of this basemap.

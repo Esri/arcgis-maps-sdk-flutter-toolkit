@@ -17,14 +17,25 @@
 part of '../../arcgis_maps_toolkit.dart';
 
 /// Controls the state and behavior of a [BasemapGallery].
+///
+/// A [BasemapGalleryController] is required to construct a [BasemapGallery].
+/// It can be configured with an optional [GeoModel]. If a geo model is attached, a basemap selected in the basemap gallery
+/// will automatically update in the view.
+/// By default, the basemap gallery will display basemaps from ArcGISOnline. If a scene is provided, this will include 3D basemaps.
+/// Alternatively, construct the [BasemapGalleryController] with a portal Uri or custom list of [BasemapGalleryItem] to display custom
+/// basemaps.
+///
+/// Toggle the [BasemapGalleryViewStyle] to display the thumbnails in a grid or list.
+///
+/// The [BasemapGalleryController] should be disposed of when no longer required.
 final class BasemapGalleryController {
-  /// Creates a gallery with default basemaps.
+  /// Creates a basemap gallery controller.
   ///
-  /// If no custom items or portal is provided, this controller loads ArcGIS
-  /// Online's developer basemaps by default.
+  /// The list of gallery items is populated with default basemaps from ArcGIS Online.
   ///
-  /// If the [geoModel] is an [ArcGISScene], 3D basemaps from
-  /// [Portal.basemaps3D] are also included.
+  /// If a [GeoModel] is provided, when an enabled basemap is selected by the user, the geo model
+  /// will have its basemap replaced with the selected basemap.
+  /// If the [geoModel] is an [ArcGISScene], default 3D basemaps are also provided.
   BasemapGalleryController({GeoModel? geoModel})
     : _geoModel = geoModel,
       _portal = null,
@@ -33,14 +44,11 @@ final class BasemapGalleryController {
     unawaited(_populateDefaultBasemaps());
   }
 
-  /// Creates a gallery using basemaps from a [Portal].
+  /// Creates a basemap gallery controller using basemaps from a [Portal].
   ///
-  /// If [portal] is valid, the controller fetches portal basemaps asynchronously
-  /// and copies them into [gallery].
-  ///
-  /// If the [geoModel] is an [ArcGISScene], 3D basemaps from
-  /// [Portal.basemaps3D] are also included.
-  ///
+  /// Uses the given [Portal] (if valid) to retrieve the list of gallery items.
+  /// If a [GeoModel] is provided, when an enabled basemap is selected by the user, the geo model
+  /// will have its basemap replaced with the selected basemap.
   BasemapGalleryController.withPortal(Portal portal, {GeoModel? geoModel})
     : _geoModel = geoModel,
       _portal = portal,
@@ -49,18 +57,11 @@ final class BasemapGalleryController {
     unawaited(_populateFromPortal());
   }
 
-  /// Creates a gallery using provided [items].
+  /// Creates a basemap gallery controller using the given list of basemap gallery items.
+  /// The portal property is set to null.
   ///
-  /// This can be used to display basemaps from any source, including a caller-
-  /// provided list of [Basemap] objects by mapping them to gallery items:
-  ///
-  /// ```dart
-  /// final items = basemaps.map((b) => BasemapGalleryItem(basemap: b)).toList();
-  /// final controller = BasemapGalleryController.withItems(items: items);
-  /// ```
-  ///
-  /// Note: when using custom [items], the controller does not automatically add
-  /// portal 3D basemaps; include any desired 3D basemaps in [items].
+  /// If a [GeoModel] is provided, when an enabled basemap is selected by the user, the geo model
+  /// will have its basemap replaced with the selected basemap.
   BasemapGalleryController.withItems({
     required List<BasemapGalleryItem> items,
     GeoModel? geoModel,
@@ -112,8 +113,10 @@ final class BasemapGalleryController {
 
   /// The associated geo model.
   ///
-  /// If it is not loaded when set, it will be loaded immediately.
-  ///
+  /// If the [GeoModel] is not loaded when passed to the [BasemapGalleryController],
+  /// then the map/scene will be automatically loaded.
+  /// The spatial reference of geo model dictates which basemaps from the gallery are enabled.
+  /// When an enabled basemap is selected by the user, the geo model will have its basemap replaced with the selected basemap.
   GeoModel? get geoModel => _geoModel;
 
   set geoModel(GeoModel? value) {
@@ -133,24 +136,25 @@ final class BasemapGalleryController {
     }
   }
 
-  /// The portal used for basemaps when constructed with a portal.
+  /// The portal object, if set in the constructor of the [BasemapGalleryController].
   Portal? get portal => _portal;
 
-  /// The currently applied basemap on the associated [GeoModel].
+  /// Currently applied basemap on the associated [GeoModel]. This may be a basemap which does not exist in the gallery.
   Basemap? get currentBasemap => _currentBasemapNotifier.value?.basemap;
 
   /// Event invoked when the currently selected basemap changes.
   ///
-  /// This only updates when the user selects a new basemap from the gallery.
+  /// Notifies when the user selects a different basemap from the gallery.
   Stream<Basemap> get onCurrentBasemapChanged =>
       _currentBasemapChangedController.stream;
 
-  /// The list of basemaps visible in the gallery.
+  /// The list of basemaps currently visible in the gallery. Items added or removed from this list will update the gallery.
   List<BasemapGalleryItem> get gallery => _galleryNotifier.value;
 
   bool get _isFetchingBasemaps => _isFetchingBasemapsNotifier.value;
 
-  /// Current view style.
+  /// The current view style of the basemap gallery.
+  /// The gallery can be displayed as a list or grid,
   BasemapGalleryViewStyle get viewStyle => _viewStyleNotifier.value;
 
   set viewStyle(BasemapGalleryViewStyle style) {
