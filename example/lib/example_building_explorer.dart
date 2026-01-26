@@ -34,15 +34,41 @@ class _ExampleBuildingExplorerState extends State<ExampleBuildingExplorer> {
   // Create a controller for the local scene view.
   final _localSceneViewController = ArcGISLocalSceneView.createController();
 
-  // Building scene layer that will be filtered. Set after the WebScene is loaded.
-  BuildingSceneLayer? _buildingSceneLayer;
+  late final BuildingExplorerController _buildingExplorerController;
 
   bool _showBottomSheet = false;
 
   @override
+  void initState() {
+    super.initState();
+
+    _buildingExplorerController = BuildingExplorer.createController(
+      _localSceneViewController,
+    );
+  }
+
+  @override
+  void dispose() {
+    // Remove the Token handler and current credentials.
+    ArcGISEnvironment
+            .authenticationManager
+            .arcGISAuthenticationChallengeHandler =
+        null;
+    Future.wait(
+      ArcGISEnvironment.authenticationManager.arcGISCredentialStore
+          .getCredentials()
+          .whereType<OAuthUserCredential>()
+          .map((credential) => credential.revokeToken()),
+    ).then((_) {
+      ArcGISEnvironment.authenticationManager.arcGISCredentialStore.removeAll();
+    });
+
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Building Explorer')),
       body: SafeArea(
         top: false,
         left: false,
@@ -58,31 +84,33 @@ class _ExampleBuildingExplorerState extends State<ExampleBuildingExplorer> {
                     onLocalSceneViewReady: onLocalSceneViewReady,
                   ),
                 ),
-                Center(
+                Row(
                   // Button to show the building filter settings sheet.
-                  child: ElevatedButton(
-                    onPressed: _buildingSceneLayer != null
-                        ? () => setState(() => _showBottomSheet = true)
-                        : null,
-                    child: const Text('Building Filter Settings'),
-                  ),
+                  children: [
+                    const Spacer(),
+                    ElevatedButton(
+                      onPressed: () => setState(() => _showBottomSheet = true),
+                      child: const Text('Building Filter Settings'),
+                    ),
+                    const Spacer(),
+                  ],
                 ),
               ],
             ),
           ],
         ),
       ),
-      bottomSheet: _showBottomSheet ? showBuildingExplorerModal(context) : null,
+      bottomSheet: _showBottomSheet ? buildBuildingExplorer(context) : null,
     );
   }
 
-  Widget showBuildingExplorerModal(BuildContext context) {
+  Widget buildBuildingExplorer(BuildContext context) {
     return Container(
       height: 400, // Define the height of the bottom sheet
       color: Colors.white,
       child: Center(
         child: BuildingExplorer(
-          localScene: _localSceneViewController.arcGISScene!,
+          buildingExplorerControllerProvider: () => _buildingExplorerController,
           onClose: () => setState(() => _showBottomSheet = false),
         ),
       ),
@@ -91,22 +119,24 @@ class _ExampleBuildingExplorerState extends State<ExampleBuildingExplorer> {
 
   Future<void> onLocalSceneViewReady() async {
     // Create the local scene from a ArcGISOnline web scene.
+    // 0-building scene
+    // final sceneUri = Uri.parse(
+    //   'https://maps.arcgis.com/home/item.html?id=fcebd77958634ac3874bbc0e6b0677a4',
+    // );
+    // 1-building scene
     final sceneUri = Uri.parse(
       'https://arcgisruntime.maps.arcgis.com/home/item.html?id=b7c387d599a84a50aafaece5ca139d44',
     );
+
     final scene = ArcGISScene.withUri(sceneUri)!;
 
     // Load the scene so the underlying layers can be accessed.
     await scene.load();
 
-    // Get the BuildingSceneLayer from the webmap.
-    final buildingSceneLayers = scene.operationalLayers
-        .whereType<BuildingSceneLayer>();
-    if (buildingSceneLayers.isNotEmpty) {
-      setState(() => _buildingSceneLayer = buildingSceneLayers.first);
-    }
-
     // Apply the scene to the local scene view controller.
     _localSceneViewController.arcGISScene = scene;
+
+    // Refresh the building explorer controller to load the new scene.
+    _buildingExplorerController.refreshScene();
   }
 }

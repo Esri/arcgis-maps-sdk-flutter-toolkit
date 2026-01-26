@@ -14,16 +14,21 @@
 // limitations under the License.
 //
 
-part of '../../arcgis_maps_toolkit.dart';
+part of '../../../arcgis_maps_toolkit.dart';
 
+/// Widget that lists the Disciplines in the Full Model in the building scene layer.
 class _BuildingCategoryList extends StatelessWidget {
   const _BuildingCategoryList({
     required this.buildingSceneLayer,
-    required this.fullModelSublayerName,
+    this.shrinkWrap = false,
+    this.scrollPhysics,
   });
 
   final BuildingSceneLayer buildingSceneLayer;
-  final String fullModelSublayerName;
+
+  // shrinkWrap and scrollPhysics values will be applied to the ListView builder.
+  final bool shrinkWrap;
+  final ScrollPhysics? scrollPhysics;
 
   @override
   Widget build(BuildContext context) {
@@ -32,18 +37,25 @@ class _BuildingCategoryList extends StatelessWidget {
         .where((sublayer) => sublayer.name == 'Full Model')
         .firstOrNull;
 
-    final categoryGroupSublayers =
+    final disciplineGroupSublayers =
         fullModelGroupSublayer?.sublayers
             .whereType<BuildingGroupSublayer>()
             .toList() ??
         [];
 
+    disciplineGroupSublayers.sort(
+      (discipline1, discipline2) =>
+          discipline1.name.compareTo(discipline2.name),
+    );
+
     return ListView.builder(
-      itemCount: categoryGroupSublayers.length,
+      itemCount: disciplineGroupSublayers.length,
+      shrinkWrap: shrinkWrap,
+      physics: scrollPhysics,
       itemBuilder: (context, index) {
-        final categoryGroupSublayer = categoryGroupSublayers[index];
+        final categoryGroupSublayer = disciplineGroupSublayers[index];
         return _BuildingCategorySelector(
-          buildingCategory: categoryGroupSublayer,
+          buildingDiscipline: categoryGroupSublayer,
         );
       },
     );

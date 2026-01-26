@@ -47,10 +47,16 @@ part 'src/authenticator/authenticator_certificate_password.dart';
 part 'src/authenticator/authenticator_login.dart';
 part 'src/authenticator/authenticator_trust.dart';
 // Building Explorer Widget
-part 'src/building_explorer/building_category_list.dart';
-part 'src/building_explorer/building_category_selector.dart';
+part 'src/building_explorer/support_widgets/building_category_list.dart';
+part 'src/building_explorer/support_widgets/building_category_selector.dart';
 part 'src/building_explorer/building_explorer.dart';
-part 'src/building_explorer/building_level_selector.dart';
+part 'src/building_explorer/building_explorer_controller.dart';
+part 'src/building_explorer/support_widgets/building_level_selector.dart';
+part 'src/building_explorer/support_widgets/building_scene_layer_selector.dart';
+part 'src/building_explorer/building_scene_layer_state.dart';
+part 'src/building_explorer/support_widgets/construction_phase_selector.dart';
+part 'src/building_explorer/support_widgets/overview_model_toggle.dart';
+part 'src/building_explorer/support_widgets/zoom_to_building_control.dart';
 // Compass Widget
 part 'src/compass/compass.dart';
 part 'src/compass/compass_needle_painter.dart';

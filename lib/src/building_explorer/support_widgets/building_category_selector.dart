@@ -14,12 +14,16 @@
 // limitations under the License.
 //
 
-part of '../../arcgis_maps_toolkit.dart';
+part of '../../../arcgis_maps_toolkit.dart';
 
+/// A widget that provides a discipline and a collapsible list of categories under
+/// the discipline. Each item has a checkbox that will show/hide the discipline or
+/// category. If the discipline is hidden, the underlying category checkboxes are
+/// disabled.
 class _BuildingCategorySelector extends StatefulWidget {
-  const _BuildingCategorySelector({required this.buildingCategory});
+  const _BuildingCategorySelector({required this.buildingDiscipline});
 
-  final BuildingGroupSublayer buildingCategory;
+  final BuildingGroupSublayer buildingDiscipline;
 
   @override
   State<StatefulWidget> createState() => _BuildingCategorySelectorState();
@@ -28,27 +32,31 @@ class _BuildingCategorySelector extends StatefulWidget {
 class _BuildingCategorySelectorState extends State<_BuildingCategorySelector> {
   @override
   Widget build(BuildContext context) {
-    final componentSublayers = widget.buildingCategory.sublayers;
+    final sortedCategories = widget.buildingDiscipline.sublayers.toList();
+    sortedCategories.sort(
+      (sublayer1, sublayer2) => sublayer1.name.compareTo(sublayer2.name),
+    );
+
     return ExpansionTile(
       title: Row(
         children: [
-          Text(widget.buildingCategory.name),
+          Text(widget.buildingDiscipline.name),
           const Spacer(),
           Checkbox(
-            value: widget.buildingCategory.isVisible,
+            value: widget.buildingDiscipline.isVisible,
             onChanged: (val) {
               setState(() {
-                widget.buildingCategory.isVisible = val ?? false;
+                widget.buildingDiscipline.isVisible = val ?? false;
               });
             },
           ),
         ],
       ),
-      children: componentSublayers.map((componentSublayer) {
+      children: sortedCategories.map((componentSublayer) {
         return CheckboxListTile(
           title: Text(componentSublayer.name),
           value: componentSublayer.isVisible,
-          enabled: widget.buildingCategory.isVisible,
+          enabled: widget.buildingDiscipline.isVisible,
           onChanged: (val) {
             setState(() {
               componentSublayer.isVisible = val ?? false;

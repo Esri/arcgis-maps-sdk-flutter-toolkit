@@ -33,126 +33,112 @@ part of '../../arcgis_maps_toolkit.dart';
 ///
 /// ## Usage
 /// A [BuildingExplorer] widget is created with the following parameters:
-/// * buildingSceneLayer: The [BuildingSceneLayer] that this widget will be exploring
-/// * fullModelSublayerName: An optional [String] that is the name of the full model sublayer. Default is “Full Model”.
+/// * buildingExplorerControllerProvider: A Function that returns the [BuildingExplorerController] that contains state data for this widget.
 /// * onClose: An optional callback that is called when the close button of the widget is tapped. If a callback is not provided, the close button will be hidden.
 ///
 /// The widget can be inserted into a widget tree by calling the constructor and supplying a [BuildlingSceneLayer] and an optional onClose callback function.
 /// ```dart
 /// ...
+/// final localSceneViewController = ArcGISLocalSceneView.createController();
+/// final buildingExplorerController = BuildingExplorer.createController(viewController: localSceneViewController);
+/// ...
+///
+/// ...
 ///   BuildingExplorer(
-///     buildingSceneLayer: _buildingSceneLayer!,
-///     onClose: () => Navigator.pop(context),
+///     buildingExplorerControllerProvider: () => buildingExplorerController),
+///     onClose: () => setState(() => _showBottomSheet = false),
 ///   ),
 /// ...
 /// ```
 class BuildingExplorer extends StatefulWidget {
   const BuildingExplorer({
-    required this.localScene,
-    // required this.buildingSceneLayer,
-    this.fullModelSublayerName = 'Full Model',
+    required this.buildingExplorerControllerProvider,
     this.onClose,
     super.key,
   });
 
-  /// Local Scene that contains BuildingSceneLayers.
-  final ArcGISScene localScene;
+  final BuildingExplorerController Function()
+  buildingExplorerControllerProvider;
 
-  /// BuildingSceneLayer that this widget explores
-  // final BuildingSceneLayer buildingSceneLayer;
-
-  /// Name of the full model group sublayer
-  final String fullModelSublayerName;
-
-  /// Optional onClose callback. If set, a close [IconButton] will appear at the top right of the widget.
+  /// Optional onClose callback. If set, a close [IconButton] will appear at
+  /// the top right of the widget.
   final VoidCallback? onClose;
+
+  /// Static function used to create the BuildingExplorerController that will
+  /// be used between widget instances.
+  static BuildingExplorerController createController(
+    ArcGISLocalSceneViewController viewController,
+  ) {
+    return BuildingExplorerController._(
+      localSceneViewController: viewController,
+    );
+  }
 
   @override
   State<BuildingExplorer> createState() => _BuildingExplorerState();
 }
 
 class _BuildingExplorerState extends State<BuildingExplorer> {
-  var _buildingSceneLayers = <BuildingSceneLayer>[];
-  BuildingSceneLayer? _selectedBuildingSceneLayer;
-
-  StreamSubscription<LoadStatus>? _sceneOnLoadSubscription;
+  late final BuildingExplorerController widgetController;
+  StreamSubscription<Null>? onRequestSceneRefreshSubscription;
+  var _refreshFuture = Future<void>.value();
 
   @override
   void initState() {
     super.initState();
+    widgetController = widget.buildingExplorerControllerProvider();
 
-    if (widget.localScene.loadStatus == LoadStatus.loaded) {
-      final buildingSceneLayers = widget.localScene.operationalLayers
-          .whereType<BuildingSceneLayer>()
-          .toList();
-      _buildingSceneLayers = buildingSceneLayers;
-      _selectedBuildingSceneLayer = _buildingSceneLayers.first;
-    } else {
-      _sceneOnLoadSubscription = widget.localScene.onLoadStatusChanged.listen((
-        loadStatus,
-      ) {
-        if (loadStatus == LoadStatus.loaded) {
-          final buildingSceneLayers = widget.localScene.operationalLayers
-              .whereType<BuildingSceneLayer>()
-              .toList();
+    // Refresh the scene layers in the controller just in case layers have been
+    // added or removed.
+    _refreshFuture = widgetController._refreshBuildingSceneLayers();
 
-          setState(() {
-            _buildingSceneLayers = buildingSceneLayers;
-            _selectedBuildingSceneLayer = _buildingSceneLayers.first;
-          });
-
-          // We've heard enough. Cancel the subscription and null the variable.
-          _sceneOnLoadSubscription!.cancel();
-          _sceneOnLoadSubscription = null;
-        }
-      });
-    }
+    onRequestSceneRefreshSubscription = widgetController._onRequestSceneRefresh
+        .listen(
+          (_) => setState(() {
+            _refreshFuture = widgetController._refreshBuildingSceneLayers();
+          }),
+        );
   }
 
   @override
   void dispose() {
-    if (_sceneOnLoadSubscription != null) {
-      _sceneOnLoadSubscription!.cancel().then(
-        (_) => _sceneOnLoadSubscription = null,
-      );
-    }
-
+    onRequestSceneRefreshSubscription?.cancel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: _refreshFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          return _selectBuildingExplorerWidget(context);
+        } else {
+          return _buildLoadingExplorer(context);
+        }
+      },
+    );
+  }
+
+  Widget _selectBuildingExplorerWidget(BuildContext context) {
+    if (widgetController._buildingSceneLayerStates.isEmpty) {
+      return _buildEmptyBuildingExplorer(context);
+    } else {
+      return _buildFullBuildingExplorer(context);
+    }
+  }
+
+  Widget _buildLoadingExplorer(BuildContext context) {
     return Column(
       children: [
         Stack(
-          alignment: Alignment.center,
+          alignment: AlignmentGeometry.center,
           children: [
-            // Building scene layer name centered
-            if (_buildingSceneLayers.length == 1)
-              Text(
-                _selectedBuildingSceneLayer!.name,
-                style: Theme.of(context).textTheme.headlineSmall,
-                textAlign: TextAlign.center,
-              )
-            else
-              DropdownButton(
-                value:
-                    _selectedBuildingSceneLayer ?? _buildingSceneLayers.first,
-                items: _buildingSceneLayers
-                    .map(
-                      (e) => DropdownMenuItem(
-                        value: e,
-                        child: Text(
-                          e.name,
-                          style: Theme.of(context).textTheme.headlineSmall,
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    )
-                    .toList(),
-                onChanged: (layer) =>
-                    setState(() => _selectedBuildingSceneLayer = layer),
-              ),
+            Text(
+              'Building Explorer',
+              style: Theme.of(context).textTheme.headlineSmall,
+              textAlign: TextAlign.center,
+            ),
             // Right-justified close icon button
             if (widget.onClose != null)
               Align(
@@ -166,18 +152,132 @@ class _BuildingExplorerState extends State<BuildingExplorer> {
           ],
         ),
         const Divider(),
-        _BuildingLevelSelector(
-          buildingSceneLayer: _selectedBuildingSceneLayer!,
+        const Expanded(
+          child: Center(
+            child: SizedBox(
+              width: 60,
+              height: 60,
+              child: CircularProgressIndicator(),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildEmptyBuildingExplorer(BuildContext context) {
+    return Column(
+      children: [
+        Stack(
+          alignment: AlignmentGeometry.center,
+          children: [
+            Text(
+              'Building Explorer',
+              style: Theme.of(context).textTheme.headlineSmall,
+              textAlign: TextAlign.center,
+            ),
+            // Right-justified close icon button
+            if (widget.onClose != null)
+              Align(
+                alignment: Alignment.centerRight,
+                child: IconButton(
+                  icon: const Icon(Icons.close),
+                  onPressed: widget.onClose,
+                  tooltip: 'Close',
+                ),
+              ),
+          ],
         ),
         const Divider(),
-        Text(
-          'Disciplines & Categories:',
-          style: Theme.of(context).textTheme.bodyLarge,
-        ),
         Expanded(
-          child: _BuildingCategoryList(
-            buildingSceneLayer: _selectedBuildingSceneLayer!,
-            fullModelSublayerName: widget.fullModelSublayerName,
+          child: Center(
+            child: Text(
+              'No BuildingSceneLayers in the Scene.',
+              style: Theme.of(context).textTheme.bodyLarge,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildFullBuildingExplorer(BuildContext context) {
+    var overviewShowing =
+        widgetController._selectedBuildingSceneLayerState!.showOverview;
+
+    return Column(
+      children: [
+        Stack(
+          alignment: Alignment.center,
+          children: [
+            _BuildingSceneLayerSelector(
+              buildingExplorerController: widgetController,
+              onBuildingSceneChanged: (layer) =>
+                  setState(() => widgetController._selectedLayer = layer),
+            ),
+            // Right-justified close icon button
+            if (widget.onClose != null)
+              Align(
+                alignment: Alignment.centerRight,
+                child: IconButton(
+                  icon: const Icon(Icons.close),
+                  onPressed: widget.onClose,
+                  tooltip: 'Close',
+                ),
+              ),
+          ],
+        ),
+        const Divider(),
+        Expanded(
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(15, 0, 20, 0),
+                  child: Column(
+                    children: [
+                      // Zoom to Building widget.
+                      _ZoomToBuildingControl(
+                        buildingExplorerController: widgetController,
+                      ),
+                      // Overview model toggle widget.
+                      _OverviewModelToggle(
+                        layerState:
+                            widgetController._selectedBuildingSceneLayerState!,
+                        onOverviewVisibilityChanged: (newValue) =>
+                            setState(() => overviewShowing = newValue),
+                      ),
+                    ],
+                  ),
+                ),
+                // Hide the rest of the controls if the overview is showing.
+                if (!overviewShowing)
+                  Column(
+                    children: [
+                      // Widget for selecting the level to highlight.
+                      _BuildingLevelSelector(
+                        buildingSceneLayerState:
+                            widgetController._selectedBuildingSceneLayerState!,
+                      ),
+                      _ConstructionPhaseSelector(
+                        buildingSceneLayerState:
+                            widgetController._selectedBuildingSceneLayerState!,
+                      ),
+                      const Divider(),
+                      // Categories sublayer selection widget.
+                      Text(
+                        'Disciplines & Categories:',
+                        style: Theme.of(context).textTheme.bodyLarge,
+                      ),
+                      _BuildingCategoryList(
+                        buildingSceneLayer: widgetController._selectedLayer!,
+                        shrinkWrap: true,
+                        scrollPhysics: const NeverScrollableScrollPhysics(),
+                      ),
+                    ],
+                  ),
+              ],
+            ),
           ),
         ),
       ],
