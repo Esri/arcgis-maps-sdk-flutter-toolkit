@@ -254,7 +254,7 @@ class _AuthenticatorState extends State<Authenticator>
     }
 
     // Browse for a pfx file.
-    final filePickerResult = await FilePicker.pickFiles(
+    final filePickerResult = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['pfx'],
     );
