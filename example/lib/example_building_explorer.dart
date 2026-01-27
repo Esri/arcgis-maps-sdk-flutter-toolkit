@@ -34,8 +34,12 @@ class _ExampleBuildingExplorerState extends State<ExampleBuildingExplorer> {
   // Create a controller for the local scene view.
   final _localSceneViewController = ArcGISLocalSceneView.createController();
 
+  // Controller for the Building Explorer toolkit widget. This will be created
+  // in the initState function.
   late final BuildingExplorerController _buildingExplorerController;
 
+  // Flag indicating whether to show the bottom sheet that contains the Building
+  // Explorer widget.
   bool _showBottomSheet = false;
 
   @override
@@ -105,9 +109,8 @@ class _ExampleBuildingExplorerState extends State<ExampleBuildingExplorer> {
   }
 
   Widget buildBuildingExplorer(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: 400, // Define the height of the bottom sheet
-      color: Colors.white,
       child: Center(
         child: BuildingExplorer(
           buildingExplorerControllerProvider: () => _buildingExplorerController,
