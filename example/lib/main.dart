@@ -16,6 +16,7 @@
 
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_toolkit_example/example_authenticator.dart';
+import 'package:arcgis_maps_toolkit_example/example_building_explorer.dart';
 import 'package:arcgis_maps_toolkit_example/example_compass.dart';
 import 'package:arcgis_maps_toolkit_example/example_overview_map.dart';
 import 'package:arcgis_maps_toolkit_example/example_popup.dart';
@@ -64,6 +65,11 @@ enum ComponentExample {
     'PopupView',
     'Displays a popup for a feature, including fields, media, and attachments',
     PopupExample.new,
+  ),
+  buildingExplorer(
+    'BuildingExplorer',
+    'Filters a BuildingSceneLayer by floor level and category sublayers',
+    ExampleBuildingExplorer.new,
   );
 
   const ComponentExample(this.title, this.subtitle, this.constructor);
