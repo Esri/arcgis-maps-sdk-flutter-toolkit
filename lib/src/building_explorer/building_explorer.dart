@@ -49,6 +49,8 @@ part of '../../arcgis_maps_toolkit.dart';
 /// ...
 /// ```
 class BuildingExplorer extends StatefulWidget {
+  /// Creates a [BuildingExplorer] widget for use in a widget tree. The constructor
+  /// requires a [BuildingExplorerController] and an optional onClose callback.
   const BuildingExplorer({
     required this.buildingExplorerControllerProvider,
     this.onClose,
