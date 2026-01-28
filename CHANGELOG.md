@@ -10,7 +10,7 @@
 * First release of ArcGIS Maps SDK for Flutter Toolkit
 
 ### New Toolkit Components
-* Authenticator 
+* Authenticator
 * Compass
 * OverviewMap
 * PopupView

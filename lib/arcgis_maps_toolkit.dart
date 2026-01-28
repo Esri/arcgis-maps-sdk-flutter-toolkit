@@ -18,6 +18,7 @@
 ///
 /// Toolkit components:
 /// * [Authenticator]: A widget that handles authentication challenges. It will display a user interface when network and ArcGIS authentication challenges occur.
+/// * [BasemapGallery]: A widget that displays a gallery of basemaps for the user to choose from and apply to a target map or scene.
 /// * [Compass]: A widget that visualizes the current rotation of the map or scene and allows the user to reset the rotation to north by tapping on it.
 /// * [OverviewMap]: A small inset map displaying a representation of the current viewpoint of the target map or scene.
 /// * [PopupView]: A widget that will display a pop-up for an individual feature. This includes showing the feature's title, attributes, custom description, media, and attachments.
@@ -27,11 +28,11 @@ import 'dart:async';
 import 'dart:collection';
 import 'dart:io';
 import 'dart:math' as math;
-import 'dart:typed_data';
 
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
@@ -70,5 +71,11 @@ part 'src/popups/popup_views/image_media_view.dart';
 part 'src/popups/popup_views/popup_element_header.dart';
 part 'src/popups/popup_views/common_utils.dart';
 part 'src/popups/theme/theme_data.dart';
+// Basemap Gallery Widget
+part 'src/basemap_gallery/basemap_gallery.dart';
+part 'src/basemap_gallery/basemap_gallery_controller.dart';
+part 'src/basemap_gallery/basemap_gallery_view_style.dart';
+part 'src/basemap_gallery/basemap_gallery_item.dart';
+part 'src/basemap_gallery/utils/image_loadable.dart';
 
 part 'src/template_widget.dart';

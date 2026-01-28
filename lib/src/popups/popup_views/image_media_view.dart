@@ -78,10 +78,10 @@ class _ImageMediaViewState extends State<_ImageMediaView> {
                 errorBuilder: (context, error, stackTrace) {
                   // If an image isn't available, we don't display the detail view.
                   isShowingDetailReady = false;
-                  return const Center(
+                  return Center(
                     child: Icon(
                       Icons.error_outline,
-                      color: Colors.red,
+                      color: Theme.of(context).colorScheme.error,
                       size: 30,
                     ),
                   );
@@ -295,8 +295,8 @@ class _IndicatorDotState extends State<_IndicatorDot>
       child: Container(
         width: widget.size,
         height: widget.size,
-        decoration: const BoxDecoration(
-          color: Colors.red,
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.error,
           shape: BoxShape.circle,
         ),
       ),

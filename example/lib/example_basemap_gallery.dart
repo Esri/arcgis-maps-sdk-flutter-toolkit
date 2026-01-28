@@ -15,11 +15,10 @@
 //
 
 import 'package:arcgis_maps/arcgis_maps.dart';
-import 'package:arcgis_maps_toolkit_example/example_authenticator.dart';
-import 'package:arcgis_maps_toolkit_example/example_basemap_gallery.dart';
-import 'package:arcgis_maps_toolkit_example/example_compass.dart';
-import 'package:arcgis_maps_toolkit_example/example_overview_map.dart';
-import 'package:arcgis_maps_toolkit_example/example_popup.dart';
+import 'package:arcgis_maps_toolkit_example/example_basemap_gallery_map_grid.dart';
+import 'package:arcgis_maps_toolkit_example/example_basemap_gallery_map_list.dart';
+import 'package:arcgis_maps_toolkit_example/example_basemap_gallery_scene_grid.dart';
+import 'package:arcgis_maps_toolkit_example/example_basemap_gallery_scene_list.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -40,39 +39,34 @@ void main() {
         colorScheme: colorScheme,
         appBarTheme: AppBarTheme(backgroundColor: colorScheme.inversePrimary),
       ),
-      home: const ExampleApp(),
+      home: const ExampleBasemapGallery(),
     ),
   );
 }
 
-enum ComponentExample {
-  authenticator(
-    'Authenticator',
-    'Handles authentication challenges',
-    ExampleAuthenticator.new,
+enum BasemapGalleryExample {
+  mapGrid(
+    'BasemapGallery for a map (grid layout)',
+    'Example of showing the default basemaps in a grid and applying one to a map.',
+    ExampleBasemapGalleryMapGrid.new,
   ),
-  basemapGallery(
-    'BasemapGallery',
-    'Browse basemaps and apply the selection to a map/scene',
-    ExampleBasemapGallery.new,
+  mapList(
+    'BasemapGallery for a map (list layout)',
+    'Example of showing a list of basemaps from a portal and applying one to a map.',
+    ExampleBasemapGalleryMapList.new,
   ),
-  compass(
-    'Compass',
-    'Visualizes current rotation of map/scene and resets the rotation to north on tap',
-    ExampleCompass.new,
+  sceneGrid(
+    'BasemapGallery for a scene (grid layout)',
+    'Example of showing the default basemaps in a grid and applying one to a scene (includes 3D basemaps).',
+    ExampleBasemapGallerySceneGrid.new,
   ),
-  overviewMap(
-    'OverviewMap',
-    'Small inset map showing the current viewpoint of the target map/scene',
-    ExampleOverviewMap.new,
-  ),
-  popupView(
-    'PopupView',
-    'Displays a popup for a feature, including fields, media, and attachments',
-    PopupExample.new,
+  sceneList(
+    'BasemapGallery for a scene (list layout)',
+    'Example of showing a list of basemaps from a portal. 2D items only (no 3D basemaps).',
+    ExampleBasemapGallerySceneList.new,
   );
 
-  const ComponentExample(this.title, this.subtitle, this.constructor);
+  const BasemapGalleryExample(this.title, this.subtitle, this.constructor);
 
   final String title;
   final String subtitle;
@@ -94,18 +88,18 @@ enum ComponentExample {
   }
 }
 
-class ExampleApp extends StatelessWidget {
-  const ExampleApp({super.key});
+class ExampleBasemapGallery extends StatelessWidget {
+  const ExampleBasemapGallery({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Toolkit Examples')),
+      appBar: AppBar(title: const Text('BasemapGallery')),
       body: ListView.builder(
         padding: const EdgeInsets.all(10),
-        itemCount: ComponentExample.values.length,
+        itemCount: BasemapGalleryExample.values.length,
         itemBuilder: (context, index) =>
-            ComponentExample.values[index].buildCard(context),
+            BasemapGalleryExample.values[index].buildCard(context),
       ),
     );
   }
