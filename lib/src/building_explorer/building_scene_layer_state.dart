@@ -59,7 +59,7 @@ class _BuildingSceneLayerState {
     );
   }
 
-  /// The [BuildingSceneLayer] for this state.
+  /// The [BuildingSceneLayer] for this [BuildingSceneLayerState].
   BuildingSceneLayer buildingSceneLayer;
 
   /// The currently selected building level. This can be 'All' or the level name.

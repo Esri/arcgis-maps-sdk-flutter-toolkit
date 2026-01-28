@@ -18,8 +18,8 @@ part of '../../arcgis_maps_toolkit.dart';
 
 /// This class stores state for the [BuildingExplorer] widget across different
 /// instances of the widget. Get an instance of this class by calling
-/// BuildingExplorer.createController(localSceneViewController). The controller
-/// object is used when creating the BuildingExplorer in the widget tree.
+/// `BuildingExplorer.createController(localSceneViewController)`. The controller
+/// object is used when creating the [BuildingExplorer] in the widget tree.
 class BuildingExplorerController {
   BuildingExplorerController._({
     required ArcGISLocalSceneViewController localSceneViewController,
@@ -48,8 +48,8 @@ class BuildingExplorerController {
       _onRequestSceneRefreshController.stream;
   final _onRequestSceneRefreshController = StreamController<Null>.broadcast();
 
-  /// Public function called when there has been an update to the scene that
-  /// requires the BuildingExplorerController to refresh it's data.
+  /// Call this function when there has been an update to the scene that
+  /// requires the [BuildingExplorerController] to refresh it's data.
   void refreshScene() {
     _onRequestSceneRefreshController.add(null);
   }

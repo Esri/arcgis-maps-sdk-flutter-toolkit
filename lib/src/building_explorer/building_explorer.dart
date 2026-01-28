@@ -22,14 +22,12 @@ part of '../../arcgis_maps_toolkit.dart';
 /// The Building Explorer widget provides a tool for users to browse the levels and sublayers of a building scene layer. The widget can highlight specified levels and show or hide building features of different categories and subcategories.
 ///
 /// ## Features
-/// Features of the Building Explorer widget include:
 /// * Showing the name of the layer as the title of the widget.
 /// * Selecting a level of the building to highlight in the view.
 ///     * The selected level and all of the features of the level are rendered normally.
 ///     * Levels above are hidden.
-///     * Levels below are given an Xray style.
+///     * Levels below are given an X-ray style.
 /// * Visibility of building feature categories and subcategories can be toggled on and off.
-/// * The widget can present a close button when provided with an onClose callback function.
 ///
 /// ## Usage
 /// A [BuildingExplorer] widget is created with the following parameters:
