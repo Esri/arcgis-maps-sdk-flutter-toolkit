@@ -124,7 +124,6 @@ class _ExampleBuildingExplorerState extends State<ExampleBuildingExplorer> {
 
   Future<void> onLocalSceneViewReady() async {
     // Create the local scene from a ArcGISOnline web scene.
-    // 1-building scene
     final sceneUri = Uri.parse(
       'https://arcgisruntime.maps.arcgis.com/home/item.html?id=b7c387d599a84a50aafaece5ca139d44',
     );
