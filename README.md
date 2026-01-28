@@ -8,6 +8,7 @@ ArcGIS Maps SDK for Flutter Toolkit contains ready-made widgets to simplify the 
 * Compass: A widget that visualizes the current rotation of the map or scene and allows the user to reset the rotation to north by tapping on it.
 * OverviewMap: A small inset map displaying a representation of the current viewpoint of the target map or scene.
 * PopupView: A widget that will display a pop-up for an individual feature. This includes showing the feature's title, attributes, custom description, media, and attachments.
+* Building Explorer: A widget that enables a user to explore a `BuildingSceneLayer` building model in a `LocalSceneView`.
 
 ## Platform support
 * Use a macOS development host to deploy to iOS & Android mobile devices.
