@@ -46,7 +46,7 @@ part of '../../arcgis_maps_toolkit.dart';
 ///     return Scaffold(
 ///       body: Authenticator(
 ///         iapConfigurations: [
-///          IapConfiguration.fromJsonString(yourConfigurationJson),
+///           IapConfiguration.fromJsonString(yourConfigurationJson),
 ///         ],
 ///         oAuthUserConfigurations: [
 ///           OAauthUserConfiguration(
