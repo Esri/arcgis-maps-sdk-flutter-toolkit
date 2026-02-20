@@ -26,6 +26,7 @@ part of '../../arcgis_maps_toolkit.dart';
 /// * ArcGIS authentication (token and OAuth)
 /// * Integrated Windows Authentication (IWA)
 /// * Client Certificate (PKI)
+/// * Identity-Aware Proxy (IAP)
 /// * If credentials were persisted to the keychain, the authenticator will use those instead of requiring the user to re-enter credentials.
 ///
 /// ## Usage
@@ -36,11 +37,17 @@ part of '../../arcgis_maps_toolkit.dart';
 /// [Authenticator.oAuthUserConfigurations] parameter. Otherwise, the user will be prompted to
 /// sign in using a username and password to obtain a [TokenCredential].
 ///
+/// If a service is protected by an Identity-Aware Proxy (IAP), provide its [IapConfiguration]
+/// in the [Authenticator.iapConfigurations] parameter.
+///
 /// ```dart
 ///   @override
 ///   Widget build(BuildContext context) {
 ///     return Scaffold(
 ///       body: Authenticator(
+///         iapConfigurations: [
+///          IapConfiguration.fromJsonString(yourConfigurationJson),
+///         ],
 ///         oAuthUserConfigurations: [
 ///           OAauthUserConfiguration(
 ///             portalUri: Uri.parse('https://www.arcgis.com'),
@@ -72,6 +79,7 @@ class Authenticator extends StatefulWidget {
   const Authenticator({
     super.key,
     this.child,
+    this.iapConfigurations = const [],
     this.oAuthUserConfigurations = const [],
   });
 
@@ -81,6 +89,13 @@ class Authenticator extends StatefulWidget {
   /// recommended to make it the parent widget of an [ArcGISMapView].
   final Widget? child;
 
+  /// The list of IAP configurations to use for authenticating with an Identity-Aware Proxy (IAP).
+  ///
+  /// If an IAP challenge is received, it will be compared against the IAP configurations. If a
+  /// matching configuration is found, it will be used to prompt the user to sign in. Otherwise,
+  /// the IAP challenge will fail.
+  final List<IapConfiguration> iapConfigurations;
+
   /// The list of OAuth configurations to use for authentication.
   ///
   /// If a challenge is received that matches a configuration, the user will be
@@ -88,6 +103,17 @@ class Authenticator extends StatefulWidget {
   /// will be prompted to sign in using a username and password to obtain a
   /// [TokenCredential].
   final List<OAuthUserConfiguration> oAuthUserConfigurations;
+
+  /// Invalidate all IAP credentials. This will launch a logout workflow in the system browser.
+  /// The returned [Future] completes when the logout process is finished.
+  static Future<void> invalidateIapCredentials() async {
+    await Future.wait(
+      ArcGISEnvironment.authenticationManager.arcGISCredentialStore
+          .getCredentials()
+          .whereType<IapCredential>()
+          .map((credential) => credential.invalidate()),
+    );
+  }
 
   /// Revoke all OAuth tokens. The returned [Future] completes when all tokens
   /// have been successfully revoked.
@@ -164,18 +190,62 @@ class _AuthenticatorState extends State<Authenticator>
   void handleArcGISAuthenticationChallenge(
     ArcGISAuthenticationChallenge challenge,
   ) {
-    // If an OAuth configuration matches, use it. Else use token login.
-    final configuration = widget.oAuthUserConfigurations
-        .where(
-          (configuration) =>
-              configuration.canBeUsedForUri(challenge.requestUri),
-        )
-        .firstOrNull;
+    switch (challenge.type) {
+      case .iap:
+        // An IAP challenge must be handled by a matching IAP configuration, or else it fails.
+        final configuration = widget.iapConfigurations
+            .where(
+              (configuration) =>
+                  configuration.canBeUsedForUri(challenge.requestUri),
+            )
+            .firstOrNull;
 
-    if (configuration != null) {
-      _oauthLogin(challenge, configuration);
-    } else {
-      _tokenLogin(challenge);
+        if (configuration != null) {
+          _iapLogin(challenge, configuration);
+        } else {
+          challenge.continueAndFail();
+        }
+      case .oauthOrToken:
+        // An OAuth-or-token challenge is handled by the OAuth login workflow if a matching
+        // OAuth configuration is found, or else by the token login workflow.
+        final configuration = widget.oAuthUserConfigurations
+            .where(
+              (configuration) =>
+                  configuration.canBeUsedForUri(challenge.requestUri),
+            )
+            .firstOrNull;
+
+        if (configuration != null) {
+          _oauthLogin(challenge, configuration);
+        } else {
+          _tokenLogin(challenge);
+        }
+      case .token:
+        // A token challenge is handled by the token login workflow.
+        _tokenLogin(challenge);
+    }
+  }
+
+  Future<void> _iapLogin(
+    ArcGISAuthenticationChallenge challenge,
+    IapConfiguration configuration,
+  ) async {
+    try {
+      // Initiate the sign in process to the IAP server using the defined user configuration.
+      final credential = await IapCredential.create(configuration);
+
+      // Sign in was successful, so continue with the provided credential.
+      challenge.continueWithCredential(credential);
+    } on ArcGISException catch (error) {
+      // An exception occurred.
+      final e = (error.wrappedException as ArcGISException?) ?? error;
+      if (e.errorType == ArcGISExceptionType.commonUserCanceled) {
+        // User canceled.
+        challenge.cancel();
+      } else {
+        // Some other error.
+        challenge.continueAndFail();
+      }
     }
   }
 
