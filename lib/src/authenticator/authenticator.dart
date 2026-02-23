@@ -75,12 +75,12 @@ part of '../../arcgis_maps_toolkit.dart';
 /// https://developers.arcgis.com/flutter/install-and-set-up/#enabling-user-authentication
 class Authenticator extends StatefulWidget {
   /// Creates an [Authenticator] widget with the optional child [Widget] and optional
-  /// `oAuthUserConfigurations`.
+  /// `oAuthUserConfigurations` and `iapConfigurations`.
   const Authenticator({
     super.key,
     this.child,
-    this.iapConfigurations = const [],
     this.oAuthUserConfigurations = const [],
+    this.iapConfigurations = const [],
   });
 
   /// An optional child widget.
