@@ -45,15 +45,15 @@ part of '../../arcgis_maps_toolkit.dart';
 ///   Widget build(BuildContext context) {
 ///     return Scaffold(
 ///       body: Authenticator(
-///         iapConfigurations: [
-///           IapConfiguration.fromJsonString(yourConfigurationJson),
-///         ],
 ///         oAuthUserConfigurations: [
 ///           OAauthUserConfiguration(
 ///             portalUri: Uri.parse('https://www.arcgis.com'),
 ///             clientId: 'YOUR-CLIENT-ID',
 ///             redirectUri: Uri.parse('YOUR-REDIRECT-URL'),
 ///           ),
+///         ],
+///         iapConfigurations: [
+///           IapConfiguration.fromJsonString(yourConfigurationJson),
 ///         ],
 ///         child: ArcGISMapView(
 ///           controllerProvider: () => _mapViewController,
@@ -89,13 +89,6 @@ class Authenticator extends StatefulWidget {
   /// recommended to make it the parent widget of an [ArcGISMapView].
   final Widget? child;
 
-  /// The list of IAP configurations to use for authenticating with an Identity-Aware Proxy (IAP).
-  ///
-  /// If an IAP challenge is received, it will be compared against the IAP configurations. If a
-  /// matching configuration is found, it will be used to prompt the user to sign in. Otherwise,
-  /// the IAP challenge will fail.
-  final List<IapConfiguration> iapConfigurations;
-
   /// The list of OAuth configurations to use for authentication.
   ///
   /// If a challenge is received that matches a configuration, the user will be
@@ -104,16 +97,13 @@ class Authenticator extends StatefulWidget {
   /// [TokenCredential].
   final List<OAuthUserConfiguration> oAuthUserConfigurations;
 
-  /// Invalidate all IAP credentials. This will launch a logout workflow in the system browser.
-  /// The returned [Future] completes when the logout process is finished.
-  static Future<void> invalidateIapCredentials() async {
-    await Future.wait(
-      ArcGISEnvironment.authenticationManager.arcGISCredentialStore
-          .getCredentials()
-          .whereType<IapCredential>()
-          .map((credential) => credential.invalidate()),
-    );
-  }
+  /// The list of IAP configurations to use for authenticating with an Identity-Aware Proxy (IAP).
+  ///
+  /// If a service is protected by an Identity-Aware Proxy (IAP), provide its [IapConfiguration] here.
+  /// If an IAP challenge is received, it will be compared against the IAP configurations. If a
+  /// matching configuration is found, it will be used to prompt the user to sign in. Otherwise,
+  /// the IAP challenge will fail.
+  final List<IapConfiguration> iapConfigurations;
 
   /// Revoke all OAuth tokens. The returned [Future] completes when all tokens
   /// have been successfully revoked.
@@ -123,6 +113,17 @@ class Authenticator extends StatefulWidget {
           .getCredentials()
           .whereType<OAuthUserCredential>()
           .map((credential) => credential.revokeToken()),
+    );
+  }
+
+  /// Invalidate all IAP credentials. This will launch a logout workflow in the system browser.
+  /// The returned [Future] completes when the logout process is finished.
+  static Future<void> invalidateIapCredentials() async {
+    await Future.wait(
+      ArcGISEnvironment.authenticationManager.arcGISCredentialStore
+          .getCredentials()
+          .whereType<IapCredential>()
+          .map((credential) => credential.invalidate()),
     );
   }
 
