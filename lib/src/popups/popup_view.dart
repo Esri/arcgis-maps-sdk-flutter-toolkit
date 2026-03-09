@@ -185,6 +185,7 @@ class _PopupViewInternal extends StatefulWidget {
 /// and builds the UI for displaying the pop-up content.
 class _PopupStateInternal extends State<_PopupViewInternal> {
   late Future<List<PopupExpressionEvaluation>> _futurePopupExprEvaluation;
+
   @override
   void initState() {
     super.initState();
@@ -233,6 +234,36 @@ class _PopupStateInternal extends State<_PopupViewInternal> {
               },
             ),
           ),
+          // Edit summary footer.
+          // Shown only when the popup has a non-empty edit summary.
+          if (widget.popup.editSummary.isNotEmpty) ...[
+            const Divider(height: 1, thickness: 0.5),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(12, 8, 12, 12),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(
+                    Icons.history,
+                    size: 16,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Text(
+                      widget.popup.editSummary,
+                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.left,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ],
       ),
     );
