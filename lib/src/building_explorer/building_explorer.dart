@@ -36,19 +36,13 @@ part of '../../arcgis_maps_toolkit.dart';
 ///
 /// The widget can be inserted into a widget tree by calling the constructor and supplying a [BuildingSceneLayer] and an optional onClose callback function.
 /// ```dart
-/// ...
-/// final localSceneViewController = ArcGISLocalSceneView.createController();
-/// final buildingExplorerController = BuildingExplorer.createController(viewController: localSceneViewController);
-/// ...
-///
-/// ...
-///   BuildingExplorer(
-///     buildingExplorerControllerProvider: () => buildingExplorerController),
-///     onClose: () {
-///       // Optional: handle close action
-///     },
-///   ),
-/// ...
+/// BuildingExplorer(
+///   buildingExplorerControllerProvider: () =>
+///              BuildingExplorer.createController(localSceneViewController),
+///   onClose: () {
+///     // Optional: handle close action
+///   },
+/// ),
 /// ```
 class BuildingExplorer extends StatefulWidget {
   /// Creates a [BuildingExplorer] widget for use in a widget tree. The constructor
