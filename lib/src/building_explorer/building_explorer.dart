@@ -34,19 +34,15 @@ part of '../../arcgis_maps_toolkit.dart';
 /// * buildingExplorerControllerProvider: A Function that returns the [BuildingExplorerController] that contains state data for this widget.
 /// * onClose: An optional callback that is called when the close button of the widget is tapped. If a callback is not provided, the close button will be hidden.
 ///
-/// The widget can be inserted into a widget tree by calling the constructor and supplying a [BuildlingSceneLayer] and an optional onClose callback function.
+/// The widget can be inserted into a widget tree by calling the constructor and supplying a [BuildingSceneLayer] and an optional onClose callback function.
 /// ```dart
-/// ...
-/// final localSceneViewController = ArcGISLocalSceneView.createController();
-/// final buildingExplorerController = BuildingExplorer.createController(viewController: localSceneViewController);
-/// ...
-///
-/// ...
-///   BuildingExplorer(
-///     buildingExplorerControllerProvider: () => buildingExplorerController),
-///     onClose: () => setState(() => _showBottomSheet = false),
-///   ),
-/// ...
+/// BuildingExplorer(
+///   buildingExplorerControllerProvider: () =>
+///              BuildingExplorer.createController(localSceneViewController),
+///   onClose: () {
+///     // Optional: handle close action
+///   },
+/// ),
 /// ```
 class BuildingExplorer extends StatefulWidget {
   /// Creates a [BuildingExplorer] widget for use in a widget tree. The constructor
@@ -57,14 +53,15 @@ class BuildingExplorer extends StatefulWidget {
     super.key,
   });
 
+  /// Called when this [BuildingExplorer] needs a [BuildingExplorerController] to associate with itself.
   final BuildingExplorerController Function()
   buildingExplorerControllerProvider;
 
-  /// Optional onClose callback. If set, a close [IconButton] will appear at
-  /// the top right of the widget.
+  /// Optional onClose callback. If set, a "close" [IconButton] will appear at
+  /// the top right of the widget. The callback function is called when the "close" button is tapped.
   final VoidCallback? onClose;
 
-  /// Static function used to create the BuildingExplorerController that will
+  /// Static function used to create the [BuildingExplorerController] that will
   /// be used between widget instances.
   static BuildingExplorerController createController(
     ArcGISLocalSceneViewController viewController,
