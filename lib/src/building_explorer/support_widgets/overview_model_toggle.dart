@@ -48,14 +48,12 @@ class _OverviewModelToggleState extends State<_OverviewModelToggle> {
           onChanged: (newValue) {
             // Set the Full Model sublayer visibility
             widget.layerState.buildingSceneLayer.sublayers
-                    .firstWhere((layer) => layer.name == 'Full Model')
+                    .firstWhere(
+                      (layer) =>
+                          layer.modelName == _FULL_MODEL_SUBLAYER_MODEL_NAME,
+                    )
                     .isVisible =
                 !newValue;
-
-            // If the Overview is visible, remove the applied layer filters.
-            if (newValue) {
-              widget.layerState.buildingSceneLayer.activeFilter = null;
-            }
 
             setState(() {
               // Set the Overview sublayer visiblity.

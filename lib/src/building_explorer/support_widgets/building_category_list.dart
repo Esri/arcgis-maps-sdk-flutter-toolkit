@@ -34,15 +34,22 @@ class _BuildingCategoryList extends StatelessWidget {
   Widget build(BuildContext context) {
     final fullModelGroupSublayer = buildingSceneLayer.sublayers
         .whereType<BuildingGroupSublayer>()
-        .where((sublayer) => sublayer.name == 'Full Model')
+        .where(
+          (sublayer) => sublayer.modelName == _FULL_MODEL_SUBLAYER_MODEL_NAME,
+        )
         .firstOrNull;
 
+    // If there is no "Full Model" sublayerGroup, the top-level groups are the
+    // disciplines.
     final disciplineGroupSublayers =
         fullModelGroupSublayer?.sublayers
             .whereType<BuildingGroupSublayer>()
             .toList() ??
-        [];
+        buildingSceneLayer.sublayers
+            .whereType<BuildingGroupSublayer>()
+            .toList();
 
+    // Sort the list by the sublayer names.
     disciplineGroupSublayers.sort(
       (discipline1, discipline2) =>
           discipline1.name.compareTo(discipline2.name),
