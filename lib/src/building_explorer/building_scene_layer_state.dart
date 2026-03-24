@@ -25,6 +25,8 @@ const _SOLID_BLOCK_NAME = 'solid block';
 const _XRAY_BLOCK_NAME = 'xray block';
 const _BUILDING_LEVEL_ATTRIBUTE = 'BldgLevel';
 const _CONSTRUCTION_PHASE_ATTRIBUTES = 'CreatedPhase';
+const _FULL_MODEL_SUBLAYER_MODEL_NAME = 'FullModel';
+const _OVERVIEW_SUBLAYER_MODEL_NAME = 'Overview';
 
 /// Class that records the state of a single building scene layer. The
 /// properties of this class drive UI elements for a specific building scene layer.
@@ -46,7 +48,7 @@ class _BuildingSceneLayerState {
   }) {
     // Check if the layer has an overview model
     final overviewSublayerIndex = layer.sublayers.indexWhere(
-      (layer) => layer.name == 'Overview',
+      (layer) => layer.modelName == _OVERVIEW_SUBLAYER_MODEL_NAME,
     );
 
     return _BuildingSceneLayerState._(
