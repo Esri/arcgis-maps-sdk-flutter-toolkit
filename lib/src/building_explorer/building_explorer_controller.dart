@@ -29,17 +29,17 @@ class BuildingExplorerController {
   /// scene layers. This provides the scene that contains the layers.
   final ArcGISLocalSceneViewController _localSceneViewController;
 
-  /// Map of relevent state for each of the building scene layers. The [BuildingSceneLayer]
-  /// is used as the key, and the value is a [_BuildingSceneLayerState] object.
-  var _buildingSceneLayerStates =
-      <BuildingSceneLayer, _BuildingSceneLayerState>{};
+  /// Map of relevent state for each of the building scene layers. The id of the
+  /// [BuildingSceneLayer] is used as the key, and the value is a
+  /// [_BuildingSceneLayerState] object.
+  var _buildingSceneLayerStates = <String, _BuildingSceneLayerState>{};
 
   /// The [BuildingSceneLayer] currently active in the [BuildingExplorer].
   BuildingSceneLayer? _selectedLayer;
 
   /// Convenience property to get the state object for the currently selected building layer.
   _BuildingSceneLayerState? get _selectedBuildingSceneLayerState {
-    return _buildingSceneLayerStates[_selectedLayer];
+    return _buildingSceneLayerStates[_selectedLayer?.id];
   }
 
   /// Stream that notifies listeners that they need to call
@@ -86,19 +86,18 @@ class BuildingExplorerController {
     }
   }
 
-  Future<Map<BuildingSceneLayer, _BuildingSceneLayerState>>
+  Future<Map<String, _BuildingSceneLayerState>>
   _refreshBuildingSceneLayerStates(
     List<BuildingSceneLayer> buildingSceneLayers,
   ) async {
     final refreshFutures = <Future<void>>[];
-    final refreshedLayerStates =
-        <BuildingSceneLayer, _BuildingSceneLayerState>{};
+    final refreshedLayerStates = <String, _BuildingSceneLayerState>{};
 
     // Create BuildingSceneLayerStates from the layers.
     for (final layer in buildingSceneLayers) {
       final refreshFuture = layer.load().then((_) {
-        refreshedLayerStates[layer] =
-            _buildingSceneLayerStates[layer] ??
+        refreshedLayerStates[layer.id] =
+            _buildingSceneLayerStates[layer.id] ??
             _BuildingSceneLayerState.withBuildingSceneLayer(layer);
       });
 

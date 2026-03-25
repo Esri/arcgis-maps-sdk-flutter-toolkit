@@ -42,12 +42,12 @@ class _BuildingSceneLayerSelector extends StatelessWidget {
       // Dropdown to select building from scene.
       return DropdownButton(
         value: widgetController._selectedLayer,
-        items: widgetController._buildingSceneLayerStates.keys
+        items: widgetController._buildingSceneLayerStates.values
             .map(
               (e) => DropdownMenuItem(
-                value: e,
+                value: e.buildingSceneLayer,
                 child: Text(
-                  e.name,
+                  e.buildingSceneLayer.name,
                   style: Theme.of(context).textTheme.headlineSmall,
                   textAlign: TextAlign.center,
                 ),

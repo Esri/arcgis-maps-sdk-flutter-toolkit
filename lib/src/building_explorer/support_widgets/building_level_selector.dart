@@ -61,25 +61,22 @@ class _BuildingLevelSelectorState extends State<_BuildingLevelSelector> {
   @override
   Widget build(BuildContext context) {
     final options = ['All', ..._levelList];
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(15, 0, 20, 0),
-      child: Row(
-        children: [
-          const Text('Level:'),
-          const Spacer(),
-          DropdownButton(
-            value: options.length == 1
-                ? 'All'
-                : widget.buildingSceneLayerState.selectedLevel,
-            items: options
-                .map(
-                  (value) => DropdownMenuItem(value: value, child: Text(value)),
-                )
-                .toList(),
-            onChanged: onLevelChanged,
-          ),
-        ],
-      ),
+    return Row(
+      children: [
+        const Text('Level:'),
+        const Spacer(),
+        DropdownButton(
+          value: options.length == 1
+              ? 'All'
+              : widget.buildingSceneLayerState.selectedLevel,
+          items: options
+              .map(
+                (value) => DropdownMenuItem(value: value, child: Text(value)),
+              )
+              .toList(),
+          onChanged: onLevelChanged,
+        ),
+      ],
     );
   }
 

@@ -201,6 +201,10 @@ class _BuildingExplorerState extends State<BuildingExplorer> {
   Widget _buildFullBuildingExplorer(BuildContext context) {
     var fullModelShowing =
         widgetController._selectedBuildingSceneLayerState!.showFullModel;
+    var layerVisible = widgetController
+        ._selectedBuildingSceneLayerState!
+        .buildingSceneLayer
+        .isVisible;
 
     return Column(
       children: [
@@ -233,43 +237,63 @@ class _BuildingExplorerState extends State<BuildingExplorer> {
                   padding: const EdgeInsets.fromLTRB(15, 0, 20, 0),
                   child: Column(
                     children: [
-                      // Zoom to Building widget.
-                      _ZoomToBuildingControl(
-                        buildingExplorerController: widgetController,
-                      ),
-                      // Overview sublayer toggle widget.
-                      _OverviewModelToggle(
+                      // Layer visibility toggle widget
+                      _LayerVisibilityToggle(
                         layerState:
                             widgetController._selectedBuildingSceneLayerState!,
-                        onOverviewVisibilityChanged: (newValue) =>
-                            setState(() => fullModelShowing = newValue),
+                        onLayerVisibilityChanged: (newValue) =>
+                            setState(() => layerVisible = newValue),
                       ),
+                      if (layerVisible)
+                        // Overview sublayer toggle widget.
+                        _OverviewModelToggle(
+                          layerState: widgetController
+                              ._selectedBuildingSceneLayerState!,
+                          onOverviewVisibilityChanged: (newValue) =>
+                              setState(() => fullModelShowing = newValue),
+                        ),
                     ],
                   ),
                 ),
                 // Hide the rest of the controls if the overview is showing.
-                if (fullModelShowing)
+                if (fullModelShowing && layerVisible)
                   Column(
                     children: [
-                      // Widget for selecting the level to highlight.
-                      _BuildingLevelSelector(
-                        buildingSceneLayerState:
-                            widgetController._selectedBuildingSceneLayerState!,
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(15, 0, 20, 0),
+                        child: Column(
+                          children: [
+                            // Zoom to Building widget.
+                            _ZoomToBuildingControl(
+                              buildingExplorerController: widgetController,
+                            ),
+                            // Widget for selecting the level to highlight.
+                            _BuildingLevelSelector(
+                              buildingSceneLayerState: widgetController
+                                  ._selectedBuildingSceneLayerState!,
+                            ),
+                            _ConstructionPhaseSelector(
+                              buildingSceneLayerState: widgetController
+                                  ._selectedBuildingSceneLayerState!,
+                            ),
+                          ],
+                        ),
                       ),
-                      _ConstructionPhaseSelector(
-                        buildingSceneLayerState:
-                            widgetController._selectedBuildingSceneLayerState!,
-                      ),
-                      const Divider(),
-                      // Categories sublayer selection widget.
-                      Text(
-                        'Disciplines & Categories:',
-                        style: Theme.of(context).textTheme.bodyLarge,
-                      ),
-                      _BuildingCategoryList(
-                        buildingSceneLayer: widgetController._selectedLayer!,
-                        shrinkWrap: true,
-                        scrollPhysics: const NeverScrollableScrollPhysics(),
+                      Column(
+                        children: [
+                          const Divider(),
+                          // Categories sublayer selection widget.
+                          Text(
+                            'Disciplines & Categories:',
+                            style: Theme.of(context).textTheme.bodyLarge,
+                          ),
+                          _BuildingCategoryList(
+                            buildingSceneLayer:
+                                widgetController._selectedLayer!,
+                            shrinkWrap: true,
+                            scrollPhysics: const NeverScrollableScrollPhysics(),
+                          ),
+                        ],
                       ),
                     ],
                   ),

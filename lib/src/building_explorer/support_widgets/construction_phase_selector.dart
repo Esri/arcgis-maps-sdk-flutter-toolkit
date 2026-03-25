@@ -69,23 +69,20 @@ class _ConstructionPhaseSelectorState
       return const SizedBox.shrink();
     }
 
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(15, 0, 20, 0),
-      child: Row(
-        children: [
-          const Text('Construction phase:'),
-          const Spacer(),
-          DropdownButton(
-            value: widget.buildingSceneLayerState.selectedConstructionPhase,
-            items: options
-                .map(
-                  (value) => DropdownMenuItem(value: value, child: Text(value)),
-                )
-                .toList(),
-            onChanged: onConstructionPhaseChanged,
-          ),
-        ],
-      ),
+    return Row(
+      children: [
+        const Text('Construction phase:'),
+        const Spacer(),
+        DropdownButton(
+          value: widget.buildingSceneLayerState.selectedConstructionPhase,
+          items: options
+              .map(
+                (value) => DropdownMenuItem(value: value, child: Text(value)),
+              )
+              .toList(),
+          onChanged: onConstructionPhaseChanged,
+        ),
+      ],
     );
   }
 
