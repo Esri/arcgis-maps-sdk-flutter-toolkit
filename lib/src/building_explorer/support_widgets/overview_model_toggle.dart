@@ -34,30 +34,30 @@ class _OverviewModelToggle extends StatefulWidget {
 class _OverviewModelToggleState extends State<_OverviewModelToggle> {
   @override
   Widget build(BuildContext context) {
-    if (widget.layerState.overviewSublayer == null) {
+    if (widget.layerState.fullModelSublayer == null) {
       // Show nothing if there is no overview model.
       return const SizedBox.shrink();
     }
 
     return Row(
       children: [
-        const Text('Show Overview'),
+        const Text('Show Full Model'),
         const Spacer(),
         Switch(
-          value: widget.layerState.showOverview,
+          value: widget.layerState.showFullModel,
           onChanged: (newValue) {
             // Set the Full Model sublayer visibility
             widget.layerState.buildingSceneLayer.sublayers
                     .firstWhere(
                       (layer) =>
-                          layer.modelName == _FULL_MODEL_SUBLAYER_MODEL_NAME,
+                          layer.modelName == _OVERVIEW_SUBLAYER_MODEL_NAME,
                     )
                     .isVisible =
                 !newValue;
 
             setState(() {
               // Set the Overview sublayer visiblity.
-              widget.layerState.overviewSublayer!.isVisible = newValue;
+              widget.layerState.fullModelSublayer!.isVisible = newValue;
             });
 
             widget.onOverviewVisibilityChanged?.call(newValue);

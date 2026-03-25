@@ -199,8 +199,8 @@ class _BuildingExplorerState extends State<BuildingExplorer> {
   }
 
   Widget _buildFullBuildingExplorer(BuildContext context) {
-    var overviewShowing =
-        widgetController._selectedBuildingSceneLayerState!.showOverview;
+    var fullModelShowing =
+        widgetController._selectedBuildingSceneLayerState!.showFullModel;
 
     return Column(
       children: [
@@ -237,18 +237,18 @@ class _BuildingExplorerState extends State<BuildingExplorer> {
                       _ZoomToBuildingControl(
                         buildingExplorerController: widgetController,
                       ),
-                      // Overview model toggle widget.
+                      // Overview sublayer toggle widget.
                       _OverviewModelToggle(
                         layerState:
                             widgetController._selectedBuildingSceneLayerState!,
                         onOverviewVisibilityChanged: (newValue) =>
-                            setState(() => overviewShowing = newValue),
+                            setState(() => fullModelShowing = newValue),
                       ),
                     ],
                   ),
                 ),
                 // Hide the rest of the controls if the overview is showing.
-                if (!overviewShowing)
+                if (fullModelShowing)
                   Column(
                     children: [
                       // Widget for selecting the level to highlight.

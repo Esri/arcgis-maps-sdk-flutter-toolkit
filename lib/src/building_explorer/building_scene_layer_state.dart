@@ -36,7 +36,7 @@ class _BuildingSceneLayerState {
     required this.buildingSceneLayer,
     this.selectedLevel = 'All',
     this.selectedConstructionPhase = 'All',
-    this.overviewSublayer,
+    this.fullModelSublayer,
   });
 
   /// Creates and initializes a [BuildingSceneLayerState] object for the
@@ -46,17 +46,17 @@ class _BuildingSceneLayerState {
     String selectedLevel = 'All',
     String selectedConstructionPhase = 'All',
   }) {
-    // Check if the layer has an overview model
-    final overviewSublayerIndex = layer.sublayers.indexWhere(
-      (layer) => layer.modelName == _OVERVIEW_SUBLAYER_MODEL_NAME,
+    // Check if the layer has an Full Model sublayer
+    final fullModelSublayerIndex = layer.sublayers.indexWhere(
+      (layer) => layer.modelName == _FULL_MODEL_SUBLAYER_MODEL_NAME,
     );
 
     return _BuildingSceneLayerState._(
       buildingSceneLayer: layer,
       selectedLevel: selectedLevel,
       selectedConstructionPhase: selectedConstructionPhase,
-      overviewSublayer: overviewSublayerIndex > -1
-          ? layer.sublayers[overviewSublayerIndex]
+      fullModelSublayer: fullModelSublayerIndex > -1
+          ? layer.sublayers[fullModelSublayerIndex]
           : null,
     );
   }
@@ -74,11 +74,11 @@ class _BuildingSceneLayerState {
   /// is 'All' this filter will be null.
   BuildingFilter? currentBuildingFilter;
 
-  /// Flag for the state of the Show Overview toggle control.
-  bool get showOverview => overviewSublayer?.isVisible ?? false;
+  /// Full Model sublayer if one exists in the building scene layer.
+  final BuildingSublayer? fullModelSublayer;
 
-  /// Overview sublayer if one exists in the building scene layer.
-  final BuildingSublayer? overviewSublayer;
+  /// Flag for the state of the Show Full Model toggle control.
+  bool get showFullModel => fullModelSublayer?.isVisible ?? false;
 
   /// Function to build a [BuildingFilter] based on the currently selected level
   /// and construction phase.
