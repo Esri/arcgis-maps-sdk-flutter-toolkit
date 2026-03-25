@@ -35,7 +35,7 @@ class _BuildingSceneLayerState {
   _BuildingSceneLayerState._({
     required this.buildingSceneLayer,
     this.selectedLevel = 'All',
-    this.selectedConstructionPhase = 'All',
+    this.selectedConstructionPhase,
     this.fullModelSublayer,
   });
 
@@ -44,7 +44,7 @@ class _BuildingSceneLayerState {
   factory _BuildingSceneLayerState.withBuildingSceneLayer(
     BuildingSceneLayer layer, {
     String selectedLevel = 'All',
-    String selectedConstructionPhase = 'All',
+    String? selectedConstructionPhase,
   }) {
     // Check if the layer has an Full Model sublayer
     final fullModelSublayerIndex = layer.sublayers.indexWhere(
@@ -67,8 +67,8 @@ class _BuildingSceneLayerState {
   /// The currently selected building level. This can be 'All' or the level name.
   String selectedLevel;
 
-  /// The currently selected construction phase. This can be 'All' or the phase name.
-  String selectedConstructionPhase;
+  /// The currently selected construction phase. This can be 'null' or the phase name.
+  String? selectedConstructionPhase;
 
   /// The current [BuildingFilter] for the selected level. If the selected level
   /// is 'All' this filter will be null.
@@ -78,12 +78,12 @@ class _BuildingSceneLayerState {
   final BuildingSublayer? fullModelSublayer;
 
   /// Flag for the state of the Show Full Model toggle control.
-  bool get showFullModel => fullModelSublayer?.isVisible ?? false;
+  bool get showFullModel => fullModelSublayer?.isVisible ?? true;
 
   /// Function to build a [BuildingFilter] based on the currently selected level
   /// and construction phase.
   void updateBuildingFilter() {
-    if (selectedLevel == 'All' && selectedConstructionPhase == 'All') {
+    if (selectedLevel == 'All' && selectedConstructionPhase == null) {
       currentBuildingFilter = null;
       buildingSceneLayer.activeFilter = null;
       return;
@@ -93,7 +93,7 @@ class _BuildingSceneLayerState {
     var solidFilterWhere = '';
     var xrayFilterWhere = '';
 
-    if (selectedConstructionPhase != 'All') {
+    if (selectedConstructionPhase != null) {
       // Construction phase where clause.
       final constructionPhaseWhere =
           '$_CONSTRUCTION_PHASE_ATTRIBUTES <= $selectedConstructionPhase';
