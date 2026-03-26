@@ -125,6 +125,9 @@ class _BuildingExplorerState extends State<BuildingExplorer> {
     }
   }
 
+  // Function that defines the "Loading" version of the Building Explorer widget.
+  // This is shown as the scene is loading and the building scene layer
+  // information is being collected.
   Widget _buildLoadingExplorer(BuildContext context) {
     return Column(
       children: [
@@ -162,6 +165,8 @@ class _BuildingExplorerState extends State<BuildingExplorer> {
     );
   }
 
+  // Function that defines the version of the Building Explorer widget when there
+  // are no building scene layers in the scene.
   Widget _buildEmptyBuildingExplorer(BuildContext context) {
     return Column(
       children: [
@@ -198,6 +203,8 @@ class _BuildingExplorerState extends State<BuildingExplorer> {
     );
   }
 
+  // Function that defines the full version of the Building Explorer widget. Shown
+  // when one or more building scene layers are present in the scene.
   Widget _buildFullBuildingExplorer(BuildContext context) {
     var fullModelShowing =
         widgetController._selectedBuildingSceneLayerState!.showFullModel;
@@ -211,6 +218,7 @@ class _BuildingExplorerState extends State<BuildingExplorer> {
         Stack(
           alignment: Alignment.center,
           children: [
+            // Building selection widget.
             _BuildingSceneLayerSelector(
               buildingExplorerController: widgetController,
               onBuildingSceneChanged: (layer) =>
@@ -276,6 +284,7 @@ class _BuildingExplorerState extends State<BuildingExplorer> {
                               buildingSceneLayerState: widgetController
                                   ._selectedBuildingSceneLayerState!,
                             ),
+                            // Construction Phase selection widget.
                             _ConstructionPhaseSelector(
                               buildingSceneLayerState: widgetController
                                   ._selectedBuildingSceneLayerState!,
@@ -291,6 +300,7 @@ class _BuildingExplorerState extends State<BuildingExplorer> {
                             'Disciplines & Categories:',
                             style: Theme.of(context).textTheme.bodyLarge,
                           ),
+                          // Disciplines and Categories listing widget.
                           _BuildingCategoryList(
                             buildingSceneLayer:
                                 widgetController._selectedLayer!,
