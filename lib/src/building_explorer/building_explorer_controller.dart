@@ -29,8 +29,8 @@ class BuildingExplorerController {
   /// scene layers. This provides the scene that contains the layers.
   final ArcGISLocalSceneViewController _localSceneViewController;
 
-  /// Map of relevent state for each of the building scene layers. The id of the
-  /// [BuildingSceneLayer] is used as the key, and the value is a
+  /// Map of relevent state for each of the building scene layers.
+  /// [BuildingSceneLayer.id] is used as the key, and the value is the associated
   /// [_BuildingSceneLayerState] object.
   var _buildingSceneLayerStates = <String, _BuildingSceneLayerState>{};
 

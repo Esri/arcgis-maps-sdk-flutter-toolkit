@@ -105,22 +105,16 @@ class _ConstructionPhaseSelectorState
   }
 
   void _checkSelectedPhase(List<String> phaseList) {
-    if (widget.buildingSceneLayerState.selectedConstructionPhase == null &&
-        phaseList.isNotEmpty) {
-      // Due to sorting, the first element is the last of the construction phases.
-      widget.buildingSceneLayerState.selectedConstructionPhase =
-          phaseList.first;
-    } else if (widget.buildingSceneLayerState.selectedConstructionPhase !=
-            null &&
+    if (widget.buildingSceneLayerState.selectedConstructionPhase == null ||
         !phaseList.contains(
           widget.buildingSceneLayerState.selectedConstructionPhase,
         )) {
-      // The selected phase is no longer in the phase list, or the phase list is empty.
+      // The selected phase is null or is no longer in the phase list.
       widget.buildingSceneLayerState.selectedConstructionPhase =
-          phaseList.isNotEmpty ? phaseList.first : null;
+          phaseList.firstOrNull;
     }
 
-    // Update the building filter to the new selected construction phase.
+    // Update the building filter to the selected construction phase.
     widget.buildingSceneLayerState.updateBuildingFilter();
   }
 

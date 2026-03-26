@@ -36,7 +36,6 @@ class _BuildingSceneLayerState {
     required this.buildingSceneLayer,
     this.selectedLevel = 'All',
     this.selectedConstructionPhase,
-    this.fullModelSublayer,
   });
 
   /// Creates and initializes a [BuildingSceneLayerState] object for the
@@ -46,18 +45,10 @@ class _BuildingSceneLayerState {
     String selectedLevel = 'All',
     String? selectedConstructionPhase,
   }) {
-    // Check if the layer has an Full Model sublayer
-    final fullModelSublayerIndex = layer.sublayers.indexWhere(
-      (layer) => layer.modelName == _FULL_MODEL_SUBLAYER_MODEL_NAME,
-    );
-
     return _BuildingSceneLayerState._(
       buildingSceneLayer: layer,
       selectedLevel: selectedLevel,
       selectedConstructionPhase: selectedConstructionPhase,
-      fullModelSublayer: fullModelSublayerIndex > -1
-          ? layer.sublayers[fullModelSublayerIndex]
-          : null,
     );
   }
 
@@ -75,7 +66,27 @@ class _BuildingSceneLayerState {
   BuildingFilter? currentBuildingFilter;
 
   /// Full Model sublayer if one exists in the building scene layer.
-  final BuildingSublayer? fullModelSublayer;
+  BuildingGroupSublayer? get fullModelSublayer {
+    // Check if the layer has an Full Model sublayer
+    final fullModelSublayerIndex = buildingSceneLayer.sublayers.indexWhere(
+      (layer) => layer.modelName == _FULL_MODEL_SUBLAYER_MODEL_NAME,
+    );
+    return fullModelSublayerIndex > -1
+        ? buildingSceneLayer.sublayers[fullModelSublayerIndex]
+              as BuildingGroupSublayer
+        : null;
+  }
+
+  /// Overview sublayer if one exists in the building scene layer.
+  BuildingSublayer? get overviewSublayer {
+    // Check if the layer has an Full Model sublayer
+    final overviewSublayerIndex = buildingSceneLayer.sublayers.indexWhere(
+      (layer) => layer.modelName == _OVERVIEW_SUBLAYER_MODEL_NAME,
+    );
+    return overviewSublayerIndex > -1
+        ? buildingSceneLayer.sublayers[overviewSublayerIndex]
+        : null;
+  }
 
   /// Flag for the state of the Show Full Model toggle control.
   bool get showFullModel => fullModelSublayer?.isVisible ?? true;

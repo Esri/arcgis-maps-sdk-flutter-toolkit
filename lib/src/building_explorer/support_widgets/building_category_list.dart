@@ -19,12 +19,12 @@ part of '../../../arcgis_maps_toolkit.dart';
 /// Widget that lists the Disciplines in the Full Model in the building scene layer.
 class _BuildingCategoryList extends StatelessWidget {
   const _BuildingCategoryList({
-    required this.buildingSceneLayer,
+    required this.buildingSceneLayerState,
     this.shrinkWrap = false,
     this.scrollPhysics,
   });
 
-  final BuildingSceneLayer buildingSceneLayer;
+  final _BuildingSceneLayerState buildingSceneLayerState;
 
   // shrinkWrap and scrollPhysics values will be applied to the ListView builder.
   final bool shrinkWrap;
@@ -32,12 +32,7 @@ class _BuildingCategoryList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final fullModelGroupSublayer = buildingSceneLayer.sublayers
-        .whereType<BuildingGroupSublayer>()
-        .where(
-          (sublayer) => sublayer.modelName == _FULL_MODEL_SUBLAYER_MODEL_NAME,
-        )
-        .firstOrNull;
+    final fullModelGroupSublayer = buildingSceneLayerState.fullModelSublayer;
 
     // If there is no "Full Model" sublayerGroup, the top-level groups are the
     // disciplines.
@@ -45,7 +40,7 @@ class _BuildingCategoryList extends StatelessWidget {
         fullModelGroupSublayer?.sublayers
             .whereType<BuildingGroupSublayer>()
             .toList() ??
-        buildingSceneLayer.sublayers
+        buildingSceneLayerState.buildingSceneLayer.sublayers
             .whereType<BuildingGroupSublayer>()
             .toList();
 

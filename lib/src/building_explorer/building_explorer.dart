@@ -302,8 +302,8 @@ class _BuildingExplorerState extends State<BuildingExplorer> {
                           ),
                           // Disciplines and Categories listing widget.
                           _BuildingCategoryList(
-                            buildingSceneLayer:
-                                widgetController._selectedLayer!,
+                            buildingSceneLayerState: widgetController
+                                ._selectedBuildingSceneLayerState!,
                             shrinkWrap: true,
                             scrollPhysics: const NeverScrollableScrollPhysics(),
                           ),
