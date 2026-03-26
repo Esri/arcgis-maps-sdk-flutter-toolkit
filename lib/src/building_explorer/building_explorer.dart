@@ -245,12 +245,20 @@ class _BuildingExplorerState extends State<BuildingExplorer> {
                             setState(() => layerVisible = newValue),
                       ),
                       if (layerVisible)
-                        // Overview sublayer toggle widget.
-                        _OverviewModelToggle(
-                          layerState: widgetController
-                              ._selectedBuildingSceneLayerState!,
-                          onOverviewVisibilityChanged: (newValue) =>
-                              setState(() => fullModelShowing = newValue),
+                        Column(
+                          children: [
+                            // Overview sublayer toggle widget.
+                            _OverviewModelToggle(
+                              layerState: widgetController
+                                  ._selectedBuildingSceneLayerState!,
+                              onOverviewVisibilityChanged: (newValue) =>
+                                  setState(() => fullModelShowing = newValue),
+                            ),
+                            // Zoom to Building widget.
+                            _ZoomToBuildingControl(
+                              buildingExplorerController: widgetController,
+                            ),
+                          ],
                         ),
                     ],
                   ),
@@ -263,10 +271,6 @@ class _BuildingExplorerState extends State<BuildingExplorer> {
                         padding: const EdgeInsets.fromLTRB(15, 0, 20, 0),
                         child: Column(
                           children: [
-                            // Zoom to Building widget.
-                            _ZoomToBuildingControl(
-                              buildingExplorerController: widgetController,
-                            ),
                             // Widget for selecting the level to highlight.
                             _BuildingLevelSelector(
                               buildingSceneLayerState: widgetController
