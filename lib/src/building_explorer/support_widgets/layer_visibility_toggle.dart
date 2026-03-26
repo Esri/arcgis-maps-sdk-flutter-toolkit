@@ -34,11 +34,6 @@ class _LayerVisibilityToggle extends StatefulWidget {
 class _LayerVisibilityToggleState extends State<_LayerVisibilityToggle> {
   @override
   Widget build(BuildContext context) {
-    if (widget.layerState.fullModelSublayer == null) {
-      // Show nothing if there is no overview model.
-      return const SizedBox.shrink();
-    }
-
     return Row(
       children: [
         const Text('Visible'),
