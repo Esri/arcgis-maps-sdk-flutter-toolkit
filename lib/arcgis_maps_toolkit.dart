@@ -55,6 +55,7 @@ part 'src/building_explorer/support_widgets/building_level_selector.dart';
 part 'src/building_explorer/support_widgets/building_scene_layer_selector.dart';
 part 'src/building_explorer/building_scene_layer_state.dart';
 part 'src/building_explorer/support_widgets/construction_phase_selector.dart';
+part 'src/building_explorer/support_widgets/layer_visibility_toggle.dart';
 part 'src/building_explorer/support_widgets/overview_model_toggle.dart';
 part 'src/building_explorer/support_widgets/zoom_to_building_control.dart';
 // Compass Widget

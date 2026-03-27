@@ -29,17 +29,19 @@ class BuildingExplorerController {
   /// scene layers. This provides the scene that contains the layers.
   final ArcGISLocalSceneViewController _localSceneViewController;
 
-  /// Map of relevent state for each of the building scene layers. The [BuildingSceneLayer]
-  /// is used as the key, and the value is a [_BuildingSceneLayerState] object.
-  var _buildingSceneLayerStates =
-      <BuildingSceneLayer, _BuildingSceneLayerState>{};
+  /// Map of relevent state for each of the building scene layers.
+  /// [BuildingSceneLayer.id] is used as the key, and the value is the associated
+  /// [_BuildingSceneLayerState] object.
+  final _buildingSceneLayerStates =
+      <String, _BuildingSceneLayerState>{}
+          as LinkedHashMap<String, _BuildingSceneLayerState>;
 
   /// The [BuildingSceneLayer] currently active in the [BuildingExplorer].
   BuildingSceneLayer? _selectedLayer;
 
   /// Convenience property to get the state object for the currently selected building layer.
   _BuildingSceneLayerState? get _selectedBuildingSceneLayerState {
-    return _buildingSceneLayerStates[_selectedLayer];
+    return _buildingSceneLayerStates[_selectedLayer?.id];
   }
 
   /// Stream that notifies listeners that they need to call
@@ -61,7 +63,7 @@ class BuildingExplorerController {
     final scene = _localSceneViewController.arcGISScene;
     if (scene == null) {
       _selectedLayer = null;
-      _buildingSceneLayerStates = {};
+      _buildingSceneLayerStates.clear();
       return;
     }
 
@@ -74,9 +76,7 @@ class BuildingExplorerController {
     if (buildingSceneLayers.isEmpty) return;
 
     // Refresh the state records for the building scene layers.
-    _buildingSceneLayerStates = await _refreshBuildingSceneLayerStates(
-      buildingSceneLayers,
-    );
+    await _refreshBuildingSceneLayerStates(buildingSceneLayers);
 
     // Set selectedLayer.
     // If a layer has not yet been selected, or the selection is no longer in
@@ -86,28 +86,40 @@ class BuildingExplorerController {
     }
   }
 
-  Future<Map<BuildingSceneLayer, _BuildingSceneLayerState>>
-  _refreshBuildingSceneLayerStates(
+  Future<void> _refreshBuildingSceneLayerStates(
     List<BuildingSceneLayer> buildingSceneLayers,
   ) async {
     final refreshFutures = <Future<void>>[];
-    final refreshedLayerStates =
-        <BuildingSceneLayer, _BuildingSceneLayerState>{};
 
     // Create BuildingSceneLayerStates from the layers.
     for (final layer in buildingSceneLayers) {
-      final refreshFuture = layer.load().then((_) {
-        refreshedLayerStates[layer] =
-            _buildingSceneLayerStates[layer] ??
-            _BuildingSceneLayerState.withBuildingSceneLayer(layer);
-      });
-
-      refreshFutures.add(refreshFuture);
+      refreshFutures.add(layer.load());
     }
 
     // Wait for all the building scene layers to load.
     await Future.wait(refreshFutures);
 
-    return refreshedLayerStates;
+    // Sort the states by building scene layer name.
+    buildingSceneLayers.sort(
+      (layer1, layer2) => layer1.name.compareTo(layer2.name),
+    );
+
+    // Create a map of the building layer state objects based on the sorted buildingSceneLayers.
+    final tempStates =
+        <String, _BuildingSceneLayerState>{}
+            as LinkedHashMap<String, _BuildingSceneLayerState>;
+    for (final layer in buildingSceneLayers) {
+      // If a state object already exists for this layer, use it. Otherwise,
+      // create a new one.
+      tempStates[layer.id] =
+          _buildingSceneLayerStates[layer.id] ??
+          _BuildingSceneLayerState.withBuildingSceneLayer(layer);
+    }
+
+    // Replace _buildingSceneLayerStates contents with tempMap. This will remove
+    // any layer states no longer in the scene, and add new ones all in the
+    // sorted order.
+    _buildingSceneLayerStates.clear();
+    _buildingSceneLayerStates.addAll(tempStates);
   }
 }

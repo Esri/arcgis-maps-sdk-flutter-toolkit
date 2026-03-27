@@ -90,11 +90,13 @@ class _BuildingExplorerState extends State<BuildingExplorer> {
     _refreshFuture = widgetController._refreshBuildingSceneLayers();
 
     onRequestSceneRefreshSubscription = widgetController._onRequestSceneRefresh
-        .listen(
-          (_) => setState(() {
-            _refreshFuture = widgetController._refreshBuildingSceneLayers();
-          }),
-        );
+        .listen((_) {
+          if (mounted) {
+            setState(() {
+              _refreshFuture = widgetController._refreshBuildingSceneLayers();
+            });
+          }
+        });
   }
 
   @override
@@ -125,6 +127,9 @@ class _BuildingExplorerState extends State<BuildingExplorer> {
     }
   }
 
+  // Function that defines the "Loading" version of the Building Explorer widget.
+  // This is shown as the scene is loading and the building scene layer
+  // information is being collected.
   Widget _buildLoadingExplorer(BuildContext context) {
     return Column(
       children: [
@@ -162,6 +167,8 @@ class _BuildingExplorerState extends State<BuildingExplorer> {
     );
   }
 
+  // Function that defines the version of the Building Explorer widget when there
+  // are no building scene layers in the scene.
   Widget _buildEmptyBuildingExplorer(BuildContext context) {
     return Column(
       children: [
@@ -198,15 +205,22 @@ class _BuildingExplorerState extends State<BuildingExplorer> {
     );
   }
 
+  // Function that defines the full version of the Building Explorer widget. Shown
+  // when one or more building scene layers are present in the scene.
   Widget _buildFullBuildingExplorer(BuildContext context) {
-    var overviewShowing =
-        widgetController._selectedBuildingSceneLayerState!.showOverview;
+    var fullModelShowing =
+        widgetController._selectedBuildingSceneLayerState!.showFullModel;
+    var layerVisible = widgetController
+        ._selectedBuildingSceneLayerState!
+        .buildingSceneLayer
+        .isVisible;
 
     return Column(
       children: [
         Stack(
           alignment: Alignment.center,
           children: [
+            // Building selection widget.
             _BuildingSceneLayerSelector(
               buildingExplorerController: widgetController,
               onBuildingSceneChanged: (layer) =>
@@ -233,43 +247,69 @@ class _BuildingExplorerState extends State<BuildingExplorer> {
                   padding: const EdgeInsets.fromLTRB(15, 0, 20, 0),
                   child: Column(
                     children: [
-                      // Zoom to Building widget.
-                      _ZoomToBuildingControl(
-                        buildingExplorerController: widgetController,
-                      ),
-                      // Overview model toggle widget.
-                      _OverviewModelToggle(
+                      // Layer visibility toggle widget
+                      _LayerVisibilityToggle(
                         layerState:
                             widgetController._selectedBuildingSceneLayerState!,
-                        onOverviewVisibilityChanged: (newValue) =>
-                            setState(() => overviewShowing = newValue),
+                        onLayerVisibilityChanged: (newValue) =>
+                            setState(() => layerVisible = newValue),
                       ),
+                      if (layerVisible)
+                        Column(
+                          children: [
+                            // Overview sublayer toggle widget.
+                            _OverviewModelToggle(
+                              layerState: widgetController
+                                  ._selectedBuildingSceneLayerState!,
+                              onOverviewVisibilityChanged: (newValue) =>
+                                  setState(() => fullModelShowing = newValue),
+                            ),
+                            // Zoom to Building widget.
+                            _ZoomToBuildingControl(
+                              buildingExplorerController: widgetController,
+                            ),
+                          ],
+                        ),
                     ],
                   ),
                 ),
                 // Hide the rest of the controls if the overview is showing.
-                if (!overviewShowing)
+                if (fullModelShowing && layerVisible)
                   Column(
                     children: [
-                      // Widget for selecting the level to highlight.
-                      _BuildingLevelSelector(
-                        buildingSceneLayerState:
-                            widgetController._selectedBuildingSceneLayerState!,
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(15, 0, 20, 0),
+                        child: Column(
+                          children: [
+                            // Widget for selecting the level to highlight.
+                            _BuildingLevelSelector(
+                              buildingSceneLayerState: widgetController
+                                  ._selectedBuildingSceneLayerState!,
+                            ),
+                            // Construction Phase selection widget.
+                            _ConstructionPhaseSelector(
+                              buildingSceneLayerState: widgetController
+                                  ._selectedBuildingSceneLayerState!,
+                            ),
+                          ],
+                        ),
                       ),
-                      _ConstructionPhaseSelector(
-                        buildingSceneLayerState:
-                            widgetController._selectedBuildingSceneLayerState!,
-                      ),
-                      const Divider(),
-                      // Categories sublayer selection widget.
-                      Text(
-                        'Disciplines & Categories:',
-                        style: Theme.of(context).textTheme.bodyLarge,
-                      ),
-                      _BuildingCategoryList(
-                        buildingSceneLayer: widgetController._selectedLayer!,
-                        shrinkWrap: true,
-                        scrollPhysics: const NeverScrollableScrollPhysics(),
+                      Column(
+                        children: [
+                          const Divider(),
+                          // Categories sublayer selection widget.
+                          Text(
+                            'Disciplines & Categories:',
+                            style: Theme.of(context).textTheme.bodyLarge,
+                          ),
+                          // Disciplines and Categories listing widget.
+                          _BuildingCategoryList(
+                            buildingSceneLayerState: widgetController
+                                ._selectedBuildingSceneLayerState!,
+                            shrinkWrap: true,
+                            scrollPhysics: const NeverScrollableScrollPhysics(),
+                          ),
+                        ],
                       ),
                     ],
                   ),

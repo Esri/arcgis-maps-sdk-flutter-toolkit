@@ -39,10 +39,6 @@ class _ConstructionPhaseSelectorState
 
     // Get the state for the new BuidlingSceneLayer
     _initPhaseList();
-
-    // Check if the selected construction phase is still valid for the current state of the
-    // building layer.
-    _checkSelectedPhase();
   }
 
   @override
@@ -50,42 +46,33 @@ class _ConstructionPhaseSelectorState
     super.didUpdateWidget(oldWidget);
 
     // Reset the state variables
-    _constructionPhaseList = <String>[];
+    _constructionPhaseList = [];
 
     // Get the state for the new BuidlingSceneLayer
     _initPhaseList();
-
-    // Check if the selected phase is still valid for the current state of the
-    // building layer.
-    _checkSelectedPhase();
   }
 
   @override
   Widget build(BuildContext context) {
-    final options = ['All', ..._constructionPhaseList];
-
-    if (options.length < 3) {
-      // Don't show the widget if there is less than two phases (excluding 'All').
+    if (_constructionPhaseList.length < 2) {
+      // Don't show the widget if there are less than two phases.
       return const SizedBox.shrink();
     }
 
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(15, 0, 20, 0),
-      child: Row(
-        children: [
-          const Text('Construction phase:'),
-          const Spacer(),
-          DropdownButton(
-            value: widget.buildingSceneLayerState.selectedConstructionPhase,
-            items: options
-                .map(
-                  (value) => DropdownMenuItem(value: value, child: Text(value)),
-                )
-                .toList(),
-            onChanged: onConstructionPhaseChanged,
-          ),
-        ],
-      ),
+    return Row(
+      children: [
+        const Text('Construction phase:'),
+        const Spacer(),
+        DropdownButton(
+          value: widget.buildingSceneLayerState.selectedConstructionPhase,
+          items: _constructionPhaseList
+              .map(
+                (value) => DropdownMenuItem(value: value, child: Text(value)),
+              )
+              .toList(),
+          onChanged: onConstructionPhaseChanged,
+        ),
+      ],
     );
   }
 
@@ -104,8 +91,12 @@ class _ConstructionPhaseSelectorState
         return intB.compareTo(intA);
       });
 
+      // Check if the selected phase is still valid for the current state of the
+      // building layer.
+      _checkSelectedPhase(phaseList);
+
       // Setting state after await. Check if the widget is mounted.
-      if (context.mounted) {
+      if (mounted) {
         setState(() {
           _constructionPhaseList = phaseList;
         });
@@ -113,17 +104,17 @@ class _ConstructionPhaseSelectorState
     }
   }
 
-  void _checkSelectedPhase() {
-    if (!identical(
-      widget.buildingSceneLayerState.buildingSceneLayer.activeFilter,
-      widget.buildingSceneLayerState.currentBuildingFilter,
-    )) {
-      // The active filter for the layer was not set by this widget. The
-      // selected layer is invalid.
-      widget.buildingSceneLayerState.selectedConstructionPhase = 'All';
+  void _checkSelectedPhase(List<String> phaseList) {
+    if (widget.buildingSceneLayerState.selectedConstructionPhase == null ||
+        !phaseList.contains(
+          widget.buildingSceneLayerState.selectedConstructionPhase,
+        )) {
+      // The selected phase is null or is no longer in the phase list.
+      widget.buildingSceneLayerState.selectedConstructionPhase =
+          phaseList.firstOrNull;
     }
 
-    // Update the building filter to the currently selected construction phase.
+    // Update the building filter to the selected construction phase.
     widget.buildingSceneLayerState.updateBuildingFilter();
   }
 

@@ -17,45 +17,36 @@
 part of '../../../arcgis_maps_toolkit.dart';
 
 /// Widget to toggle Overview/Full Model sublayer visibility.
-class _OverviewModelToggle extends StatefulWidget {
-  const _OverviewModelToggle({
+class _LayerVisibilityToggle extends StatefulWidget {
+  const _LayerVisibilityToggle({
     required this.layerState,
-    this.onOverviewVisibilityChanged,
+    this.onLayerVisibilityChanged,
   });
 
   /// The state info for the selected buidling scene layer.
   final _BuildingSceneLayerState layerState;
-  final void Function(bool isOverviewVisible)? onOverviewVisibilityChanged;
+  final void Function(bool isLayerVisible)? onLayerVisibilityChanged;
 
   @override
-  State<_OverviewModelToggle> createState() => _OverviewModelToggleState();
+  State<_LayerVisibilityToggle> createState() => _LayerVisibilityToggleState();
 }
 
-class _OverviewModelToggleState extends State<_OverviewModelToggle> {
+class _LayerVisibilityToggleState extends State<_LayerVisibilityToggle> {
   @override
   Widget build(BuildContext context) {
-    if (widget.layerState.fullModelSublayer == null ||
-        widget.layerState.overviewSublayer == null) {
-      // Show nothing if there is no Full Model or Overview sublayer.
-      return const SizedBox.shrink();
-    }
-
     return Row(
       children: [
-        const Text('Show Full Model'),
+        const Text('Visible'),
         const Spacer(),
         Switch(
-          value: widget.layerState.showFullModel,
+          value: widget.layerState.buildingSceneLayer.isVisible,
           onChanged: (newValue) {
-            // Set the Full Model sublayer visibility
-            widget.layerState.overviewSublayer!.isVisible = !newValue;
-
             setState(() {
-              // Set the Overview sublayer visiblity.
-              widget.layerState.fullModelSublayer!.isVisible = newValue;
+              // Set the layer's visibility.
+              widget.layerState.buildingSceneLayer.isVisible = newValue;
             });
 
-            widget.onOverviewVisibilityChanged?.call(newValue);
+            widget.onLayerVisibilityChanged?.call(newValue);
           },
         ),
       ],
