@@ -96,7 +96,7 @@ class _ConstructionPhaseSelectorState
       _checkSelectedPhase(phaseList);
 
       // Setting state after await. Check if the widget is mounted.
-      if (context.mounted) {
+      if (mounted) {
         setState(() {
           _constructionPhaseList = phaseList;
         });

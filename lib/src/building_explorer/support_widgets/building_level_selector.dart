@@ -96,7 +96,7 @@ class _BuildingLevelSelectorState extends State<_BuildingLevelSelector> {
       });
 
       // Setting state after await. Check if the widget is mounted.
-      if (context.mounted) {
+      if (mounted) {
         setState(() {
           _levelList = levelList;
         });
