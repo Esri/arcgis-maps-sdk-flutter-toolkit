@@ -89,9 +89,6 @@ class BuildingExplorerController {
   Future<void> _refreshBuildingSceneLayerStates(
     List<BuildingSceneLayer> buildingSceneLayers,
   ) async {
-    // Clear out the existing state map.
-    _buildingSceneLayerStates.clear();
-
     final refreshFutures = <Future<void>>[];
 
     // Create BuildingSceneLayerStates from the layers.
@@ -107,10 +104,22 @@ class BuildingExplorerController {
       (layer1, layer2) => layer1.name.compareTo(layer2.name),
     );
 
-    // Load up the state map.
+    // Create a map of the building layer state objects based on the sorted buildingSceneLayers.
+    final tempStates =
+        <String, _BuildingSceneLayerState>{}
+            as LinkedHashMap<String, _BuildingSceneLayerState>;
     for (final layer in buildingSceneLayers) {
-      _buildingSceneLayerStates[layer.id] =
+      // If a state object already exists for this layer, use it. Otherwise,
+      // create a new one.
+      tempStates[layer.id] =
+          _buildingSceneLayerStates[layer.id] ??
           _BuildingSceneLayerState.withBuildingSceneLayer(layer);
     }
+
+    // Replace _buildingSceneLayerStates contents with tempMap. This will remove
+    // any layer states no longer in the scene, and add new ones all in the
+    // sorted order.
+    _buildingSceneLayerStates.clear();
+    _buildingSceneLayerStates.addAll(tempStates);
   }
 }

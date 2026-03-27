@@ -42,7 +42,7 @@ class _LayerVisibilityToggleState extends State<_LayerVisibilityToggle> {
           value: widget.layerState.buildingSceneLayer.isVisible,
           onChanged: (newValue) {
             setState(() {
-              // Set the layer's visiblity.
+              // Set the layer's visibility.
               widget.layerState.buildingSceneLayer.isVisible = newValue;
             });
 
