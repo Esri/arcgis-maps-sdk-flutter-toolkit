@@ -90,11 +90,13 @@ class _BuildingExplorerState extends State<BuildingExplorer> {
     _refreshFuture = widgetController._refreshBuildingSceneLayers();
 
     onRequestSceneRefreshSubscription = widgetController._onRequestSceneRefresh
-        .listen(
-          (_) => setState(() {
-            _refreshFuture = widgetController._refreshBuildingSceneLayers();
-          }),
-        );
+        .listen((_) {
+          if (mounted) {
+            setState(() {
+              _refreshFuture = widgetController._refreshBuildingSceneLayers();
+            });
+          }
+        });
   }
 
   @override
