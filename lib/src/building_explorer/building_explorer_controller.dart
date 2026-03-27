@@ -32,7 +32,9 @@ class BuildingExplorerController {
   /// Map of relevent state for each of the building scene layers.
   /// [BuildingSceneLayer.id] is used as the key, and the value is the associated
   /// [_BuildingSceneLayerState] object.
-  var _buildingSceneLayerStates = <String, _BuildingSceneLayerState>{};
+  final _buildingSceneLayerStates =
+      <String, _BuildingSceneLayerState>{}
+          as LinkedHashMap<String, _BuildingSceneLayerState>;
 
   /// The [BuildingSceneLayer] currently active in the [BuildingExplorer].
   BuildingSceneLayer? _selectedLayer;
@@ -61,7 +63,7 @@ class BuildingExplorerController {
     final scene = _localSceneViewController.arcGISScene;
     if (scene == null) {
       _selectedLayer = null;
-      _buildingSceneLayerStates = {};
+      _buildingSceneLayerStates.clear();
       return;
     }
 
@@ -74,9 +76,7 @@ class BuildingExplorerController {
     if (buildingSceneLayers.isEmpty) return;
 
     // Refresh the state records for the building scene layers.
-    _buildingSceneLayerStates = await _refreshBuildingSceneLayerStates(
-      buildingSceneLayers,
-    );
+    await _refreshBuildingSceneLayerStates(buildingSceneLayers);
 
     // Set selectedLayer.
     // If a layer has not yet been selected, or the selection is no longer in
@@ -86,27 +86,31 @@ class BuildingExplorerController {
     }
   }
 
-  Future<Map<String, _BuildingSceneLayerState>>
-  _refreshBuildingSceneLayerStates(
+  Future<void> _refreshBuildingSceneLayerStates(
     List<BuildingSceneLayer> buildingSceneLayers,
   ) async {
+    // Clear out the existing state map.
+    _buildingSceneLayerStates.clear();
+
     final refreshFutures = <Future<void>>[];
-    final refreshedLayerStates = <String, _BuildingSceneLayerState>{};
 
     // Create BuildingSceneLayerStates from the layers.
     for (final layer in buildingSceneLayers) {
-      final refreshFuture = layer.load().then((_) {
-        refreshedLayerStates[layer.id] =
-            _buildingSceneLayerStates[layer.id] ??
-            _BuildingSceneLayerState.withBuildingSceneLayer(layer);
-      });
-
-      refreshFutures.add(refreshFuture);
+      refreshFutures.add(layer.load());
     }
 
     // Wait for all the building scene layers to load.
     await Future.wait(refreshFutures);
 
-    return refreshedLayerStates;
+    // Sort the states by building scene layer name.
+    buildingSceneLayers.sort(
+      (layer1, layer2) => layer1.name.compareTo(layer2.name),
+    );
+
+    // Load up the state map.
+    for (final layer in buildingSceneLayers) {
+      _buildingSceneLayerStates[layer.id] =
+          _BuildingSceneLayerState.withBuildingSceneLayer(layer);
+    }
   }
 }
