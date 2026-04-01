@@ -73,6 +73,7 @@ class _ExampleBuildingExplorerState extends State<ExampleBuildingExplorer> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(title: const Text('Building Explorer')),
       body: SafeArea(
         top: false,
         left: false,
