@@ -88,13 +88,9 @@ class _ConstructionPhaseSelectorState
         statistics[_CONSTRUCTION_PHASE_ATTRIBUTES]!.mostFrequentValues,
       );
 
-      // Check that the construction phases are integers
-      for (final phase in phaseList) {
-        if (int.tryParse(phase) == null) {
-          // Found a text construction phase. Clear the list and end the loop.
-          phaseList.clear();
-          break;
-        }
+      if (!phaseList.every((phase) => int.tryParse(phase) != null)) {
+        // Found a non-integer construction phase. Clear the list and end the loop.
+        phaseList.clear();
       }
 
       phaseList.sort((a, b) {
