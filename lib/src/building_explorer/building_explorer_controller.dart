@@ -128,7 +128,7 @@ class BuildingExplorerController {
   }
 
   // Recursive function to find the BuildingSceneLayers in the scene.
-  List<BuildingSceneLayer> _extractBuildingSceneLayers(List<Layer> layers) {
+  List<BuildingSceneLayer> _extractBuildingSceneLayers(Iterable<Layer> layers) {
     final buildingSceneLayers = <BuildingSceneLayer>[];
     for (final layer in layers) {
       if (layer is BuildingSceneLayer) {
@@ -136,7 +136,7 @@ class BuildingExplorerController {
       } else if (layer is GroupLayer) {
         buildingSceneLayers.addAll(
           _extractBuildingSceneLayers(
-            layer.subLayerContents.whereType<Layer>().toList(),
+            layer.subLayerContents.whereType<Layer>(),
           ),
         );
       }
