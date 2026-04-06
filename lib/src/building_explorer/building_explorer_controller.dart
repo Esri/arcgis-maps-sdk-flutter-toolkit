@@ -68,9 +68,9 @@ class BuildingExplorerController {
     }
 
     // Get the BuildingSceneLayers in the scene.
-    final buildingSceneLayers = scene.operationalLayers
-        .whereType<BuildingSceneLayer>()
-        .toList();
+    final buildingSceneLayers = _extractBuildingSceneLayers(
+      scene.operationalLayers,
+    );
 
     // If none, return.
     if (buildingSceneLayers.isEmpty) return;
@@ -121,5 +121,21 @@ class BuildingExplorerController {
     // sorted order.
     _buildingSceneLayerStates.clear();
     _buildingSceneLayerStates.addAll(tempStates);
+  }
+
+  // Recursive function to find the BuildingSceneLayers in the scene.
+  List<BuildingSceneLayer> _extractBuildingSceneLayers(List<Layer> layers) {
+    final buildingSceneLayers = <BuildingSceneLayer>[];
+    for (final layer in layers) {
+      if (layer is BuildingSceneLayer) {
+        buildingSceneLayers.add(layer);
+      } else if (layer is GroupLayer) {
+        buildingSceneLayers.addAll(
+          _extractBuildingSceneLayers(layer.subLayerContents as List<Layer>),
+        );
+      }
+    }
+
+    return buildingSceneLayers;
   }
 }
