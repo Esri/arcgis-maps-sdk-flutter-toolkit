@@ -72,8 +72,12 @@ class BuildingExplorerController {
       scene.operationalLayers,
     );
 
-    // If none, return.
-    if (buildingSceneLayers.isEmpty) return;
+    // If none, clear _selectedLayer and _buildingSceneLayerStates then return.
+    if (buildingSceneLayers.isEmpty) {
+      _selectedLayer = null;
+      _buildingSceneLayerStates.clear();
+      return;
+    }
 
     // Refresh the state records for the building scene layers.
     await _refreshBuildingSceneLayerStates(buildingSceneLayers);
