@@ -131,7 +131,9 @@ class BuildingExplorerController {
         buildingSceneLayers.add(layer);
       } else if (layer is GroupLayer) {
         buildingSceneLayers.addAll(
-          _extractBuildingSceneLayers(layer.subLayerContents as List<Layer>),
+          _extractBuildingSceneLayers(
+            layer.subLayerContents.whereType<Layer>().toList(),
+          ),
         );
       }
     }
