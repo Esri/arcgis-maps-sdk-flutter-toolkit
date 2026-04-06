@@ -18,7 +18,9 @@ part of '../../../arcgis_maps_toolkit.dart';
 
 /// Widget to list and select building's construction phases. Selecting a phase
 /// will apply a filter to the building layer hiding all features that were not
-/// present during that construction phase.
+/// present during that construction phase. The widget expects the construction
+/// phases can be parsed to integer values and will not appear if there are any
+/// non-integer phase values.
 class _ConstructionPhaseSelector extends StatefulWidget {
   const _ConstructionPhaseSelector({required this.buildingSceneLayerState});
 
@@ -85,6 +87,12 @@ class _ConstructionPhaseSelectorState
       phaseList.addAll(
         statistics[_CONSTRUCTION_PHASE_ATTRIBUTES]!.mostFrequentValues,
       );
+
+      if (!phaseList.every((phase) => int.tryParse(phase) != null)) {
+        // Found a non-integer construction phase. Clear the list and end the loop.
+        phaseList.clear();
+      }
+
       phaseList.sort((a, b) {
         final intA = int.tryParse(a) ?? 0;
         final intB = int.tryParse(b) ?? 0;
