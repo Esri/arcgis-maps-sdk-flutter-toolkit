@@ -168,6 +168,7 @@ linter:
     unnecessary_null_in_if_null_operators: true
     unnecessary_nullable_for_final_variable_declarations: true
     unnecessary_overrides: true
+    unnecessary_underscores: true
     unnecessary_parenthesis: true
     unnecessary_raw_strings: true
     unnecessary_statements: true
