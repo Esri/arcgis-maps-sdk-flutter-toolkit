@@ -38,18 +38,20 @@ class _PopupBarChart extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        Navigator.of(context).push(
-          MaterialPageRoute<void>(
-            builder: (context) => _BarChartDetailView(
-              popupMedia: popupMedia,
-              // Bar Chart should be interactive in detail view.
-              barData: barData(interactive: true),
-              onClose: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ),
-        );
+        Navigator.of(context)
+            .push(
+              MaterialPageRoute<void>(
+                builder: (context) => _BarChartDetailView(
+                  popupMedia: popupMedia,
+                  // Bar Chart should be interactive in detail view.
+                  barData: barData(interactive: true),
+                  onClose: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ),
+            )
+            .ignore();
       },
       child: Stack(
         children: [

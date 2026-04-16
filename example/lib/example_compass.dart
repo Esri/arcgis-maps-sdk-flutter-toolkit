@@ -81,7 +81,7 @@ enum CompassExample {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (_) => constructor()),
-          );
+          ).ignore();
         },
       ),
     );

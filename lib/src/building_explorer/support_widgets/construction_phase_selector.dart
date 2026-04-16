@@ -40,7 +40,7 @@ class _ConstructionPhaseSelectorState
     super.initState();
 
     // Get the state for the new BuidlingSceneLayer
-    _initPhaseList();
+    _initPhaseList().ignore();
   }
 
   @override
@@ -51,7 +51,7 @@ class _ConstructionPhaseSelectorState
     _constructionPhaseList = [];
 
     // Get the state for the new BuidlingSceneLayer
-    _initPhaseList();
+    _initPhaseList().ignore();
   }
 
   @override

@@ -38,19 +38,21 @@ class _PopupPieChart extends StatelessWidget {
         : MediaQuery.sizeOf(context).height / 3;
     return GestureDetector(
       onTap: () {
-        Navigator.of(context).push(
-          MaterialPageRoute<void>(
-            builder: (context) => _PieChartDetailView(
-              popupMedia: popupMedia,
-              chartData: chartData,
-              // Pie Charts have default size of 40. Define radius that fits within screen depending on orientation.
-              pieData: pieData(radius: radius),
-              onClose: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ),
-        );
+        Navigator.of(context)
+            .push(
+              MaterialPageRoute<void>(
+                builder: (context) => _PieChartDetailView(
+                  popupMedia: popupMedia,
+                  chartData: chartData,
+                  // Pie Charts have default size of 40. Define radius that fits within screen depending on orientation.
+                  pieData: pieData(radius: radius),
+                  onClose: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ),
+            )
+            .ignore();
       },
       child: Stack(
         children: [

@@ -36,7 +36,7 @@ class _BuildingLevelSelectorState extends State<_BuildingLevelSelector> {
     super.initState();
 
     // Get the state for the new BuidlingSceneLayer
-    _initLevelList();
+    _initLevelList().ignore();
 
     // Check if the selected level is still valid for the current state of the
     // building layer.
@@ -51,7 +51,7 @@ class _BuildingLevelSelectorState extends State<_BuildingLevelSelector> {
     _levelList = <String>[];
 
     // Get the state for the new BuidlingSceneLayer
-    _initLevelList();
+    _initLevelList().ignore();
 
     // Check if the selected level is still valid for the current state of the
     // building layer.
