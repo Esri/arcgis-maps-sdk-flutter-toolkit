@@ -70,7 +70,10 @@ final class _NotifyingList<E> extends ChangeNotifier with ListMixin<E> {
   void add(E value) => _mutate(() => _inner.add(value));
 
   @override
-  void addAll(Iterable<E> iterable) => _mutate(() => _inner.addAll(iterable));
+  void addAll(Iterable<E> iterable) {
+    if (iterable.isEmpty) return;
+    _mutate(() => _inner.addAll(iterable));
+  }
 
   @override
   void clear() {
