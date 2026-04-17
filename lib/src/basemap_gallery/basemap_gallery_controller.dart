@@ -68,8 +68,8 @@ final class BasemapGalleryController {
     BasemapGalleryViewStyle.automatic,
   );
 
-    // The list of basemap items in the gallery.
-    final _BasemapGalleryNotifyingList<BasemapGalleryItem> _gallery =
+  // The list of basemap items in the gallery.
+  final _BasemapGalleryNotifyingList<BasemapGalleryItem> _gallery =
       _BasemapGalleryNotifyingList<BasemapGalleryItem>();
   final _isFetchingBasemapsNotifier = ValueNotifier<bool>(false);
   final _fetchBasemapsErrorNotifier = ValueNotifier<Object?>(null);
@@ -237,9 +237,6 @@ final class BasemapGalleryController {
 }
 
 /// BasemapGallery-specific list that notifies listeners when it changes.
-///
-/// This is intentionally scoped to BasemapGallery to avoid becoming a general
-/// toolkit utility.
 final class _BasemapGalleryNotifyingList<E> extends ChangeNotifier
     with ListMixin<E> {
   final List<E> _inner = <E>[];
@@ -351,12 +348,7 @@ final class _BasemapGalleryNotifyingList<E> extends ChangeNotifier
   }
 
   @override
-  void setRange(
-    int start,
-    int end,
-    Iterable<E> iterable, [
-    int skipCount = 0,
-  ]) {
+  void setRange(int start, int end, Iterable<E> iterable, [int skipCount = 0]) {
     if (start == end) {
       _inner.setRange(start, end, iterable, skipCount);
       return;
@@ -366,7 +358,9 @@ final class _BasemapGalleryNotifyingList<E> extends ChangeNotifier
 
   @override
   void replaceRange(int start, int end, Iterable<E> replacements) {
-    final items = replacements is List<E> ? replacements : replacements.toList();
+    final items = replacements is List<E>
+        ? replacements
+        : replacements.toList();
     if (start == end && items.isEmpty) {
       _inner.replaceRange(start, end, items);
       return;
