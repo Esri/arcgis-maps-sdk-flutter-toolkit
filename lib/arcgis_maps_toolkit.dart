@@ -89,5 +89,6 @@ part 'src/basemap_gallery/basemap_gallery_controller.dart';
 part 'src/basemap_gallery/basemap_gallery_view_style.dart';
 part 'src/basemap_gallery/basemap_gallery_item.dart';
 part 'src/basemap_gallery/utils/image_loadable.dart';
+part 'src/basemap_gallery/utils/notifying_list.dart';
 
 part 'src/template_widget.dart';
