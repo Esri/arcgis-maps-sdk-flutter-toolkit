@@ -18,12 +18,6 @@ part of '../../../arcgis_maps_toolkit.dart';
 
 /// A regular, growable `List` that notifies listeners when it changes.
 ///
-/// This exists so [BasemapGalleryController.gallery] can match the design
-/// requirement:
-/// - You can call `controller.gallery.add(...)` / `remove(...)` directly.
-/// - The [BasemapGallery] UI still updates, because this list is a
-///   [Listenable].
-///
 /// If several mutations happen in quick succession, notifications are queued
 /// to a microtask so they are usually delivered once per event-loop tick
 /// instead of once per operation.

@@ -68,9 +68,7 @@ final class BasemapGalleryController {
     BasemapGalleryViewStyle.automatic,
   );
 
-  // `gallery` is intentionally exposed as a mutable list (design: MutableArray).
-  // The list instance is stable for the lifetime of the controller, while
-  // mutations (add/remove/clear/...) notify listeners so the UI updates.
+  // The list of basemap items in the gallery.
   final _NotifyingList<BasemapGalleryItem> _gallery =
       _NotifyingList<BasemapGalleryItem>();
   final _isFetchingBasemapsNotifier = ValueNotifier<bool>(false);
