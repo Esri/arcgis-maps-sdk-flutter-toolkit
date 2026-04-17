@@ -10,12 +10,12 @@ topics:
 publish_to: none
 
 environment:
-  sdk: '>=3.10.4 <4.0.0'
-  flutter: '>=3.38.5'
+  sdk: '>=3.11.1 <4.0.0'
+  flutter: '>=3.41.3'
 
 dependencies:
   arcgis_maps: ^300.0.0
-  file_picker: ^10.2.0
+  file_picker: ^10.3.10
   fl_chart: ^1.1.0
   flutter:
     sdk: flutter
@@ -27,7 +27,7 @@ dependencies:
   webview_flutter: ^4.10.0
 
 dev_dependencies:
-  flutter_lints: ^5.0.0
+  flutter_lints: ^6.0.0
   flutter_test:
     sdk: flutter
 

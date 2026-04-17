@@ -146,6 +146,7 @@ class _ExampleAuthenticatorState extends State<ExampleAuthenticator> {
     _mapViewController.arcGISMap = _emptyMap;
 
     await Authenticator.revokeOAuthTokens();
+    await Authenticator.invalidateIapCredentials();
     await Authenticator.clearCredentials();
 
     setState(() => _mapState = _MapState.unloaded);
