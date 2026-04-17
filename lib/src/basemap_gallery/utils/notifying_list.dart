@@ -17,26 +17,14 @@
 part of '../../../arcgis_maps_toolkit.dart';
 
 /// A regular, growable `List` that notifies listeners when it changes.
-///
-/// If several mutations happen in quick succession, notifications are queued
-/// to a microtask so they are usually delivered once per event-loop tick
-/// instead of once per operation.
 final class _NotifyingList<E> extends ChangeNotifier with ListMixin<E> {
   final List<E> _inner = <E>[];
 
-  bool _notifyScheduled = false;
   bool _disposed = false;
 
   void _changed() {
     if (_disposed) return;
-    if (_notifyScheduled) return;
-
-    _notifyScheduled = true;
-    scheduleMicrotask(() {
-      _notifyScheduled = false;
-      if (_disposed) return;
-      notifyListeners();
-    });
+    notifyListeners();
   }
 
   void _mutate(void Function() fn) {
