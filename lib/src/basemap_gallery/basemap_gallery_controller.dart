@@ -69,8 +69,7 @@ final class BasemapGalleryController {
   );
 
   // The list of basemap items in the gallery.
-  final _BasemapGalleryNotifyingList<BasemapGalleryItem> _gallery =
-      _BasemapGalleryNotifyingList<BasemapGalleryItem>();
+  final _gallery = _BasemapGalleryNotifyingList<BasemapGalleryItem>();
   final _isFetchingBasemapsNotifier = ValueNotifier<bool>(false);
   final _fetchBasemapsErrorNotifier = ValueNotifier<Object?>(null);
 
