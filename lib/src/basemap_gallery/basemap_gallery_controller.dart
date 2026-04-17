@@ -275,15 +275,21 @@ final class _BasemapGalleryNotifyingList<E> extends ChangeNotifier
 
   void _mutate(void Function() fn) {
     _batch<void>(() {
-      _notifyPending = true;
-      fn();
+      try {
+        fn();
+      } finally {
+        _notifyPending = true;
+      }
     });
   }
 
   T _mutateReturn<T>(T Function() fn) {
     return _batch<T>(() {
-      _notifyPending = true;
-      return fn();
+      try {
+        return fn();
+      } finally {
+        _notifyPending = true;
+      }
     });
   }
 
