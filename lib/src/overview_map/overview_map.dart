@@ -16,23 +16,23 @@
 
 part of '../../arcgis_maps_toolkit.dart';
 
-/// [OverviewMap] is a small, secondary map view (sometimes called an “inset map”), superimposed on an existing [ArcGISMapView] or [ArcGISSceneView], which shows a representation of the current visible area (for an [ArcGISMapView]) or viewpoint (for an [ArcGISSceneView]).
+/// [OverviewMap] is a small, secondary map view (sometimes called an “inset map”), superimposed on an existing [ArcGISMapView], [ArcGISSceneView], or [ArcGISLocalSceneView], which shows a representation of the current visible area (for an [ArcGISMapView]) or viewpoint (for an [ArcGISSceneView] or [ArcGISLocalSceneView]).
 ///
 /// # Overview
 /// For an [OverviewMap] on an [ArcGISMapView], the map view's `visibleArea` property will be represented in the overview map as a polygon, which will rotate as the map view rotates.
-/// For an [OverviewMap] on an [ArcGISSceneView], the center point of the scene view's `currentViewpoint` property will be represented in the overview map by a point.
+/// For an [OverviewMap] on an [ArcGISSceneView] or [ArcGISLocalSceneView], the center point of the scene view's `currentViewpoint` property will be represented in the overview map by a point.
 ///
 /// ## Features
-/// * Displays a representation of the current visible area or viewpoint for a connected map view or scene view, respectively.
+/// * Displays a representation of the current visible area or viewpoint for the connected map view, scene view, or local scene view.
 /// * Supports a configurable scaling factor for setting the overview map’s zoom level relative to the connected view.
-/// * Supports a configurable symbol for visualizing the current visible area or viewpoint representation (a `SimpleFillSymbol` for a connected map view; a `SimpleMarkerSymbol` for a connected scene view).
+/// * Supports a configurable symbol for visualizing the current visible area or viewpoint representation (a `SimpleFillSymbol` for a connected map view; a `SimpleMarkerSymbol` for a connected scene view or local scene view).
 /// * Supports using a custom map in the overview map display.
 ///
 /// Note: [OverviewMap] uses metered ArcGIS Location Platform basemaps by default, so you will need to implement authentication using a supported method. See [Security and authentication](https://developers.arcgis.com/documentation/security-and-authentication/) documentation for more information.
 ///
 /// ## Usage
-/// An [OverviewMap] is generally placed in a [Stack] on top of an [ArcGISMapView] or [ArcGISSceneView].
-/// The overview map must be provided the same [ArcGISMapViewController] or [ArcGISSceneViewController] as the corresponding map view or scene view.
+/// An [OverviewMap] is generally placed in a [Stack] on top of an [ArcGISMapView], [ArcGISSceneView], or [ArcGISLocalSceneView].
+/// The overview map must be provided the same [ArcGISMapViewController], [ArcGISSceneViewController], or [ArcGISLocalSceneViewController] as the corresponding map view, scene view, or local scene view.
 /// ```dart
 ///  @override
 ///  Widget build(BuildContext context) {
@@ -40,15 +40,15 @@ part of '../../arcgis_maps_toolkit.dart';
 ///      body: Stack(
 ///        children: [
 ///          ArcGISMapView(controllerProvider: controllerProvider),
-///          OverviewMap.withMapView(controllerProvider: controllerProvider),
+///          OverviewMap(controllerProvider: controllerProvider),
 ///        ],
 ///      ),
 ///    );
 ///  }
 /// ```
 class OverviewMap extends StatefulWidget {
-  /// Private constructor for use by the factory constructors.
-  const OverviewMap._internal({
+  /// Create an OverviewMap widget.
+  const OverviewMap({
     required this.controllerProvider,
     super.key,
     this.alignment = Alignment.topRight,
@@ -60,6 +60,7 @@ class OverviewMap extends StatefulWidget {
   });
 
   /// Create an OverviewMap widget with [ArcGISMapViewController].
+  @Deprecated('Use OverviewMap.new() instead.')
   factory OverviewMap.withMapView({
     required ArcGISMapViewController Function() controllerProvider,
     Key? key,
@@ -70,7 +71,7 @@ class OverviewMap extends StatefulWidget {
     ArcGISMap? map,
     Widget Function(BuildContext, Widget)? containerBuilder,
   }) {
-    return OverviewMap._internal(
+    return OverviewMap(
       controllerProvider: controllerProvider,
       key: key,
       alignment: alignment,
@@ -82,7 +83,8 @@ class OverviewMap extends StatefulWidget {
     );
   }
 
-  /// Create an OverviewMap widget with [ArcGISSceneViewController] .
+  /// Create an OverviewMap widget with [ArcGISSceneViewController].
+  @Deprecated('Use OverviewMap.new() instead.')
   factory OverviewMap.withSceneView({
     required ArcGISSceneViewController Function() controllerProvider,
     Key? key,
@@ -93,7 +95,7 @@ class OverviewMap extends StatefulWidget {
     ArcGISMap? map,
     Widget Function(BuildContext, Widget)? containerBuilder,
   }) {
-    return OverviewMap._internal(
+    return OverviewMap(
       controllerProvider: controllerProvider,
       key: key,
       alignment: alignment,
@@ -106,11 +108,11 @@ class OverviewMap extends StatefulWidget {
   }
 
   /// A function that provides the [GeoViewController] of the target map. This should return the same controller that is provided to the
-  /// corresponding [ArcGISMapView] or [ArcGISSceneView].
+  /// corresponding [ArcGISMapView], [ArcGISSceneView], or [ArcGISLocalSceneView].
   final GeoViewController Function() controllerProvider;
 
   /// The alignment of the overview map within the parent widget. Defaults to [Alignment.topRight]. The overview map should generally be placed
-  /// in a [Stack] on top of the corresponding [ArcGISMapView] or [ArcGISSceneView].
+  /// in a [Stack] on top of the corresponding [ArcGISMapView], [ArcGISSceneView], or [ArcGISLocalSceneView].
   final Alignment alignment;
 
   /// The padding around the overview map. Defaults to 10 pixels on all sides.
@@ -121,7 +123,7 @@ class OverviewMap extends StatefulWidget {
 
   /// The symbol used to represent the current viewpoint.
   /// - For [ArcGISMapView]: a [SimpleFillSymbol] is used to draw the visible area.
-  /// - For [ArcGISSceneView]: a [SimpleMarkerSymbol] is used to draw the current viewpoint's center.
+  /// - For [ArcGISSceneView] or [ArcGISLocalSceneView]: a [SimpleMarkerSymbol] is used to draw the current viewpoint's center.
   final ArcGISSymbol? symbol;
 
   /// The map to use as the overview map. Defaults to a map with the ArcGIS Topographic basemap style.
@@ -212,12 +214,12 @@ class _OverviewMapState extends State<OverviewMap> {
     Geometry? geometry;
     Geometry? sceneGeometry;
 
-    if (_controller is ArcGISMapViewController) {
-      geometry = (_controller as ArcGISMapViewController).visibleArea;
-      sceneGeometry = null;
-    } else if (_controller is ArcGISSceneViewController) {
-      sceneGeometry = viewpoint.targetGeometry;
-      geometry = null;
+    switch (_controller) {
+      case final ArcGISMapViewController controller:
+        geometry = controller.visibleArea;
+      case ArcGISSceneViewController():
+      case ArcGISLocalSceneViewController():
+        sceneGeometry = viewpoint.targetGeometry;
     }
 
     if (geometry != null) {
@@ -244,17 +246,19 @@ class _OverviewMapState extends State<OverviewMap> {
 
   // Returns a default symbol based on the type of GeoView.
   ArcGISSymbol _defaultSymbolFor(GeoViewController controller) {
-    if (controller is ArcGISMapViewController) {
-      return SimpleFillSymbol(
-        color: Colors.transparent,
-        outline: SimpleLineSymbol(color: Colors.red),
-      );
+    switch (controller) {
+      case ArcGISMapViewController():
+        return SimpleFillSymbol(
+          color: Colors.transparent,
+          outline: SimpleLineSymbol(color: Colors.red),
+        );
+      default:
+        return SimpleMarkerSymbol(
+          style: SimpleMarkerSymbolStyle.cross,
+          color: Colors.red,
+          size: 20,
+        );
     }
-    return SimpleMarkerSymbol(
-      style: SimpleMarkerSymbolStyle.cross,
-      color: Colors.red,
-      size: 20,
-    );
   }
 
   Widget _defaultContainerBuilder(BuildContext context, Widget child) {

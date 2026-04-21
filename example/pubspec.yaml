@@ -4,17 +4,17 @@ publish_to: 'none'
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.8.1 <4.0.0'
+  sdk: '>=3.11.1 <4.0.0'
 
 dependencies:
-  arcgis_maps: ^200.8.0
+  arcgis_maps: ^300.0.0
   arcgis_maps_toolkit:
     path: ../
   flutter:
     sdk: flutter
 
 dev_dependencies:
-  flutter_lints: ^5.0.0
+  flutter_lints: ^6.0.0
   flutter_test:
     sdk: flutter
 

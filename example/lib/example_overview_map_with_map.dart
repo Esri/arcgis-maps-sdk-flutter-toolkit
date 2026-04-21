@@ -57,7 +57,7 @@ class _ExampleOverviewMapWithMapState extends State<ExampleOverviewMapWithMap> {
           ),
           // Create an overview map and display on top of the map view in a stack.
           // Pass the overview map the corresponding map view controller.
-          OverviewMap.withMapView(controllerProvider: () => _mapViewController),
+          OverviewMap(controllerProvider: () => _mapViewController),
         ],
       ),
     );

@@ -5,6 +5,7 @@ ArcGIS Maps SDK for Flutter Toolkit contains ready-made widgets to simplify the 
 ## Toolkit components
 
 * Authenticator: A widget that handles authentication challenges. It will display a user interface when network and ArcGIS authentication challenges occur.
+* Building Explorer: A widget that enables a user to explore a building scene layer building model in a local scene view.
 * Compass: A widget that visualizes the current rotation of the map or scene and allows the user to reset the rotation to north by tapping on it.
 * OverviewMap: A small inset map displaying a representation of the current viewpoint of the target map or scene.
 * PopupView: A widget that will display a pop-up for an individual feature. This includes showing the feature's title, attributes, custom description, media, and attachments.
@@ -41,6 +42,7 @@ API reference for each of the toolkit components can be found via the ArcGIS Map
 
 # Additional resources
 
+* View ArcGIS Maps SDK for Flutter Toolkit on: [pub.dev](https://pub.dev/packages/arcgis_maps_toolkit) | [Github](https://github.com/ArcGIS/arcgis-maps-sdk-flutter-toolkit)
 * New to ArcGIS? Explore our documentation: [Guide](https://developers.arcgis.com/flutter) | [API Reference](https://links.esri.com/flutter-api-ref)
 * Got a question? Ask the community on our [forum](https://links.esri.com/flutter-community).
 

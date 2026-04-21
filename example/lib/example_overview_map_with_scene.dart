@@ -58,7 +58,7 @@ class _ExampleOverviewMapWithSceneState
           ),
           // Create an overview map and display on top of the scene view in a stack.
           // Pass the overview map the corresponding scene view controller.
-          OverviewMap.withSceneView(
+          OverviewMap(
             controllerProvider: () => _sceneViewController,
             map: ArcGISMap.withBasemapStyle(BasemapStyle.arcGISImageryStandard),
           ),

@@ -41,7 +41,7 @@ class _ImageMediaViewState extends State<_ImageMediaView> {
         onTap: () {
           if (isShowingDetailReady) {
             Navigator.of(context).push(
-              MaterialPageRoute(
+              MaterialPageRoute<void>(
                 builder: (context) => _MediaDetailView(
                   popupMedia: widget.popupMedia,
                   onClose: () {

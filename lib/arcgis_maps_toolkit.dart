@@ -24,6 +24,7 @@
 library;
 
 import 'dart:async';
+import 'dart:collection';
 import 'dart:io';
 import 'dart:math' as math;
 import 'dart:typed_data';
@@ -45,6 +46,18 @@ part 'src/authenticator/authenticator_certificate_required.dart';
 part 'src/authenticator/authenticator_certificate_password.dart';
 part 'src/authenticator/authenticator_login.dart';
 part 'src/authenticator/authenticator_trust.dart';
+// Building Explorer Widget
+part 'src/building_explorer/support_widgets/building_category_list.dart';
+part 'src/building_explorer/support_widgets/building_category_selector.dart';
+part 'src/building_explorer/building_explorer.dart';
+part 'src/building_explorer/building_explorer_controller.dart';
+part 'src/building_explorer/support_widgets/building_level_selector.dart';
+part 'src/building_explorer/support_widgets/building_scene_layer_selector.dart';
+part 'src/building_explorer/building_scene_layer_state.dart';
+part 'src/building_explorer/support_widgets/construction_phase_selector.dart';
+part 'src/building_explorer/support_widgets/layer_visibility_toggle.dart';
+part 'src/building_explorer/support_widgets/overview_model_toggle.dart';
+part 'src/building_explorer/support_widgets/zoom_to_building_control.dart';
 // Compass Widget
 part 'src/compass/compass.dart';
 part 'src/compass/compass_needle_painter.dart';
@@ -56,6 +69,12 @@ part 'src/popups/attachments_popup_element_view.dart';
 part 'src/popups/fields_popup_element_view.dart';
 part 'src/popups/media_popup_element_view.dart';
 part 'src/popups/text_popup_element_view.dart';
+part 'src/popups/utility_associations_popup_element_view.dart';
+part 'src/popups/popup_views/utility_associations_filter_result.dart';
+part 'src/popups/popup_views/utility_association_group_result.dart';
+part 'src/popups/popup_views/utility_association_header.dart';
+part 'src/popups/popup_views/utility_association_result.dart';
+part 'src/popups/popup_views/utility_association_result_selector.dart';
 part 'src/popups/popup_views/bar_chart.dart';
 part 'src/popups/popup_views/line_chart.dart';
 part 'src/popups/popup_views/pie_chart.dart';

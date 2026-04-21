@@ -31,6 +31,12 @@ ThemeData _popupViewThemeData = ThemeData(
     // - used as color of text links in fields pop-up element.
     // error:
     // - used as color for error messages
+
+    // onSurfaceVariant:
+    // - used by the "edit summary" row:
+    //   • tint color of the history icon
+    //   • color applied to the edit summary text (bodySmall via copyWith)
+    //   To change both at once, override colorScheme.onSurfaceVariant.
   ),
   textTheme: const TextTheme(
     // Used as text style for the main title of the popup.
@@ -69,6 +75,9 @@ ThemeData _popupViewThemeData = ThemeData(
       fontWeight: FontWeight.w400,
       color: Colors.grey,
     ),
+    // Used as the base style for the "edit summary" footer text.
+    // Note: PopupView applies colorScheme.onSurfaceVariant to this text in code,
+    bodySmall: TextStyle(fontSize: 12, fontWeight: FontWeight.w400),
   ),
   // Used as theme for cards that wrap each pop-up element.
   cardTheme: const CardThemeData(color: Colors.white),
@@ -80,6 +89,7 @@ ThemeData _popupViewThemeData = ThemeData(
     backgroundColor: Colors.white,
     collapsedBackgroundColor: Colors.white,
   ),
+  listTileTheme: const ListTileThemeData(iconColor: Colors.grey),
   // Used by divider widgets:
   // - below main pop-up title.
   // - between fields in fields section.
@@ -96,4 +106,14 @@ ThemeData _popupViewThemeData = ThemeData(
   iconTheme: const IconThemeData(color: Colors.grey),
   // Used by fullscreen dialog e.g. when an image or chart is tapped.
   appBarTheme: const AppBarTheme(),
+  inputDecorationTheme: const InputDecorationThemeData(
+    labelStyle: TextStyle(color: Colors.black),
+    focusedBorder: OutlineInputBorder(),
+    border: OutlineInputBorder(),
+  ),
+  textSelectionTheme: TextSelectionThemeData(
+    selectionColor: Colors.blue[200],
+    cursorColor: Colors.blue,
+    selectionHandleColor: Colors.blue,
+  ),
 );
