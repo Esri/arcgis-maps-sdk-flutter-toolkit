@@ -75,7 +75,7 @@ enum OverviewMapExample {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (_) => constructor()),
-          );
+          ).ignore();
         },
       ),
     );

@@ -202,7 +202,7 @@ class _AuthenticatorState extends State<Authenticator>
             .firstOrNull;
 
         if (configuration != null) {
-          _iapLogin(challenge, configuration);
+          _iapLogin(challenge, configuration).ignore();
         } else {
           challenge.continueAndFail();
         }
@@ -217,7 +217,7 @@ class _AuthenticatorState extends State<Authenticator>
             .firstOrNull;
 
         if (configuration != null) {
-          _oauthLogin(challenge, configuration);
+          _oauthLogin(challenge, configuration).ignore();
         } else {
           _tokenLogin(challenge);
         }
@@ -281,7 +281,7 @@ class _AuthenticatorState extends State<Authenticator>
       context: context,
       builder: (context) =>
           _AuthenticatorLogin(challenge: _ArcGISLoginChallenge(challenge)),
-    );
+    ).ignore();
   }
 
   @override

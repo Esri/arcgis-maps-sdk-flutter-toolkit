@@ -40,16 +40,18 @@ class _ImageMediaViewState extends State<_ImageMediaView> {
       return GestureDetector(
         onTap: () {
           if (isShowingDetailReady) {
-            Navigator.of(context).push(
-              MaterialPageRoute<void>(
-                builder: (context) => _MediaDetailView(
-                  popupMedia: widget.popupMedia,
-                  onClose: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ),
-            );
+            Navigator.of(context)
+                .push(
+                  MaterialPageRoute<void>(
+                    builder: (context) => _MediaDetailView(
+                      popupMedia: widget.popupMedia,
+                      onClose: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ),
+                )
+                .ignore();
           }
         },
         child: Stack(
@@ -229,7 +231,7 @@ class _MediaDetailView extends StatelessWidget {
                           child: _IndicatorDot(
                             size: 16,
                             duration: Duration(
-                              milliseconds: (imageRefreshInterval / 2).toInt(),
+                              milliseconds: imageRefreshInterval ~/ 2,
                             ),
                           ),
                         ),
@@ -279,7 +281,7 @@ class _IndicatorDotState extends State<_IndicatorDot>
   void initState() {
     super.initState();
     _controller = AnimationController(vsync: this, duration: widget.duration)
-      ..repeat(reverse: true);
+      ..repeat(reverse: true).ignore();
   }
 
   @override

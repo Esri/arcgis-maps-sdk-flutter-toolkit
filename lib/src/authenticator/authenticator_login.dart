@@ -62,9 +62,9 @@ class _NetworkLoginChallenge extends _LoginChallenge {
   @override
   String? get realm {
     switch (challenge) {
-      case BasicAuthenticationChallenge(realm: final realm):
+      case BasicAuthenticationChallenge(:final realm):
         return realm;
-      case DigestAuthenticationChallenge(realm: final realm):
+      case DigestAuthenticationChallenge(:final realm):
         return realm;
       default:
         return null;
@@ -206,9 +206,9 @@ class _AuthenticatorLoginState extends State<_AuthenticatorLogin> {
 
     // Attempt to log in with the provided username and password, using the appropriate type.
     switch (widget.challenge) {
-      case _ArcGISLoginChallenge(challenge: final challenge):
+      case _ArcGISLoginChallenge(:final challenge):
         await _loginArcGIS(challenge, username, password);
-      case _NetworkLoginChallenge(challenge: final challenge):
+      case _NetworkLoginChallenge(:final challenge):
         await _loginNetwork(challenge, username, password);
     }
   }
