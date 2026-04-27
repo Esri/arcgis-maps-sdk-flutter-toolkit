@@ -14,7 +14,7 @@ environment:
   flutter: '>=3.41.3'
 
 dependencies:
-  arcgis_maps: ^300.0.0
+  arcgis_maps: ^300.1.0
   file_picker: ^10.3.10
   fl_chart: ^1.1.0
   flutter:
