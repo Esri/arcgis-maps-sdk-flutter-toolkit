@@ -94,6 +94,7 @@ final class BasemapGalleryItem {
     if (_basemap.loadStatus == LoadStatus.loaded) {
       _isBasemapLoadingNotifier.value = false;
       _recomputeDerivedFields();
+      await _loadThumbnailIfNeeded();
       return;
     }
 
@@ -103,12 +104,8 @@ final class BasemapGalleryItem {
     String? error;
     try {
       await _basemap.load();
-
-      // If we have a thumbnail (override or from the basemap's item), load it.
-      final thumb = _thumbnailNotifier.value;
-      if (thumb != null && thumb.loadStatus != LoadStatus.loaded) {
-        await thumb.load();
-      }
+      _recomputeDerivedFields();
+      await _loadThumbnailIfNeeded();
     } on ArcGISException {
       error = 'The basemap failed to load for an unknown reason.';
     }
@@ -116,6 +113,13 @@ final class BasemapGalleryItem {
     _recomputeDerivedFields();
     _loadBasemapErrorNotifier.value = error;
     _isBasemapLoadingNotifier.value = false;
+  }
+
+  Future<void> _loadThumbnailIfNeeded() async {
+    final thumbnail = _thumbnailNotifier.value;
+    if (thumbnail != null && thumbnail.loadStatus != LoadStatus.loaded) {
+      await thumbnail.load();
+    }
   }
 
   Future<void> _updateSpatialReferenceStatus(
@@ -160,12 +164,9 @@ final class BasemapGalleryItem {
     final overrideTooltip = _tooltipOverride;
     final tooltipFromItem = item?.description;
 
-    _tooltipNotifier.value =
-        (overrideTooltip != null && overrideTooltip.isNotEmpty)
+    _tooltipNotifier.value = _isValidTooltip(overrideTooltip)
         ? overrideTooltip
-        : (tooltipFromItem != null && tooltipFromItem.isNotEmpty
-              ? tooltipFromItem
-              : null);
+        : (_isValidTooltip(tooltipFromItem) ? tooltipFromItem : null);
 
     _thumbnailNotifier.value = _thumbnailOverride ?? item?.thumbnail;
 
@@ -181,6 +182,9 @@ final class BasemapGalleryItem {
         ? itemName
         : 'Untitled Basemap';
   }
+
+  bool _isValidTooltip(String? tooltip) =>
+      tooltip != null && tooltip.isNotEmpty;
 
   void dispose() {
     _nameNotifier.dispose();
