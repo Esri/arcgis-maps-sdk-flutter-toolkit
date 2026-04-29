@@ -126,7 +126,12 @@ class _ExampleBasemapGalleryState extends State<ExampleBasemapGallery> {
             portal: portal,
             itemId: id,
           );
-          return BasemapGalleryItem(basemap: Basemap.withItem(portalItem));
+          return BasemapGalleryItem(
+            basemap: Basemap.withItem(portalItem),
+            tooltip: id == identifiers.first
+                ? 'OpenStreetMap (Blueprint)'
+                : null,
+          );
         })
         .toList(growable: false);
   }
