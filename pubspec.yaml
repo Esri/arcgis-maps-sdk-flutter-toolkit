@@ -32,5 +32,7 @@ dev_dependencies:
     sdk: flutter
 
 flutter:
+  config:
+    enable-swift-package-manager: true
   assets:
     - assets/icons/
