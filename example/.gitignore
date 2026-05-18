@@ -11,6 +11,7 @@
 .svn/
 .swiftpm/
 Package.resolved
+ios/Flutter/ephemeral/
 migrate_working_dir/
 # IntelliJ related
 *.iml
