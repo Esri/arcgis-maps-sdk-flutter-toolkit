@@ -14,6 +14,8 @@
 // limitations under the License.
 //
 
+import 'dart:async';
+
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_toolkit/arcgis_maps_toolkit.dart';
 import 'package:flutter/material.dart';
@@ -71,6 +73,8 @@ class _ExampleBasemapGalleryState extends State<ExampleBasemapGallery> {
       geoModel: _map,
       items: galleryItems,
     )..viewStyle = BasemapGalleryViewStyle.grid;
+
+    unawaited(_setDefaultThumbnail(galleryItems.last));
 
     _selectedBasemapName.value = _controller.currentBasemap?.name ?? '';
     _controller.onCurrentBasemapChanged = (basemap) {
@@ -134,6 +138,11 @@ class _ExampleBasemapGalleryState extends State<ExampleBasemapGallery> {
           );
         })
         .toList(growable: false);
+  }
+
+  Future<void> _setDefaultThumbnail(BasemapGalleryItem item) async {
+    final thumbnail = await ArcGISImage.fromAsset('assets/basemap_default.png');
+    item.setThumbnail(image: thumbnail);
   }
 
   Future<void> _showBasemapGallerySheet() async {
