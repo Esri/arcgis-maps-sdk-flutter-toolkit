@@ -102,6 +102,7 @@ final class BasemapGalleryItem {
     // If the basemap is already loaded, just ensure derived properties are
     // consistent.
     if (_basemap.loadStatus == LoadStatus.loaded) {
+      await _loadItemThumbnailIfNeeded();
       _isBasemapLoadingNotifier.value = false;
       _recomputeDerivedFields();
       return;
@@ -113,13 +114,7 @@ final class BasemapGalleryItem {
     String? error;
     try {
       await _basemap.load();
-
-      // Ensure item-provided thumbnails are loaded before resolving image data.
-      final itemThumbnail = _basemap.item?.thumbnail;
-      if (itemThumbnail != null &&
-          itemThumbnail.loadStatus != LoadStatus.loaded) {
-        await itemThumbnail.load();
-      }
+      await _loadItemThumbnailIfNeeded();
     } on ArcGISException {
       error = 'The basemap failed to load for an unknown reason.';
     }
@@ -127,6 +122,13 @@ final class BasemapGalleryItem {
     _recomputeDerivedFields();
     _loadBasemapErrorNotifier.value = error;
     _isBasemapLoadingNotifier.value = false;
+  }
+
+  Future<void> _loadItemThumbnailIfNeeded() async {
+    final itemThumbnail = _basemap.item?.thumbnail;
+    if (itemThumbnail != null && itemThumbnail.loadStatus != LoadStatus.loaded) {
+      await itemThumbnail.load();
+    }
   }
 
   Future<void> _updateSpatialReferenceStatus(
