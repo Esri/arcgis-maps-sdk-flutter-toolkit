@@ -7,7 +7,7 @@ environment:
   sdk: '>=3.11.1 <4.0.0'
 
 dependencies:
-  arcgis_maps: ^300.0.0
+  arcgis_maps: ^300.1.0
   arcgis_maps_toolkit:
     path: ../
   flutter:
@@ -20,3 +20,5 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  config:
+    enable-swift-package-manager: true

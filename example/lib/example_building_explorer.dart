@@ -65,7 +65,7 @@ class _ExampleBuildingExplorerState extends State<ExampleBuildingExplorer> {
           .map((credential) => credential.revokeToken()),
     ).then((_) {
       ArcGISEnvironment.authenticationManager.arcGISCredentialStore.removeAll();
-    });
+    }).ignore();
 
     super.dispose();
   }

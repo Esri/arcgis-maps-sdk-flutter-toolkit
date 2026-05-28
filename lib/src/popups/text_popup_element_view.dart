@@ -38,29 +38,32 @@ class _TextPopupElementViewState extends State<_TextPopupElementView> {
 
   @override
   void initState() {
-    _controller = WebViewController()
-      ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setNavigationDelegate(
-        NavigationDelegate(
-          onNavigationRequest: (request) {
-            final url = request.url;
-            if (url.startsWith('http') || url.startsWith('https')) {
-              _launchUri(context, url);
-              return NavigationDecision.prevent;
-            }
-            return NavigationDecision.navigate; // Allow WebView to load the URL
-          },
+    _controller = WebViewController();
+    _controller.setJavaScriptMode(JavaScriptMode.unrestricted).ignore();
+    _controller
+        .setNavigationDelegate(
+          NavigationDelegate(
+            onNavigationRequest: (request) {
+              final url = request.url;
+              if (url.startsWith('http') || url.startsWith('https')) {
+                _launchUri(context, url).ignore();
+                return NavigationDecision.prevent;
+              }
+              return NavigationDecision
+                  .navigate; // Allow WebView to load the URL
+            },
 
-          onPageFinished: (url) async {
-            final calculatedHeight = await _calculateHeight();
-            if (calculatedHeight != null) {
-              setState(() => height = calculatedHeight);
-            }
-          },
-        ),
-      )
-      ..setBackgroundColor(Colors.transparent)
-      ..loadHtmlString(_buildHTML(widget.textElement.text));
+            onPageFinished: (url) async {
+              final calculatedHeight = await _calculateHeight();
+              if (calculatedHeight != null) {
+                setState(() => height = calculatedHeight);
+              }
+            },
+          ),
+        )
+        .ignore();
+    _controller.setBackgroundColor(Colors.transparent).ignore();
+    _controller.loadHtmlString(_buildHTML(widget.textElement.text)).ignore();
 
     super.initState();
   }

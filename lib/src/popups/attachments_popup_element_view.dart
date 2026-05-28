@@ -188,7 +188,7 @@ class _PopupAttachmentViewInGalleryState
     // recreated every time the widget is rebuilt.
     thumbnailFuture = getThumbnailFuture(thumbnailSize.toInt());
     // Load the file path from the cache.
-    initFilePath();
+    initFilePath().ignore();
   }
 
   /// Load the thumbnail file path from the cache.
@@ -297,7 +297,7 @@ class _PopupAttachmentViewInListState
     // recreated every time the widget is rebuilt.
     thumbnailFuture = getThumbnailFuture(thumbnailSize.toInt());
     // Load the file path from the cache.
-    initFilePath();
+    initFilePath().ignore();
   }
 
   /// Load the thumbnail file path from the cache.
@@ -381,9 +381,12 @@ class _PopupAttachmentViewInListState
               context: context,
               builder: (context) =>
                   _DetailsScreenImageDialog(filePath: filePath!),
-            );
+            ).ignore();
           } else {
-            OpenFile.open(filePath, type: widget.popupAttachment.contentType);
+            OpenFile.open(
+              filePath,
+              type: widget.popupAttachment.contentType,
+            ).ignore();
           }
         }
       },

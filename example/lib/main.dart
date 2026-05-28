@@ -93,7 +93,7 @@ enum ComponentExample {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (_) => constructor()),
-          );
+          ).ignore();
         },
       ),
     );
