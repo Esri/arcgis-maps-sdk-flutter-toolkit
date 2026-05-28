@@ -71,10 +71,11 @@ final class BasemapGalleryItem {
   /// The thumbnail to display for this gallery item.
   ArcGISImage? get thumbnail => _thumbnailNotifier.value;
 
-  /// Sets the thumbnail of this gallery item with the specified image.
+  /// Sets the thumbnail for this gallery item.
   ///
-  /// If set to `null`, the item falls back to the basemap item's thumbnail.
-
+  /// Use this to apply thumbnails that are created asynchronously, such as with
+  /// `ArcGISImage.fromAsset`. If [image] is `null`, the item falls back to the
+  /// basemap item's thumbnail.
   void setThumbnail({ArcGISImage? image}) {
     _thumbnailOverride = image;
     _recomputeDerivedFields();

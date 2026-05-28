@@ -34,10 +34,8 @@ void main() {
   runApp(const MaterialApp(home: ExampleBasemapGallery()));
 }
 
-// Toolkit BasemapGallery example:
-// - Provide a custom list of basemap portal items.
-// - Include a mismatched spatial reference basemap and an incorrect portal
-//   item type to demonstrate error handling.
+// Toolkit BasemapGallery example with custom items, a local thumbnail override,
+// and a couple of intentionally invalid entries for error handling.
 
 class ExampleBasemapGallery extends StatefulWidget {
   const ExampleBasemapGallery({super.key});
@@ -74,6 +72,7 @@ class _ExampleBasemapGalleryState extends State<ExampleBasemapGallery> {
       items: galleryItems,
     )..viewStyle = BasemapGalleryViewStyle.grid;
 
+    // Asset-backed ArcGISImage values are created asynchronously.
     unawaited(_setDefaultThumbnail(galleryItems.last));
 
     _selectedBasemapName.value = _controller.currentBasemap?.name ?? '';

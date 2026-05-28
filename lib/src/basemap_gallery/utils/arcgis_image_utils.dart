@@ -16,12 +16,11 @@
 
 part of '../../../arcgis_maps_toolkit.dart';
 
-/// Helpers for converting ArcGIS `ArcGISImage` into Flutter `ImageProvider`s.
+/// Helpers for rendering ArcGIS `ArcGISImage` values in Flutter.
 final class _ArcGISImageUtils {
   const _ArcGISImageUtils._();
 
-  /// Returns an [ImageProvider] for [thumbnail] when encoded bytes are
-  /// available.
+  /// Returns an [ImageProvider] for [thumbnail] if its image data can be read.
   static ImageProvider? imageProviderIfAvailable(ArcGISImage? thumbnail) {
     if (thumbnail == null) return null;
 
@@ -35,7 +34,7 @@ final class _ArcGISImageUtils {
     }
   }
 
-  /// Widget that renders a thumbnail image or a placeholder.
+  /// Renders a thumbnail image or a placeholder.
   static Widget thumbnailOrPlaceholder({
     required ArcGISImage? thumbnail,
     required BoxFit fit,
