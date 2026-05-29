@@ -35,7 +35,7 @@ void main() {
 }
 
 // Toolkit BasemapGallery example with custom items, a local thumbnail override,
-// and a couple of intentionally invalid entries for error handling.
+// and example, intentionally invalid entries for error handling.
 
 class ExampleBasemapGallery extends StatefulWidget {
   const ExampleBasemapGallery({super.key});
