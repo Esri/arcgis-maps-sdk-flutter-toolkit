@@ -125,6 +125,10 @@ final class BasemapGalleryItem {
   }
 
   Future<void> _loadItemThumbnailIfNeeded() async {
+    if (_thumbnailOverride != null) {
+      return;
+    }
+
     final itemThumbnail = _basemap.item?.thumbnail;
     if (itemThumbnail != null && itemThumbnail.loadStatus != LoadStatus.loaded) {
       await itemThumbnail.load();
