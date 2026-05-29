@@ -139,6 +139,7 @@ class _ExampleBasemapGalleryState extends State<ExampleBasemapGallery> {
         .toList(growable: false);
   }
 
+  // Use setThumbnail to provide a default custom thumbnail for a gallery item.
   Future<void> _setDefaultThumbnail(BasemapGalleryItem item) async {
     final thumbnail = await ArcGISImage.fromAsset('assets/basemap_default.png');
     item.setThumbnail(image: thumbnail);
