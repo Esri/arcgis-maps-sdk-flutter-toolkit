@@ -14,6 +14,8 @@
 // limitations under the License.
 //
 
+import 'dart:async';
+
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_toolkit/arcgis_maps_toolkit.dart';
 import 'package:flutter/material.dart';
@@ -32,10 +34,8 @@ void main() {
   runApp(const MaterialApp(home: ExampleBasemapGallery()));
 }
 
-// Toolkit BasemapGallery example:
-// - Provide a custom list of basemap portal items.
-// - Include a mismatched spatial reference basemap and an incorrect portal
-//   item type to demonstrate error handling.
+// Toolkit BasemapGallery example with custom items, a local thumbnail override,
+// and example, intentionally invalid entries for error handling.
 
 class ExampleBasemapGallery extends StatefulWidget {
   const ExampleBasemapGallery({super.key});
@@ -71,6 +71,9 @@ class _ExampleBasemapGalleryState extends State<ExampleBasemapGallery> {
       geoModel: _map,
       items: galleryItems,
     )..viewStyle = BasemapGalleryViewStyle.grid;
+
+    // Asset-backed ArcGISImage values are created asynchronously.
+    unawaited(_setDefaultThumbnail(galleryItems.last));
 
     _selectedBasemapName.value = _controller.currentBasemap?.name ?? '';
     _controller.onCurrentBasemapChanged = (basemap) {
@@ -134,6 +137,12 @@ class _ExampleBasemapGalleryState extends State<ExampleBasemapGallery> {
           );
         })
         .toList(growable: false);
+  }
+
+  // Use setThumbnail to provide a default custom thumbnail for a gallery item.
+  Future<void> _setDefaultThumbnail(BasemapGalleryItem item) async {
+    final thumbnail = await ArcGISImage.fromAsset('assets/basemap_default.png');
+    item.setThumbnail(image: thumbnail);
   }
 
   Future<void> _showBasemapGallerySheet() async {

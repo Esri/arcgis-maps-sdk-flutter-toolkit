@@ -16,30 +16,16 @@
 
 part of '../../../arcgis_maps_toolkit.dart';
 
-/// Helpers for converting ArcGIS `LoadableImage` into Flutter `ImageProvider`s.
-///
-/// This utility does not trigger network activity on its own. If the
-/// `LoadableImage` is not already loaded, this returns `null`.
-final class _LoadableImageUtils {
-  const _LoadableImageUtils._();
+/// Helpers for rendering ArcGIS `ArcGISImage` values in Flutter.
+final class _ArcGISImageUtils {
+  const _ArcGISImageUtils._();
 
-  /// Returns an [ImageProvider] if [loadableImage] is already loaded.
-  ///
-  /// If the underlying [ArcGISImage] contains an encoded buffer (PNG/JPEG), it
-  /// is rendered via [MemoryImage].
-  ///
-  static ImageProvider? imageProviderIfLoaded(LoadableImage? loadableImage) {
-    if (loadableImage == null) return null;
-
-    if (loadableImage.loadStatus != LoadStatus.loaded) {
-      return null;
-    }
-
-    final image = loadableImage.image;
-    if (image == null) return null;
+  /// Returns an [ImageProvider] for [thumbnail] if its image data can be read.
+  static ImageProvider? imageProviderIfAvailable(ArcGISImage? thumbnail) {
+    if (thumbnail == null) return null;
 
     try {
-      final bytes = image.getEncodedBuffer();
+      final bytes = thumbnail.getEncodedBuffer();
       if (bytes.isEmpty) return null;
       return MemoryImage(bytes);
     } on Object {
@@ -48,13 +34,13 @@ final class _LoadableImageUtils {
     }
   }
 
-  /// Widget that renders a loaded [LoadableImage] or a placeholder.
+  /// Renders a thumbnail image or a placeholder.
   static Widget thumbnailOrPlaceholder({
-    required LoadableImage? thumbnail,
+    required ArcGISImage? thumbnail,
     required BoxFit fit,
     Widget? placeholder,
   }) {
-    final provider = imageProviderIfLoaded(thumbnail);
+    final provider = imageProviderIfAvailable(thumbnail);
     if (provider == null) {
       return placeholder ??
           DecoratedBox(

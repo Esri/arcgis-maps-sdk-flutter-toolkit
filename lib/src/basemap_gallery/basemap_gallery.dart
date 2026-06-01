@@ -394,7 +394,7 @@ final class _BasemapTile extends StatelessWidget {
   }
 
   Widget _buildThumbnail(BuildContext context, {required BoxFit fit}) {
-    final base = _LoadableImageUtils.thumbnailOrPlaceholder(
+    final base = _ArcGISImageUtils.thumbnailOrPlaceholder(
       thumbnail: item.thumbnail,
       fit: fit,
     );

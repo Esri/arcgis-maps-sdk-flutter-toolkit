@@ -20,5 +20,7 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/basemap_default.png
   config:
     enable-swift-package-manager: true

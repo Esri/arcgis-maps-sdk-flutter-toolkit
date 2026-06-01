@@ -28,7 +28,7 @@ final class BasemapGalleryItem {
   /// values from the basemap's associated [Item] are used as fallbacks.
   BasemapGalleryItem({
     required Basemap basemap,
-    LoadableImage? thumbnail,
+    ArcGISImage? thumbnail,
     String? tooltip,
   }) : _basemap = basemap,
        _thumbnailOverride = thumbnail,
@@ -39,11 +39,11 @@ final class BasemapGalleryItem {
 
   final Basemap _basemap;
 
-  final LoadableImage? _thumbnailOverride;
+  ArcGISImage? _thumbnailOverride;
   final String? _tooltipOverride;
 
   final _nameNotifier = ValueNotifier<String>('');
-  final _thumbnailNotifier = ValueNotifier<LoadableImage?>(null);
+  final _thumbnailNotifier = ValueNotifier<ArcGISImage?>(null);
   final _tooltipNotifier = ValueNotifier<String?>(null);
   final _isBasemapLoadingNotifier = ValueNotifier<bool>(true);
   final _loadBasemapErrorNotifier = ValueNotifier<Object?>(null);
@@ -69,7 +69,17 @@ final class BasemapGalleryItem {
   String get name => _nameNotifier.value;
 
   /// The thumbnail to display for this gallery item.
-  LoadableImage? get thumbnail => _thumbnailNotifier.value;
+  ArcGISImage? get thumbnail => _thumbnailNotifier.value;
+
+  /// Sets the thumbnail for this gallery item.
+  ///
+  /// Use this to apply thumbnails that are created asynchronously, such as with
+  /// `ArcGISImage.fromAsset`. If [image] is `null`, the item falls back to the
+  /// basemap item's thumbnail.
+  void setThumbnail({ArcGISImage? image}) {
+    _thumbnailOverride = image;
+    _recomputeDerivedFields();
+  }
 
   /// The tooltip to display for this gallery item.
   String? get tooltip => _tooltipNotifier.value;
@@ -92,9 +102,9 @@ final class BasemapGalleryItem {
     // If the basemap is already loaded, just ensure derived properties are
     // consistent.
     if (_basemap.loadStatus == LoadStatus.loaded) {
+      await _loadItemThumbnailIfNeeded();
       _isBasemapLoadingNotifier.value = false;
       _recomputeDerivedFields();
-      await _loadThumbnailIfNeeded();
       return;
     }
 
@@ -104,8 +114,7 @@ final class BasemapGalleryItem {
     String? error;
     try {
       await _basemap.load();
-      _recomputeDerivedFields();
-      await _loadThumbnailIfNeeded();
+      await _loadItemThumbnailIfNeeded();
     } on ArcGISException {
       error = 'The basemap failed to load for an unknown reason.';
     }
@@ -115,10 +124,14 @@ final class BasemapGalleryItem {
     _isBasemapLoadingNotifier.value = false;
   }
 
-  Future<void> _loadThumbnailIfNeeded() async {
-    final thumbnail = _thumbnailNotifier.value;
-    if (thumbnail != null && thumbnail.loadStatus != LoadStatus.loaded) {
-      await thumbnail.load();
+  Future<void> _loadItemThumbnailIfNeeded() async {
+    if (_thumbnailOverride != null) {
+      return;
+    }
+
+    final itemThumbnail = _basemap.item?.thumbnail;
+    if (itemThumbnail != null && itemThumbnail.loadStatus != LoadStatus.loaded) {
+      await itemThumbnail.load();
     }
   }
 
@@ -168,7 +181,7 @@ final class BasemapGalleryItem {
         ? overrideTooltip
         : (_isValidTooltip(tooltipFromItem) ? tooltipFromItem : null);
 
-    _thumbnailNotifier.value = _thumbnailOverride ?? item?.thumbnail;
+    _thumbnailNotifier.value = _thumbnailOverride ?? item?.thumbnail?.image;
 
     final basemapName = _basemap.name;
     final itemTitle = item?.title;
