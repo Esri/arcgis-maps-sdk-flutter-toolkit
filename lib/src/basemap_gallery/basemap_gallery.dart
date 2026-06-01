@@ -337,6 +337,7 @@ final class _BasemapTile extends StatelessWidget {
           label: item.name,
           child: Tooltip(
             message: tooltipMessage,
+            waitDuration: const Duration(milliseconds: 500),
             child: tile,
           ),
         );
