@@ -290,6 +290,9 @@ final class _BasemapGalleryState extends State<BasemapGallery> {
 
 /// Tile for a basemap item; shows thumbnail, name, selection outline, and load/error state.
 final class _BasemapTile extends StatelessWidget {
+  // Keep tooltips short so long descriptions stay easy to scan.
+  static const int _maxTooltipCharacters = 400;
+
   /// Creates a tile for the basemap gallery item. Tap is disabled while loading.
   const _BasemapTile({
     required this.item,
@@ -317,6 +320,7 @@ final class _BasemapTile extends StatelessWidget {
       animation: item._tileListenable,
       builder: (context, _) {
         final isEnabled = !item._isBasemapLoading;
+        final tooltipMessage = _buildTooltipMessage();
 
         final tile = InkWell(
           borderRadius: BorderRadius.circular(6),
@@ -332,13 +336,25 @@ final class _BasemapTile extends StatelessWidget {
           enabled: isEnabled,
           label: item.name,
           child: Tooltip(
-            message: item.tooltip ?? item.name,
-            waitDuration: const Duration(milliseconds: 500),
+            message: tooltipMessage,
             child: tile,
           ),
         );
       },
     );
+  }
+
+  // Build a tooltip string and cap its length for readability.
+  String _buildTooltipMessage() {
+    // Show the item tooltip when available; otherwise show the basemap name.
+    final raw = (item.tooltip?.isNotEmpty ?? false)
+        ? item.tooltip!
+        : item.name;
+    if (raw.length <= _maxTooltipCharacters) {
+      return raw;
+    }
+    // Keep the beginning of the text and add an ellipsis when truncated.
+    return '${raw.substring(0, _maxTooltipCharacters)}...';
   }
 
   Widget _buildGridContent(BuildContext context) {
