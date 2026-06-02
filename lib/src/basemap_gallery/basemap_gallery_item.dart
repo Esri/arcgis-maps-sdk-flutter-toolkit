@@ -174,9 +174,11 @@ final class BasemapGalleryItem {
   void _recomputeDerivedFields() {
     final item = _basemap.item;
 
-    final overrideTooltip = _tooltipOverride;
-    final tooltipFromItem = item?.description;
+    final overrideTooltip = _normalizeTooltipToParagraph(_tooltipOverride);
+    final tooltipFromItem = _normalizeTooltipToParagraph(item?.description);
 
+    // Use the app-provided tooltip first; otherwise fall back to the portal
+    // description when available.
     _tooltipNotifier.value = _isValidTooltip(overrideTooltip)
         ? overrideTooltip
         : (_isValidTooltip(tooltipFromItem) ? tooltipFromItem : null);
@@ -187,6 +189,8 @@ final class BasemapGalleryItem {
     final itemTitle = item?.title;
     final itemName = item?.name;
 
+    // Prefer the basemap name shown in the app, then fall back to portal
+    // metadata if needed.
     _nameNotifier.value = basemapName.isNotEmpty
         ? basemapName
         : (itemTitle != null && itemTitle.isNotEmpty)
@@ -198,6 +202,22 @@ final class BasemapGalleryItem {
 
   bool _isValidTooltip(String? tooltip) =>
       tooltip != null && tooltip.isNotEmpty;
+
+  // Converts optional HTML tooltip content into a plain-text paragraph.
+  String? _normalizeTooltipToParagraph(String? rawTooltip) {
+    if (rawTooltip == null || rawTooltip.isEmpty) {
+      return null;
+    }
+
+    final fragment = html_parser.parseFragment(rawTooltip);
+    final normalized = _collapseWhitespace(fragment.text ?? '');
+    return normalized.isEmpty ? null : normalized;
+  }
+
+  // Collapses repeated whitespace into single spaces for tooltip-friendly text.
+  String _collapseWhitespace(String input) {
+    return input.replaceAll(RegExp(r'\s+'), ' ').trim();
+  }
 
   void dispose() {
     _nameNotifier.dispose();
