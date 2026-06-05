@@ -10,8 +10,8 @@ topics:
 publish_to: none
 
 environment:
-  sdk: '>=3.11.1 <4.0.0'
-  flutter: '>=3.41.3'
+  sdk: '>=3.12.1 <4.0.0'
+  flutter: '>=3.44.1'
 
 dependencies:
   arcgis_maps: ^300.1.0
