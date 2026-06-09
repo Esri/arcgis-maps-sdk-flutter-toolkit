@@ -290,9 +290,6 @@ final class _BasemapGalleryState extends State<BasemapGallery> {
 
 /// Tile for a basemap item; shows thumbnail, name, selection outline, and load/error state.
 final class _BasemapTile extends StatelessWidget {
-  // Keep tooltips short so long descriptions stay easy to scan.
-  static const int _maxTooltipCharacters = 400;
-
   /// Creates a tile for the basemap gallery item. Tap is disabled while loading.
   const _BasemapTile({
     required this.item,
@@ -301,6 +298,8 @@ final class _BasemapTile extends StatelessWidget {
     required this.dense,
     super.key,
   });
+  // Keep tooltips short so long descriptions stay easy to scan.
+  static const int _maxTooltipCharacters = 400;
 
   /// Gallery item backing this tile.
   final BasemapGalleryItem item;
@@ -348,9 +347,7 @@ final class _BasemapTile extends StatelessWidget {
   // Build a tooltip string and cap its length for readability.
   String _buildTooltipMessage() {
     // Show the item tooltip when available; otherwise show the basemap name.
-    final raw = (item.tooltip?.isNotEmpty ?? false)
-        ? item.tooltip!
-        : item.name;
+    final raw = (item.tooltip?.isNotEmpty ?? false) ? item.tooltip! : item.name;
     if (raw.length <= _maxTooltipCharacters) {
       return raw;
     }
