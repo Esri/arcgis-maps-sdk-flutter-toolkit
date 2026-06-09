@@ -23,9 +23,7 @@ final class BasemapGalleryController {
   /// If no custom items or portal is provided, this controller loads ArcGIS
   /// Online's developer basemaps by default. These basemaps are secured and
   /// typically require an API key or named-user authentication.
-  BasemapGalleryController({GeoModel? geoModel})
-    : _geoModel = geoModel,
-      _portal = null {
+  BasemapGalleryController({this._geoModel}) : _portal = null {
     _initFromGeoModel();
     unawaited(_populateDefaultBasemaps());
   }
@@ -35,9 +33,8 @@ final class BasemapGalleryController {
   /// If [portal] is valid, the controller fetches portal basemaps asynchronously
   /// and copies them into [gallery].
   ///
-  BasemapGalleryController.withPortal(Portal portal, {GeoModel? geoModel})
-    : _geoModel = geoModel,
-      _portal = portal {
+  BasemapGalleryController.withPortal(Portal portal, {this._geoModel})
+    : _portal = portal {
     _initFromGeoModel();
     unawaited(_populateFromPortal());
   }
@@ -45,9 +42,8 @@ final class BasemapGalleryController {
   /// Creates a gallery using provided [items].
   BasemapGalleryController.withItems({
     required List<BasemapGalleryItem> items,
-    GeoModel? geoModel,
-  }) : _geoModel = geoModel,
-       _portal = null {
+    this._geoModel,
+  }) : _portal = null {
     _initFromGeoModel();
 
     if (items.isEmpty) {
@@ -59,7 +55,7 @@ final class BasemapGalleryController {
       );
     }
 
-    _gallery.replaceAll(items);
+    _replaceGalleryItems(items);
   }
 
   GeoModel? _geoModel;
@@ -77,6 +73,8 @@ final class BasemapGalleryController {
       ValueNotifier<_SpatialReferenceMismatchError?>(null);
 
   final _currentBasemapNotifier = ValueNotifier<BasemapGalleryItem?>(null);
+
+  bool _isDisposed = false;
 
   late final Listenable _galleryListenable = Listenable.merge(<Listenable>[
     _gallery,
@@ -163,12 +161,51 @@ final class BasemapGalleryController {
 
   /// Disposes resources.
   void dispose() {
+    _isDisposed = true;
+
+    final galleryItems = List<BasemapGalleryItem>.from(_gallery);
+    final currentItem = _currentBasemapItem;
+    _disposeItems(galleryItems);
+    if (currentItem != null && !galleryItems.contains(currentItem)) {
+      currentItem.dispose();
+    }
+
     _viewStyleNotifier.dispose();
     _gallery.dispose();
     _isFetchingBasemapsNotifier.dispose();
     _fetchBasemapsErrorNotifier.dispose();
     _currentBasemapNotifier.dispose();
     _spatialReferenceMismatchErrorNotifier.dispose();
+  }
+
+  void _replaceGalleryItems(Iterable<BasemapGalleryItem> items) {
+    final newItems = items is List<BasemapGalleryItem>
+        ? items
+        : items.toList(growable: false);
+    final previousItems = List<BasemapGalleryItem>.from(_gallery);
+
+    _gallery.replaceAll(newItems);
+
+    for (final item in previousItems) {
+      if (!newItems.contains(item) && !identical(item, _currentBasemapItem)) {
+        item.dispose();
+      }
+    }
+  }
+
+  void _clearGalleryItems() {
+    if (_gallery.isEmpty) return;
+
+    final previousItems = List<BasemapGalleryItem>.from(_gallery);
+    _gallery.clear();
+    _disposeItems(previousItems);
+  }
+
+  void _disposeItems(Iterable<BasemapGalleryItem> items) {
+    for (final item in items) {
+      if (identical(item, _currentBasemapItem)) continue;
+      item.dispose();
+    }
   }
 
   void _initFromGeoModel() {
@@ -189,12 +226,16 @@ final class BasemapGalleryController {
   }
 
   Future<void> _populateFromPortal() async {
+    if (_isDisposed) return;
+
     final p = _portal;
     if (p == null) {
-      _gallery.clear();
+      if (_isDisposed) return;
+      _clearGalleryItems();
       return;
     }
 
+    if (_isDisposed) return;
     _isFetchingBasemapsNotifier.value = true;
     _fetchBasemapsErrorNotifier.value = null;
 
@@ -203,19 +244,25 @@ final class BasemapGalleryController {
         await p.load();
       }
       final basemaps = await p.basemaps();
-      _gallery.replaceAll(basemaps.map((b) => BasemapGalleryItem(basemap: b)));
+      if (_isDisposed) return;
+      _replaceGalleryItems(basemaps.map((b) => BasemapGalleryItem(basemap: b)));
     } on Object catch (e) {
+      if (_isDisposed) return;
       _fetchBasemapsErrorNotifier.value = e;
-      _gallery.clear();
+      _clearGalleryItems();
     } finally {
-      _isFetchingBasemapsNotifier.value = false;
+      if (!_isDisposed) {
+        _isFetchingBasemapsNotifier.value = false;
+      }
     }
   }
 
   Future<void> _populateDefaultBasemaps() async {
+    if (_isDisposed) return;
+
     _isFetchingBasemapsNotifier.value = true;
     _fetchBasemapsErrorNotifier.value = null;
-    _gallery.clear();
+    _clearGalleryItems();
 
     // Load developer basemaps from ArcGIS Online by default (API-key metered basemaps).
     final portal = Portal.arcGISOnline();
@@ -225,12 +272,16 @@ final class BasemapGalleryController {
         await portal.load();
       }
       final basemaps = await portal.developerBasemaps();
-      _gallery.replaceAll(basemaps.map((b) => BasemapGalleryItem(basemap: b)));
+      if (_isDisposed) return;
+      _replaceGalleryItems(basemaps.map((b) => BasemapGalleryItem(basemap: b)));
     } on Object catch (e) {
+      if (_isDisposed) return;
       _fetchBasemapsErrorNotifier.value = e;
-      _gallery.clear();
+      _clearGalleryItems();
     } finally {
-      _isFetchingBasemapsNotifier.value = false;
+      if (!_isDisposed) {
+        _isFetchingBasemapsNotifier.value = false;
+      }
     }
   }
 }
