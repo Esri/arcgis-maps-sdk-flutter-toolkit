@@ -27,11 +27,10 @@ final class BasemapGalleryItem {
   /// If [thumbnail] or [tooltip] are not provided (or are empty for [tooltip]),
   /// values from the basemap's associated [Item] are used as fallbacks.
   BasemapGalleryItem({
-    required Basemap basemap,
+    required this._basemap,
     ArcGISImage? thumbnail,
     String? tooltip,
-  }) : _basemap = basemap,
-       _thumbnailOverride = thumbnail,
+  }) : _thumbnailOverride = thumbnail,
        _tooltipOverride = tooltip {
     _recomputeDerivedFields();
     unawaited(_loadBasemapAndThumbnailIfNeeded());
@@ -117,6 +116,8 @@ final class BasemapGalleryItem {
       await _loadItemThumbnailIfNeeded();
     } on ArcGISException {
       error = 'The basemap failed to load for an unknown reason.';
+    } on Object {
+      error = 'The basemap failed to load.';
     }
 
     _recomputeDerivedFields();
@@ -130,7 +131,8 @@ final class BasemapGalleryItem {
     }
 
     final itemThumbnail = _basemap.item?.thumbnail;
-    if (itemThumbnail != null && itemThumbnail.loadStatus != LoadStatus.loaded) {
+    if (itemThumbnail != null &&
+        itemThumbnail.loadStatus != LoadStatus.loaded) {
       await itemThumbnail.load();
     }
   }
