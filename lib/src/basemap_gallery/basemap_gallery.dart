@@ -16,21 +16,22 @@
 
 part of '../../../arcgis_maps_toolkit.dart';
 
-/// The [BasemapGallery] widget displays a collection of basemaps from:
-/// * ArcGIS Online, 
-/// * a user-defined portal, 
+/// The [BasemapGallery] widget displays a collection of basemaps from one of:
+/// * ArcGIS Online,
+/// * a user-defined portal,
 /// * or an array of custom [BasemapGalleryItem] objects.
 ///
 /// # Overview
 /// The [BasemapGallery] widget enables users to browse a collection of
-/// basemaps and apply a selected basemap item to a connected [GeoModel] (such as an
+/// basemaps and apply a selected [BasemapGalleryItem] to a connected [GeoModel] (such as an
 /// [ArcGISMap] or [ArcGISScene]) via a [BasemapGalleryController].
 ///
 /// ## Features
-/// * Displays basemaps as [BasemapGalleryItem] objects in a grid or list layout. 
+/// * Displays basemaps as [BasemapGalleryItem] objects in a grid or list layout.
 /// * Option to automatically switch the layout based on available width using the [BasemapGalleryViewStyle] enum.
-/// * Displays a default thumbnail if a thumbnail is not available via the portal item, or is not manually set to the [BasemapGalleryItem].
+/// * Displays a name and thumbnail for each basemap.
 /// * Shows selection state and exposes selection events via the controller.
+/// * Can be configured to automatically change the basemap of a geo model based on user selection.
 ///
 /// ## Usage
 /// A [BasemapGallery] widget is created with the following parameters:
