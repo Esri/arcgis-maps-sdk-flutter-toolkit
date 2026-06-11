@@ -19,11 +19,10 @@ part of '../../arcgis_maps_toolkit.dart';
 /// A class representing an item within a basemap gallery.
 ///
 /// Fallback rules:
-/// - Thumbnail: If [BasemapGalleryItem.thumbnail] is set and valid, it overrides the default. Otherwise, defaults to the basemap's associated [PortalItem] thumbnail, if it exists. 
+/// - Thumbnail: If [BasemapGalleryItem.thumbnail] is set and valid, it overrides the default. Otherwise, defaults to the basemap's associated [PortalItem] thumbnail, if it exists.
 /// - Tooltip: If [BasemapGalleryItem.tooltip] is set and valid, it overrides the default. Otherwise, defaults to the basemap's associated [PortalItem] description, if it exists.
 final class BasemapGalleryItem {
-  /// Creates a [BasemapGalleryItem].
-  ///
+  /// Creates a [BasemapGalleryItem] using the provided basemap.
   /// If [thumbnail] is not provided, defaults to the basemap's associated [PortalItem] thumbnail, if it exists.
   /// If [tooltip] is not provided, or is empty, defaults to the basemap's associated [PortalItem] description, if it exists.
   BasemapGalleryItem({
@@ -79,7 +78,7 @@ final class BasemapGalleryItem {
     _recomputeDerivedFields();
   }
 
-  /// The tooltip for this basemap gallery item.
+  /// The tooltip for this basemap gallery item, as provided in the constructor.
   String? get tooltip => _tooltipNotifier.value;
 
   bool get _isBasemapLoading => _isBasemapLoadingNotifier.value;

@@ -16,24 +16,24 @@
 
 part of '../../arcgis_maps_toolkit.dart';
 
-/// The [BasemapGalleryController] contains the state data and properties for an active [BasemapGallery].
+/// The [BasemapGalleryController] contains the state data and properties for the [BasemapGallery] it is associated with.
 /// The controller is used to define the list of [BasemapGalleryItem] to display within the [BasemapGallery], manage the view style of the gallery, and
 /// listen to events when the current basemap changes.
 /// Once the [BasemapGalleryController] is configured, it is used to construct the [BasemapGallery] widget.
 final class BasemapGalleryController {
   /// Creates a [BasemapGalleryController] with default basemaps from ArcGIS Online's developer basemaps.
+  /// Provide a [GeoModel] to automatically apply the [BasemapGalleryController.currentBasemap] to the respective map or scene.
   ///
   /// These basemaps are secured and typically require an API key or named-user authentication.
-  /// Provide a [GeoModel] to automatically apply the [BasemapGalleryController.currentBasemap] to the respective map or scene.
   BasemapGalleryController({this._geoModel}) : _portal = null {
     _initFromGeoModel();
     unawaited(_populateDefaultBasemaps());
   }
 
   /// Creates a [BasemapGalleryController] using basemaps from the provided [Portal].
+  /// Provide a [GeoModel] to automatically apply the [BasemapGalleryController.currentBasemap] to the respective map or scene.
   ///
   /// If the [portal] is valid, the controller fetches basemaps from the portal asynchronously and populates the [gallery].
-  /// Provide a [GeoModel] to automatically apply the [BasemapGalleryController.currentBasemap] to the respective map or scene.
   BasemapGalleryController.withPortal(Portal portal, {this._geoModel})
     : _portal = portal {
     _initFromGeoModel();
@@ -97,7 +97,7 @@ final class BasemapGalleryController {
     _initFromGeoModel();
   }
 
-  /// The portal used to populate the [gallery], if set in the constructor.
+  /// The portal used to populate the [gallery], if provided in the constructor.
   Portal? get portal => _portal;
 
   /// Called after a basemap selection is applied.
