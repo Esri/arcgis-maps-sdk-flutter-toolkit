@@ -16,46 +16,35 @@
 
 part of '../../../arcgis_maps_toolkit.dart';
 
-/// The [BasemapGallery] widget displays a gallery of basemap thumbnails.
+/// The [BasemapGallery] widget displays a collection of basemaps from:
+/// * ArcGIS Online, 
+/// * a user-defined portal, 
+/// * or an array of custom [BasemapGalleryItem] objects.
 ///
 /// # Overview
-/// [BasemapGallery] is a UI component that lets a user browse a collection of
-/// basemaps and apply a selection to a connected [GeoModel] (such as an
+/// The [BasemapGallery] widget enables users to browse a collection of
+/// basemaps and apply a selected basemap item to a connected [GeoModel] (such as an
 /// [ArcGISMap] or [ArcGISScene]) via a [BasemapGalleryController].
 ///
-/// The basemaps shown in the gallery are provided by the controller (defaults,
-/// a portal, or custom items), and the current selection is tracked by the
-/// controller.
-///
 /// ## Features
-/// * Displays basemaps as a grid, list, or automatically switches based on
-///   available width.
+/// * Displays basemaps as [BasemapGalleryItem] objects in a grid or list layout. 
+/// * Option to automatically switch the layout based on available width using the [BasemapGalleryViewStyle] enum.
+/// * Displays a default thumbnail if a thumbnail is not available via the portal item, or is not manually set to the [BasemapGalleryItem].
 /// * Shows selection state and exposes selection events via the controller.
 ///
 /// ## Usage
-/// Provide a [BasemapGalleryController] and place the gallery in your widget
-/// tree.
+/// A [BasemapGallery] widget is created with the following parameters:
+/// * controller: A property for the controller that contains state data for this widget.
+/// * onCurrentBasemapChanged: An optional callback that is called when a basemap item is tapped.
 ///
+/// The widget can be inserted into a widget tree by calling the constructor and supplying a [BasemapGalleryController] with an associated [GeoModel] (i.e. [ArcGISMap] or [ArcGISScene]) and an optional onCurrentBasemapChanged callback function.
 /// ```dart
-/// late final ArcGISMap _map;
-/// late final BasemapGalleryController _controller;
-///
-/// @override
-/// void initState() {
-///   super.initState();
-///   _map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);
-///   _controller = BasemapGalleryController(geoModel: _map);
-/// }
-///
-/// @override
-/// Widget build(BuildContext context) {
-///   return BasemapGallery(
-///     controller: _controller,
-///     onCurrentBasemapChanged: (basemap) {
-///       debugPrint('Selected basemap: ${basemap.name}');
-///     },
-///   );
-/// }
+/// BasemapGallery(
+///   controller: BasemapGalleryController(geoModel: map),
+///   onCurrentBasemapChanged: (basemap) {
+///     // Optional: handle basemap changed event
+///   },
+/// );
 /// ```
 final class BasemapGallery extends StatefulWidget {
   /// Creates a [BasemapGallery] widget.
