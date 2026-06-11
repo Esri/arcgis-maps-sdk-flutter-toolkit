@@ -76,7 +76,7 @@ class _ExampleBasemapGalleryState extends State<ExampleBasemapGallery> {
     unawaited(_setDefaultThumbnail(galleryItems.last));
 
     _selectedBasemapName.value = _controller.currentBasemap?.name ?? '';
-    _controller.onCurrentBasemapChanged = (basemap) {
+    _controller.onBasemapChanged = (basemap) {
       _selectedBasemapName.value = basemap.name;
     };
   }
@@ -174,7 +174,7 @@ class _ExampleBasemapGalleryState extends State<ExampleBasemapGallery> {
                   padding: const EdgeInsets.all(8),
                   child: BasemapGallery(
                     controller: _controller,
-                    onCurrentBasemapChanged: (basemap) {
+                    onBasemapTapped: (basemap) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
                           content: Text('Basemap changed to: ${basemap.name}'),
