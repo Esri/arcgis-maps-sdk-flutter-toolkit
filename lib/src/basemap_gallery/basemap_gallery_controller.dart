@@ -87,9 +87,9 @@ final class BasemapGalleryController {
   ]);
 
   /// The associated [GeoModel]. This is either an [ArcGISMap] or [ArcGISScene].
-  /// Associate a geo model with the [BasemapGalleryController] to automatically apply the selected basemap to the map or scene.
+  /// Associate a [GeoModel] with the [BasemapGalleryController] to automatically apply the selected basemap to the map or scene.
   ///
-  /// If the geo model is not loaded when set, it will be loaded by the [BasemapGalleryController].
+  /// If the [GeoModel] is not loaded when set, it will be loaded by the [BasemapGalleryController].
   GeoModel? get geoModel => _geoModel;
 
   set geoModel(GeoModel? value) {
