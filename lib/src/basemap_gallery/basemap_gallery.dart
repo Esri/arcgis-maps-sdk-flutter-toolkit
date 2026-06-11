@@ -54,7 +54,7 @@ final class BasemapGallery extends StatefulWidget {
     this.onCurrentBasemapChanged,
   });
 
-  /// The [controller] driving this view.
+  /// The [controller] containing the state data and properties for this [BasemapGallery].
   final BasemapGalleryController controller;
 
   /// Default outer padding.
