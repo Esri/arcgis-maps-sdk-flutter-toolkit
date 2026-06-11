@@ -17,8 +17,8 @@
 part of '../../arcgis_maps_toolkit.dart';
 
 /// The [BasemapGalleryController] contains the state data and properties for an active [BasemapGallery].
-/// The controller is used to define the [BasemapGalleryItems] to display within the [BasemapGallery], manage the view style of the gallery, and 
-/// listen to events when the current basemap changes. 
+/// The controller is used to define the list of [BasemapGalleryItem] to display within the [BasemapGallery], manage the view style of the gallery, and
+/// listen to events when the current basemap changes.
 /// Once the [BasemapGalleryController] is configured, it is used to construct the [BasemapGallery] widget.
 final class BasemapGalleryController {
   /// Creates a [BasemapGalleryController] with default basemaps from ArcGIS Online's developer basemaps.
