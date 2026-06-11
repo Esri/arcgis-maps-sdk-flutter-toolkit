@@ -81,10 +81,25 @@ class _ImageMediaViewState extends State<_ImageMediaView> {
                   // If an image isn't available, we don't display the detail view.
                   isShowingDetailReady = false;
                   return Center(
-                    child: Icon(
-                      Icons.error_outline,
-                      color: Theme.of(context).colorScheme.error,
-                      size: 30,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.error_outline,
+                          color: Theme.of(context).colorScheme.error,
+                          size: 30,
+                        ),
+                        if (widget.popupMedia.alternativeText.isNotEmpty)
+                          Padding(
+                            padding: const EdgeInsets.all(8),
+                            child: Text(
+                              widget.popupMedia.alternativeText,
+                              maxLines: 2,
+                              style: Theme.of(context).textTheme.bodyMedium,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                      ],
                     ),
                   );
                 },
