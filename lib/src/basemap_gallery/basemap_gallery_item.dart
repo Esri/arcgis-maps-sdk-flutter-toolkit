@@ -48,8 +48,8 @@ final class BasemapGalleryItem {
   final _loadBasemapErrorNotifier = ValueNotifier<Object?>(null);
   final _spatialReferenceNotifier = ValueNotifier<SpatialReference?>(null);
   final _spatialReferenceStatusNotifier =
-      ValueNotifier<BasemapGalleryItemSpatialReferenceStatus>(
-        BasemapGalleryItemSpatialReferenceStatus.unknown,
+      ValueNotifier<_BasemapGalleryItemSpatialReferenceStatus>(
+        _BasemapGalleryItemSpatialReferenceStatus.unknown,
       );
 
   late final Listenable _tileListenable = Listenable.merge(<Listenable>[
@@ -89,13 +89,13 @@ final class BasemapGalleryItem {
 
   SpatialReference? get _spatialReference => _spatialReferenceNotifier.value;
 
-  BasemapGalleryItemSpatialReferenceStatus get _spatialReferenceStatus =>
+  _BasemapGalleryItemSpatialReferenceStatus get _spatialReferenceStatus =>
       _spatialReferenceStatusNotifier.value;
 
   bool get _hasError =>
       _loadBasemapErrorNotifier.value != null ||
       _spatialReferenceStatusNotifier.value ==
-          BasemapGalleryItemSpatialReferenceStatus.noMatch;
+          _BasemapGalleryItemSpatialReferenceStatus.noMatch;
 
   Future<void> _loadBasemapAndThumbnailIfNeeded() async {
     // If the basemap is already loaded, just ensure derived properties are
@@ -161,13 +161,13 @@ final class BasemapGalleryItem {
 
     if (referenceSpatialReference == null) {
       _spatialReferenceStatusNotifier.value =
-          BasemapGalleryItemSpatialReferenceStatus.unknown;
+          _BasemapGalleryItemSpatialReferenceStatus.unknown;
     } else if (_spatialReferenceNotifier.value == referenceSpatialReference) {
       _spatialReferenceStatusNotifier.value =
-          BasemapGalleryItemSpatialReferenceStatus.match;
+          _BasemapGalleryItemSpatialReferenceStatus.match;
     } else {
       _spatialReferenceStatusNotifier.value =
-          BasemapGalleryItemSpatialReferenceStatus.noMatch;
+          _BasemapGalleryItemSpatialReferenceStatus.noMatch;
     }
 
     _isBasemapLoadingNotifier.value = false;
@@ -237,7 +237,7 @@ final class BasemapGalleryItem {
 
 /// The status of a basemap's spatial reference in relation to a reference
 /// spatial reference.
-enum BasemapGalleryItemSpatialReferenceStatus {
+enum _BasemapGalleryItemSpatialReferenceStatus {
   /// Unknown because spatial references are not available yet.
   unknown,
 
