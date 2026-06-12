@@ -20,7 +20,7 @@ dependencies:
   flutter:
     sdk: flutter
   html: ^0.15.6
-  open_file: ^3.5.10
+  open_file: ^4.0.0
   path_provider: ^2.1.5
   shared_preferences: ^2.5.3
   timer_builder: ^2.0.0
