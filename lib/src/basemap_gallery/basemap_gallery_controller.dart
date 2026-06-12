@@ -140,7 +140,7 @@ final class BasemapGalleryController {
       await item._updateSpatialReferenceStatus(gm.actualSpatialReference);
 
       if (item._spatialReferenceStatus ==
-          BasemapGalleryItemSpatialReferenceStatus.noMatch) {
+          _BasemapGalleryItemSpatialReferenceStatus.noMatch) {
         _spatialReferenceMismatchErrorNotifier.value =
             _SpatialReferenceMismatchError(
               basemapSpatialReference: item._spatialReference,
