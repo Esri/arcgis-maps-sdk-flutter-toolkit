@@ -62,10 +62,7 @@ part of '../../../arcgis_maps_toolkit.dart';
 /// ```
 final class BasemapGallery extends StatefulWidget {
   /// Creates a [BasemapGallery] widget.
-  const BasemapGallery({
-    required this.controller,
-    super.key,
-  });
+  const BasemapGallery({required this.controller, super.key});
 
   /// The [controller] containing the state data and properties for this [BasemapGallery].
   final BasemapGalleryController controller;
