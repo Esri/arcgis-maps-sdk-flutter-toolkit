@@ -16,16 +16,15 @@
 
 part of '../../arcgis_maps_toolkit.dart';
 
-/// An element in a basemap gallery.
+/// A class representing an item within a basemap gallery.
 ///
 /// Fallback rules:
-/// - If `thumbnail`/`tooltip` overrides are provided and valid, they are used.
-/// - Otherwise, fall back to the basemap's associated [Item] (if present).
+/// - Thumbnail: If [BasemapGalleryItem.thumbnail] is set and valid, it overrides the default. Otherwise, defaults to the basemap's associated [PortalItem] thumbnail, if it exists.
+/// - Tooltip: If [BasemapGalleryItem.tooltip] is set and valid, it overrides the default. Otherwise, defaults to the basemap's associated [PortalItem] description, if it exists.
 final class BasemapGalleryItem {
-  /// Creates a [BasemapGalleryItem].
-  ///
-  /// If [thumbnail] or [tooltip] are not provided (or are empty for [tooltip]),
-  /// values from the basemap's associated [Item] are used as fallbacks.
+  /// Creates a [BasemapGalleryItem] using the provided basemap.
+  /// If [thumbnail] is not provided, defaults to the basemap's associated [PortalItem] thumbnail, if it exists.
+  /// If [tooltip] is not provided, or is empty, defaults to the basemap's associated [PortalItem] description, if it exists.
   BasemapGalleryItem({
     required this._basemap,
     ArcGISImage? thumbnail,
@@ -61,26 +60,25 @@ final class BasemapGalleryItem {
     _spatialReferenceStatusNotifier,
   ]);
 
-  /// The basemap for this gallery item.
+  /// The basemap for this basemap gallery item.
   Basemap get basemap => _basemap;
 
-  /// The name of this basemap.
+  /// The name of this basemap from the basemap's associated [PortalItem] name, if it exists.
   String get name => _nameNotifier.value;
 
   /// The thumbnail to display for this gallery item.
+  /// The thumbnail can be set manually, otherwise defaults to the basemap's associated [PortalItem] thumbnail, if it exists.
   ArcGISImage? get thumbnail => _thumbnailNotifier.value;
 
-  /// Sets the thumbnail for this gallery item.
+  /// Sets the provided thumbnail image to this basemap gallery item.
   ///
-  /// Use this to apply thumbnails that are created asynchronously, such as with
-  /// `ArcGISImage.fromAsset`. If [image] is `null`, the item falls back to the
-  /// basemap item's thumbnail.
+  /// If [image] is `null`, defaults to the basemap's associated [PortalItem] thumbnail, if it exists.
   void setThumbnail({ArcGISImage? image}) {
     _thumbnailOverride = image;
     _recomputeDerivedFields();
   }
 
-  /// The tooltip to display for this gallery item.
+  /// The tooltip for this basemap gallery item, as provided in the constructor.
   String? get tooltip => _tooltipNotifier.value;
 
   bool get _isBasemapLoading => _isBasemapLoadingNotifier.value;

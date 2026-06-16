@@ -18,7 +18,8 @@
 ///
 /// Toolkit components:
 /// * [Authenticator]: A widget that handles authentication challenges. It will display a user interface when network and ArcGIS authentication challenges occur.
-/// * [BasemapGallery]: A widget that displays a gallery of basemaps for the user to choose from and apply to a target map or scene.
+/// * [BasemapGallery]: A widget that displays a collection of basemaps, either from ArcGIS Online, a user-defined portal, or an array of custom basemap gallery items.
+/// * [BuildingExplorer]: A widget that enables a user to explore a building scene layer building model in a local scene view.
 /// * [Compass]: A widget that visualizes the current rotation of the map or scene and allows the user to reset the rotation to north by tapping on it.
 /// * [OverviewMap]: A small inset map displaying a representation of the current viewpoint of the target map or scene.
 /// * [PopupView]: A widget that will display a pop-up for an individual feature. This includes showing the feature's title, attributes, custom description, media, and attachments.

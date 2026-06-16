@@ -16,30 +16,32 @@
 
 part of '../../arcgis_maps_toolkit.dart';
 
-/// Controls the state and behavior of a [BasemapGallery].
+/// The [BasemapGalleryController] contains the state data and properties for the associated [BasemapGallery].
+/// The controller is used to define the list of [BasemapGalleryItem] to display within the [BasemapGallery], manage the view style of the gallery, and
+/// listen to events when the current basemap changes.
+/// Once the [BasemapGalleryController] is configured, it is used to construct the [BasemapGallery] widget.
 final class BasemapGalleryController {
-  /// Creates a gallery with default basemaps.
+  /// Creates a [BasemapGalleryController] with default basemaps from ArcGIS Online's developer basemaps.
+  /// Provide a [GeoModel] to automatically apply the [BasemapGalleryController.currentBasemap] to the respective map or scene.
   ///
-  /// If no custom items or portal is provided, this controller loads ArcGIS
-  /// Online's developer basemaps by default. These basemaps are secured and
-  /// typically require an API key or named-user authentication.
+  /// These basemaps are secured and typically require an API key or named-user authentication.
   BasemapGalleryController({this._geoModel}) : _portal = null {
     _initFromGeoModel();
     unawaited(_populateDefaultBasemaps());
   }
 
-  /// Creates a gallery using basemaps from a [Portal].
+  /// Creates a [BasemapGalleryController] using basemaps from the provided [Portal].
+  /// Provide a [GeoModel] to automatically apply the [BasemapGalleryController.currentBasemap] to the respective map or scene.
   ///
-  /// If [portal] is valid, the controller fetches portal basemaps asynchronously
-  /// and copies them into [gallery].
-  ///
+  /// If the [portal] is valid, the controller fetches basemaps from the portal asynchronously and populates the [gallery].
   BasemapGalleryController.withPortal(Portal portal, {this._geoModel})
     : _portal = portal {
     _initFromGeoModel();
     unawaited(_populateFromPortal());
   }
 
-  /// Creates a gallery using provided [items].
+  /// Creates a [BasemapGalleryController] using the provided custom list of [BasemapGalleryItem].
+  /// Provide a [GeoModel] to automatically apply the [BasemapGalleryController.currentBasemap] to the respective map or scene.
   BasemapGalleryController.withItems({
     required List<BasemapGalleryItem> items,
     this._geoModel,
@@ -84,10 +86,10 @@ final class BasemapGalleryController {
     _currentBasemapNotifier,
   ]);
 
-  /// The associated geo model.
+  /// The associated [GeoModel]. This is either an [ArcGISMap] or [ArcGISScene].
+  /// Associate a [GeoModel] with the [BasemapGalleryController] to automatically apply the selected basemap to the map or scene.
   ///
-  /// If it is not loaded when set, it will be loaded immediately.
-  ///
+  /// If the [GeoModel] is not loaded when set, it will be loaded by the [BasemapGalleryController].
   GeoModel? get geoModel => _geoModel;
 
   set geoModel(GeoModel? value) {
@@ -95,25 +97,25 @@ final class BasemapGalleryController {
     _initFromGeoModel();
   }
 
-  /// The portal used for basemaps when constructed with a portal.
+  /// The portal used to populate the [gallery], if provided in the constructor.
   Portal? get portal => _portal;
 
   /// Called after a basemap selection is applied.
   ValueChanged<Basemap>? onCurrentBasemapChanged;
 
-  /// The currently applied basemap on the associated [GeoModel].
+  /// The basemap that is currently applied on the associated [GeoModel].
   Basemap? get currentBasemap => _currentBasemapNotifier.value?.basemap;
 
   BasemapGalleryItem? get _currentBasemapItem => _currentBasemapNotifier.value;
 
-  /// The list of basemaps visible in the gallery.
+  /// The list of basemap gallery items associated with this [BasemapGalleryController].
   ///
-  /// Items added or removed from this list will update the gallery.
+  /// When the controller is attached to a [BasemapGallery] widget, items added or removed from this list will update the visible gallery.
   List<BasemapGalleryItem> get gallery => _gallery;
 
   bool get _isFetchingBasemaps => _isFetchingBasemapsNotifier.value;
 
-  /// Current view style.
+  /// The current view style for the basemap gallery.
   BasemapGalleryViewStyle get viewStyle => _viewStyleNotifier.value;
 
   set viewStyle(BasemapGalleryViewStyle style) {

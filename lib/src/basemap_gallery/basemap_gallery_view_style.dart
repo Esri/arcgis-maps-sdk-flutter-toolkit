@@ -16,12 +16,12 @@
 
 part of '../../arcgis_maps_toolkit.dart';
 
-// The view style of the basemap gallery.
+/// An enum representing the view style of a basemap gallery.
 enum BasemapGalleryViewStyle {
-  // Display as a grid when width allows; otherwise display as a list.
+  /// Display as a grid when width allows; otherwise display as a list.
   automatic,
-  // Display as a grid.
+  /// Display as a grid.
   grid,
-  // Display as a list.
+  /// Display as a list.
   list,
 }
