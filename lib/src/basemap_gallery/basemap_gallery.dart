@@ -36,9 +36,8 @@ part of '../../../arcgis_maps_toolkit.dart';
 /// ## Usage
 /// A [BasemapGallery] widget is created with the following parameters:
 /// * controller: A property for the controller that contains state data for this widget.
-/// * onCurrentBasemapChanged: An optional callback that is called when a basemap item is tapped.
 ///
-/// The widget can be inserted into a widget tree by calling the constructor and supplying a [BasemapGalleryController] with an associated [GeoModel] (i.e. [ArcGISMap] or [ArcGISScene]) and an optional onCurrentBasemapChanged callback function.
+/// The widget can be inserted into a widget tree by calling the constructor and supplying a [BasemapGalleryController] with an associated [GeoModel] (i.e. [ArcGISMap] or [ArcGISScene]).
 /// ```dart
 /// @override
 /// Widget build(BuildContext context) {
