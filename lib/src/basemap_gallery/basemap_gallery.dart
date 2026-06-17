@@ -40,23 +40,10 @@ part of '../../../arcgis_maps_toolkit.dart';
 ///
 /// The widget can be inserted into a widget tree by calling the constructor and supplying a [BasemapGalleryController] with an associated [GeoModel] (i.e. [ArcGISMap] or [ArcGISScene]) and an optional onCurrentBasemapChanged callback function.
 /// ```dart
-/// late final ArcGISMap _map;
-/// late final BasemapGalleryController _controller;
-///
-/// @override
-/// void initState() {
-///   super.initState();
-///   _map = ArcGISMap.withBasemapStyle(BasemapStyle.arcGISTopographic);
-///   _controller = BasemapGalleryController(geoModel: _map);
-///   _controller.onBasemapChanged = (basemap) {
-///     debugPrint('Selected basemap: ${basemap.name}');
-///   };
-/// }
-///
 /// @override
 /// Widget build(BuildContext context) {
 ///   return BasemapGallery(
-///     controller: _controller,
+///     controller: BasemapGalleryController(geoModel: map),
 ///   );
 /// }
 /// ```
