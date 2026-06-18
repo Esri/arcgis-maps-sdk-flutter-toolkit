@@ -49,7 +49,7 @@ class _ExampleBasemapGalleryState extends State<ExampleBasemapGallery> {
 
   late final ArcGISMap _map;
   final _selectedBasemapName = ValueNotifier<String>('');
-  late final BasemapGalleryController _controller;
+  late final BasemapGalleryController _basemapGalleryController;
 
   @override
   void initState() {
@@ -67,7 +67,7 @@ class _ExampleBasemapGalleryState extends State<ExampleBasemapGallery> {
 
     final galleryItems = _makeBasemapGalleryItems();
 
-    _controller = BasemapGalleryController.withItems(
+    _basemapGalleryController = BasemapGalleryController.withItems(
       geoModel: _map,
       items: galleryItems,
     )..viewStyle = BasemapGalleryViewStyle.grid;
@@ -75,8 +75,9 @@ class _ExampleBasemapGalleryState extends State<ExampleBasemapGallery> {
     // Asset-backed ArcGISImage values are created asynchronously.
     unawaited(_setDefaultThumbnail(galleryItems.last));
 
-    _selectedBasemapName.value = _controller.currentBasemap?.name ?? '';
-    _controller.onCurrentBasemapChanged = (basemap) {
+    _selectedBasemapName.value =
+        _basemapGalleryController.currentBasemap?.name ?? '';
+    _basemapGalleryController.onBasemapChanged = (basemap) {
       _selectedBasemapName.value = basemap.name;
     };
   }
@@ -84,7 +85,7 @@ class _ExampleBasemapGalleryState extends State<ExampleBasemapGallery> {
   @override
   void dispose() {
     _selectedBasemapName.dispose();
-    _controller.dispose();
+    _basemapGalleryController.dispose();
     super.dispose();
   }
 
@@ -172,17 +173,7 @@ class _ExampleBasemapGalleryState extends State<ExampleBasemapGallery> {
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.all(8),
-                  child: BasemapGallery(
-                    controller: _controller,
-                    onCurrentBasemapChanged: (basemap) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('Basemap changed to: ${basemap.name}'),
-                          duration: const Duration(seconds: 2),
-                        ),
-                      );
-                    },
-                  ),
+                  child: BasemapGallery(controller: _basemapGalleryController),
                 ),
               ),
             ],

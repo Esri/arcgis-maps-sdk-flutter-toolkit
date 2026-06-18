@@ -36,24 +36,19 @@ part of '../../../arcgis_maps_toolkit.dart';
 /// ## Usage
 /// A [BasemapGallery] widget is created with the following parameters:
 /// * controller: A property for the controller that contains state data for this widget.
-/// * onCurrentBasemapChanged: An optional callback that is called when a basemap item is tapped.
 ///
-/// The widget can be inserted into a widget tree by calling the constructor and supplying a [BasemapGalleryController] with an associated [GeoModel] (i.e. [ArcGISMap] or [ArcGISScene]) and an optional onCurrentBasemapChanged callback function.
+/// The widget can be inserted into a widget tree by calling the constructor and supplying a [BasemapGalleryController] with an associated [GeoModel] (i.e. [ArcGISMap] or [ArcGISScene]).
 /// ```dart
-/// BasemapGallery(
-///   controller: BasemapGalleryController(geoModel: map),
-///   onCurrentBasemapChanged: (basemap) {
-///     // Optional: handle basemap changed event
-///   },
-/// );
+/// @override
+/// Widget build(BuildContext context) {
+///   return BasemapGallery(
+///     controller: BasemapGalleryController(geoModel: map),
+///   );
+/// }
 /// ```
 final class BasemapGallery extends StatefulWidget {
   /// Creates a [BasemapGallery] widget.
-  const BasemapGallery({
-    required this.controller,
-    super.key,
-    this.onCurrentBasemapChanged,
-  });
+  const BasemapGallery({required this.controller, super.key});
 
   /// The [controller] containing the state data and properties for this [BasemapGallery].
   final BasemapGalleryController controller;
@@ -66,12 +61,6 @@ final class BasemapGallery extends StatefulWidget {
 
   /// Default grid tile spacing.
   static const double _gridSpacing = 8;
-
-  /// [onCurrentBasemapChanged] is called when a basemap is tapped.
-  /// Not called for loading/error items. Selection may show a
-  /// spatial reference mismatch dialog. For applied selection, listen to
-  /// [BasemapGalleryController.currentBasemap].
-  final ValueChanged<Basemap>? onCurrentBasemapChanged;
 
   @override
   State<BasemapGallery> createState() => _BasemapGalleryState();
@@ -271,10 +260,6 @@ final class _BasemapGalleryState extends State<BasemapGallery> {
     }
 
     await widget.controller._select(item);
-    final current = widget.controller._currentBasemapItem;
-    if (current == null) return;
-    if (!identical(current.basemap, item.basemap)) return;
-    widget.onCurrentBasemapChanged?.call(current.basemap);
   }
 }
 

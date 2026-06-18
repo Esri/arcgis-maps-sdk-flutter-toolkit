@@ -101,7 +101,7 @@ final class BasemapGalleryController {
   Portal? get portal => _portal;
 
   /// Called after a basemap selection is applied.
-  ValueChanged<Basemap>? onCurrentBasemapChanged;
+  ValueChanged<Basemap>? onBasemapChanged;
 
   /// The basemap that is currently applied on the associated [GeoModel].
   Basemap? get currentBasemap => _currentBasemapNotifier.value?.basemap;
@@ -129,7 +129,7 @@ final class BasemapGalleryController {
   /// - Ensure the associated [GeoModel] is loaded (if provided).
   /// - Check spatial reference compatibility when a [GeoModel] is provided.
   /// - Update [currentBasemap], synchronize [GeoModel.basemap], and emit on
-  ///   [onCurrentBasemapChanged] when selection succeeds.
+  ///   [onBasemapChanged] when selection succeeds.
   Future<void> _select(BasemapGalleryItem item) async {
     if (item._isBasemapLoading) return;
     if (item._loadBasemapError != null) return;
@@ -158,7 +158,7 @@ final class BasemapGalleryController {
       gm.basemap = item.basemap;
     }
 
-    onCurrentBasemapChanged?.call(item.basemap);
+    onBasemapChanged?.call(item.basemap);
   }
 
   /// Disposes resources.
