@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "com.esri.arcgis_maps_toolkit_example"
-    compileSdk = 36
+    compileSdk = 37
     ndkVersion = "28.2.13676358"
 
     compileOptions {
