@@ -219,7 +219,7 @@ final class BasemapGalleryItem {
     return input.replaceAll(RegExp(r'\s+'), ' ').trim();
   }
 
-  /// Clean up resources contained in this item.
+  /// Disposes resources contained in this item.
   void dispose() {
     _nameNotifier.dispose();
     _thumbnailNotifier.dispose();
