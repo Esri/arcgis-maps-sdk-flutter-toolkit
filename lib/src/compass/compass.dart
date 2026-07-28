@@ -91,6 +91,9 @@ class Compass extends StatefulWidget {
 class _CompassState extends State<Compass> {
   late GeoViewController _controller;
 
+  // TODO: get rid of this graphics stuff
+  final _centerPointOverlay = GraphicsOverlay();
+
   StreamSubscription<double>? _rotationSubscription;
   StreamSubscription<void>? _viewpointSubscription;
 
@@ -114,6 +117,9 @@ class _CompassState extends State<Compass> {
           setState(() => _angleDegrees = rotation);
         });
       case final ArcGISSceneViewController controller:
+        // TODO: get rid of this graphics stuff
+        controller.graphicsOverlays.add(_centerPointOverlay);
+
         _angleDegrees = controller.getCurrentViewpointCamera().heading;
         _viewpointSubscription = controller.onViewpointChanged.listen((_) {
           final heading = controller.getCurrentViewpointCamera().heading;
@@ -166,28 +172,50 @@ class _CompassState extends State<Compass> {
     );
   }
 
-  void onPressed() {
+  Future<void> onPressed() async {
     switch (_controller) {
       case final ArcGISMapViewController controller:
         controller.setViewpointRotation(angleDegrees: 0);
       case final ArcGISSceneViewController controller:
         final currentCamera = controller.getCurrentViewpointCamera();
-        controller.setViewpointCameraAnimated(
-          camera: currentCamera.rotateTo(
-            heading: 0,
-            pitch: currentCamera.pitch,
-            roll: currentCamera.roll,
-          ),
+        // Get the target point.
+        // final targetPt = await _getCameraTargetPoint();
+        final targetPt = await _getSceneCenterPoint(context);
+        if (targetPt == null) return;
+
+        // Configure and set an OrbitLocationCameraController.
+        final currentCameraController = controller.cameraController;
+        final orbitalCameraController =
+            OrbitLocationCameraController.withTargetPositionAndCameraPosition(
+              targetLocation: targetPt,
+              cameraPoint: currentCamera.location,
+            );
+        controller.cameraController = orbitalCameraController;
+
+        // Move the camera to the new position.
+        final normalizedCurrentHeading = currentCamera.heading % 360;
+        final headingDelta = normalizedCurrentHeading < 180
+            ? -normalizedCurrentHeading
+            : 360 - normalizedCurrentHeading;
+        await orbitalCameraController.moveCamera(
+          distanceDelta: 0,
+          headingDelta: headingDelta,
+          pitchDelta: 0,
+          duration: 1,
         );
-      case final ArcGISLocalSceneViewController controller:
-        final currentCamera = controller.getCurrentViewpointCamera();
-        controller.setViewpointCameraAnimated(
-          camera: currentCamera.rotateTo(
-            heading: 0,
-            pitch: currentCamera.pitch,
-            roll: currentCamera.roll,
-          ),
-        );
+
+        // Reset the camera controller on the view.
+        controller.cameraController = currentCameraController;
+
+      // case final ArcGISLocalSceneViewController controller:
+      //   final currentCamera = controller.getCurrentViewpointCamera();
+      //   controller.setViewpointCameraAnimated(
+      //     camera: currentCamera.rotateTo(
+      //       heading: 0,
+      //       pitch: currentCamera.pitch,
+      //       roll: currentCamera.roll,
+      //     ),
+      //   );
     }
   }
 
@@ -211,5 +239,43 @@ class _CompassState extends State<Compass> {
         ),
       ),
     );
+  }
+
+  Future<ArcGISPoint?> _getSceneCenterPoint(BuildContext context) async {
+    // Get the center offset for the scene or local scene view
+    final renderBox = context.findRenderObject() as RenderBox?;
+    if (renderBox == null) return null;
+    final centerOffset = Offset(
+      renderBox.size.width / 2,
+      renderBox.size.height / 2,
+    );
+
+    final ArcGISPoint centerPoint;
+    if (_controller is ArcGISLocalSceneViewController) {
+      centerPoint = await (_controller as ArcGISLocalSceneViewController)
+          .screenToLocation(screen: centerOffset);
+    } else if (_controller is ArcGISSceneViewController) {
+      centerPoint = await (_controller as ArcGISSceneViewController)
+          .screenToLocation(screen: centerOffset);
+    } else {
+      // This function only works with local scene view and scene view controllers.
+      return null;
+    }
+
+    // TODO: get rid of this graphics stuff
+    final centerPointGraphic = Graphic(
+      geometry: centerPoint,
+      symbol: SimpleMarkerSceneSymbol(
+        style: .diamond,
+        color: Colors.yellow,
+        width: 10,
+        height: 10,
+        depth: 10,
+      ),
+    );
+    _centerPointOverlay.graphics.clear();
+    _centerPointOverlay.graphics.add(centerPointGraphic);
+
+    return centerPoint;
   }
 }
