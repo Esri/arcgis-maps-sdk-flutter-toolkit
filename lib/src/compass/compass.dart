@@ -178,35 +178,45 @@ class _CompassState extends State<Compass> {
         controller.setViewpointRotation(angleDegrees: 0);
       case final ArcGISSceneViewController controller:
         final currentCamera = controller.getCurrentViewpointCamera();
-        // Get the target point.
-        // final targetPt = await _getCameraTargetPoint();
-        final targetPt = await _getSceneCenterPoint(context);
-        if (targetPt == null) return;
+        if (currentCamera.pitch < 0.1) {
+          // Orbit controller gets confused when camera is looking straight down.
+          controller.setViewpointCameraAnimated(
+            camera: currentCamera.rotateTo(
+              heading: 0,
+              pitch: currentCamera.pitch,
+              roll: currentCamera.roll,
+            ),
+          );
+        } else {
+          // Pitch is great enough to use an orbit controller.
+          // Get the target point.
+          final targetPt = await _getSceneCenterPoint(context);
+          if (targetPt == null) return;
 
-        // Configure and set an OrbitLocationCameraController.
-        final currentCameraController = controller.cameraController;
-        final orbitalCameraController =
-            OrbitLocationCameraController.withTargetPositionAndCameraPosition(
-              targetLocation: targetPt,
-              cameraPoint: currentCamera.location,
-            );
-        controller.cameraController = orbitalCameraController;
+          // Configure and set an OrbitLocationCameraController.
+          final currentCameraController = controller.cameraController;
+          final orbitalCameraController =
+              OrbitLocationCameraController.withTargetPositionAndCameraPosition(
+                targetLocation: targetPt,
+                cameraPoint: currentCamera.location,
+              );
+          controller.cameraController = orbitalCameraController;
 
-        // Move the camera to the new position.
-        final normalizedCurrentHeading = currentCamera.heading % 360;
-        final headingDelta = normalizedCurrentHeading < 180
-            ? -normalizedCurrentHeading
-            : 360 - normalizedCurrentHeading;
-        await orbitalCameraController.moveCamera(
-          distanceDelta: 0,
-          headingDelta: headingDelta,
-          pitchDelta: 0,
-          duration: 1,
-        );
+          // Move the camera to the new position.
+          final normalizedCurrentHeading = currentCamera.heading % 360;
+          final headingDelta = normalizedCurrentHeading < 180
+              ? -normalizedCurrentHeading
+              : 360 - normalizedCurrentHeading;
+          await orbitalCameraController.moveCamera(
+            distanceDelta: 0,
+            headingDelta: headingDelta,
+            pitchDelta: 0,
+            duration: 1,
+          );
 
-        // Reset the camera controller on the view.
-        controller.cameraController = currentCameraController;
-
+          // Reset the camera controller.
+          controller.cameraController = currentCameraController;
+        }
       // case final ArcGISLocalSceneViewController controller:
       //   final currentCamera = controller.getCurrentViewpointCamera();
       //   controller.setViewpointCameraAnimated(
