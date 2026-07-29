@@ -260,8 +260,9 @@ class _CompassState extends State<Compass> {
 
   Future<ArcGISPoint?> _getSceneCenterPoint(BuildContext context) async {
     // Get the center offset for the scene or local scene view
-    final renderBox = context.findRenderObject() as RenderBox?;
-    if (renderBox == null) return null;
+    // The view will exist in an ancestor of the Compass. Use the nearst ancestor's RenderBox.
+    final renderBox = context.findAncestorRenderObjectOfType<RenderBox>();
+    if (renderBox == null || !renderBox.hasSize) return null;
     final centerOffset = Offset(
       renderBox.size.width / 2,
       renderBox.size.height / 2,
