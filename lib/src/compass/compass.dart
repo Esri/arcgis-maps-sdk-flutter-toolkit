@@ -201,15 +201,18 @@ class _CompassState extends State<Compass> {
           final headingDelta = normalizedCurrentHeading < 180
               ? -normalizedCurrentHeading
               : 360 - normalizedCurrentHeading;
-          await orbitalCameraController.moveCamera(
-            distanceDelta: 0,
-            headingDelta: headingDelta,
-            pitchDelta: 0,
-            duration: 1,
-          );
 
-          // Reset the camera controller.
-          controller.cameraController = currentCameraController;
+          try {
+            await orbitalCameraController.moveCamera(
+              distanceDelta: 0,
+              headingDelta: headingDelta,
+              pitchDelta: 0,
+              duration: 1,
+            );
+          } finally {
+            // Reset the camera controller.
+            controller.cameraController = currentCameraController;
+          }
         }
       case final ArcGISLocalSceneViewController controller:
         // Get the target point.
