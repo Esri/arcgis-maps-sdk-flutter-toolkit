@@ -91,9 +91,6 @@ class Compass extends StatefulWidget {
 class _CompassState extends State<Compass> {
   late GeoViewController _controller;
 
-  // TODO: get rid of this graphics stuff
-  final _centerPointOverlay = GraphicsOverlay();
-
   StreamSubscription<double>? _rotationSubscription;
   StreamSubscription<void>? _viewpointSubscription;
 
@@ -117,9 +114,6 @@ class _CompassState extends State<Compass> {
           setState(() => _angleDegrees = rotation);
         });
       case final ArcGISSceneViewController controller:
-        // TODO: get rid of this graphics stuff
-        controller.graphicsOverlays.add(_centerPointOverlay);
-
         _angleDegrees = controller.getCurrentViewpointCamera().heading;
         _viewpointSubscription = controller.onViewpointChanged.listen((_) {
           final heading = controller.getCurrentViewpointCamera().heading;
@@ -191,7 +185,7 @@ class _CompassState extends State<Compass> {
           // Pitch is great enough to use an orbit controller.
           // Get the target point.
           final targetPt = await _getSceneCenterPoint(context);
-          if (targetPt == null) return;
+          if (targetPt == null || targetPt.isEmpty) return;
 
           // Configure and set an OrbitLocationCameraController.
           final currentCameraController = controller.cameraController;
@@ -217,15 +211,25 @@ class _CompassState extends State<Compass> {
           // Reset the camera controller.
           controller.cameraController = currentCameraController;
         }
-      // case final ArcGISLocalSceneViewController controller:
-      //   final currentCamera = controller.getCurrentViewpointCamera();
-      //   controller.setViewpointCameraAnimated(
-      //     camera: currentCamera.rotateTo(
-      //       heading: 0,
-      //       pitch: currentCamera.pitch,
-      //       roll: currentCamera.roll,
-      //     ),
-      //   );
+      case final ArcGISLocalSceneViewController controller:
+        // Get the target point.
+        final targetPt = await _getSceneCenterPoint(context);
+        if (targetPt == null || targetPt.isEmpty) return;
+
+        final currentCamera = controller.getCurrentViewpointCamera();
+        final normalizedCurrentHeading = currentCamera.heading % 360;
+        final headingDelta = normalizedCurrentHeading < 180
+            ? -normalizedCurrentHeading
+            : 360 - normalizedCurrentHeading;
+
+        controller.setViewpointCameraAnimated(
+          camera: currentCamera.rotateAround(
+            targetPoint: targetPt,
+            deltaHeading: -headingDelta,
+            deltaPitch: 0,
+            deltaRoll: 0,
+          ),
+        );
     }
   }
 
@@ -271,20 +275,6 @@ class _CompassState extends State<Compass> {
       // This function only works with local scene view and scene view controllers.
       return null;
     }
-
-    // TODO: get rid of this graphics stuff
-    final centerPointGraphic = Graphic(
-      geometry: centerPoint,
-      symbol: SimpleMarkerSceneSymbol(
-        style: .diamond,
-        color: Colors.yellow,
-        width: 10,
-        height: 10,
-        depth: 10,
-      ),
-    );
-    _centerPointOverlay.graphics.clear();
-    _centerPointOverlay.graphics.add(centerPointGraphic);
 
     return centerPoint;
   }
