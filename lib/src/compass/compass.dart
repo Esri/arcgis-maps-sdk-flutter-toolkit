@@ -185,7 +185,17 @@ class _CompassState extends State<Compass> {
           // Pitch is great enough to use an orbit controller.
           // Get the target point.
           final targetPt = await _getSceneCenterPoint(context);
-          if (targetPt == null || targetPt.isEmpty) return;
+          if (targetPt == null || targetPt.isEmpty) {
+            // If no target point, just set the camera heading to 0 and update the view.
+            controller.setViewpointCameraAnimated(
+              camera: currentCamera.rotateTo(
+                heading: 0,
+                pitch: currentCamera.pitch,
+                roll: currentCamera.roll,
+              ),
+            );
+            return;
+          }
 
           // Configure and set an OrbitLocationCameraController.
           final currentCameraController = controller.cameraController;
@@ -215,11 +225,21 @@ class _CompassState extends State<Compass> {
           }
         }
       case final ArcGISLocalSceneViewController controller:
+        final currentCamera = controller.getCurrentViewpointCamera();
         // Get the target point.
         final targetPt = await _getSceneCenterPoint(context);
-        if (targetPt == null || targetPt.isEmpty) return;
+        if (targetPt == null || targetPt.isEmpty) {
+          // If no target point, just set the camera heading to 0 and update the view.
+          controller.setViewpointCameraAnimated(
+            camera: currentCamera.rotateTo(
+              heading: 0,
+              pitch: currentCamera.pitch,
+              roll: currentCamera.roll,
+            ),
+          );
+          return;
+        }
 
-        final currentCamera = controller.getCurrentViewpointCamera();
         final normalizedCurrentHeading = currentCamera.heading % 360;
         final headingDelta = normalizedCurrentHeading < 180
             ? -normalizedCurrentHeading
