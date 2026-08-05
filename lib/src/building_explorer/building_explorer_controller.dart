@@ -21,9 +21,7 @@ part of '../../arcgis_maps_toolkit.dart';
 /// [BuildingExplorer.createController] and passing in the relevant [ArcGISLocalSceneViewController].
 /// The controller object is used when creating the [BuildingExplorer] in the widget tree.
 class BuildingExplorerController {
-  BuildingExplorerController._({
-    required ArcGISLocalSceneViewController localSceneViewController,
-  }) : _localSceneViewController = localSceneViewController;
+  BuildingExplorerController._({required this._localSceneViewController});
 
   /// The [ArcGISLocalSceneViewController] for the view showing the building
   /// scene layers. This provides the scene that contains the layers.

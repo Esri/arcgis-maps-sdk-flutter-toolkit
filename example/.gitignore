@@ -10,8 +10,8 @@
 .history
 .svn/
 .swiftpm/
+Package.resolved
 migrate_working_dir/
-
 # IntelliJ related
 *.iml
 *.ipr
@@ -44,8 +44,6 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
-
-/ios/Podfile.lock
 
 env.json
 

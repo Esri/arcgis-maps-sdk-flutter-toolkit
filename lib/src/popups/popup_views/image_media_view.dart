@@ -40,16 +40,18 @@ class _ImageMediaViewState extends State<_ImageMediaView> {
       return GestureDetector(
         onTap: () {
           if (isShowingDetailReady) {
-            Navigator.of(context).push(
-              MaterialPageRoute<void>(
-                builder: (context) => _MediaDetailView(
-                  popupMedia: widget.popupMedia,
-                  onClose: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ),
-            );
+            Navigator.of(context)
+                .push(
+                  MaterialPageRoute<void>(
+                    builder: (context) => _MediaDetailView(
+                      popupMedia: widget.popupMedia,
+                      onClose: () {
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ),
+                )
+                .ignore();
           }
         },
         child: Stack(
@@ -78,11 +80,26 @@ class _ImageMediaViewState extends State<_ImageMediaView> {
                 errorBuilder: (context, error, stackTrace) {
                   // If an image isn't available, we don't display the detail view.
                   isShowingDetailReady = false;
-                  return const Center(
-                    child: Icon(
-                      Icons.error_outline,
-                      color: Colors.red,
-                      size: 30,
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.error_outline,
+                          color: Theme.of(context).colorScheme.error,
+                          size: 30,
+                        ),
+                        if (widget.popupMedia.alternativeText.isNotEmpty)
+                          Padding(
+                            padding: const EdgeInsets.all(8),
+                            child: Text(
+                              widget.popupMedia.alternativeText,
+                              maxLines: 2,
+                              style: Theme.of(context).textTheme.bodyMedium,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                      ],
                     ),
                   );
                 },
@@ -229,7 +246,7 @@ class _MediaDetailView extends StatelessWidget {
                           child: _IndicatorDot(
                             size: 16,
                             duration: Duration(
-                              milliseconds: (imageRefreshInterval / 2).toInt(),
+                              milliseconds: imageRefreshInterval ~/ 2,
                             ),
                           ),
                         ),
@@ -279,7 +296,7 @@ class _IndicatorDotState extends State<_IndicatorDot>
   void initState() {
     super.initState();
     _controller = AnimationController(vsync: this, duration: widget.duration)
-      ..repeat(reverse: true);
+      ..repeat(reverse: true).ignore();
   }
 
   @override
@@ -295,8 +312,8 @@ class _IndicatorDotState extends State<_IndicatorDot>
       child: Container(
         width: widget.size,
         height: widget.size,
-        decoration: const BoxDecoration(
-          color: Colors.red,
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.error,
           shape: BoxShape.circle,
         ),
       ),

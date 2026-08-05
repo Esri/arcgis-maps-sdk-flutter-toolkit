@@ -1,5 +1,13 @@
 ## 0.0.0+0 # version will be set during export in ci/stamp_toolkit.sh
 
+### New widget
+* `BasemapGallery`: A widget that displays a collection of basemaps, either from ArcGIS Online, a user-defined portal, or an array of custom basemap gallery items.
+
+### Enhancement to PopupView
+* Alternative text: If a `PopupMedia` has an image that can’t be loaded, display the `alternativeText` (if it has any).
+
+## 300.0.0+4935
+
 ### Enhancements to PopupView
 
 * This release includes support for navigating through utility network associations. It uses the newly available `UtilityAssociationsPopupElement` API with the toolkit component.
@@ -19,7 +27,7 @@
 * First release of ArcGIS Maps SDK for Flutter Toolkit
 
 ### New Toolkit Components
-* Authenticator 
+* Authenticator
 * Compass
 * OverviewMap
 * PopupView

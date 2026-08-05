@@ -10,21 +10,22 @@ topics:
 publish_to: none
 
 environment:
-  sdk: '>=3.11.1 <4.0.0'
-  flutter: '>=3.41.3'
+  sdk: '>=3.12.1 <4.0.0'
+  flutter: '>=3.44.1'
 
 dependencies:
-  arcgis_maps: ^300.0.0
-  file_picker: ^10.3.10
-  fl_chart: ^1.1.0
+  arcgis_maps: ^300.1.0
+  file_picker: ^12.0.0-beta.7
+  fl_chart: ^1.2.0
   flutter:
     sdk: flutter
-  open_file: ^3.5.10
-  path_provider: ^2.1.5
-  shared_preferences: ^2.5.3
+  html: ^0.15.6
+  open_file: ^4.0.0
+  path_provider: ^2.1.6
+  shared_preferences: ^2.5.5
   timer_builder: ^2.0.0
-  url_launcher: ^6.3.1
-  webview_flutter: ^4.10.0
+  url_launcher: ^6.3.2
+  webview_flutter: ^4.14.1
 
 dev_dependencies:
   flutter_lints: ^6.0.0
@@ -32,5 +33,7 @@ dev_dependencies:
     sdk: flutter
 
 flutter:
- assets:
-  - assets/icons/
+  config:
+    enable-swift-package-manager: true
+  assets:
+    - assets/icons/

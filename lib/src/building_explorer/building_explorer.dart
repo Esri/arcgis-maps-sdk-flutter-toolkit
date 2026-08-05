@@ -101,7 +101,7 @@ class _BuildingExplorerState extends State<BuildingExplorer> {
 
   @override
   void dispose() {
-    onRequestSceneRefreshSubscription?.cancel();
+    onRequestSceneRefreshSubscription?.cancel().ignore();
     super.dispose();
   }
 

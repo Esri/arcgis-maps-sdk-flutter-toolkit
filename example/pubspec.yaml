@@ -4,10 +4,10 @@ publish_to: 'none'
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.11.1 <4.0.0'
+  sdk: '>=3.12.1 <4.0.0'
 
 dependencies:
-  arcgis_maps: ^300.0.0
+  arcgis_maps: ^300.1.0
   arcgis_maps_toolkit:
     path: ../
   flutter:
@@ -20,3 +20,7 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/basemap_default.png
+  config:
+    enable-swift-package-manager: true

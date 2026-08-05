@@ -170,7 +170,7 @@ class _OverviewMapState extends State<OverviewMap> {
 
   @override
   void dispose() {
-    _viewpointChangedSubscription?.cancel();
+    _viewpointChangedSubscription?.cancel().ignore();
 
     super.dispose();
   }
