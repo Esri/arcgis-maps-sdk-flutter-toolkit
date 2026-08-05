@@ -166,28 +166,14 @@ class _CompassState extends State<Compass> {
     );
   }
 
-  void onPressed() {
+  Future<void> onPressed() async {
     switch (_controller) {
       case final ArcGISMapViewController controller:
-        controller.setViewpointRotation(angleDegrees: 0);
+        _onPressedMapView(controller);
       case final ArcGISSceneViewController controller:
-        final currentCamera = controller.getCurrentViewpointCamera();
-        controller.setViewpointCameraAnimated(
-          camera: currentCamera.rotateTo(
-            heading: 0,
-            pitch: currentCamera.pitch,
-            roll: currentCamera.roll,
-          ),
-        );
+        await _onPressedSceneView(controller);
       case final ArcGISLocalSceneViewController controller:
-        final currentCamera = controller.getCurrentViewpointCamera();
-        controller.setViewpointCameraAnimated(
-          camera: currentCamera.rotateTo(
-            heading: 0,
-            pitch: currentCamera.pitch,
-            roll: currentCamera.roll,
-          ),
-        );
+        await _onPressedLocalSceneView(controller);
     }
   }
 
@@ -211,5 +197,123 @@ class _CompassState extends State<Compass> {
         ),
       ),
     );
+  }
+
+  void _onPressedMapView(ArcGISMapViewController controller) {
+    controller.setViewpointRotation(angleDegrees: 0);
+  }
+
+  Future<void> _onPressedSceneView(ArcGISSceneViewController controller) async {
+    final currentCamera = controller.getCurrentViewpointCamera();
+    if (currentCamera.pitch < 0.1) {
+      // Orbit controller gets confused when camera is looking straight down.
+      controller.setViewpointCameraAnimated(
+        camera: currentCamera.rotateTo(
+          heading: 0,
+          pitch: currentCamera.pitch,
+          roll: currentCamera.roll,
+        ),
+      );
+    } else {
+      // Pitch is great enough to use an orbit controller.
+      // Get the target point.
+      final targetPt = await _getSceneCenterPoint(context);
+      if (targetPt == null || targetPt.isEmpty) {
+        // If no target point, just set the camera heading to 0 and update the view.
+        controller.setViewpointCameraAnimated(
+          camera: currentCamera.rotateTo(
+            heading: 0,
+            pitch: currentCamera.pitch,
+            roll: currentCamera.roll,
+          ),
+        );
+        return;
+      }
+
+      // Configure and set an OrbitLocationCameraController.
+      final currentCameraController = controller.cameraController;
+      final orbitalCameraController =
+          OrbitLocationCameraController.withTargetPositionAndCameraPosition(
+            targetLocation: targetPt,
+            cameraPoint: currentCamera.location,
+          );
+      controller.cameraController = orbitalCameraController;
+
+      // Move the camera to the new position.
+      final normalizedCurrentHeading = currentCamera.heading % 360;
+      final headingDelta = normalizedCurrentHeading < 180
+          ? -normalizedCurrentHeading
+          : 360 - normalizedCurrentHeading;
+
+      try {
+        await orbitalCameraController.moveCamera(
+          distanceDelta: 0,
+          headingDelta: headingDelta,
+          pitchDelta: 0,
+          duration: 1,
+        );
+      } finally {
+        // Reset the camera controller.
+        controller.cameraController = currentCameraController;
+      }
+    }
+  }
+
+  Future<void> _onPressedLocalSceneView(
+    ArcGISLocalSceneViewController controller,
+  ) async {
+    final currentCamera = controller.getCurrentViewpointCamera();
+    // Get the target point.
+    final targetPt = await _getSceneCenterPoint(context);
+    if (targetPt == null || targetPt.isEmpty) {
+      // If no target point, just set the camera heading to 0 and update the view.
+      controller.setViewpointCameraAnimated(
+        camera: currentCamera.rotateTo(
+          heading: 0,
+          pitch: currentCamera.pitch,
+          roll: currentCamera.roll,
+        ),
+      );
+      return;
+    }
+
+    final normalizedCurrentHeading = currentCamera.heading % 360;
+    final headingDelta = normalizedCurrentHeading < 180
+        ? -normalizedCurrentHeading
+        : 360 - normalizedCurrentHeading;
+
+    controller.setViewpointCameraAnimated(
+      camera: currentCamera.rotateAround(
+        targetPoint: targetPt,
+        deltaHeading: -headingDelta,
+        deltaPitch: 0,
+        deltaRoll: 0,
+      ),
+    );
+  }
+
+  Future<ArcGISPoint?> _getSceneCenterPoint(BuildContext context) async {
+    // Get the center offset for the scene or local scene view
+    // The view will exist in an ancestor of the Compass. Use the nearst ancestor's RenderBox.
+    final renderBox = context.findAncestorRenderObjectOfType<RenderBox>();
+    if (renderBox == null || !renderBox.hasSize) return null;
+    final centerOffset = Offset(
+      renderBox.size.width / 2,
+      renderBox.size.height / 2,
+    );
+
+    final ArcGISPoint centerPoint;
+    if (_controller is ArcGISLocalSceneViewController) {
+      centerPoint = await (_controller as ArcGISLocalSceneViewController)
+          .screenToLocation(screen: centerOffset);
+    } else if (_controller is ArcGISSceneViewController) {
+      centerPoint = await (_controller as ArcGISSceneViewController)
+          .screenToLocation(screen: centerOffset);
+    } else {
+      // This function only works with local scene view and scene view controllers.
+      return null;
+    }
+
+    return centerPoint;
   }
 }
