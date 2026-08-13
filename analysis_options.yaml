@@ -1,5 +1,9 @@
 include: linter_rules.yaml
 
+linter:
+  rules:
+    public_member_api_docs: true
+
 analyzer:
   errors:
     close_sinks: warning
