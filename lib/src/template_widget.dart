@@ -18,6 +18,7 @@ part of '../arcgis_maps_toolkit.dart';
 
 /// @nodoc
 class TemplateWidget extends StatelessWidget {
+  /// @nodoc
   const TemplateWidget({super.key});
 
   @override
