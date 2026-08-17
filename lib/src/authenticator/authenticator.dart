@@ -325,20 +325,18 @@ class _AuthenticatorState extends State<Authenticator>
     }
 
     // Browse for a pfx file.
-    final filePickerResult = await FilePicker.pickFiles(
+    final files = await FilePicker.pickFiles(
       type: FileType.custom,
       allowedExtensions: ['pfx'],
     );
 
-    if (filePickerResult == null ||
-        filePickerResult.files.isEmpty ||
-        !mounted) {
+    if (files.isEmpty || !mounted) {
       // If the user canceled the file picker, cancel the challenge and end here.
       challenge.cancel();
       return;
     }
 
-    final file = filePickerResult.files.single;
+    final file = files.single;
 
     // Show a dialog to prompt the user for the certificate file's password, which
     // will answer the challenge.
