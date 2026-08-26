@@ -245,7 +245,9 @@ final class BasemapGalleryController {
       if (p.loadStatus == LoadStatus.notLoaded) {
         await p.load();
       }
-      final basemaps = await p.basemaps();
+      final basemaps = p.portalInfo?.useVectorBasemaps ?? false
+          ? await p.vectorBasemaps()
+          : await p.basemaps();
       if (_isDisposed) return;
       _replaceGalleryItems(basemaps.map((b) => BasemapGalleryItem(basemap: b)));
     } on Object catch (e) {
