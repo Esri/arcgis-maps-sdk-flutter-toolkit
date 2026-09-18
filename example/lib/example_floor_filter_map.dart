@@ -43,6 +43,11 @@ class _ExampleFloorFilterMapState extends State<ExampleFloorFilterMap> {
   // Create a map view controller.
   final _mapViewController = ArcGISMapView.createController();
 
+  // Create a controller for the FloorFilter widget.
+  late final _floorFilterController = FloorFilter.createController(
+    _mapViewController,
+  );
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -59,21 +64,26 @@ class _ExampleFloorFilterMapState extends State<ExampleFloorFilterMap> {
           Positioned(
             bottom: 70,
             left: 20,
-            child: FloorFilter(geoViewController: _mapViewController),
+            child: FloorFilter(widgetController: _floorFilterController),
           ),
         ],
       ),
     );
   }
 
-  void onMapViewReady() {
-    // Set a map with a basemap style and initial viewpoint to the map view controller.
+  Future<void> onMapViewReady() async {
+    // Create the map from an ArcGISOnline web map.
     final map = ArcGISMap.withUri(
       Uri.parse(
         'https://arcgisruntime.maps.arcgis.com/home/item.html?id=b4b599a43a474d33946cf0df526426f5',
       ),
-    );
+    )!;
 
+    // Load the map and set it on the view controller.
+    await map.load();
     _mapViewController.arcGISMap = map;
+
+    // Refresh the floor filter now that the map has been set.
+    _floorFilterController.refresh();
   }
 }

@@ -19,11 +19,17 @@ part of '../../arcgis_maps_toolkit.dart';
 /// A widget for filtering map content by floor.
 class FloorFilter extends StatefulWidget {
   /// Creates a floor filter.
-  const FloorFilter({required this.geoViewController, super.key});
+  const FloorFilter({required this.widgetController, super.key});
 
-  /// The [GeoViewController] for the view showing the floor data. This provides
-  /// the map or scene that contains the [FloorManager].
-  final GeoViewController geoViewController;
+  /// The [FloorFilterController] for the widget.
+  final FloorFilterController widgetController;
+
+  /// Static function used to create the [FloorFilterController] for the widget.
+  static FloorFilterController createController(
+    GeoViewController geoViewController,
+  ) {
+    return FloorFilterController._(geoViewController: geoViewController);
+  }
 
   @override
   State<FloorFilter> createState() => _FloorFilterState();
@@ -31,14 +37,39 @@ class FloorFilter extends StatefulWidget {
 
 class _FloorFilterState extends State<FloorFilter> {
   FloorManager? _floorManager;
+  StreamSubscription<Null>? onRequestFloorFilterRefreshSubscription;
 
   @override
   void initState() {
     super.initState();
+
+    // Listen for a refresh notification from the controller. When notified
+    // refresh the controller data and update the widget state.
+    onRequestFloorFilterRefreshSubscription = widget
+        .widgetController
+        ._onRequestFloorFilterRefresh
+        .listen((_) {
+          if (mounted) {
+            setState(() {
+              widget.widgetController._resetFloorManager();
+            });
+          }
+        });
+  }
+
+  @override
+  void dispose() {
+    onRequestFloorFilterRefreshSubscription?.cancel().ignore();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    if (_floorManager == null) {
+      // Do not show the widget if this map or scene has no floor manager.
+      return const SizedBox.shrink();
+    }
+
     return SizedBox.square(
       dimension: 50,
       child: IconButton.filled(

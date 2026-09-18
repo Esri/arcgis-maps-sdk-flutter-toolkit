@@ -66,6 +66,7 @@ part 'src/compass/compass.dart';
 part 'src/compass/compass_needle_painter.dart';
 // Floor Filter Widget
 part 'src/floor_filter/floor_filter.dart';
+part 'src/floor_filter/floor_filter_controller.dart';
 // Overview Map Widget
 part 'src/overview_map/overview_map.dart';
 // Popup Widget
