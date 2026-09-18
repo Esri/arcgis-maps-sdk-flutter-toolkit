@@ -48,10 +48,11 @@ class _FloorFilterState extends State<FloorFilter> {
     onRequestFloorFilterRefreshSubscription = widget
         .widgetController
         ._onRequestFloorFilterRefresh
-        .listen((_) {
+        .listen((_) async {
+          await widget.widgetController._resetFloorManager();
           if (mounted) {
             setState(() {
-              widget.widgetController._resetFloorManager();
+              _floorManager = widget.widgetController._floorManager;
             });
           }
         });
