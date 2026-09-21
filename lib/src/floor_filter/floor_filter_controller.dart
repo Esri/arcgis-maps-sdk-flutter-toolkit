@@ -212,10 +212,15 @@ class FloorFilterController {
       switch (geoViewController) {
         case final ArcGISMapViewController mapViewController:
           _zoomMapToExtent(geometry.extent, mapViewController);
+        case final ArcGISSceneViewController sceneViewController:
+          _zoomSceneToExtent(geometry.extent, sceneViewController);
+        case final ArcGISLocalSceneViewController localSceneViewController:
+          _zoomLocalSceneToExtent(geometry.extent, localSceneViewController);
       }
     }
   }
 
+  // Function to set the viewpoint to the extent of a facility in an ArcGISMapView.
   void _zoomMapToExtent(
     Envelope extent,
     ArcGISMapViewController mapViewController,
@@ -224,5 +229,19 @@ class FloorFilterController {
     builder.expandBy(1.5);
     final targetExtent = builder.toGeometry();
     mapViewController.setViewpoint(Viewpoint.fromTargetExtent(targetExtent));
+  }
+
+  void _zoomSceneToExtent(
+    Envelope extent,
+    ArcGISSceneViewController sceneViewController,
+  ) {
+    // TODO: zoom to extent with camera.
+  }
+
+  void _zoomLocalSceneToExtent(
+    Envelope extent,
+    ArcGISLocalSceneViewController localSceneViewController,
+  ) {
+    // TODO: zoom to extent with camera.
   }
 }
