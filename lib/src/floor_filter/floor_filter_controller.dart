@@ -26,9 +26,13 @@ class FloorFilterController {
   /// The [GeoViewController] for the view showing the floor information.
   final GeoViewController geoViewController;
 
+  // The floor manager for the GeoModel.
   FloorManager? _floorManager;
+  // The currently selected site.
   FloorSite? _selectedSite;
+  // The currently selected facility.
   FloorFacility? _selectedFacility;
+  // The currently selected level.
   FloorLevel? _selectedLevel;
 
   /// The ID of the currently selected site.
@@ -117,15 +121,15 @@ class FloorFilterController {
     if (geoModel != null) {
       await geoModel.load();
       _floorManager = geoModel.floorManager;
-      await _floorManager?.load();
 
       if (_floorManager != null) {
+        await _floorManager!.load();
         final facilities = _floorManager!.facilities;
-        final selectedIdx = facilities.lastIndexWhere(
-          (facility) => facility.name == 'Lattice',
-        );
+
         // TODO: Removed this test code. Setting the selected facility to test FloorLevel picker.
-        _selectFacility(facilities[selectedIdx]);
+        _selectFacility(
+          facilities.firstWhere((facility) => facility.name == 'Lattice'),
+        );
       }
     }
   }
