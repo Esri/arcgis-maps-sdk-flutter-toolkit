@@ -73,16 +73,23 @@ class FloorFilterController {
     _onRequestFloorFilterRefreshController.add(null);
   }
 
+  /// Notification that the Site/Facility/Floor selection has changed.
+  Stream<FloorSite?> get onSelectedChanged =>
+      _onSelectedChangedController.stream;
+  final _onSelectedChangedController = StreamController<Null>.broadcast();
+
+  // Internal stream notifying listeners that the selected site has changed.
   Stream<FloorSite?> get _onSiteChanged => _onSiteChangedController.stream;
   final _onSiteChangedController = StreamController<FloorSite?>.broadcast();
+  // Internal stream notifying listeners that the selected facility has changed.
   Stream<FloorFacility?> get _onFacilityChanged =>
       _onFacilityChangedController.stream;
   final _onFacilityChangedController =
       StreamController<FloorFacility?>.broadcast();
+  // Internal stream notifying listeners that the selected level has changed.
   Stream<FloorLevel?> get _onLevelChanged => _onLevelChangedController.stream;
   final _onLevelChangedController = StreamController<FloorLevel?>.broadcast();
-
-  // Stream that notifies internal listeners that they need to call
+  // Internal stream that notifies listeners that they need to call
   // _refreshBuildingSceneLayers due to a change in the scene of the view controller.
   Stream<Null> get _onRequestFloorFilterRefresh =>
       _onRequestFloorFilterRefreshController.stream;
@@ -95,6 +102,7 @@ class FloorFilterController {
     _selectedFacility = null;
     _selectedLevel = null;
 
+    // Obtain the GeoModel (map or scene) for this view.
     GeoModel? geoModel;
     switch (geoViewController) {
       case final ArcGISMapViewController mapViewController:
@@ -105,6 +113,7 @@ class FloorFilterController {
         geoModel = localSceneViewController.arcGISScene;
     }
 
+    // Obtain and load the FloorManager for this GeoView.
     if (geoModel != null) {
       await geoModel.load();
       _floorManager = geoModel.floorManager;
@@ -121,43 +130,89 @@ class FloorFilterController {
     }
   }
 
-  void _selectFacility(FloorFacility facility) {
-    if (_selectedFacility != facility) {
-      _selectedFacility = facility;
+  // Funciton to set the selected site and handle actions related to the change.
+  void _selectSite(FloorSite? site) {
+    if (_selectedSite == site) return;
 
-      // Notify stream that the facility changed.
-      _onFacilityChangedController.add(_selectedFacility);
+    _selectedSite = site;
 
-      // Set the level to the default level.
-      _selectDefaultLevel(facility);
+    // Clear the currently selected facility.
+    _selectFacility(null, notifySelectionChanged: false);
+
+    // Notify the streams that the site changed.
+    _onSiteChangedController.add(site);
+    _onSelectedChangedController.add(null);
+  }
+
+  // Funciton to set the selected facility and handle actions related to the change.
+  void _selectFacility(
+    FloorFacility? facility, {
+    bool notifySelectionChanged = true,
+  }) {
+    if (_selectedFacility == facility) return;
+
+    _selectedFacility = facility;
+
+    // Notify stream that the facility changed.
+    _onFacilityChangedController.add(_selectedFacility);
+    if (notifySelectionChanged) {
+      _onSelectedChangedController.add(null);
     }
 
-    // Adjust viewpoint to center of facility
+    if (facility != null) {
+      // Set the level to the default level.
+      _selectDefaultLevel(facility, notifySelectionChanged: false);
+
+      // Adjust viewpoint to facility extent.
+      _zoomToFacility(facility);
+    } else {
+      // Clear the selected floor.
+      _selectLevel(null, notifySelectionChanged: false);
+    }
+  }
+
+  // Function to select the default level of a facility.
+  void _selectDefaultLevel(
+    FloorFacility facility, {
+    bool notifySelectionChanged = true,
+  }) {
+    // The level with verticalOrder set to 0 is the default, ground floor.
+    if (facility.levels.isNotEmpty) {
+      _selectLevel(
+        facility.levels.firstWhere((level) => level.verticalOrder == 0),
+        notifySelectionChanged: notifySelectionChanged,
+      );
+    } else {
+      // Facility has no levels.
+      _selectLevel(null, notifySelectionChanged: notifySelectionChanged);
+    }
+  }
+
+  // Funciton to set the selected level and handle actions related to the change.
+  void _selectLevel(FloorLevel? level, {bool notifySelectionChanged = true}) {
+    if (_selectedLevel == level) return;
+
+    _selectedLevel = level;
+
+    // Notify the streams that the level changed.
+    _onLevelChangedController.add(level);
+    if (notifySelectionChanged) {
+      _onSelectedChangedController.add(null);
+    }
+  }
+
+  void _zoomToFacility(FloorFacility facility) {
     if (facility.geometry != null) {
       final geometry = facility.geometry!;
 
       switch (geoViewController) {
         case final ArcGISMapViewController mapViewController:
-          _zoomToExtent(geometry.extent, mapViewController);
+          _zoomMapToExtent(geometry.extent, mapViewController);
       }
     }
   }
 
-  void _selectDefaultLevel(FloorFacility facility) {
-    if (facility.levels.isNotEmpty) {
-      _selectedLevel = facility.levels.firstWhere(
-        (level) => level.verticalOrder == 0,
-      );
-      _selectedLevel = null;
-    } else {
-      _selectedLevel = null;
-    }
-
-    // Notify the stream that the level changed
-    _onLevelChangedController.add(_selectedLevel);
-  }
-
-  void _zoomToExtent(
+  void _zoomMapToExtent(
     Envelope extent,
     ArcGISMapViewController mapViewController,
   ) {
