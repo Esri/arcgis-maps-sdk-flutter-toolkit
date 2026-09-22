@@ -18,10 +18,15 @@ part of '../../../arcgis_maps_toolkit.dart';
 
 /// A widget for selecting a floor level in the selected facility.
 class _LevelSelector extends StatefulWidget {
-  const _LevelSelector({required FloorFilterController floorFilterController})
-    : widgetController = floorFilterController;
+  const _LevelSelector({
+    required FloorFilterController floorFilterController,
+    required this.maxHeight,
+  }) : widgetController = floorFilterController;
 
   final FloorFilterController widgetController;
+
+  // The maximum height that the LevelSelector can occupy.
+  final double maxHeight;
 
   @override
   State<_LevelSelector> createState() => _LevelSelectorState();
@@ -64,10 +69,15 @@ class _LevelSelectorState extends State<_LevelSelector> {
       return const SizedBox.shrink();
     }
 
+    // The maximum height of the level listing. It is the maximum height of the
+    // widget minus the height of the button.
+    final listViewMaxHeight = widget.maxHeight - 24;
+
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.only(bottom: 4),
+          // padding: const EdgeInsets.only(bottom: 4),
+          padding: EdgeInsets.zero,
           child: SizedBox(
             height: 24,
             child: OutlinedButton(
@@ -80,95 +90,37 @@ class _LevelSelectorState extends State<_LevelSelector> {
                 side: const BorderSide(color: Colors.black12),
                 backgroundColor: Colors.white,
               ),
-              child: const Icon(Icons.expand_less_outlined, size: 18),
+              // child: const Icon(Icons.expand_less_outlined, size: 18),
+              child: const Icon(Icons.expand_more_outlined, size: 18),
             ),
           ),
         ),
-        Expanded(
+        ConstrainedBox(
+          constraints: BoxConstraints(maxHeight: listViewMaxHeight),
           child: ListView.builder(
+            shrinkWrap: true,
             reverse: true,
             padding: EdgeInsets.zero,
             physics: const BouncingScrollPhysics(),
             itemCount: levels.length,
             itemBuilder: (context, index) {
               final level = levels[index];
-              return Align(
-                child: IntrinsicWidth(
-                  child: Material(
-                    type: MaterialType.transparency,
-                    child: ListTile(
-                      dense: true,
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 8),
-                      title: Text(level.levelNumber.toString()),
-                      selected: selectedLevel == level,
-                      onTap: () {
-                        widget.widgetController._selectLevel(level);
-                      },
-                    ),
+              return OutlinedButton(
+                onPressed: () => widget.widgetController._selectLevel(level),
+                style: OutlinedButton.styleFrom(
+                  padding: EdgeInsets.zero,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(6),
                   ),
+                  side: const BorderSide(color: Colors.white),
+                  backgroundColor: Colors.white,
                 ),
+                child: Text(level.levelNumber.toString()),
               );
             },
           ),
         ),
       ],
     );
-
-    // return ConstrainedBox(
-    //   constraints: BoxConstraints(maxHeight: maxHeight),
-    //   child: Column(
-    //     children: [
-    //       Padding(
-    //         padding: const EdgeInsets.only(bottom: 4),
-    //         child: SizedBox(
-    //           height: 24,
-    //           width: 50,
-    //           child: OutlinedButton(
-    //             onPressed: () {},
-    //             style: OutlinedButton.styleFrom(
-    //               padding: EdgeInsets.zero,
-    //               shape: RoundedRectangleBorder(
-    //                 borderRadius: BorderRadius.circular(6),
-    //               ),
-    //               side: const BorderSide(color: Colors.black12),
-    //               backgroundColor: Colors.white,
-    //             ),
-    //             child: const Icon(Icons.expand_less_outlined, size: 18),
-    //           ),
-    //         ),
-    //       ),
-    //       Expanded(
-    //         child: ScrollConfiguration(
-    //           behavior: const ScrollBehavior().copyWith(overscroll: false),
-    //           child: ListView.builder(
-    //             physics: const BouncingScrollPhysics(),
-    //             itemCount: levels.length,
-    //             itemBuilder: (context, index) {
-    //               final level = levels[index];
-    //               return Align(
-    //                 child: IntrinsicWidth(
-    //                   child: Material(
-    //                     type: MaterialType.transparency,
-    //                     child: ListTile(
-    //                       dense: true,
-    //                       contentPadding: const EdgeInsets.symmetric(
-    //                         horizontal: 8,
-    //                       ),
-    //                       title: Text(level.levelNumber.toString()),
-    //                       selected: selectedLevel == level,
-    //                       onTap: () {
-    //                         widget.widgetController._selectLevel(level);
-    //                       },
-    //                     ),
-    //                   ),
-    //                 ),
-    //               );
-    //             },
-    //           ),
-    //         ),
-    //       ),
-    //     ],
-    //   ),
-    // );
   }
 }

@@ -83,11 +83,15 @@ class _FloorFilterState extends State<FloorFilter> {
 
     const widgetWidth = 50.0;
     const decorationExtra = 22.0;
-    final maxWidgetHeight = _maxWidgetHeight;
-    final selectorMaxHeight = maxWidgetHeight - widgetWidth - decorationExtra;
+
+    // The height of the level selector is the height of the widget (_maxWidgetHeight)
+    // minus the height of the IconButton (widgetWidth) and the extra padding
+    // and border heights (decorationExtra).
+    final levelSelectorMaxHeight =
+        _maxWidgetHeight - widgetWidth - decorationExtra;
 
     return ConstrainedBox(
-      constraints: BoxConstraints(maxHeight: maxWidgetHeight),
+      constraints: BoxConstraints(maxHeight: _maxWidgetHeight),
       child: Container(
         width: widgetWidth,
         padding: const EdgeInsets.all(5),
@@ -99,13 +103,9 @@ class _FloorFilterState extends State<FloorFilter> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            ConstrainedBox(
-              constraints: BoxConstraints(maxHeight: selectorMaxHeight),
-              child: Center(
-                child: _LevelSelector(
-                  floorFilterController: widget.widgetController,
-                ),
-              ),
+            _LevelSelector(
+              floorFilterController: widget.widgetController,
+              maxHeight: levelSelectorMaxHeight,
             ),
             SizedBox.square(
               dimension: widgetWidth,
