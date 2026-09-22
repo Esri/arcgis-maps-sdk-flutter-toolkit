@@ -19,10 +19,18 @@ part of '../../arcgis_maps_toolkit.dart';
 /// A widget for filtering map content by floor.
 class FloorFilter extends StatefulWidget {
   /// Creates a floor filter.
-  const FloorFilter({required this.widgetController, super.key});
+  const FloorFilter({
+    required this.widgetController,
+    this.maxHeight,
+    super.key,
+  });
 
   /// The [FloorFilterController] for the widget.
   final FloorFilterController widgetController;
+
+  /// The maximum height of the widget. If not set, a default of 80% of the
+  /// screen height will be used.
+  final double? maxHeight;
 
   /// Static function used to create the [FloorFilterController] for the widget.
   static FloorFilterController createController(
@@ -38,12 +46,14 @@ class FloorFilter extends StatefulWidget {
 class _FloorFilterState extends State<FloorFilter> {
   FloorManager? _floorManager;
   StreamSubscription<Null>? onRequestFloorFilterRefreshSubscription;
+  late final double _maxWidgetHeight =
+      widget.maxHeight ?? MediaQuery.sizeOf(context).height * 0.8;
 
   @override
   void initState() {
     super.initState();
 
-    // Listen for a refresh notification from the controller. When notified
+    // Listen for a refresh notification from the controller. When notified,
     // refresh the controller data and update the widget state.
     onRequestFloorFilterRefreshSubscription = widget
         .widgetController
@@ -71,16 +81,48 @@ class _FloorFilterState extends State<FloorFilter> {
       return const SizedBox.shrink();
     }
 
-    return SizedBox.square(
-      dimension: 50,
-      child: IconButton.filled(
-        onPressed: () => print('FloorFilter online!'),
-        style: IconButton.styleFrom(
-          backgroundColor: Colors.white,
-          foregroundColor: Colors.black,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+    const widgetWidth = 50.0;
+    const decorationExtra = 22.0;
+    final maxWidgetHeight = _maxWidgetHeight;
+    final selectorMaxHeight = maxWidgetHeight - widgetWidth - decorationExtra;
+
+    return ConstrainedBox(
+      constraints: BoxConstraints(maxHeight: maxWidgetHeight),
+      child: Container(
+        width: widgetWidth,
+        padding: const EdgeInsets.all(5),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.black12),
         ),
-        icon: const Icon(Icons.business_outlined),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ConstrainedBox(
+              constraints: BoxConstraints(maxHeight: selectorMaxHeight),
+              child: Center(
+                child: _LevelSelector(
+                  floorFilterController: widget.widgetController,
+                ),
+              ),
+            ),
+            SizedBox.square(
+              dimension: widgetWidth,
+              child: IconButton.filled(
+                onPressed: () => debugPrint('FloorFilter online!'),
+                style: IconButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  foregroundColor: Colors.black,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                icon: const Icon(Icons.business_outlined),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
