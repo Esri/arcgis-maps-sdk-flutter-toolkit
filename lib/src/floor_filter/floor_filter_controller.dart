@@ -129,6 +129,7 @@ class FloorFilterController {
         // TODO: Removed this test code. Setting the selected facility to test FloorLevel picker.
         _selectFacility(
           facilities.firstWhere((facility) => facility.name == 'Lattice'),
+          // facilities.firstWhere((facility) => facility.name == 'Bearing'),
         );
       }
     }
@@ -202,6 +203,19 @@ class FloorFilterController {
     _onLevelChangedController.add(level);
     if (notifySelectionChanged) {
       _onSelectedChangedController.add(null);
+    }
+
+    // Set the visibility of layers to match the selected level. This will span
+    // all facilities.
+    for (final floorManagerLevel in _floorManager!.levels) {
+      if (level != null) {
+        // Levels on with the verticalOrder of the selected level are set to visible.
+        floorManagerLevel.isVisible =
+            floorManagerLevel.verticalOrder == level.verticalOrder;
+      } else {
+        // If selected level is null, fall back to default level.
+        floorManagerLevel.isVisible = floorManagerLevel.verticalOrder == 0;
+      }
     }
   }
 
