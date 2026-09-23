@@ -130,12 +130,9 @@ class _LevelSelectorState extends State<_LevelSelector> {
                           widget.widgetController._selectLevel(level),
                       style: buttonStyle,
                       child: level == widget.widgetController._selectedLevel
-                          ? Text(
-                              level.levelNumber.toString(),
-                              style: selectedLevelTextStyle,
-                            )
+                          ? Text(level.shortName, style: selectedLevelTextStyle)
                           : Text(
-                              level.levelNumber.toString(),
+                              level.shortName,
                               style: unselectedLevelTextStyle,
                             ),
                     );
@@ -146,8 +143,7 @@ class _LevelSelectorState extends State<_LevelSelector> {
                   onPressed: toggleExpandedView,
                   style: buttonStyle,
                   child: Text(
-                    widget.widgetController._selectedLevel!.levelNumber
-                        .toString(),
+                    widget.widgetController._selectedLevel!.shortName,
                     style: selectedLevelTextStyle,
                   ),
                 ),

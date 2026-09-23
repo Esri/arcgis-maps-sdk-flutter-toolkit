@@ -126,10 +126,11 @@ class FloorFilterController {
         await _floorManager!.load();
         final facilities = _floorManager!.facilities;
 
-        // TODO: Removed this test code. Setting the selected facility to test FloorLevel picker.
+        // TODO(kmueller-gis): Removed this test code. Setting the selected facility to test FloorLevel picker.
         _selectFacility(
-          facilities.firstWhere((facility) => facility.name == 'Lattice'),
+          // facilities.firstWhere((facility) => facility.name == 'Lattice'),
           // facilities.firstWhere((facility) => facility.name == 'Bearing'),
+          facilities.firstWhere((facility) => facility.name == 'Geoid'),
         );
       }
     }
@@ -249,13 +250,13 @@ class FloorFilterController {
     Envelope extent,
     ArcGISSceneViewController sceneViewController,
   ) {
-    // TODO: zoom to extent with camera.
+    // TODO(kmueller-gis): zoom to extent with camera.
   }
 
   void _zoomLocalSceneToExtent(
     Envelope extent,
     ArcGISLocalSceneViewController localSceneViewController,
   ) {
-    // TODO: zoom to extent with camera.
+    // TODO(kmueller-gis): zoom to extent with camera.
   }
 }
