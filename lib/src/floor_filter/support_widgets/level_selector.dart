@@ -74,6 +74,22 @@ class _LevelSelectorState extends State<_LevelSelector> {
     // widget minus the height of the button.
     final listViewMaxHeight = widget.maxHeight - 24;
 
+    // Text style for selected level.
+    final selectedLevelTextStyle = DefaultTextStyle.of(
+      context,
+    ).style.apply(fontWeightDelta: 2, fontSizeFactor: 1.3);
+
+    // Text style for unselected level.
+    final unselectedLevelTextStyle = DefaultTextStyle.of(context).style;
+
+    // Button style applied to the level selection buttons.
+    final buttonStyle = OutlinedButton.styleFrom(
+      padding: EdgeInsets.zero,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+      side: const BorderSide(color: Colors.white),
+      backgroundColor: Colors.white,
+    );
+
     return Column(
       children: [
         Padding(
@@ -97,62 +113,45 @@ class _LevelSelectorState extends State<_LevelSelector> {
             ),
           ),
         ),
-        if (expandedView) ...[
-          ConstrainedBox(
-            constraints: BoxConstraints(maxHeight: listViewMaxHeight),
-            child: ListView.builder(
-              shrinkWrap: true,
-              reverse: true,
-              padding: EdgeInsets.zero,
-              physics: const BouncingScrollPhysics(),
-              itemCount: levels.length,
-              itemBuilder: (context, index) {
-                final level = levels[index];
-                return OutlinedButton(
-                  onPressed: () => widget.widgetController._selectLevel(level),
-                  style: OutlinedButton.styleFrom(
-                    padding: EdgeInsets.zero,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                    side: const BorderSide(color: Colors.white),
-                    backgroundColor: Colors.white,
+        ConstrainedBox(
+          constraints: BoxConstraints(maxHeight: listViewMaxHeight),
+          child: expandedView
+              // Show the whole list for the expandedView.
+              ? ListView.builder(
+                  shrinkWrap: true,
+                  reverse: true,
+                  padding: EdgeInsets.zero,
+                  physics: const BouncingScrollPhysics(),
+                  itemCount: levels.length,
+                  itemBuilder: (context, index) {
+                    final level = levels[index];
+                    return OutlinedButton(
+                      onPressed: () =>
+                          widget.widgetController._selectLevel(level),
+                      style: buttonStyle,
+                      child: level == widget.widgetController._selectedLevel
+                          ? Text(
+                              level.levelNumber.toString(),
+                              style: selectedLevelTextStyle,
+                            )
+                          : Text(
+                              level.levelNumber.toString(),
+                              style: unselectedLevelTextStyle,
+                            ),
+                    );
+                  },
+                )
+              // Only show the selected level for non-expandedView.
+              : OutlinedButton(
+                  onPressed: toggleExpandedView,
+                  style: buttonStyle,
+                  child: Text(
+                    widget.widgetController._selectedLevel!.levelNumber
+                        .toString(),
+                    style: selectedLevelTextStyle,
                   ),
-                  child: level == widget.widgetController._selectedLevel
-                      ? Text(
-                          level.levelNumber.toString(),
-                          style: DefaultTextStyle.of(context).style.apply(
-                            fontWeightDelta: 2,
-                            fontSizeFactor: 1.3,
-                          ),
-                        )
-                      : Text(
-                          level.levelNumber.toString(),
-                          style: DefaultTextStyle.of(context).style,
-                        ),
-                );
-              },
-            ),
-          ),
-        ] else ...[
-          OutlinedButton(
-            onPressed: toggleExpandedView,
-            style: OutlinedButton.styleFrom(
-              padding: EdgeInsets.zero,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(6),
-              ),
-              side: const BorderSide(color: Colors.white),
-              backgroundColor: Colors.white,
-            ),
-            child: Text(
-              widget.widgetController._selectedLevel!.levelNumber.toString(),
-              style: DefaultTextStyle.of(
-                context,
-              ).style.apply(fontWeightDelta: 2, fontSizeFactor: 1.3),
-            ),
-          ),
-        ],
+                ),
+        ),
       ],
     );
   }
