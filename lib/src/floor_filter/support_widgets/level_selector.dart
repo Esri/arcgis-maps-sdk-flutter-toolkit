@@ -35,6 +35,7 @@ class _LevelSelector extends StatefulWidget {
 class _LevelSelectorState extends State<_LevelSelector> {
   StreamSubscription<FloorLevel?>? onLevelChangedSubscription;
   FloorLevel? selectedLevel;
+  bool expandedView = true;
 
   @override
   void initState() {
@@ -81,7 +82,7 @@ class _LevelSelectorState extends State<_LevelSelector> {
           child: SizedBox(
             height: 24,
             child: OutlinedButton(
-              onPressed: () {},
+              onPressed: toggleExpandedView,
               style: OutlinedButton.styleFrom(
                 padding: EdgeInsets.zero,
                 shape: RoundedRectangleBorder(
@@ -90,47 +91,75 @@ class _LevelSelectorState extends State<_LevelSelector> {
                 side: const BorderSide(color: Colors.black12),
                 backgroundColor: Colors.white,
               ),
-              // child: const Icon(Icons.expand_less_outlined, size: 18),
-              child: const Icon(Icons.expand_more_outlined, size: 18),
+              child: expandedView
+                  ? const Icon(Icons.expand_more_outlined, size: 18)
+                  : const Icon(Icons.expand_less_outlined, size: 18),
             ),
           ),
         ),
-        ConstrainedBox(
-          constraints: BoxConstraints(maxHeight: listViewMaxHeight),
-          child: ListView.builder(
-            shrinkWrap: true,
-            reverse: true,
-            padding: EdgeInsets.zero,
-            physics: const BouncingScrollPhysics(),
-            itemCount: levels.length,
-            itemBuilder: (context, index) {
-              final level = levels[index];
-              return OutlinedButton(
-                onPressed: () => widget.widgetController._selectLevel(level),
-                style: OutlinedButton.styleFrom(
-                  padding: EdgeInsets.zero,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(6),
+        if (expandedView) ...[
+          ConstrainedBox(
+            constraints: BoxConstraints(maxHeight: listViewMaxHeight),
+            child: ListView.builder(
+              shrinkWrap: true,
+              reverse: true,
+              padding: EdgeInsets.zero,
+              physics: const BouncingScrollPhysics(),
+              itemCount: levels.length,
+              itemBuilder: (context, index) {
+                final level = levels[index];
+                return OutlinedButton(
+                  onPressed: () => widget.widgetController._selectLevel(level),
+                  style: OutlinedButton.styleFrom(
+                    padding: EdgeInsets.zero,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(6),
+                    ),
+                    side: const BorderSide(color: Colors.white),
+                    backgroundColor: Colors.white,
                   ),
-                  side: const BorderSide(color: Colors.white),
-                  backgroundColor: Colors.white,
-                ),
-                child: level == widget.widgetController._selectedLevel
-                    ? Text(
-                        level.levelNumber.toString(),
-                        style: DefaultTextStyle.of(
-                          context,
-                        ).style.apply(fontWeightDelta: 2, fontSizeFactor: 1.3),
-                      )
-                    : Text(
-                        level.levelNumber.toString(),
-                        style: DefaultTextStyle.of(context).style,
-                      ),
-              );
-            },
+                  child: level == widget.widgetController._selectedLevel
+                      ? Text(
+                          level.levelNumber.toString(),
+                          style: DefaultTextStyle.of(context).style.apply(
+                            fontWeightDelta: 2,
+                            fontSizeFactor: 1.3,
+                          ),
+                        )
+                      : Text(
+                          level.levelNumber.toString(),
+                          style: DefaultTextStyle.of(context).style,
+                        ),
+                );
+              },
+            ),
           ),
-        ),
+        ] else ...[
+          OutlinedButton(
+            onPressed: toggleExpandedView,
+            style: OutlinedButton.styleFrom(
+              padding: EdgeInsets.zero,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(6),
+              ),
+              side: const BorderSide(color: Colors.white),
+              backgroundColor: Colors.white,
+            ),
+            child: Text(
+              widget.widgetController._selectedLevel!.levelNumber.toString(),
+              style: DefaultTextStyle.of(
+                context,
+              ).style.apply(fontWeightDelta: 2, fontSizeFactor: 1.3),
+            ),
+          ),
+        ],
       ],
     );
+  }
+
+  void toggleExpandedView() {
+    if (mounted) {
+      setState(() => expandedView = !expandedView);
+    }
   }
 }
