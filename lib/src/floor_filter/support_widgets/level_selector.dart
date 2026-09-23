@@ -115,7 +115,17 @@ class _LevelSelectorState extends State<_LevelSelector> {
                   side: const BorderSide(color: Colors.white),
                   backgroundColor: Colors.white,
                 ),
-                child: Text(level.levelNumber.toString()),
+                child: level == widget.widgetController._selectedLevel
+                    ? Text(
+                        level.levelNumber.toString(),
+                        style: DefaultTextStyle.of(
+                          context,
+                        ).style.apply(fontWeightDelta: 2, fontSizeFactor: 1.3),
+                      )
+                    : Text(
+                        level.levelNumber.toString(),
+                        style: DefaultTextStyle.of(context).style,
+                      ),
               );
             },
           ),
