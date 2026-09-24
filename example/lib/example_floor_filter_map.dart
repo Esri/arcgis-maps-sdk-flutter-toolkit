@@ -52,21 +52,25 @@ class _ExampleFloorFilterMapState extends State<ExampleFloorFilterMap> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Compass Map')),
-      body: Stack(
-        children: [
-          // Add a map view to the widget tree and set a controller.
-          ArcGISMapView(
-            controllerProvider: () => _mapViewController,
-            onMapViewReady: onMapViewReady,
-          ),
-          // Create a floor filter and display on top of the map view in a stack.
-          // Pass the floor filter the corresponding map view controller.
-          Positioned(
-            bottom: 70,
-            left: 20,
-            child: FloorFilter(floorFilterController: _floorFilterController),
-          ),
-        ],
+      body: SafeArea(
+        left: false,
+        right: false,
+        child: Stack(
+          children: [
+            // Add a map view to the widget tree and set a controller.
+            ArcGISMapView(
+              controllerProvider: () => _mapViewController,
+              onMapViewReady: onMapViewReady,
+            ),
+            // Create a floor filter and display on top of the map view in a stack.
+            // Pass the floor filter the corresponding map view controller.
+            Positioned(
+              bottom: 70,
+              left: 20,
+              child: FloorFilter(floorFilterController: _floorFilterController),
+            ),
+          ],
+        ),
       ),
     );
   }
