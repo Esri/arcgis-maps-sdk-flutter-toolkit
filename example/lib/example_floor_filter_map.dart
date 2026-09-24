@@ -64,7 +64,7 @@ class _ExampleFloorFilterMapState extends State<ExampleFloorFilterMap> {
           Positioned(
             bottom: 70,
             left: 20,
-            child: FloorFilter(widgetController: _floorFilterController),
+            child: FloorFilter(floorFilterController: _floorFilterController),
           ),
         ],
       ),

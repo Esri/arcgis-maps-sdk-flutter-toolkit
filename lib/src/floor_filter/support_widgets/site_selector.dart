@@ -17,17 +17,127 @@
 part of '../../../arcgis_maps_toolkit.dart';
 
 /// A widget for selecting a floor filter site.
-class SiteSelector extends StatefulWidget {
+class _SiteSelector extends StatefulWidget {
   /// Creates a site selector.
-  const SiteSelector({super.key});
+  const _SiteSelector({required FloorFilterController floorFilterController})
+    : _widgetController = floorFilterController;
+
+  final FloorFilterController _widgetController;
 
   @override
-  State<SiteSelector> createState() => _SiteSelectorState();
+  State<_SiteSelector> createState() => _SiteSelectorState();
 }
 
-class _SiteSelectorState extends State<SiteSelector> {
+class _SiteSelectorState extends State<_SiteSelector> {
+  final _searchTextController = TextEditingController();
+  StreamSubscription<FloorSite?>? _onSiteChangedSubscription;
+  FloorSite? _selectedSite;
+  late final List<FloorSite> _sites;
+  late List<FloorSite> _filterdSites;
+
+  @override
+  void initState() {
+    super.initState();
+    _sites = widget._widgetController._floorManager?.sites ?? <FloorSite>[];
+    _filterdSites = List.from(_sites);
+    _filterdSites.sort((site1, site2) => site1.name.compareTo(site2.name));
+
+    _onSiteChangedSubscription = widget._widgetController._onSiteChanged.listen(
+      (newSite) {
+        if (mounted) {
+          setState(() => _selectedSite = newSite);
+        }
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    _searchTextController.dispose();
+
+    _onSiteChangedSubscription?.cancel().ignore();
+    _onSiteChangedSubscription = null;
+
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return const SizedBox.shrink();
+    return Column(
+      children: [
+        Row(
+          children: [
+            const Spacer(),
+            Text('Sites', style: Theme.of(context).textTheme.titleLarge),
+            const Spacer(),
+          ],
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8),
+          child: TextField(
+            controller: _searchTextController,
+            onChanged: _filterSitesByName,
+            decoration: const InputDecoration(
+              border: OutlineInputBorder(),
+              labelText: 'Search',
+              prefixIcon: Icon(Icons.search_outlined),
+            ),
+          ),
+        ),
+        Expanded(
+          child: ListView.builder(
+            itemCount: _filterdSites.length,
+            itemBuilder: (context, index) {
+              final site = _filterdSites[index];
+              return ListTile(
+                title: site == _selectedSite
+                    ? Text(site.name, style: const TextStyle(fontWeight: .w800))
+                    : Text(site.name),
+                onTap: () => _onSiteSelected(site),
+              );
+            },
+          ),
+        ),
+        ElevatedButton(
+          onPressed: () => _onSiteSelected(null),
+          child: const Text('All Facilities'),
+        ),
+      ],
+    );
+  }
+
+  void _filterSitesByName(String filterText) {
+    final List<FloorSite> tmpSites;
+
+    if (filterText.isEmpty) {
+      tmpSites = List.from(_sites);
+    } else {
+      tmpSites = _sites.where((site) {
+        final siteName = site.name.toUpperCase();
+        return siteName.contains(filterText.toUpperCase());
+      }).toList();
+    }
+
+    tmpSites.sort((site1, site2) => site1.name.compareTo(site2.name));
+
+    if (mounted) {
+      setState(() {
+        _filterdSites = tmpSites;
+      });
+    }
+  }
+
+  void _onSiteSelected(FloorSite? site) {
+    // Set the selected site on the controller.
+    widget._widgetController._selectSite(site);
+
+    // // Navigate to facility selector sheet.
+    // Navigator.of(context)
+    //     .push(
+    //       MaterialPageRoute<void>(
+    //         builder: (context) => const _FacilitySelector(),
+    //       ),
+    //     )
+    //     .ignore();
   }
 }

@@ -21,9 +21,9 @@ class _LevelSelector extends StatefulWidget {
   const _LevelSelector({
     required FloorFilterController floorFilterController,
     required this.maxHeight,
-  }) : widgetController = floorFilterController;
+  }) : _widgetController = floorFilterController;
 
-  final FloorFilterController widgetController;
+  final FloorFilterController _widgetController;
 
   // The maximum height that the LevelSelector can occupy.
   final double maxHeight;
@@ -33,30 +33,31 @@ class _LevelSelector extends StatefulWidget {
 }
 
 class _LevelSelectorState extends State<_LevelSelector> {
-  StreamSubscription<FloorLevel?>? onLevelChangedSubscription;
-  FloorLevel? selectedLevel;
-  bool expandedView = true;
+  StreamSubscription<FloorLevel?>? _onLevelChangedSubscription;
+  FloorLevel? _selectedLevel;
+  bool _expandedView = true;
 
   @override
   void initState() {
     super.initState();
     // Set the initial selectedLevel.
-    selectedLevel = widget.widgetController._selectedLevel;
+    _selectedLevel = widget._widgetController._selectedLevel;
 
     // Listen for any changes to the selected level.
-    onLevelChangedSubscription = widget.widgetController._onLevelChanged.listen(
-      (level) {
-        if (mounted) {
-          setState(() => selectedLevel = level);
-        }
-      },
-    );
+    _onLevelChangedSubscription = widget._widgetController._onLevelChanged
+        .listen((newLevel) {
+          if (mounted) {
+            setState(() => _selectedLevel = newLevel);
+          }
+        });
   }
+
+  // TODO(kmueller-gis): Add didUpdateWidget override to resize the widget if height changes.
 
   @override
   void dispose() {
-    onLevelChangedSubscription?.cancel().ignore();
-    onLevelChangedSubscription = null;
+    _onLevelChangedSubscription?.cancel().ignore();
+    _onLevelChangedSubscription = null;
 
     super.dispose();
   }
@@ -64,7 +65,7 @@ class _LevelSelectorState extends State<_LevelSelector> {
   @override
   Widget build(BuildContext context) {
     final levels =
-        widget.widgetController._selectedFacility?.levels ?? const [];
+        widget._widgetController._selectedFacility?.levels ?? const [];
 
     if (levels.isEmpty) {
       return const SizedBox.shrink();
@@ -107,7 +108,7 @@ class _LevelSelectorState extends State<_LevelSelector> {
                 side: const BorderSide(color: Colors.black12),
                 backgroundColor: Colors.white,
               ),
-              child: expandedView
+              child: _expandedView
                   ? const Icon(Icons.expand_more_outlined, size: 18)
                   : const Icon(Icons.expand_less_outlined, size: 18),
             ),
@@ -115,7 +116,7 @@ class _LevelSelectorState extends State<_LevelSelector> {
         ),
         ConstrainedBox(
           constraints: BoxConstraints(maxHeight: listViewMaxHeight),
-          child: expandedView
+          child: _expandedView
               // Show the whole list for the expandedView.
               ? ListView.builder(
                   shrinkWrap: true,
@@ -127,9 +128,9 @@ class _LevelSelectorState extends State<_LevelSelector> {
                     final level = levels[index];
                     return OutlinedButton(
                       onPressed: () =>
-                          widget.widgetController._selectLevel(level),
+                          widget._widgetController._selectLevel(level),
                       style: buttonStyle,
-                      child: level == widget.widgetController._selectedLevel
+                      child: level == _selectedLevel
                           ? Text(level.shortName, style: selectedLevelTextStyle)
                           : Text(
                               level.shortName,
@@ -143,7 +144,7 @@ class _LevelSelectorState extends State<_LevelSelector> {
                   onPressed: toggleExpandedView,
                   style: buttonStyle,
                   child: Text(
-                    widget.widgetController._selectedLevel!.shortName,
+                    widget._widgetController._selectedLevel!.shortName,
                     style: selectedLevelTextStyle,
                   ),
                 ),
@@ -154,7 +155,7 @@ class _LevelSelectorState extends State<_LevelSelector> {
 
   void toggleExpandedView() {
     if (mounted) {
-      setState(() => expandedView = !expandedView);
+      setState(() => _expandedView = !_expandedView);
     }
   }
 }

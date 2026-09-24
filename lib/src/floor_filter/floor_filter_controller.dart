@@ -85,14 +85,17 @@ class FloorFilterController {
   // Internal stream notifying listeners that the selected site has changed.
   Stream<FloorSite?> get _onSiteChanged => _onSiteChangedController.stream;
   final _onSiteChangedController = StreamController<FloorSite?>.broadcast();
+
   // Internal stream notifying listeners that the selected facility has changed.
   Stream<FloorFacility?> get _onFacilityChanged =>
       _onFacilityChangedController.stream;
   final _onFacilityChangedController =
       StreamController<FloorFacility?>.broadcast();
+
   // Internal stream notifying listeners that the selected level has changed.
   Stream<FloorLevel?> get _onLevelChanged => _onLevelChangedController.stream;
   final _onLevelChangedController = StreamController<FloorLevel?>.broadcast();
+
   // Internal stream that notifies listeners that they need to call
   // _refreshBuildingSceneLayers due to a change in the scene of the view controller.
   Stream<Null> get _onRequestFloorFilterRefresh =>
@@ -128,9 +131,14 @@ class FloorFilterController {
 
         // TODO(kmueller-gis): Removed this test code. Setting the selected facility to test FloorLevel picker.
         _selectFacility(
+          // 12 levels
           // facilities.firstWhere((facility) => facility.name == 'Lattice'),
+          // 1 level
           // facilities.firstWhere((facility) => facility.name == 'Bearing'),
+          // 3 levels incl basement
           facilities.firstWhere((facility) => facility.name == 'Geoid'),
+          // No Levels
+          // facilities.firstWhere((facility) => facility.name == 'Datum'),
         );
       }
     }
@@ -148,6 +156,10 @@ class FloorFilterController {
     // Notify the streams that the site changed.
     _onSiteChangedController.add(site);
     _onSelectedChangedController.add(null);
+
+    if (site != null) {
+      _zoomToSite(site);
+    }
   }
 
   // Funciton to set the selected facility and handle actions related to the change.
@@ -166,18 +178,17 @@ class FloorFilterController {
     }
 
     if (facility != null) {
-      // Set the level to the default level.
-      _selectDefaultLevel(facility, notifySelectionChanged: false);
-
       // Adjust viewpoint to facility extent.
       _zoomToFacility(facility);
+
+      // Set the level to the default level.
+      _selectDefaultLevel(facility, notifySelectionChanged: false);
     } else {
       // Clear the selected floor.
       _selectLevel(null, notifySelectionChanged: false);
     }
   }
 
-  // Function to select the default level of a facility.
   void _selectDefaultLevel(
     FloorFacility facility, {
     bool notifySelectionChanged = true,
@@ -206,32 +217,50 @@ class FloorFilterController {
       _onSelectedChangedController.add(null);
     }
 
-    // Set the visibility of layers to match the selected level. This will span
-    // all facilities.
+    // Update the visible levels
+    if (level != null) {
+      _showLevelsWithVerticalOrder(level.verticalOrder);
+    } else {
+      // Default to the 0th level.
+      _showLevelsWithVerticalOrder(0);
+    }
+  }
+
+  // Function to set the visibility of layers that have the specified
+  // verticalOrder. This will span all facilities. Facilites that do not have
+  // a level with this verticalOrder will not show any floor.
+  void _showLevelsWithVerticalOrder(int verticalOrder) {
+    if (_floorManager == null) return;
+
     for (final floorManagerLevel in _floorManager!.levels) {
-      if (level != null) {
-        // Levels on with the verticalOrder of the selected level are set to visible.
-        floorManagerLevel.isVisible =
-            floorManagerLevel.verticalOrder == level.verticalOrder;
-      } else {
-        // If selected level is null, fall back to default level.
-        floorManagerLevel.isVisible = floorManagerLevel.verticalOrder == 0;
-      }
+      // Levels on with the verticalOrder of the selected level are set to visible.
+      floorManagerLevel.isVisible =
+          floorManagerLevel.verticalOrder == verticalOrder;
+    }
+  }
+
+  void _zoomToSite(FloorSite site) {
+    final geometry = site.geometry;
+    if (geometry != null) {
+      _zoomViewToExtent(geometry.extent);
     }
   }
 
   void _zoomToFacility(FloorFacility facility) {
-    if (facility.geometry != null) {
-      final geometry = facility.geometry!;
+    final geometry = facility.geometry;
+    if (geometry != null) {
+      _zoomViewToExtent(geometry.extent);
+    }
+  }
 
-      switch (geoViewController) {
-        case final ArcGISMapViewController mapViewController:
-          _zoomMapToExtent(geometry.extent, mapViewController);
-        case final ArcGISSceneViewController sceneViewController:
-          _zoomSceneToExtent(geometry.extent, sceneViewController);
-        case final ArcGISLocalSceneViewController localSceneViewController:
-          _zoomLocalSceneToExtent(geometry.extent, localSceneViewController);
-      }
+  void _zoomViewToExtent(Envelope extent) {
+    switch (geoViewController) {
+      case final ArcGISMapViewController mapViewController:
+        _zoomMapToExtent(extent, mapViewController);
+      case final ArcGISSceneViewController sceneViewController:
+        _zoomSceneToExtent(extent, sceneViewController);
+      case final ArcGISLocalSceneViewController localSceneViewController:
+        _zoomLocalSceneToExtent(extent, localSceneViewController);
     }
   }
 
@@ -240,10 +269,16 @@ class FloorFilterController {
     Envelope extent,
     ArcGISMapViewController mapViewController,
   ) {
+    // Pad the extent by a factor of 1.5.
     final builder = EnvelopeBuilder.fromEnvelope(extent);
     builder.expandBy(1.5);
     final targetExtent = builder.toGeometry();
-    mapViewController.setViewpoint(Viewpoint.fromTargetExtent(targetExtent));
+
+    // Set the viewpoint of the map view.
+    mapViewController.setViewpointAnimated(
+      Viewpoint.fromTargetExtent(targetExtent),
+      duration: 0.5,
+    );
   }
 
   void _zoomSceneToExtent(

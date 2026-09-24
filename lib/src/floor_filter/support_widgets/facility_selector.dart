@@ -17,15 +17,15 @@
 part of '../../../arcgis_maps_toolkit.dart';
 
 /// A widget for selecting a floor facility.
-class FacilitySelector extends StatefulWidget {
+class _FacilitySelector extends StatefulWidget {
   /// Creates a FacilitySelector.
-  const FacilitySelector({super.key});
+  const _FacilitySelector();
 
   @override
-  State<FacilitySelector> createState() => _FacilitySelectorState();
+  State<_FacilitySelector> createState() => _FacilitySelectorState();
 }
 
-class _FacilitySelectorState extends State<FacilitySelector> {
+class _FacilitySelectorState extends State<_FacilitySelector> {
   @override
   Widget build(BuildContext context) {
     return const SizedBox.shrink();

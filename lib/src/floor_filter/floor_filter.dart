@@ -20,13 +20,13 @@ part of '../../arcgis_maps_toolkit.dart';
 class FloorFilter extends StatefulWidget {
   /// Creates a floor filter.
   const FloorFilter({
-    required this.widgetController,
+    required this.floorFilterController,
     this.maxHeight,
     super.key,
   });
 
   /// The [FloorFilterController] for the widget.
-  final FloorFilterController widgetController;
+  final FloorFilterController floorFilterController;
 
   /// The maximum height of the widget. If not set, a default of 80% of the
   /// screen height will be used.
@@ -45,7 +45,7 @@ class FloorFilter extends StatefulWidget {
 
 class _FloorFilterState extends State<FloorFilter> {
   FloorManager? _floorManager;
-  StreamSubscription<Null>? onRequestFloorFilterRefreshSubscription;
+  StreamSubscription<Null>? _onRequestFloorFilterRefreshSubscription;
   late final double _maxWidgetHeight =
       widget.maxHeight ?? MediaQuery.sizeOf(context).height * 0.8;
 
@@ -55,14 +55,14 @@ class _FloorFilterState extends State<FloorFilter> {
 
     // Listen for a refresh notification from the controller. When notified,
     // refresh the controller data and update the widget state.
-    onRequestFloorFilterRefreshSubscription = widget
-        .widgetController
+    _onRequestFloorFilterRefreshSubscription = widget
+        .floorFilterController
         ._onRequestFloorFilterRefresh
         .listen((_) async {
-          await widget.widgetController._resetFloorManager();
+          await widget.floorFilterController._resetFloorManager();
           if (mounted) {
             setState(() {
-              _floorManager = widget.widgetController._floorManager;
+              _floorManager = widget.floorFilterController._floorManager;
             });
           }
         });
@@ -70,7 +70,7 @@ class _FloorFilterState extends State<FloorFilter> {
 
   @override
   void dispose() {
-    onRequestFloorFilterRefreshSubscription?.cancel().ignore();
+    _onRequestFloorFilterRefreshSubscription?.cancel().ignore();
     super.dispose();
   }
 
@@ -104,13 +104,13 @@ class _FloorFilterState extends State<FloorFilter> {
           mainAxisSize: MainAxisSize.min,
           children: [
             _LevelSelector(
-              floorFilterController: widget.widgetController,
+              floorFilterController: widget.floorFilterController,
               maxHeight: levelSelectorMaxHeight,
             ),
             SizedBox.square(
               dimension: widgetWidth,
               child: IconButton.filled(
-                onPressed: () => debugPrint('FloorFilter online!'),
+                onPressed: showSiteAndFacitliySelector,
                 style: IconButton.styleFrom(
                   backgroundColor: Colors.white,
                   foregroundColor: Colors.black,
@@ -124,6 +124,17 @@ class _FloorFilterState extends State<FloorFilter> {
           ],
         ),
       ),
+    );
+  }
+
+  Future<void> showSiteAndFacitliySelector() {
+    return showModalBottomSheet<void>(
+      context: context,
+      builder: (context) {
+        return _SiteSelector(
+          floorFilterController: widget.floorFilterController,
+        );
+      },
     );
   }
 }
