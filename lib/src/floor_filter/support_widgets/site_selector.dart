@@ -38,6 +38,7 @@ class _SiteSelectorState extends State<_SiteSelector> {
   @override
   void initState() {
     super.initState();
+    _selectedSite = widget._widgetController._selectedSite;
     _sites = widget._widgetController._floorManager?.sites ?? <FloorSite>[];
     _filterdSites = List.from(_sites);
     _filterdSites.sort((site1, site2) => site1.name.compareTo(site2.name));
@@ -63,46 +64,51 @@ class _SiteSelectorState extends State<_SiteSelector> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Row(
+    return Padding(
+      padding: const EdgeInsets.all(10),
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Sites'),
+          automaticallyImplyLeading: false,
+        ),
+        body: Column(
           children: [
-            const Spacer(),
-            Text('Sites', style: Theme.of(context).textTheme.titleLarge),
-            const Spacer(),
+            Padding(
+              padding: const EdgeInsets.all(8),
+              child: TextField(
+                controller: _searchTextController,
+                onChanged: _filterSitesByName,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                  labelText: 'Search',
+                  prefixIcon: Icon(Icons.search_outlined),
+                ),
+              ),
+            ),
+            Expanded(
+              child: ListView.builder(
+                itemCount: _filterdSites.length,
+                itemBuilder: (context, index) {
+                  final site = _filterdSites[index];
+                  return ListTile(
+                    title: site == _selectedSite
+                        ? Text(
+                            site.name,
+                            style: const TextStyle(fontWeight: .w800),
+                          )
+                        : Text(site.name),
+                    onTap: () => _onSiteSelected(site),
+                  );
+                },
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () => _onSiteSelected(null),
+              child: const Text('All Facilities'),
+            ),
           ],
         ),
-        Padding(
-          padding: const EdgeInsets.all(8),
-          child: TextField(
-            controller: _searchTextController,
-            onChanged: _filterSitesByName,
-            decoration: const InputDecoration(
-              border: OutlineInputBorder(),
-              labelText: 'Search',
-              prefixIcon: Icon(Icons.search_outlined),
-            ),
-          ),
-        ),
-        Expanded(
-          child: ListView.builder(
-            itemCount: _filterdSites.length,
-            itemBuilder: (context, index) {
-              final site = _filterdSites[index];
-              return ListTile(
-                title: site == _selectedSite
-                    ? Text(site.name, style: const TextStyle(fontWeight: .w800))
-                    : Text(site.name),
-                onTap: () => _onSiteSelected(site),
-              );
-            },
-          ),
-        ),
-        ElevatedButton(
-          onPressed: () => _onSiteSelected(null),
-          child: const Text('All Facilities'),
-        ),
-      ],
+      ),
     );
   }
 
