@@ -133,6 +133,7 @@ class _FloorFilterState extends State<FloorFilter> {
       builder: (context) {
         return _SiteAndFacilitySelectorNavigator(
           floorFilterController: widget.floorFilterController,
+          onClose: () => Navigator.pop(context),
         );
       },
     );

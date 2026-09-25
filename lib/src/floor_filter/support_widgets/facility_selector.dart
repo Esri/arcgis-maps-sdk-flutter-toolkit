@@ -21,9 +21,11 @@ class _FacilitySelector extends StatefulWidget {
   /// Creates a FacilitySelector.
   const _FacilitySelector({
     required FloorFilterController floorFilterController,
+    this.onClose,
   }) : _widgetController = floorFilterController;
 
   final FloorFilterController _widgetController;
+  final VoidCallback? onClose;
 
   @override
   State<_FacilitySelector> createState() => _FacilitySelectorState();
@@ -76,7 +78,17 @@ class _FacilitySelectorState extends State<_FacilitySelector> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Facilities')),
+      appBar: AppBar(
+        title: const Text('Facilities'),
+        actions: [
+          if (widget.onClose != null) ...[
+            IconButton(
+              icon: const Icon(Icons.close_outlined),
+              onPressed: widget.onClose?.call,
+            ),
+          ],
+        ],
+      ),
       body: Column(
         children: [
           Padding(
@@ -140,5 +152,8 @@ class _FacilitySelectorState extends State<_FacilitySelector> {
   void _onFacilitySelected(FloorFacility? facility) {
     // Set the selected facility on the controller.
     widget._widgetController._selectFacility(facility);
+
+    // If on onClose callback was set, call it.
+    widget.onClose?.call();
   }
 }

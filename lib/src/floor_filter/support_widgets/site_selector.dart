@@ -19,10 +19,13 @@ part of '../../../arcgis_maps_toolkit.dart';
 /// A widget for selecting a floor filter site.
 class _SiteSelector extends StatefulWidget {
   /// Creates a site selector.
-  const _SiteSelector({required FloorFilterController floorFilterController})
-    : _widgetController = floorFilterController;
+  const _SiteSelector({
+    required FloorFilterController floorFilterController,
+    this.onClose,
+  }) : _widgetController = floorFilterController;
 
   final FloorFilterController _widgetController;
+  final VoidCallback? onClose;
 
   @override
   State<_SiteSelector> createState() => _SiteSelectorState();
@@ -65,6 +68,14 @@ class _SiteSelectorState extends State<_SiteSelector> {
       appBar: AppBar(
         title: const Text('Sites'),
         automaticallyImplyLeading: false,
+        actions: [
+          if (widget.onClose != null) ...[
+            IconButton(
+              icon: const Icon(Icons.close_outlined),
+              onPressed: widget.onClose?.call,
+            ),
+          ],
+        ],
       ),
       body: Column(
         children: [

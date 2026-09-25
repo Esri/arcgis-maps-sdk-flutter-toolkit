@@ -21,11 +21,14 @@ class _SiteAndFacilitySelectorNavigator extends StatefulWidget {
   /// Creates a selector flow.
   const _SiteAndFacilitySelectorNavigator({
     required FloorFilterController floorFilterController,
+    this.onClose,
   }) : _widgetController = floorFilterController;
 
   static const _facilitySelectorRoute = '/facilities';
 
   final FloorFilterController _widgetController;
+
+  final VoidCallback? onClose;
 
   static void showFacilitySelector(BuildContext context) {
     Navigator.of(context).pushNamed(_facilitySelectorRoute).ignore();
@@ -65,8 +68,14 @@ class _SiteAndFacilitySelectorNavigatorState
       builder: (context) {
         return switch (settings.name) {
           _SiteAndFacilitySelectorNavigator._facilitySelectorRoute =>
-            _FacilitySelector(floorFilterController: widget._widgetController),
-          _ => _SiteSelector(floorFilterController: widget._widgetController),
+            _FacilitySelector(
+              floorFilterController: widget._widgetController,
+              onClose: widget.onClose,
+            ),
+          _ => _SiteSelector(
+            floorFilterController: widget._widgetController,
+            onClose: widget.onClose,
+          ),
         };
       },
     );
