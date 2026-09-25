@@ -17,10 +17,11 @@
 part of '../../../arcgis_maps_toolkit.dart';
 
 /// A navigation flow for selecting a floor site and facility.
-class _SelectorFlow extends StatefulWidget {
+class _SiteAndFacilitySelectorNavigator extends StatefulWidget {
   /// Creates a selector flow.
-  const _SelectorFlow({required FloorFilterController floorFilterController})
-    : _widgetController = floorFilterController;
+  const _SiteAndFacilitySelectorNavigator({
+    required FloorFilterController floorFilterController,
+  }) : _widgetController = floorFilterController;
 
   static const _facilitySelectorRoute = '/facilities';
 
@@ -31,10 +32,12 @@ class _SelectorFlow extends StatefulWidget {
   }
 
   @override
-  State<_SelectorFlow> createState() => _SelectorFlowState();
+  State<_SiteAndFacilitySelectorNavigator> createState() =>
+      _SiteAndFacilitySelectorNavigatorState();
 }
 
-class _SelectorFlowState extends State<_SelectorFlow> {
+class _SiteAndFacilitySelectorNavigatorState
+    extends State<_SiteAndFacilitySelectorNavigator> {
   static const _siteSelectorRoute = '/';
 
   final _navigatorKey = GlobalKey<NavigatorState>();
@@ -48,7 +51,9 @@ class _SelectorFlowState extends State<_SelectorFlow> {
       ),
       child: Navigator(
         key: _navigatorKey,
-        initialRoute: _siteSelectorRoute,
+        initialRoute: widget._widgetController._selectedFacility != null
+            ? _SiteAndFacilitySelectorNavigator._facilitySelectorRoute
+            : _siteSelectorRoute,
         onGenerateRoute: _onGenerateRoute,
       ),
     );
@@ -59,9 +64,8 @@ class _SelectorFlowState extends State<_SelectorFlow> {
       settings: settings,
       builder: (context) {
         return switch (settings.name) {
-          _SelectorFlow._facilitySelectorRoute => _FacilitySelector(
-            floorFilterController: widget._widgetController,
-          ),
+          _SiteAndFacilitySelectorNavigator._facilitySelectorRoute =>
+            _FacilitySelector(floorFilterController: widget._widgetController),
           _ => _SiteSelector(floorFilterController: widget._widgetController),
         };
       },

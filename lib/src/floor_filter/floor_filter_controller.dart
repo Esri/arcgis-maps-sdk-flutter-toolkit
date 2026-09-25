@@ -124,23 +124,7 @@ class FloorFilterController {
     if (geoModel != null) {
       await geoModel.load();
       _floorManager = geoModel.floorManager;
-
-      if (_floorManager != null) {
-        await _floorManager!.load();
-        final facilities = _floorManager!.facilities;
-
-        // TODO(kmueller-gis): Removed this test code. Setting the selected facility to test FloorLevel picker.
-        _selectFacility(
-          // 12 levels
-          // facilities.firstWhere((facility) => facility.name == 'Lattice'),
-          // 1 level
-          // facilities.firstWhere((facility) => facility.name == 'Bearing'),
-          // 3 levels incl basement
-          facilities.firstWhere((facility) => facility.name == 'Geoid'),
-          // No Levels
-          // facilities.firstWhere((facility) => facility.name == 'Datum'),
-        );
-      }
+      await _floorManager?.load();
     }
   }
 

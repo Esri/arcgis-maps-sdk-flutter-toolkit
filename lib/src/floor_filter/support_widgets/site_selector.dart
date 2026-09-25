@@ -131,6 +131,6 @@ class _SiteSelectorState extends State<_SiteSelector> {
     widget._widgetController._selectSite(site);
 
     // Navigate to facility selector sheet.
-    _SelectorFlow.showFacilitySelector(context);
+    _SiteAndFacilitySelectorNavigator.showFacilitySelector(context);
   }
 }

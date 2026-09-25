@@ -39,13 +39,24 @@ class _FacilitySelectorState extends State<_FacilitySelector> {
   void initState() {
     super.initState();
     _selectedFacility = widget._widgetController._selectedFacility;
-    _facilities =
-        widget._widgetController._floorManager?.facilities ?? <FloorFacility>[];
+
+    // If there is a selected site, pull facilities from the site. Otherwise
+    // list all facilities in the floor manager.
+    if (widget._widgetController._selectedSite != null) {
+      _facilities = widget._widgetController._selectedSite!.facilities;
+    } else {
+      _facilities =
+          widget._widgetController._floorManager?.facilities ??
+          <FloorFacility>[];
+    }
+
+    // Create a mutable list from the facilities list for filtering and sorting.
     _filterdFacilities = List.from(_facilities);
     _filterdFacilities.sort(
       (facility1, facility2) => facility1.name.compareTo(facility2.name),
     );
 
+    // Listen for a change in the selected facility from the widget controller.
     _onFacilityChangedSubscription = widget._widgetController._onFacilityChanged
         .listen((newFacility) {
           if (mounted) {

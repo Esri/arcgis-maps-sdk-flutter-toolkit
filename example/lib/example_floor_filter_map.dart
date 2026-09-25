@@ -51,7 +51,7 @@ class _ExampleFloorFilterMapState extends State<ExampleFloorFilterMap> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Compass Map')),
+      appBar: AppBar(title: const Text('Floor Filter Map')),
       body: SafeArea(
         left: false,
         right: false,
@@ -65,7 +65,7 @@ class _ExampleFloorFilterMapState extends State<ExampleFloorFilterMap> {
             // Create a floor filter and display on top of the map view in a stack.
             // Pass the floor filter the corresponding map view controller.
             Positioned(
-              bottom: 70,
+              bottom: 50,
               left: 20,
               child: FloorFilter(floorFilterController: _floorFilterController),
             ),
