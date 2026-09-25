@@ -29,7 +29,6 @@ class _SiteSelector extends StatefulWidget {
 }
 
 class _SiteSelectorState extends State<_SiteSelector> {
-  final _searchTextController = TextEditingController();
   StreamSubscription<FloorSite?>? _onSiteChangedSubscription;
   FloorSite? _selectedSite;
   late final List<FloorSite> _sites;
@@ -54,8 +53,6 @@ class _SiteSelectorState extends State<_SiteSelector> {
 
   @override
   void dispose() {
-    _searchTextController.dispose();
-
     _onSiteChangedSubscription?.cancel().ignore();
     _onSiteChangedSubscription = null;
 
@@ -64,50 +61,46 @@ class _SiteSelectorState extends State<_SiteSelector> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(10),
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Sites'),
-          automaticallyImplyLeading: false,
-        ),
-        body: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(8),
-              child: TextField(
-                controller: _searchTextController,
-                onChanged: _filterSitesByName,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  labelText: 'Search',
-                  prefixIcon: Icon(Icons.search_outlined),
-                ),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Sites'),
+        automaticallyImplyLeading: false,
+      ),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8),
+            child: TextField(
+              onChanged: _filterSitesByName,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                labelText: 'Search',
+                prefixIcon: Icon(Icons.search_outlined),
               ),
             ),
-            Expanded(
-              child: ListView.builder(
-                itemCount: _filterdSites.length,
-                itemBuilder: (context, index) {
-                  final site = _filterdSites[index];
-                  return ListTile(
-                    title: site == _selectedSite
-                        ? Text(
-                            site.name,
-                            style: const TextStyle(fontWeight: .w800),
-                          )
-                        : Text(site.name),
-                    onTap: () => _onSiteSelected(site),
-                  );
-                },
-              ),
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: _filterdSites.length,
+              itemBuilder: (context, index) {
+                final site = _filterdSites[index];
+                return ListTile(
+                  title: site == _selectedSite
+                      ? Text(
+                          site.name,
+                          style: const TextStyle(fontWeight: .w800),
+                        )
+                      : Text(site.name),
+                  onTap: () => _onSiteSelected(site),
+                );
+              },
             ),
-            ElevatedButton(
-              onPressed: () => _onSiteSelected(null),
-              child: const Text('All Facilities'),
-            ),
-          ],
-        ),
+          ),
+          ElevatedButton(
+            onPressed: () => _onSiteSelected(null),
+            child: const Text('All Facilities'),
+          ),
+        ],
       ),
     );
   }
@@ -137,13 +130,7 @@ class _SiteSelectorState extends State<_SiteSelector> {
     // Set the selected site on the controller.
     widget._widgetController._selectSite(site);
 
-    // // Navigate to facility selector sheet.
-    // Navigator.of(context)
-    //     .push(
-    //       MaterialPageRoute<void>(
-    //         builder: (context) => const _FacilitySelector(),
-    //       ),
-    //     )
-    //     .ignore();
+    // Navigate to facility selector sheet.
+    _SelectorFlow.showFacilitySelector(context);
   }
 }

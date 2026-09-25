@@ -69,6 +69,7 @@ part 'src/floor_filter/floor_filter.dart';
 part 'src/floor_filter/floor_filter_controller.dart';
 part 'src/floor_filter/support_widgets/facility_selector.dart';
 part 'src/floor_filter/support_widgets/level_selector.dart';
+part 'src/floor_filter/support_widgets/selector_flow.dart';
 part 'src/floor_filter/support_widgets/site_selector.dart';
 // Overview Map Widget
 part 'src/overview_map/overview_map.dart';

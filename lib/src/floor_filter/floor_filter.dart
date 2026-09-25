@@ -131,7 +131,7 @@ class _FloorFilterState extends State<FloorFilter> {
     return showModalBottomSheet<void>(
       context: context,
       builder: (context) {
-        return _SiteSelector(
+        return _SelectorFlow(
           floorFilterController: widget.floorFilterController,
         );
       },
