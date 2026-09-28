@@ -45,7 +45,7 @@ class FloorFilter extends StatefulWidget {
 
 class _FloorFilterState extends State<FloorFilter> {
   FloorManager? _floorManager;
-  StreamSubscription<Null>? _onRequestFloorFilterRefreshSubscription;
+  StreamSubscription<FloorManager?>? _onFloorManagerChangedSubscription;
   late final double _maxWidgetHeight =
       widget.maxHeight ?? MediaQuery.sizeOf(context).height * 0.8;
 
@@ -55,14 +55,13 @@ class _FloorFilterState extends State<FloorFilter> {
 
     // Listen for a refresh notification from the controller. When notified,
     // refresh the controller data and update the widget state.
-    _onRequestFloorFilterRefreshSubscription = widget
+    _onFloorManagerChangedSubscription = widget
         .floorFilterController
-        ._onRequestFloorFilterRefresh
-        .listen((_) async {
-          await widget.floorFilterController._resetFloorManager();
+        ._onFloorManagerChanged
+        .listen((newFloorManager) {
           if (mounted) {
             setState(() {
-              _floorManager = widget.floorFilterController._floorManager;
+              _floorManager = newFloorManager;
             });
           }
         });
@@ -70,7 +69,7 @@ class _FloorFilterState extends State<FloorFilter> {
 
   @override
   void dispose() {
-    _onRequestFloorFilterRefreshSubscription?.cancel().ignore();
+    _onFloorManagerChangedSubscription?.cancel().ignore();
     super.dispose();
   }
 

@@ -72,39 +72,8 @@ class FloorFilterController {
     }
   }
 
-  /// Apps will call this function when there has been an update to the GeoModel
-  /// that requires the [FloorFilterController] to refresh its data.
-  void refresh() {
-    _onRequestFloorFilterRefreshController.add(null);
-  }
-
-  /// Notification that the Site/Facility/Floor selection has changed.
-  Stream<FloorSite?> get onSelectedChanged =>
-      _onSelectedChangedController.stream;
-  final _onSelectedChangedController = StreamController<Null>.broadcast();
-
-  // Internal stream notifying listeners that the selected site has changed.
-  Stream<FloorSite?> get _onSiteChanged => _onSiteChangedController.stream;
-  final _onSiteChangedController = StreamController<FloorSite?>.broadcast();
-
-  // Internal stream notifying listeners that the selected facility has changed.
-  Stream<FloorFacility?> get _onFacilityChanged =>
-      _onFacilityChangedController.stream;
-  final _onFacilityChangedController =
-      StreamController<FloorFacility?>.broadcast();
-
-  // Internal stream notifying listeners that the selected level has changed.
-  Stream<FloorLevel?> get _onLevelChanged => _onLevelChangedController.stream;
-  final _onLevelChangedController = StreamController<FloorLevel?>.broadcast();
-
-  // Internal stream that notifies listeners that they need to call
-  // _refreshBuildingSceneLayers due to a change in the scene of the view controller.
-  Stream<Null> get _onRequestFloorFilterRefresh =>
-      _onRequestFloorFilterRefreshController.stream;
-  final _onRequestFloorFilterRefreshController =
-      StreamController<Null>.broadcast();
-
-  Future<void> _resetFloorManager() async {
+  /// Apps will call this function when the [FloorManager] has been changed.
+  Future<void> refresh() async {
     // Clear the floor manager property.
     _floorManager = null;
 
@@ -129,7 +98,35 @@ class FloorFilterController {
       _floorManager = geoModel.floorManager;
       await _floorManager?.load();
     }
+
+    // Notify listeners that the FloorManager has changed.
+    _onFloorManagerChangedController.add(_floorManager);
   }
+
+  /// Notification that the Site/Facility/Floor selection has changed.
+  Stream<FloorSite?> get onSelectedChanged =>
+      _onSelectedChangedController.stream;
+  final _onSelectedChangedController = StreamController<Null>.broadcast();
+
+  // Internal stream notifying listeners that the selected site has changed.
+  Stream<FloorSite?> get _onSiteChanged => _onSiteChangedController.stream;
+  final _onSiteChangedController = StreamController<FloorSite?>.broadcast();
+
+  // Internal stream notifying listeners that the selected facility has changed.
+  Stream<FloorFacility?> get _onFacilityChanged =>
+      _onFacilityChangedController.stream;
+  final _onFacilityChangedController =
+      StreamController<FloorFacility?>.broadcast();
+
+  // Internal stream notifying listeners that the selected level has changed.
+  Stream<FloorLevel?> get _onLevelChanged => _onLevelChangedController.stream;
+  final _onLevelChangedController = StreamController<FloorLevel?>.broadcast();
+
+  // Internal stream that notifies listeners that the floor manager has been updated.
+  Stream<FloorManager?> get _onFloorManagerChanged =>
+      _onFloorManagerChangedController.stream;
+  final _onFloorManagerChangedController =
+      StreamController<FloorManager?>.broadcast();
 
   // Funciton to set the selected site and handle actions related to the change.
   void _selectSite(FloorSite? site) {
