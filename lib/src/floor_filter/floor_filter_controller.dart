@@ -284,7 +284,7 @@ class FloorFilterController {
     Envelope extent,
     ArcGISSceneViewController sceneViewController,
   ) {
-    // TODO(kmueller-gis): zoom to extent with camera.
+    // TODO(5976): zoom to extent with camera.
   }
 
   // Function to set the viewpoint to the extent of a facility in an ArcGISLocalSceneView.
@@ -292,6 +292,6 @@ class FloorFilterController {
     Envelope extent,
     ArcGISLocalSceneViewController localSceneViewController,
   ) {
-    // TODO(kmueller-gis): zoom to extent with camera.
+    // TODO(5976): zoom to extent with camera.
   }
 }

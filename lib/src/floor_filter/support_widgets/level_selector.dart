@@ -17,6 +17,8 @@
 part of '../../../arcgis_maps_toolkit.dart';
 
 /// A widget for selecting a floor level in the selected facility.
+/// - floorFilterController: the [FloorFilterController] for this widget.
+/// - maxHeight: the maximum height of this widget provided by the parent.'.
 class _LevelSelector extends StatefulWidget {
   const _LevelSelector({
     required FloorFilterController floorFilterController,
@@ -33,8 +35,13 @@ class _LevelSelector extends StatefulWidget {
 }
 
 class _LevelSelectorState extends State<_LevelSelector> {
+  // Subscription for level change notifications.
   StreamSubscription<FloorLevel?>? _onLevelChangedSubscription;
+
+  // Currenlty selected level.
   FloorLevel? _selectedLevel;
+
+  // Flag indicating whether the expanded or collapsed view is showing.
   bool _expandedView = true;
 
   @override
@@ -99,7 +106,7 @@ class _LevelSelectorState extends State<_LevelSelector> {
           child: SizedBox(
             height: 24,
             child: OutlinedButton(
-              onPressed: toggleExpandedView,
+              onPressed: () => setState(() => _expandedView = !_expandedView),
               style: OutlinedButton.styleFrom(
                 padding: EdgeInsets.zero,
                 shape: RoundedRectangleBorder(
@@ -141,7 +148,8 @@ class _LevelSelectorState extends State<_LevelSelector> {
                 )
               // Only show the selected level for non-expandedView.
               : OutlinedButton(
-                  onPressed: toggleExpandedView,
+                  onPressed: () =>
+                      setState(() => _expandedView = !_expandedView),
                   style: buttonStyle,
                   child: Text(
                     widget._widgetController._selectedLevel!.shortName,
@@ -151,11 +159,5 @@ class _LevelSelectorState extends State<_LevelSelector> {
         ),
       ],
     );
-  }
-
-  void toggleExpandedView() {
-    if (mounted) {
-      setState(() => _expandedView = !_expandedView);
-    }
   }
 }
