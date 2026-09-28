@@ -26,6 +26,10 @@ class FloorFilterController {
   /// The [GeoViewController] for the view showing the floor information.
   final GeoViewController geoViewController;
 
+  /// Defines how the floor filter updates its selection as the user navigates
+  /// the connected GeoView. Default is AutomaticSelectionMode.Always.
+  AutomaticSelectionMode automaticSelectionMode = .always;
+
   // The floor manager for the GeoModel.
   FloorManager? _floorManager;
   // The currently selected site.
