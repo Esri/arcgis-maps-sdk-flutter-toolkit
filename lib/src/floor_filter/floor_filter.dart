@@ -53,6 +53,9 @@ class _FloorFilterState extends State<FloorFilter> {
   void initState() {
     super.initState();
 
+    // Get the current floor manager from the controller.
+    _floorManager = widget.floorFilterController._floorManager;
+
     // Listen for a refresh notification from the controller. When notified,
     // refresh the controller data and update the widget state.
     _onFloorManagerChangedSubscription = widget

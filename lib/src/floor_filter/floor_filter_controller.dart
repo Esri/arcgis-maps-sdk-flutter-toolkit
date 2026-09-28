@@ -40,9 +40,10 @@ class FloorFilterController {
   String? get selectedSiteId => _selectedSite?.siteId;
   set selectedSiteId(String selectedSiteId) {
     if (_floorManager != null) {
-      _selectedSite = _floorManager!.sites.firstWhere(
+      final selectedSite = _floorManager!.sites.firstWhere(
         (site) => site.siteId == selectedSiteId,
       );
+      _selectSite(selectedSite);
     } else {
       throw StateError('This ArcGISMap or ArcGISScene has no FloorManager.');
     }
@@ -52,9 +53,10 @@ class FloorFilterController {
   String? get selectedFacilityId => _selectedFacility?.facilityId;
   set selectedFacilityId(String selectedFacilityId) {
     if (_floorManager != null) {
-      _selectedFacility = _floorManager!.facilities.firstWhere(
+      final selectedFacility = _floorManager!.facilities.firstWhere(
         (facility) => facility.facilityId == selectedFacilityId,
       );
+      _selectFacility(selectedFacility);
     } else {
       throw StateError('This ArcGISMap or ArcGISScene has no FloorManager.');
     }
@@ -64,9 +66,10 @@ class FloorFilterController {
   String? get selectedLevelId => _selectedLevel?.levelId;
   set selectedLevelId(String selectedLevelId) {
     if (_floorManager != null) {
-      _selectedLevel = _floorManager!.levels.firstWhere(
+      final selectedLevel = _floorManager!.levels.firstWhere(
         (level) => level.levelId == selectedLevelId,
       );
+      _selectLevel(selectedLevel);
     } else {
       throw StateError('This ArcGISMap or ArcGISScene has no FloorManager.');
     }
@@ -74,12 +77,13 @@ class FloorFilterController {
 
   /// Apps will call this function when the [FloorManager] has been changed.
   Future<void> refresh() async {
+    // Seting the selected Site/Facility/Level to null
+    _selectSite(null, notifySelectionChanged: false);
+    _selectFacility(null, notifySelectionChanged: false);
+    _selectLevel(null, notifySelectionChanged: false);
+
     // Clear the floor manager property.
     _floorManager = null;
-
-    // Set selected site to null. Facility and level will be set to null in the
-    // process. Internal widgets will be notified of the change.
-    _selectSite(null);
 
     // Obtain the GeoModel (map or scene) for this view.
     GeoModel? geoModel;
@@ -129,7 +133,10 @@ class FloorFilterController {
       StreamController<FloorManager?>.broadcast();
 
   // Funciton to set the selected site and handle actions related to the change.
-  void _selectSite(FloorSite? site) {
+  // The notifySelectionChanged parameter states whether the public
+  // onSelectedChanged stream should be notified. The internal onSiteChanged
+  // notification will always set if the site changed.
+  void _selectSite(FloorSite? site, {bool notifySelectionChanged = true}) {
     if (_selectedSite == site) return;
 
     _selectedSite = site;
@@ -139,7 +146,9 @@ class FloorFilterController {
 
     // Notify the streams that the site changed.
     _onSiteChangedController.add(site);
-    _onSelectedChangedController.add(null);
+    if (notifySelectionChanged) {
+      _onSelectedChangedController.add(null);
+    }
 
     if (site != null) {
       _zoomToSite(site);
@@ -149,7 +158,7 @@ class FloorFilterController {
   // Funciton to set the selected facility and handle actions related to the change.
   // The notifySelectionChanged parameter states whether the public
   // onSelectedChanged stream should be notified. The internal onFacilityChanged
-  // notification will always set.
+  // notification will always set if the facility changed.
   void _selectFacility(
     FloorFacility? facility, {
     bool notifySelectionChanged = true,
@@ -196,7 +205,7 @@ class FloorFilterController {
   // Funciton to set the selected level and handle actions related to the change.
   // The notifySelectionChanged parameter states whether the public
   // onSelectedChanged stream should be notified. The internal onLevelChanged
-  // notification will always set.
+  // notification will always set if the level changed.
   void _selectLevel(FloorLevel? level, {bool notifySelectionChanged = true}) {
     if (_selectedLevel == level) return;
 
