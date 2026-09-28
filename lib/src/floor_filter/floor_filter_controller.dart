@@ -104,10 +104,12 @@ class FloorFilterController {
       StreamController<Null>.broadcast();
 
   Future<void> _resetFloorManager() async {
+    // Clear the floor manager property.
     _floorManager = null;
-    _selectedSite = null;
-    _selectedFacility = null;
-    _selectedLevel = null;
+
+    // Set selected site to null. Facility and level will be set to null in the
+    // process. Internal widgets will be notified of the change.
+    _selectSite(null);
 
     // Obtain the GeoModel (map or scene) for this view.
     GeoModel? geoModel;
