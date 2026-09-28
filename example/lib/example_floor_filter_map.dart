@@ -88,6 +88,6 @@ class _ExampleFloorFilterMapState extends State<ExampleFloorFilterMap> {
     _mapViewController.arcGISMap = map;
 
     // Refresh the floor filter now that the map has been set.
-    _floorFilterController.refresh();
+    _floorFilterController.refresh().ignore();
   }
 }
