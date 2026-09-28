@@ -35,9 +35,14 @@ class _FacilitySelector extends StatefulWidget {
 }
 
 class _FacilitySelectorState extends State<_FacilitySelector> {
+  // Subscription for facility change notifications.
   StreamSubscription<FloorFacility?>? _onFacilityChangedSubscription;
+  // The currenlty selected facility.
   FloorFacility? _selectedFacility;
+
+  // Facility list from the floor manager.
   late final List<FloorFacility> _facilities;
+  // Mutable facility list for filtering and sorting.
   late List<FloorFacility> _filterdFacilities;
 
   @override
@@ -131,13 +136,15 @@ class _FacilitySelectorState extends State<_FacilitySelector> {
   }
 
   // Function called by when the search text is changed to filter the
-  // facilites in the list by name
+  // facilites in the list by name.
   void _filterFacilitiesByName(String filterText) {
     final List<FloorFacility> tmpFacilities;
 
     if (filterText.isEmpty) {
+      // If nothing is in the search field, pull straight from the full list.
       tmpFacilities = List.from(_facilities);
     } else {
+      // Otherwise, filter the sites by the search text.
       tmpFacilities = _facilities.where((facility) {
         final facilityName = facility.name.toUpperCase();
         return facilityName.contains(filterText.toUpperCase());
@@ -147,11 +154,9 @@ class _FacilitySelectorState extends State<_FacilitySelector> {
     // Sort alphabetically.
     tmpFacilities.sort((site1, site2) => site1.name.compareTo(site2.name));
 
-    if (mounted) {
-      setState(() {
-        _filterdFacilities = tmpFacilities;
-      });
-    }
+    setState(() {
+      _filterdFacilities = tmpFacilities;
+    });
   }
 
   // Function to handle when a facility is selected from the list.

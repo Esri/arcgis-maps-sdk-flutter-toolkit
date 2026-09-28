@@ -17,6 +17,9 @@
 part of '../../../arcgis_maps_toolkit.dart';
 
 /// A widget for selecting a floor filter site.
+/// - floorFilterController: the [FloorFilterController] for this widget
+/// - onClose: optional [VoidCallback] called when X button in top right is
+/// tapped. If no callback is provided, the button will not appear.
 class _SiteSelector extends StatefulWidget {
   /// Creates a site selector.
   const _SiteSelector({
@@ -32,9 +35,14 @@ class _SiteSelector extends StatefulWidget {
 }
 
 class _SiteSelectorState extends State<_SiteSelector> {
+  // Subscription for site change notifications.
   StreamSubscription<FloorSite?>? _onSiteChangedSubscription;
+  // The currently selected site.
   FloorSite? _selectedSite;
+
+  // Site list from the floor manager.
   late final List<FloorSite> _sites;
+  // Mutable site list for filtering and sorting.
   late List<FloorSite> _filterdSites;
 
   @override
@@ -116,27 +124,31 @@ class _SiteSelectorState extends State<_SiteSelector> {
     );
   }
 
+  // Function called by when the search text is changed to filter the sites in
+  // the list by name.
   void _filterSitesByName(String filterText) {
     final List<FloorSite> tmpSites;
 
     if (filterText.isEmpty) {
+      // If nothing is in the search field, pull straight from the full list.
       tmpSites = List.from(_sites);
     } else {
+      // Otherwise, filter the sites by the search text.
       tmpSites = _sites.where((site) {
         final siteName = site.name.toUpperCase();
         return siteName.contains(filterText.toUpperCase());
       }).toList();
     }
 
+    // Sort alphabetically.
     tmpSites.sort((site1, site2) => site1.name.compareTo(site2.name));
 
-    if (mounted) {
-      setState(() {
-        _filterdSites = tmpSites;
-      });
-    }
+    setState(() {
+      _filterdSites = tmpSites;
+    });
   }
 
+  // Function to handle when a site is selected from the list.
   void _onSiteSelected(FloorSite? site) {
     // Set the selected site on the controller.
     widget._widgetController._selectSite(site);
