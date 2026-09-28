@@ -19,7 +19,8 @@ part of '../../arcgis_maps_toolkit.dart';
 /// This class stores state for the [FloorFilter] widget. Get an instance of
 /// this class by calling [FloorFilter.createController] and passing in the
 /// relevant [GeoViewController]. The controller object is used when creating
-/// the [FloorFilter] in the widget tree.
+/// the [FloorFilter] in the widget tree and provides the interface to the
+/// widget durining use.
 class FloorFilterController {
   FloorFilterController._({required this.geoViewController});
 
@@ -35,7 +36,7 @@ class FloorFilterController {
   // The currently selected level.
   FloorLevel? _selectedLevel;
 
-  /// The ID of the currently selected site.
+  /// The siteId of the currently selected site.
   String? get selectedSiteId => _selectedSite?.siteId;
   set selectedSiteId(String selectedSiteId) {
     if (_floorManager != null) {
@@ -47,7 +48,7 @@ class FloorFilterController {
     }
   }
 
-  /// The ID of the currently selected facility.
+  /// The facilityId of the currently selected facility.
   String? get selectedFacilityId => _selectedFacility?.facilityId;
   set selectedFacilityId(String selectedFacilityId) {
     if (_floorManager != null) {
@@ -59,7 +60,7 @@ class FloorFilterController {
     }
   }
 
-  /// The ID of the currently selected level.
+  /// The levelId of the currently selected level.
   String? get selectedLevelId => _selectedLevel?.levelId;
   set selectedLevelId(String selectedLevelId) {
     if (_floorManager != null) {
@@ -71,8 +72,8 @@ class FloorFilterController {
     }
   }
 
-  /// Call this function when there has been an update on the GeoView that
-  /// requires the [FloorFilterController] to refresh its data.
+  /// Apps will call this function when there has been an update to the GeoModel
+  /// that requires the [FloorFilterController] to refresh its data.
   void refresh() {
     _onRequestFloorFilterRefreshController.add(null);
   }
@@ -149,6 +150,9 @@ class FloorFilterController {
   }
 
   // Funciton to set the selected facility and handle actions related to the change.
+  // The notifySelectionChanged parameter states whether the public
+  // onSelectedChanged stream should be notified. The internal onFacilityChanged
+  // notification will always set.
   void _selectFacility(
     FloorFacility? facility, {
     bool notifySelectionChanged = true,
@@ -175,6 +179,7 @@ class FloorFilterController {
     }
   }
 
+  // Sets the selected level to verticalOrder 0. This is the default verticalOrder.
   void _selectDefaultLevel(
     FloorFacility facility, {
     bool notifySelectionChanged = true,
@@ -192,6 +197,9 @@ class FloorFilterController {
   }
 
   // Funciton to set the selected level and handle actions related to the change.
+  // The notifySelectionChanged parameter states whether the public
+  // onSelectedChanged stream should be notified. The internal onLevelChanged
+  // notification will always set.
   void _selectLevel(FloorLevel? level, {bool notifySelectionChanged = true}) {
     if (_selectedLevel == level) return;
 
@@ -225,6 +233,7 @@ class FloorFilterController {
     }
   }
 
+  // Funciton to zoom the GeoView to the site extent.
   void _zoomToSite(FloorSite site) {
     final geometry = site.geometry;
     if (geometry != null) {
@@ -232,6 +241,7 @@ class FloorFilterController {
     }
   }
 
+  // Funciton to zoom the GeoView to the facility extent.
   void _zoomToFacility(FloorFacility facility) {
     final geometry = facility.geometry;
     if (geometry != null) {
@@ -239,6 +249,8 @@ class FloorFilterController {
     }
   }
 
+  // Utility function to call the correct zoom function based on the type of the
+  // GeoViewController.
   void _zoomViewToExtent(Envelope extent) {
     switch (geoViewController) {
       case final ArcGISMapViewController mapViewController:
@@ -267,6 +279,7 @@ class FloorFilterController {
     );
   }
 
+  // Function to set the viewpoint to the extent of a facility in an ArcGISSceneView.
   void _zoomSceneToExtent(
     Envelope extent,
     ArcGISSceneViewController sceneViewController,
@@ -274,6 +287,7 @@ class FloorFilterController {
     // TODO(kmueller-gis): zoom to extent with camera.
   }
 
+  // Function to set the viewpoint to the extent of a facility in an ArcGISLocalSceneView.
   void _zoomLocalSceneToExtent(
     Envelope extent,
     ArcGISLocalSceneViewController localSceneViewController,
