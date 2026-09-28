@@ -19,6 +19,9 @@ part of '../../../arcgis_maps_toolkit.dart';
 /// A widget for selecting a floor facility.
 class _FacilitySelector extends StatefulWidget {
   /// Creates a FacilitySelector.
+  /// - floorFilterController: the [FloorFilterController] for this widget
+  /// - onClose: optional [VoidCallback] called when X button in top right is
+  /// tapped. If no callback is provided, the button will not appear.
   const _FacilitySelector({
     required FloorFilterController floorFilterController,
     this.onClose,
@@ -127,6 +130,8 @@ class _FacilitySelectorState extends State<_FacilitySelector> {
     );
   }
 
+  // Function called by when the search text is changed to filter the
+  // facilites in the list by name
   void _filterFacilitiesByName(String filterText) {
     final List<FloorFacility> tmpFacilities;
 
@@ -149,6 +154,7 @@ class _FacilitySelectorState extends State<_FacilitySelector> {
     }
   }
 
+  // Function to handle when a facility is selected from the list.
   void _onFacilitySelected(FloorFacility? facility) {
     // Set the selected facility on the controller.
     widget._widgetController._selectFacility(facility);
