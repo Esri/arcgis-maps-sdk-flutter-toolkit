@@ -81,6 +81,7 @@ class _FloorFilterState extends State<FloorFilter> {
       return const SizedBox.shrink();
     }
 
+    // Constants for widget dimensions.
     const widgetWidth = 50.0;
     const decorationExtra = 22.0;
 
@@ -110,7 +111,7 @@ class _FloorFilterState extends State<FloorFilter> {
             SizedBox.square(
               dimension: widgetWidth,
               child: IconButton.filled(
-                onPressed: showSiteAndFacitliySelector,
+                onPressed: _showSiteAndFacitliySelector,
                 style: IconButton.styleFrom(
                   backgroundColor: Colors.white,
                   foregroundColor: Colors.black,
@@ -127,7 +128,8 @@ class _FloorFilterState extends State<FloorFilter> {
     );
   }
 
-  Future<void> showSiteAndFacitliySelector() {
+  // Function to show the bottom sheet containing the site and facility selectors.
+  Future<void> _showSiteAndFacitliySelector() {
     return showModalBottomSheet<void>(
       context: context,
       builder: (context) {
