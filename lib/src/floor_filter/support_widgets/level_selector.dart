@@ -76,22 +76,18 @@ class _LevelSelectorState extends State<_LevelSelector> {
     oldWidget._widgetController._selectedFacilityNotifier.removeListener(
       _onSelectedFacilityChanged,
     );
+    _facilityLevels =
+        widget._widgetController._selectedFacility?.levels ?? <FloorLevel>[];
     widget._widgetController._selectedFacilityNotifier.addListener(
       _onSelectedFacilityChanged,
     );
     oldWidget._widgetController._selectedLevelNotifier.removeListener(
       _onSelectedLevelChanged,
     );
+    _selectedLevel = widget._widgetController._selectedLevel;
     widget._widgetController._selectedLevelNotifier.addListener(
       _onSelectedLevelChanged,
     );
-
-    // Get facility levels from current widget controller.
-    _facilityLevels =
-        widget._widgetController._selectedFacility?.levels ?? <FloorLevel>[];
-
-    // Get selected level from current widget controller.
-    _selectedLevel = widget._widgetController._selectedLevel;
   }
 
   // TODO(kmueller-gis): Add didUpdateWidget override to resize the widget if height changes.
@@ -117,9 +113,7 @@ class _LevelSelectorState extends State<_LevelSelector> {
     // The maximum height of the level listing. It is the maximum height of the
     // widget minus the height of the button.
     const padding = 24.0;
-    final listViewMaxHeight = widget.maxHeight > padding
-        ? widget.maxHeight - padding
-        : padding;
+    final listViewMaxHeight = widget.maxHeight - padding;
 
     // Text style for selected level.
     final selectedLevelTextStyle = DefaultTextStyle.of(
@@ -137,72 +131,79 @@ class _LevelSelectorState extends State<_LevelSelector> {
       backgroundColor: Colors.white,
     );
 
-    return Column(
-      children: [
-        Padding(
-          // padding: const EdgeInsets.only(bottom: 4),
-          padding: EdgeInsets.zero,
-          child: SizedBox(
-            height: 24,
-            child: OutlinedButton(
-              onPressed: () => setState(() => _expandedView = !_expandedView),
-              style: OutlinedButton.styleFrom(
+    return listViewMaxHeight < padding
+        // If listViewMaxHeight too small, don't show the widget.
+        ? const SizedBox.shrink()
+        : Column(
+            children: [
+              Padding(
+                // padding: const EdgeInsets.only(bottom: 4),
                 padding: EdgeInsets.zero,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                side: const BorderSide(color: Colors.black12),
-                backgroundColor: Colors.white,
-              ),
-              child: _expandedView
-                  ? const Icon(Icons.expand_more_outlined, size: 18)
-                  : const Icon(Icons.expand_less_outlined, size: 18),
-            ),
-          ),
-        ),
-        ConstrainedBox(
-          constraints: BoxConstraints(
-            maxHeight: listViewMaxHeight,
-            minHeight: padding,
-          ),
-          child: _expandedView
-              // Show the whole list for the expandedView.
-              ? ListView.builder(
-                  shrinkWrap: true,
-                  reverse: true,
-                  padding: EdgeInsets.zero,
-                  physics: const BouncingScrollPhysics(),
-                  itemCount: _facilityLevels.length,
-                  itemBuilder: (context, index) {
-                    final level = _facilityLevels[index];
-                    return OutlinedButton(
-                      onPressed: () =>
-                          widget._widgetController._selectLevel(level),
-                      style: buttonStyle,
-                      child: level == _selectedLevel
-                          ? Text(level.shortName, style: selectedLevelTextStyle)
-                          : Text(
-                              level.shortName,
-                              style: unselectedLevelTextStyle,
-                            ),
-                    );
-                  },
-                )
-              // Only show the selected level for non-expandedView.
-              : _selectedLevel != null
-              ? OutlinedButton(
-                  onPressed: () =>
-                      setState(() => _expandedView = !_expandedView),
-                  style: buttonStyle,
-                  child: Text(
-                    _selectedLevel!.shortName,
-                    style: selectedLevelTextStyle,
+                child: SizedBox(
+                  height: 24,
+                  child: OutlinedButton(
+                    onPressed: () =>
+                        setState(() => _expandedView = !_expandedView),
+                    style: OutlinedButton.styleFrom(
+                      padding: EdgeInsets.zero,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      side: const BorderSide(color: Colors.black12),
+                      backgroundColor: Colors.white,
+                    ),
+                    child: _expandedView
+                        ? const Icon(Icons.expand_more_outlined, size: 18)
+                        : const Icon(Icons.expand_less_outlined, size: 18),
                   ),
-                )
-              : const SizedBox.shrink(),
-        ),
-      ],
-    );
+                ),
+              ),
+              ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxHeight: listViewMaxHeight,
+                  minHeight: padding,
+                ),
+                child: _expandedView
+                    // Show the whole list for the expandedView.
+                    ? ListView.builder(
+                        shrinkWrap: true,
+                        reverse: true,
+                        padding: EdgeInsets.zero,
+                        physics: const BouncingScrollPhysics(),
+                        itemCount: _facilityLevels.length,
+                        itemBuilder: (context, index) {
+                          final level = _facilityLevels[index];
+                          return OutlinedButton(
+                            onPressed: () =>
+                                widget._widgetController._selectLevel(level),
+                            style: buttonStyle,
+                            child: level == _selectedLevel
+                                ? Text(
+                                    level.shortName,
+                                    style: selectedLevelTextStyle,
+                                  )
+                                : Text(
+                                    level.shortName,
+                                    style: unselectedLevelTextStyle,
+                                  ),
+                          );
+                        },
+                      )
+                    // Only show the selected level for non-expandedView.
+                    : _selectedLevel != null
+                    ? OutlinedButton(
+                        onPressed: () =>
+                            setState(() => _expandedView = !_expandedView),
+                        style: buttonStyle,
+                        child: Text(
+                          _selectedLevel!.shortName,
+                          style: selectedLevelTextStyle,
+                        ),
+                      )
+                    : const SizedBox.shrink(),
+              ),
+            ],
+          );
   }
 
   void _onSelectedFacilityChanged() {

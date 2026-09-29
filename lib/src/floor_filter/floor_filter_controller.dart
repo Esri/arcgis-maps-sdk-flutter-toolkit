@@ -152,12 +152,13 @@ class FloorFilterController {
 
     // Notify listeners that the site changed.
     _selectedSiteNotifier.value = site;
-    if (notifySelectionChanged) {
-      _onSelectedChangedController.add(null);
-    }
 
     if (site != null) {
       _zoomToSite(site);
+    }
+
+    if (notifySelectionChanged) {
+      _onSelectedChangedController.add(null);
     }
   }
 
@@ -173,9 +174,6 @@ class FloorFilterController {
 
     // Notify listeners that the facility changed.
     _selectedFacilityNotifier.value = facility;
-    if (notifySelectionChanged) {
-      _onSelectedChangedController.add(null);
-    }
 
     if (facility != null) {
       // Adjust viewpoint to facility extent.
@@ -186,6 +184,10 @@ class FloorFilterController {
     } else {
       // Clear the selected floor.
       _selectLevel(null, notifySelectionChanged: false);
+    }
+
+    if (notifySelectionChanged) {
+      _onSelectedChangedController.add(null);
     }
   }
 
@@ -218,9 +220,6 @@ class FloorFilterController {
 
     // Notify listeners that the level changed.
     _selectedLevelNotifier.value = level;
-    if (notifySelectionChanged) {
-      _onSelectedChangedController.add(null);
-    }
 
     // Update the visible levels
     if (level != null) {
@@ -228,6 +227,10 @@ class FloorFilterController {
     } else {
       // Default to the 0th level.
       _showLevelsWithVerticalOrder(0);
+    }
+
+    if (notifySelectionChanged) {
+      _onSelectedChangedController.add(null);
     }
   }
 

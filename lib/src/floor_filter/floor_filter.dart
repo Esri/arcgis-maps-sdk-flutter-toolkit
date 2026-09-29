@@ -70,16 +70,14 @@ class _FloorFilterState extends State<FloorFilter> {
       return;
     }
 
-    // Rebind value notifier listener.
+    // Rebind value notifier listener and set new value.
     oldWidget.floorFilterController._floorManagerNotifier.removeListener(
       _onFloorManagerChanged,
     );
+    _floorManager = widget.floorFilterController._floorManager;
     widget.floorFilterController._floorManagerNotifier.addListener(
       _onFloorManagerChanged,
     );
-
-    // Get the floor manager from the current floor filter controller.
-    _floorManager = widget.floorFilterController._floorManager;
   }
 
   @override

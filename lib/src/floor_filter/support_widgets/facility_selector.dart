@@ -80,12 +80,11 @@ class _FacilitySelectorState extends State<_FacilitySelector> {
     oldWidget._widgetController._selectedFacilityNotifier.removeListener(
       _onSelectedFacilityChanged,
     );
+    // Get the selected facility from the current widget controller.
+    _selectedFacility = widget._widgetController._selectedFacility;
     widget._widgetController._selectedFacilityNotifier.addListener(
       _onSelectedFacilityChanged,
     );
-
-    // Get the selected facility from the current widget controller.
-    _selectedFacility = widget._widgetController._selectedFacility;
 
     // Create a mutable list from the facilities list for filtering and sorting.
     _filterdFacilities = List.from(

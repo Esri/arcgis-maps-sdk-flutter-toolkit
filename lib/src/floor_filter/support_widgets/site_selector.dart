@@ -67,12 +67,11 @@ class _SiteSelectorState extends State<_SiteSelector> {
     oldWidget._widgetController._selectedSiteNotifier.removeListener(
       _onSelectedSiteChanged,
     );
+    // Get the selected site from the current widget controller.
+    _selectedSite = widget._widgetController._selectedSite;
     widget._widgetController._selectedSiteNotifier.addListener(
       _onSelectedSiteChanged,
     );
-
-    // Get the selected site from the current widget controller.
-    _selectedSite = widget._widgetController._selectedSite;
 
     // Refresh filtered sites list.
     _filterdSites = List.from(_sites)
