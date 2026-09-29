@@ -46,7 +46,7 @@ class FloorFilter extends StatefulWidget {
 class _FloorFilterState extends State<FloorFilter> {
   FloorManager? _floorManager;
   StreamSubscription<FloorManager?>? _onFloorManagerChangedSubscription;
-  late final double _maxWidgetHeight =
+  double get _maxWidgetHeight =>
       widget.maxHeight ?? MediaQuery.sizeOf(context).height * 0.8;
 
   @override

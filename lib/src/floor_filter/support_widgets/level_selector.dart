@@ -80,7 +80,10 @@ class _LevelSelectorState extends State<_LevelSelector> {
 
     // The maximum height of the level listing. It is the maximum height of the
     // widget minus the height of the button.
-    final listViewMaxHeight = widget.maxHeight - 24;
+    const padding = 24.0;
+    final listViewMaxHeight = widget.maxHeight > padding
+        ? widget.maxHeight - padding
+        : padding;
 
     // Text style for selected level.
     final selectedLevelTextStyle = DefaultTextStyle.of(
@@ -122,7 +125,10 @@ class _LevelSelectorState extends State<_LevelSelector> {
           ),
         ),
         ConstrainedBox(
-          constraints: BoxConstraints(maxHeight: listViewMaxHeight),
+          constraints: BoxConstraints(
+            maxHeight: listViewMaxHeight,
+            minHeight: padding,
+          ),
           child: _expandedView
               // Show the whole list for the expandedView.
               ? ListView.builder(

@@ -19,6 +19,7 @@ import 'package:arcgis_maps_toolkit_example/example_authenticator.dart';
 import 'package:arcgis_maps_toolkit_example/example_basemap_gallery.dart';
 import 'package:arcgis_maps_toolkit_example/example_building_explorer.dart';
 import 'package:arcgis_maps_toolkit_example/example_compass.dart';
+import 'package:arcgis_maps_toolkit_example/example_floor_filter_map.dart';
 import 'package:arcgis_maps_toolkit_example/example_overview_map.dart';
 import 'package:arcgis_maps_toolkit_example/example_popup.dart';
 import 'package:flutter/material.dart';
@@ -76,6 +77,11 @@ enum ComponentExample {
     'BuildingExplorer',
     'Filters a BuildingSceneLayer by floor level and category sublayers',
     ExampleBuildingExplorer.new,
+  ),
+  floorFilter(
+    'FloorFilter',
+    'Browse the sites, facilities, and levels of a floor aware GeoModel',
+    ExampleFloorFilterMap.new,
   );
 
   const ComponentExample(this.title, this.subtitle, this.constructor);

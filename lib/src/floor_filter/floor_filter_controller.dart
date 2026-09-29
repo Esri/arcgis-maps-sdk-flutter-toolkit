@@ -81,6 +81,7 @@ class FloorFilterController {
     _selectSite(null, notifySelectionChanged: false);
     _selectFacility(null, notifySelectionChanged: false);
     _selectLevel(null, notifySelectionChanged: false);
+    _onSelectedChangedController.add(null);
 
     // Clear the floor manager property.
     _floorManager = null;
@@ -185,21 +186,24 @@ class FloorFilterController {
     }
   }
 
-  // Sets the selected level to verticalOrder 0. This is the default verticalOrder.
+  // Selects the default level for the facility. The level with verticalOrder 0.
+  // If the facility has no levels or no level with verticalOrder 0, the selected
+  // level is set to null.
   void _selectDefaultLevel(
     FloorFacility facility, {
     bool notifySelectionChanged = true,
   }) {
-    // The level with verticalOrder set to 0 is the default, ground floor.
+    FloorLevel? defaultLevel;
+
+    // Find the default level
     if (facility.levels.isNotEmpty) {
-      _selectLevel(
-        facility.levels.firstWhere((level) => level.verticalOrder == 0),
-        notifySelectionChanged: notifySelectionChanged,
-      );
-    } else {
-      // Facility has no levels.
-      _selectLevel(null, notifySelectionChanged: notifySelectionChanged);
+      defaultLevel = facility.levels
+          .where((level) => level.verticalOrder == 0)
+          .firstOrNull;
     }
+
+    // Select the defualt level or null.
+    _selectLevel(defaultLevel, notifySelectionChanged: notifySelectionChanged);
   }
 
   // Funciton to set the selected level and handle actions related to the change.
