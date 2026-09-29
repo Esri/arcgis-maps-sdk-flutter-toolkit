@@ -147,7 +147,7 @@ class _SiteSelectorState extends State<_SiteSelector> {
     );
   }
 
-  // Function called by when the search text is changed to filter the sites in
+  // Function called when the search text is changed to filter the sites in
   // the list by name.
   void _filterSitesByName(String filterText) {
     final List<FloorSite> tmpSites;

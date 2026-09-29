@@ -160,7 +160,7 @@ class _FacilitySelectorState extends State<_FacilitySelector> {
     });
   }
 
-  // Function called by when the search text is changed to filter the
+  // Function called when the search text is changed to filter the
   // facilites in the list by name.
   void _filterFacilitiesByName(String filterText) {
     final List<FloorFacility> tmpFacilities;
