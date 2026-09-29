@@ -32,6 +32,7 @@ import 'dart:math' as math;
 import 'dart:typed_data';
 
 import 'package:arcgis_maps/arcgis_maps.dart';
+import 'package:async/async.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';

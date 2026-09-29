@@ -36,6 +36,9 @@ class FloorFilterController {
   // The currently selected level.
   FloorLevel? _selectedLevel;
 
+  // Cancelable operation to ensure only one refresh call at a time.
+  CancelableOperation<void>? _cancelableRefresh;
+
   /// The siteId of the currently selected site.
   String? get selectedSiteId => _selectedSite?.siteId;
   set selectedSiteId(String selectedSiteId) {
@@ -76,7 +79,19 @@ class FloorFilterController {
   }
 
   /// Apps will call this function when the [FloorManager] has been changed.
-  Future<void> refresh() async {
+  void refresh() {
+    // If there is a current refresh run in progress, cancel it.
+    _cancelableRefresh?.cancel().ignore();
+
+    // Start a new refresh operation.
+    _cancelableRefresh = CancelableOperation.fromFuture(_refresh()).then((_) {
+      // Notify listeners of the updated floor manager.
+      _onFloorManagerChangedController.add(_floorManager);
+    });
+  }
+
+  // Function that does the work of refreshing. Called by the public refresh() function.
+  Future<void> _refresh() async {
     // Seting the selected Site/Facility/Level to null
     _selectSite(null, notifySelectionChanged: false);
     _selectFacility(null, notifySelectionChanged: false);
@@ -103,9 +118,6 @@ class FloorFilterController {
       _floorManager = geoModel.floorManager;
       await _floorManager?.load();
     }
-
-    // Notify listeners that the FloorManager has changed.
-    _onFloorManagerChangedController.add(_floorManager);
   }
 
   /// Notification that the Site/Facility/Floor selection has changed.
