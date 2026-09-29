@@ -72,7 +72,7 @@ class _LevelSelectorState extends State<_LevelSelector> {
 
     if (oldWidget._widgetController == widget._widgetController) return;
 
-    // Rebind value notifier listeners
+    // Rebind value notifier listeners.
     oldWidget._widgetController._selectedFacilityNotifier.removeListener(
       _onSelectedFacilityChanged,
     );
@@ -137,7 +137,6 @@ class _LevelSelectorState extends State<_LevelSelector> {
         : Column(
             children: [
               Padding(
-                // padding: const EdgeInsets.only(bottom: 4),
                 padding: EdgeInsets.zero,
                 child: SizedBox(
                   height: 24,
