@@ -58,10 +58,20 @@ enum ComponentExample {
     'Browse basemaps and apply the selection to a map',
     ExampleBasemapGallery.new,
   ),
+  buildingExplorer(
+    'BuildingExplorer',
+    'Filters a BuildingSceneLayer by floor level and category sublayers',
+    ExampleBuildingExplorer.new,
+  ),
   compass(
     'Compass',
     'Visualizes current rotation of map/scene and resets the rotation to north on tap',
     ExampleCompass.new,
+  ),
+  floorFilter(
+    'FloorFilter',
+    'Browse the sites, facilities, and levels of a floor aware GeoModel',
+    ExampleFloorFilterMap.new,
   ),
   overviewMap(
     'OverviewMap',
@@ -72,16 +82,6 @@ enum ComponentExample {
     'PopupView',
     'Displays a popup for a feature, including fields, media, and attachments',
     PopupExample.new,
-  ),
-  buildingExplorer(
-    'BuildingExplorer',
-    'Filters a BuildingSceneLayer by floor level and category sublayers',
-    ExampleBuildingExplorer.new,
-  ),
-  floorFilter(
-    'FloorFilter',
-    'Browse the sites, facilities, and levels of a floor aware GeoModel',
-    ExampleFloorFilterMap.new,
   );
 
   const ComponentExample(this.title, this.subtitle, this.constructor);
