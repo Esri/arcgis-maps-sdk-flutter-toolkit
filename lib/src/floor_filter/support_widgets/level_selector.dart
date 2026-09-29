@@ -35,8 +35,13 @@ class _LevelSelector extends StatefulWidget {
 }
 
 class _LevelSelectorState extends State<_LevelSelector> {
+  // Subscription for facility change notifications.
+  StreamSubscription<FloorFacility?>? _onFacilityChangedSubscription;
   // Subscription for level change notifications.
   StreamSubscription<FloorLevel?>? _onLevelChangedSubscription;
+
+  // All levels for the current facility.
+  var _facilityLevels = <FloorLevel>[];
 
   // Currenlty selected level.
   FloorLevel? _selectedLevel;
@@ -49,6 +54,16 @@ class _LevelSelectorState extends State<_LevelSelector> {
     super.initState();
     // Set the initial selectedLevel.
     _selectedLevel = widget._widgetController._selectedLevel;
+
+    // Listen for any changes to the selected facility.
+    _onFacilityChangedSubscription = widget._widgetController._onFacilityChanged
+        .listen((newFacility) {
+          if (mounted) {
+            setState(
+              () => _facilityLevels = newFacility?.levels ?? <FloorLevel>[],
+            );
+          }
+        });
 
     // Listen for any changes to the selected level.
     _onLevelChangedSubscription = widget._widgetController._onLevelChanged
@@ -63,6 +78,8 @@ class _LevelSelectorState extends State<_LevelSelector> {
 
   @override
   void dispose() {
+    _onFacilityChangedSubscription?.cancel().ignore();
+    _onFacilityChangedSubscription = null;
     _onLevelChangedSubscription?.cancel().ignore();
     _onLevelChangedSubscription = null;
 
@@ -71,10 +88,7 @@ class _LevelSelectorState extends State<_LevelSelector> {
 
   @override
   Widget build(BuildContext context) {
-    final levels =
-        widget._widgetController._selectedFacility?.levels ?? const [];
-
-    if (levels.isEmpty) {
+    if (_facilityLevels.isEmpty) {
       return const SizedBox.shrink();
     }
 
@@ -136,9 +150,9 @@ class _LevelSelectorState extends State<_LevelSelector> {
                   reverse: true,
                   padding: EdgeInsets.zero,
                   physics: const BouncingScrollPhysics(),
-                  itemCount: levels.length,
+                  itemCount: _facilityLevels.length,
                   itemBuilder: (context, index) {
-                    final level = levels[index];
+                    final level = _facilityLevels[index];
                     return OutlinedButton(
                       onPressed: () =>
                           widget._widgetController._selectLevel(level),
@@ -153,15 +167,17 @@ class _LevelSelectorState extends State<_LevelSelector> {
                   },
                 )
               // Only show the selected level for non-expandedView.
-              : OutlinedButton(
+              : _selectedLevel != null
+              ? OutlinedButton(
                   onPressed: () =>
                       setState(() => _expandedView = !_expandedView),
                   style: buttonStyle,
                   child: Text(
-                    widget._widgetController._selectedLevel!.shortName,
+                    _selectedLevel!.shortName,
                     style: selectedLevelTextStyle,
                   ),
-                ),
+                )
+              : const SizedBox.shrink(),
         ),
       ],
     );

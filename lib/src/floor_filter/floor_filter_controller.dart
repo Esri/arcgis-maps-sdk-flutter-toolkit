@@ -109,8 +109,7 @@ class FloorFilterController {
   }
 
   /// Notification that the Site/Facility/Floor selection has changed.
-  Stream<FloorSite?> get onSelectedChanged =>
-      _onSelectedChangedController.stream;
+  Stream<Null> get onSelectedChanged => _onSelectedChangedController.stream;
   final _onSelectedChangedController = StreamController<Null>.broadcast();
 
   // Internal stream notifying listeners that the selected site has changed.
