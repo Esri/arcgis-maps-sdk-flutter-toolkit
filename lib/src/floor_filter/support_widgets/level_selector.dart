@@ -55,6 +55,10 @@ class _LevelSelectorState extends State<_LevelSelector> {
     // Set the initial selectedLevel.
     _selectedLevel = widget._widgetController._selectedLevel;
 
+    // Get the levels from the currently selected facility.
+    _facilityLevels =
+        widget._widgetController._selectedFacility?.levels ?? <FloorLevel>[];
+
     // Listen for any changes to the selected facility.
     _onFacilityChangedSubscription = widget._widgetController._onFacilityChanged
         .listen((newFacility) {
