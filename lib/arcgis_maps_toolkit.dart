@@ -21,6 +21,7 @@
 /// * [BasemapGallery]: A widget that displays a collection of basemaps, either from ArcGIS Online, a user-defined portal, or an array of custom basemap gallery items.
 /// * [BuildingExplorer]: A widget that enables a user to explore a building scene layer building model in a local scene view.
 /// * [Compass]: A widget that visualizes the current rotation of the map or scene and allows the user to reset the rotation to north by tapping on it.
+/// * [FloorFilter]: A widget to explore and select Site, Facility, and Level of a floor aware GeoModel.
 /// * [OverviewMap]: A small inset map displaying a representation of the current viewpoint of the target map or scene.
 /// * [PopupView]: A widget that will display a pop-up for an individual feature. This includes showing the feature's title, attributes, custom description, media, and attachments.
 library;
