@@ -35,50 +35,69 @@ class _FacilitySelector extends StatefulWidget {
 }
 
 class _FacilitySelectorState extends State<_FacilitySelector> {
-  // Subscription for facility change notifications.
-  StreamSubscription<FloorFacility?>? _onFacilityChangedSubscription;
   // The currenlty selected facility.
   FloorFacility? _selectedFacility;
 
   // Facility list from the floor manager.
-  late final List<FloorFacility> _facilities;
+  List<FloorFacility> get _facilities {
+    // If there is a selected site, pull facilities from the site. Otherwise
+    // list all facilities in the floor manager.
+    if (widget._widgetController._selectedSite != null) {
+      return widget._widgetController._selectedSite!.facilities;
+    } else {
+      return widget._widgetController._floorManager?.facilities ??
+          <FloorFacility>[];
+    }
+  }
+
   // Mutable facility list for filtering and sorting.
-  late List<FloorFacility> _filterdFacilities;
+  var _filterdFacilities = <FloorFacility>[];
 
   @override
   void initState() {
     super.initState();
-    _selectedFacility = widget._widgetController._selectedFacility;
-
-    // If there is a selected site, pull facilities from the site. Otherwise
-    // list all facilities in the floor manager.
-    if (widget._widgetController._selectedSite != null) {
-      _facilities = widget._widgetController._selectedSite!.facilities;
-    } else {
-      _facilities =
-          widget._widgetController._floorManager?.facilities ??
-          <FloorFacility>[];
-    }
+    _selectedFacility =
+        widget._widgetController._selectedFacilityNotifier.value;
 
     // Create a mutable list from the facilities list for filtering and sorting.
-    _filterdFacilities = List.from(_facilities);
-    _filterdFacilities.sort(
-      (facility1, facility2) => facility1.name.compareTo(facility2.name),
-    );
+    _filterdFacilities = List.from(
+      _facilities,
+    )..sort((facility1, facility2) => facility1.name.compareTo(facility2.name));
 
     // Listen for a change in the selected facility from the widget controller.
-    _onFacilityChangedSubscription = widget._widgetController._onFacilityChanged
-        .listen((newFacility) {
-          if (mounted) {
-            setState(() => _selectedFacility = newFacility);
-          }
-        });
+    widget._widgetController._selectedFacilityNotifier.addListener(
+      _onSelectedFacilityChanged,
+    );
+  }
+
+  @override
+  void didUpdateWidget(covariant _FacilitySelector oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (oldWidget._widgetController == widget._widgetController) return;
+
+    // Rebind value notifier listeners
+    oldWidget._widgetController._selectedFacilityNotifier.removeListener(
+      _onSelectedFacilityChanged,
+    );
+    widget._widgetController._selectedFacilityNotifier.addListener(
+      _onSelectedFacilityChanged,
+    );
+
+    // Get the selected facility from the current widget controller.
+    _selectedFacility = widget._widgetController._selectedFacility;
+
+    // Create a mutable list from the facilities list for filtering and sorting.
+    _filterdFacilities = List.from(
+      _facilities,
+    )..sort((facility1, facility2) => facility1.name.compareTo(facility2.name));
   }
 
   @override
   void dispose() {
-    _onFacilityChangedSubscription?.cancel().ignore();
-    _onFacilityChangedSubscription = null;
+    widget._widgetController._selectedFacilityNotifier.removeListener(
+      _onSelectedFacilityChanged,
+    );
 
     super.dispose();
   }
@@ -133,6 +152,13 @@ class _FacilitySelectorState extends State<_FacilitySelector> {
         ],
       ),
     );
+  }
+
+  void _onSelectedFacilityChanged() {
+    setState(() {
+      _selectedFacility =
+          widget._widgetController._selectedFacilityNotifier.value;
+    });
   }
 
   // Function called by when the search text is changed to filter the

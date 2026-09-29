@@ -35,11 +35,6 @@ class _LevelSelector extends StatefulWidget {
 }
 
 class _LevelSelectorState extends State<_LevelSelector> {
-  // Subscription for facility change notifications.
-  StreamSubscription<FloorFacility?>? _onFacilityChangedSubscription;
-  // Subscription for level change notifications.
-  StreamSubscription<FloorLevel?>? _onLevelChangedSubscription;
-
   // All levels for the current facility.
   var _facilityLevels = <FloorLevel>[];
 
@@ -53,39 +48,62 @@ class _LevelSelectorState extends State<_LevelSelector> {
   void initState() {
     super.initState();
     // Set the initial selectedLevel.
-    _selectedLevel = widget._widgetController._selectedLevel;
+    _selectedLevel = widget._widgetController._selectedLevelNotifier.value;
 
     // Get the levels from the currently selected facility.
     _facilityLevels =
-        widget._widgetController._selectedFacility?.levels ?? <FloorLevel>[];
+        widget._widgetController._selectedFacilityNotifier.value?.levels ??
+        <FloorLevel>[];
 
     // Listen for any changes to the selected facility.
-    _onFacilityChangedSubscription = widget._widgetController._onFacilityChanged
-        .listen((newFacility) {
-          if (mounted) {
-            setState(
-              () => _facilityLevels = newFacility?.levels ?? <FloorLevel>[],
-            );
-          }
-        });
+    widget._widgetController._selectedFacilityNotifier.addListener(
+      _onSelectedFacilityChanged,
+    );
 
     // Listen for any changes to the selected level.
-    _onLevelChangedSubscription = widget._widgetController._onLevelChanged
-        .listen((newLevel) {
-          if (mounted) {
-            setState(() => _selectedLevel = newLevel);
-          }
-        });
+    widget._widgetController._selectedLevelNotifier.addListener(
+      _onSelectedLevelChanged,
+    );
+  }
+
+  @override
+  void didUpdateWidget(covariant _LevelSelector oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (oldWidget._widgetController == widget._widgetController) return;
+
+    // Rebind value notifier listeners
+    oldWidget._widgetController._selectedFacilityNotifier.removeListener(
+      _onSelectedFacilityChanged,
+    );
+    widget._widgetController._selectedFacilityNotifier.addListener(
+      _onSelectedFacilityChanged,
+    );
+    oldWidget._widgetController._selectedLevelNotifier.removeListener(
+      _onSelectedLevelChanged,
+    );
+    widget._widgetController._selectedLevelNotifier.addListener(
+      _onSelectedLevelChanged,
+    );
+
+    // Get facility levels from current widget controller.
+    _facilityLevels =
+        widget._widgetController._selectedFacility?.levels ?? <FloorLevel>[];
+
+    // Get selected level from current widget controller.
+    _selectedLevel = widget._widgetController._selectedLevel;
   }
 
   // TODO(kmueller-gis): Add didUpdateWidget override to resize the widget if height changes.
 
   @override
   void dispose() {
-    _onFacilityChangedSubscription?.cancel().ignore();
-    _onFacilityChangedSubscription = null;
-    _onLevelChangedSubscription?.cancel().ignore();
-    _onLevelChangedSubscription = null;
+    widget._widgetController._selectedFacilityNotifier.removeListener(
+      _onSelectedFacilityChanged,
+    );
+    widget._widgetController._selectedLevelNotifier.removeListener(
+      _onSelectedLevelChanged,
+    );
 
     super.dispose();
   }
@@ -185,5 +203,19 @@ class _LevelSelectorState extends State<_LevelSelector> {
         ),
       ],
     );
+  }
+
+  void _onSelectedFacilityChanged() {
+    setState(() {
+      _facilityLevels =
+          widget._widgetController._selectedFacilityNotifier.value?.levels ??
+          <FloorLevel>[];
+    });
+  }
+
+  void _onSelectedLevelChanged() {
+    setState(() {
+      _selectedLevel = widget._widgetController._selectedLevelNotifier.value;
+    });
   }
 }

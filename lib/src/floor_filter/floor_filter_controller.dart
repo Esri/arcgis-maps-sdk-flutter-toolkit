@@ -28,13 +28,13 @@ class FloorFilterController {
   final GeoViewController geoViewController;
 
   // The floor manager for the GeoModel.
-  FloorManager? _floorManager;
+  FloorManager? get _floorManager => _floorManagerNotifier.value;
   // The currently selected site.
-  FloorSite? _selectedSite;
+  FloorSite? get _selectedSite => _selectedSiteNotifier.value;
   // The currently selected facility.
-  FloorFacility? _selectedFacility;
+  FloorFacility? get _selectedFacility => _selectedFacilityNotifier.value;
   // The currently selected level.
-  FloorLevel? _selectedLevel;
+  FloorLevel? get _selectedLevel => _selectedLevelNotifier.value;
 
   // Cancelable operation to ensure only one refresh call at a time.
   CancelableOperation<void>? _cancelableRefresh;
@@ -84,14 +84,16 @@ class FloorFilterController {
     _cancelableRefresh?.cancel().ignore();
 
     // Start a new refresh operation.
-    _cancelableRefresh = CancelableOperation.fromFuture(_refresh()).then((_) {
+    _cancelableRefresh = CancelableOperation.fromFuture(_refresh()).then((
+      floorManager,
+    ) {
       // Notify listeners of the updated floor manager.
-      _onFloorManagerChangedController.add(_floorManager);
+      _floorManagerNotifier.value = floorManager;
     });
   }
 
   // Function that does the work of refreshing. Called by the public refresh() function.
-  Future<void> _refresh() async {
+  Future<FloorManager?> _refresh() async {
     // Seting the selected Site/Facility/Level to null
     _selectSite(null, notifySelectionChanged: false);
     _selectFacility(null, notifySelectionChanged: false);
@@ -99,7 +101,7 @@ class FloorFilterController {
     _onSelectedChangedController.add(null);
 
     // Clear the floor manager property.
-    _floorManager = null;
+    FloorManager? floorManager;
 
     // Obtain the GeoModel (map or scene) for this view.
     GeoModel? geoModel;
@@ -115,34 +117,28 @@ class FloorFilterController {
     // Obtain and load the FloorManager for this GeoView.
     if (geoModel != null) {
       await geoModel.load();
-      _floorManager = geoModel.floorManager;
-      await _floorManager?.load();
+      floorManager = geoModel.floorManager;
+      await floorManager?.load();
     }
+
+    return floorManager;
   }
 
   /// Notification that the Site/Facility/Floor selection has changed.
   Stream<Null> get onSelectedChanged => _onSelectedChangedController.stream;
   final _onSelectedChangedController = StreamController<Null>.broadcast();
 
-  // Internal stream notifying listeners that the selected site has changed.
-  Stream<FloorSite?> get _onSiteChanged => _onSiteChangedController.stream;
-  final _onSiteChangedController = StreamController<FloorSite?>.broadcast();
+  // Internal notifier for changes to the selected site.
+  final _selectedSiteNotifier = ValueNotifier<FloorSite?>(null);
 
-  // Internal stream notifying listeners that the selected facility has changed.
-  Stream<FloorFacility?> get _onFacilityChanged =>
-      _onFacilityChangedController.stream;
-  final _onFacilityChangedController =
-      StreamController<FloorFacility?>.broadcast();
+  // Internal notifier for changes to the selected facility.
+  final _selectedFacilityNotifier = ValueNotifier<FloorFacility?>(null);
 
-  // Internal stream notifying listeners that the selected level has changed.
-  Stream<FloorLevel?> get _onLevelChanged => _onLevelChangedController.stream;
-  final _onLevelChangedController = StreamController<FloorLevel?>.broadcast();
+  // Internal notifier for changes to the selected level.
+  final _selectedLevelNotifier = ValueNotifier<FloorLevel?>(null);
 
-  // Internal stream that notifies listeners that the floor manager has been updated.
-  Stream<FloorManager?> get _onFloorManagerChanged =>
-      _onFloorManagerChangedController.stream;
-  final _onFloorManagerChangedController =
-      StreamController<FloorManager?>.broadcast();
+  // Internal notifier for updates to the floor manager.
+  final _floorManagerNotifier = ValueNotifier<FloorManager?>(null);
 
   // Funciton to set the selected site and handle actions related to the change.
   // The notifySelectionChanged parameter states whether the public
@@ -151,13 +147,11 @@ class FloorFilterController {
   void _selectSite(FloorSite? site, {bool notifySelectionChanged = true}) {
     if (_selectedSite == site) return;
 
-    _selectedSite = site;
-
     // Clear the currently selected facility.
     _selectFacility(null, notifySelectionChanged: false);
 
-    // Notify the streams that the site changed.
-    _onSiteChangedController.add(site);
+    // Notify listeners that the site changed.
+    _selectedSiteNotifier.value = site;
     if (notifySelectionChanged) {
       _onSelectedChangedController.add(null);
     }
@@ -177,10 +171,8 @@ class FloorFilterController {
   }) {
     if (_selectedFacility == facility) return;
 
-    _selectedFacility = facility;
-
-    // Notify stream that the facility changed.
-    _onFacilityChangedController.add(_selectedFacility);
+    // Notify listeners that the facility changed.
+    _selectedFacilityNotifier.value = facility;
     if (notifySelectionChanged) {
       _onSelectedChangedController.add(null);
     }
@@ -224,10 +216,8 @@ class FloorFilterController {
   void _selectLevel(FloorLevel? level, {bool notifySelectionChanged = true}) {
     if (_selectedLevel == level) return;
 
-    _selectedLevel = level;
-
-    // Notify the streams that the level changed.
-    _onLevelChangedController.add(level);
+    // Notify listeners that the level changed.
+    _selectedLevelNotifier.value = level;
     if (notifySelectionChanged) {
       _onSelectedChangedController.add(null);
     }

@@ -45,7 +45,6 @@ class FloorFilter extends StatefulWidget {
 
 class _FloorFilterState extends State<FloorFilter> {
   FloorManager? _floorManager;
-  StreamSubscription<FloorManager?>? _onFloorManagerChangedSubscription;
   double get _maxWidgetHeight =>
       widget.maxHeight ?? MediaQuery.sizeOf(context).height * 0.8;
 
@@ -54,25 +53,40 @@ class _FloorFilterState extends State<FloorFilter> {
     super.initState();
 
     // Get the current floor manager from the controller.
-    _floorManager = widget.floorFilterController._floorManager;
+    _floorManager = widget.floorFilterController._floorManagerNotifier.value;
 
     // Listen for a refresh notification from the controller. When notified,
     // refresh the controller data and update the widget state.
-    _onFloorManagerChangedSubscription = widget
-        .floorFilterController
-        ._onFloorManagerChanged
-        .listen((newFloorManager) {
-          if (mounted) {
-            setState(() {
-              _floorManager = newFloorManager;
-            });
-          }
-        });
+    widget.floorFilterController._floorManagerNotifier.addListener(
+      _onFloorManagerChanged,
+    );
+  }
+
+  @override
+  void didUpdateWidget(covariant FloorFilter oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (oldWidget.floorFilterController == widget.floorFilterController) {
+      return;
+    }
+
+    // Rebind value notifier listener.
+    oldWidget.floorFilterController._floorManagerNotifier.removeListener(
+      _onFloorManagerChanged,
+    );
+    widget.floorFilterController._floorManagerNotifier.addListener(
+      _onFloorManagerChanged,
+    );
+
+    // Get the floor manager from the current floor filter controller.
+    _floorManager = widget.floorFilterController._floorManager;
   }
 
   @override
   void dispose() {
-    _onFloorManagerChangedSubscription?.cancel().ignore();
+    widget.floorFilterController._floorManagerNotifier.removeListener(
+      _onFloorManagerChanged,
+    );
     super.dispose();
   }
 
@@ -128,6 +142,12 @@ class _FloorFilterState extends State<FloorFilter> {
         ),
       ),
     );
+  }
+
+  void _onFloorManagerChanged() {
+    setState(() {
+      _floorManager = widget.floorFilterController._floorManager;
+    });
   }
 
   // Function to show the bottom sheet containing the site and facility selectors.

@@ -35,39 +35,63 @@ class _SiteSelector extends StatefulWidget {
 }
 
 class _SiteSelectorState extends State<_SiteSelector> {
-  // Subscription for site change notifications.
-  StreamSubscription<FloorSite?>? _onSiteChangedSubscription;
   // The currently selected site.
   FloorSite? _selectedSite;
 
   // Site list from the floor manager.
-  late final List<FloorSite> _sites;
+  List<FloorSite> get _sites =>
+      widget._widgetController._floorManager?.sites ?? <FloorSite>[];
+
   // Mutable site list for filtering and sorting.
-  late List<FloorSite> _filterdSites;
+  var _filterdSites = <FloorSite>[];
 
   @override
   void initState() {
     super.initState();
-    _selectedSite = widget._widgetController._selectedSite;
-    _sites = widget._widgetController._floorManager?.sites ?? <FloorSite>[];
-    _filterdSites = List.from(_sites);
-    _filterdSites.sort((site1, site2) => site1.name.compareTo(site2.name));
-
-    _onSiteChangedSubscription = widget._widgetController._onSiteChanged.listen(
-      (newSite) {
-        if (mounted) {
-          setState(() => _selectedSite = newSite);
-        }
-      },
+    _selectedSite = widget._widgetController._selectedSiteNotifier.value;
+    widget._widgetController._selectedSiteNotifier.addListener(
+      _onSelectedSiteChanged,
     );
+
+    _filterdSites = List.from(_sites)
+      ..sort((site1, site2) => site1.name.compareTo(site2.name));
+  }
+
+  @override
+  void didUpdateWidget(covariant _SiteSelector oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (oldWidget._widgetController == widget._widgetController) return;
+
+    // Rebind valueNotifier listeners
+    oldWidget._widgetController._selectedSiteNotifier.removeListener(
+      _onSelectedSiteChanged,
+    );
+    widget._widgetController._selectedSiteNotifier.addListener(
+      _onSelectedSiteChanged,
+    );
+
+    // Get the selected site from the current widget controller.
+    _selectedSite = widget._widgetController._selectedSite;
+
+    // Refresh filtered sites list.
+    _filterdSites = List.from(_sites)
+      ..sort((site1, site2) => site1.name.compareTo(site2.name));
   }
 
   @override
   void dispose() {
-    _onSiteChangedSubscription?.cancel().ignore();
-    _onSiteChangedSubscription = null;
+    widget._widgetController._selectedSiteNotifier.removeListener(
+      _onSelectedSiteChanged,
+    );
 
     super.dispose();
+  }
+
+  void _onSelectedSiteChanged() {
+    setState(() {
+      _selectedSite = widget._widgetController._selectedSiteNotifier.value;
+    });
   }
 
   @override
