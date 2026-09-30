@@ -27,6 +27,9 @@ class FloorFilterController {
   /// The [GeoViewController] for the view showing the floor information.
   final GeoViewController geoViewController;
 
+  // Flag to show all facilities or just facilities for the selected site.
+  var _listAllFacilities = false;
+
   // The floor manager for the GeoModel.
   FloorManager? get _floorManager => _floorManagerNotifier.value;
   // The currently selected site.
