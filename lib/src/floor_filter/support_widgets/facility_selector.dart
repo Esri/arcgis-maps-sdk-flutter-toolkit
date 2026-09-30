@@ -42,11 +42,12 @@ class _FacilitySelectorState extends State<_FacilitySelector> {
   List<FloorFacility> get _facilities {
     // If there is a selected site, pull facilities from the site. Otherwise
     // list all facilities in the floor manager.
-    if (widget._widgetController._selectedSite != null) {
-      return widget._widgetController._selectedSite!.facilities;
-    } else {
+    if (widget._widgetController._selectedSite == null ||
+        widget._widgetController._listAllFacilities) {
       return widget._widgetController._floorManager?.facilities ??
           <FloorFacility>[];
+    } else {
+      return widget._widgetController._selectedSite!.facilities;
     }
   }
 

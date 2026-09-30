@@ -139,8 +139,8 @@ class _SiteSelectorState extends State<_SiteSelector> {
             ),
           ),
           ElevatedButton(
-            onPressed: () => _onSiteSelected(null),
-            child: const Text('All Facilities'),
+            onPressed: _onAllSites,
+            child: const Text('All Sites'),
           ),
         ],
       ),
@@ -175,6 +175,18 @@ class _SiteSelectorState extends State<_SiteSelector> {
   void _onSiteSelected(FloorSite? site) {
     // Set the selected site on the controller.
     widget._widgetController._selectSite(site);
+
+    // Only list facilities for this site.
+    widget._widgetController._listAllFacilities = false;
+
+    // Navigate to facility selector sheet.
+    _SiteAndFacilitySelectorNavigator.showFacilitySelector(context);
+  }
+
+  // Function to handle when the All Sites button is tapped.
+  void _onAllSites() {
+    // Set the selected site on the controller.
+    widget._widgetController._listAllFacilities = true;
 
     // Navigate to facility selector sheet.
     _SiteAndFacilitySelectorNavigator.showFacilitySelector(context);
