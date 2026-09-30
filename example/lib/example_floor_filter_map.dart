@@ -63,7 +63,7 @@ class _ExampleFloorFilterMapState extends State<ExampleFloorFilterMap> {
               onMapViewReady: onMapViewReady,
             ),
             // Create a floor filter and display on top of the map view in a stack.
-            // Pass the floor filter the corresponding map view controller.
+            // Pass the floor filter the corresponding floor filter controller.
             Positioned(
               bottom: 50,
               left: 20,

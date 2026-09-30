@@ -45,32 +45,46 @@ class FloorFilter extends StatefulWidget {
 
 class _FloorFilterState extends State<FloorFilter> {
   FloorManager? _floorManager;
-  StreamSubscription<Null>? _onRequestFloorFilterRefreshSubscription;
-  late final double _maxWidgetHeight =
+  double get _maxWidgetHeight =>
       widget.maxHeight ?? MediaQuery.sizeOf(context).height * 0.8;
 
   @override
   void initState() {
     super.initState();
 
+    // Get the current floor manager from the controller.
+    _floorManager = widget.floorFilterController._floorManagerNotifier.value;
+
     // Listen for a refresh notification from the controller. When notified,
     // refresh the controller data and update the widget state.
-    _onRequestFloorFilterRefreshSubscription = widget
-        .floorFilterController
-        ._onRequestFloorFilterRefresh
-        .listen((_) async {
-          await widget.floorFilterController._resetFloorManager();
-          if (mounted) {
-            setState(() {
-              _floorManager = widget.floorFilterController._floorManager;
-            });
-          }
-        });
+    widget.floorFilterController._floorManagerNotifier.addListener(
+      _onFloorManagerChanged,
+    );
+  }
+
+  @override
+  void didUpdateWidget(covariant FloorFilter oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (oldWidget.floorFilterController == widget.floorFilterController) {
+      return;
+    }
+
+    // Rebind value notifier listener and set new value.
+    oldWidget.floorFilterController._floorManagerNotifier.removeListener(
+      _onFloorManagerChanged,
+    );
+    _floorManager = widget.floorFilterController._floorManager;
+    widget.floorFilterController._floorManagerNotifier.addListener(
+      _onFloorManagerChanged,
+    );
   }
 
   @override
   void dispose() {
-    _onRequestFloorFilterRefreshSubscription?.cancel().ignore();
+    widget.floorFilterController._floorManagerNotifier.removeListener(
+      _onFloorManagerChanged,
+    );
     super.dispose();
   }
 
@@ -81,6 +95,7 @@ class _FloorFilterState extends State<FloorFilter> {
       return const SizedBox.shrink();
     }
 
+    // Constants for widget dimensions.
     const widgetWidth = 50.0;
     const decorationExtra = 22.0;
 
@@ -110,7 +125,7 @@ class _FloorFilterState extends State<FloorFilter> {
             SizedBox.square(
               dimension: widgetWidth,
               child: IconButton.filled(
-                onPressed: showSiteAndFacitliySelector,
+                onPressed: _showSiteAndFacitliySelector,
                 style: IconButton.styleFrom(
                   backgroundColor: Colors.white,
                   foregroundColor: Colors.black,
@@ -127,7 +142,14 @@ class _FloorFilterState extends State<FloorFilter> {
     );
   }
 
-  Future<void> showSiteAndFacitliySelector() {
+  void _onFloorManagerChanged() {
+    setState(() {
+      _floorManager = widget.floorFilterController._floorManager;
+    });
+  }
+
+  // Function to show the bottom sheet containing the site and facility selectors.
+  Future<void> _showSiteAndFacitliySelector() {
     return showModalBottomSheet<void>(
       context: context,
       builder: (context) {

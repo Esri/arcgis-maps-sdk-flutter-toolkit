@@ -17,6 +17,9 @@
 part of '../../../arcgis_maps_toolkit.dart';
 
 /// A widget for selecting a floor filter site.
+/// - floorFilterController: the [FloorFilterController] for this widget
+/// - onClose: optional [VoidCallback] called when X button in top right is
+/// tapped. If no callback is provided, the button will not appear.
 class _SiteSelector extends StatefulWidget {
   /// Creates a site selector.
   const _SiteSelector({
@@ -32,34 +35,62 @@ class _SiteSelector extends StatefulWidget {
 }
 
 class _SiteSelectorState extends State<_SiteSelector> {
-  StreamSubscription<FloorSite?>? _onSiteChangedSubscription;
+  // The currently selected site.
   FloorSite? _selectedSite;
-  late final List<FloorSite> _sites;
-  late List<FloorSite> _filterdSites;
+
+  // Site list from the floor manager.
+  List<FloorSite> get _sites =>
+      widget._widgetController._floorManager?.sites ?? <FloorSite>[];
+
+  // Mutable site list for filtering and sorting.
+  var _filterdSites = <FloorSite>[];
 
   @override
   void initState() {
     super.initState();
-    _selectedSite = widget._widgetController._selectedSite;
-    _sites = widget._widgetController._floorManager?.sites ?? <FloorSite>[];
-    _filterdSites = List.from(_sites);
-    _filterdSites.sort((site1, site2) => site1.name.compareTo(site2.name));
-
-    _onSiteChangedSubscription = widget._widgetController._onSiteChanged.listen(
-      (newSite) {
-        if (mounted) {
-          setState(() => _selectedSite = newSite);
-        }
-      },
+    _selectedSite = widget._widgetController._selectedSiteNotifier.value;
+    widget._widgetController._selectedSiteNotifier.addListener(
+      _onSelectedSiteChanged,
     );
+
+    _filterdSites = List.from(_sites)
+      ..sort((site1, site2) => site1.name.compareTo(site2.name));
+  }
+
+  @override
+  void didUpdateWidget(covariant _SiteSelector oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (oldWidget._widgetController == widget._widgetController) return;
+
+    // Rebind valueNotifier listeners
+    oldWidget._widgetController._selectedSiteNotifier.removeListener(
+      _onSelectedSiteChanged,
+    );
+    // Get the selected site from the current widget controller.
+    _selectedSite = widget._widgetController._selectedSite;
+    widget._widgetController._selectedSiteNotifier.addListener(
+      _onSelectedSiteChanged,
+    );
+
+    // Refresh filtered sites list.
+    _filterdSites = List.from(_sites)
+      ..sort((site1, site2) => site1.name.compareTo(site2.name));
   }
 
   @override
   void dispose() {
-    _onSiteChangedSubscription?.cancel().ignore();
-    _onSiteChangedSubscription = null;
+    widget._widgetController._selectedSiteNotifier.removeListener(
+      _onSelectedSiteChanged,
+    );
 
     super.dispose();
+  }
+
+  void _onSelectedSiteChanged() {
+    setState(() {
+      _selectedSite = widget._widgetController._selectedSiteNotifier.value;
+    });
   }
 
   @override
@@ -116,27 +147,31 @@ class _SiteSelectorState extends State<_SiteSelector> {
     );
   }
 
+  // Function called when the search text is changed to filter the sites in
+  // the list by name.
   void _filterSitesByName(String filterText) {
     final List<FloorSite> tmpSites;
 
     if (filterText.isEmpty) {
+      // If nothing is in the search field, pull straight from the full list.
       tmpSites = List.from(_sites);
     } else {
+      // Otherwise, filter the sites by the search text.
       tmpSites = _sites.where((site) {
         final siteName = site.name.toUpperCase();
         return siteName.contains(filterText.toUpperCase());
       }).toList();
     }
 
+    // Sort alphabetically.
     tmpSites.sort((site1, site2) => site1.name.compareTo(site2.name));
 
-    if (mounted) {
-      setState(() {
-        _filterdSites = tmpSites;
-      });
-    }
+    setState(() {
+      _filterdSites = tmpSites;
+    });
   }
 
+  // Function to handle when a site is selected from the list.
   void _onSiteSelected(FloorSite? site) {
     // Set the selected site on the controller.
     widget._widgetController._selectSite(site);

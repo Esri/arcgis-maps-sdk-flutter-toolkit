@@ -16,20 +16,24 @@
 
 part of '../../../arcgis_maps_toolkit.dart';
 
-/// A navigation flow for selecting a floor site and facility.
+/// A Container with an independent navigation flow for selecting a floor site
+/// and facility. This widget is intended to be used in a modal view.
 class _SiteAndFacilitySelectorNavigator extends StatefulWidget {
   /// Creates a selector flow.
+  /// - floorFilterController: the [FloorFilterController] for this widget
+  /// - onClose: optional [VoidCallback] called when X button in top right is
+  /// tapped. If no callback is provided, the button will not appear.
   const _SiteAndFacilitySelectorNavigator({
     required FloorFilterController floorFilterController,
     this.onClose,
   }) : _widgetController = floorFilterController;
 
-  static const _facilitySelectorRoute = '/facilities';
-
   final FloorFilterController _widgetController;
-
   final VoidCallback? onClose;
 
+  // Static properties and funcitons for navigation.
+  static const _siteSelectorRoute = '/';
+  static const _facilitySelectorRoute = '/facilities';
   static void showFacilitySelector(BuildContext context) {
     Navigator.of(context).pushNamed(_facilitySelectorRoute).ignore();
   }
@@ -41,8 +45,6 @@ class _SiteAndFacilitySelectorNavigator extends StatefulWidget {
 
 class _SiteAndFacilitySelectorNavigatorState
     extends State<_SiteAndFacilitySelectorNavigator> {
-  static const _siteSelectorRoute = '/';
-
   final _navigatorKey = GlobalKey<NavigatorState>();
 
   @override
@@ -56,7 +58,7 @@ class _SiteAndFacilitySelectorNavigatorState
         key: _navigatorKey,
         initialRoute: widget._widgetController._selectedFacility != null
             ? _SiteAndFacilitySelectorNavigator._facilitySelectorRoute
-            : _siteSelectorRoute,
+            : _SiteAndFacilitySelectorNavigator._siteSelectorRoute,
         onGenerateRoute: _onGenerateRoute,
       ),
     );
