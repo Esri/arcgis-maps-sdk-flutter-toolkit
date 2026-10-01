@@ -35,24 +35,31 @@ class _FacilitySelector extends StatefulWidget {
 }
 
 class _FacilitySelectorState extends State<_FacilitySelector> {
-  // The currenlty selected facility.
+  // The currently selected facility.
   FloorFacility? _selectedFacility;
 
   // Facility list from the floor manager.
   List<FloorFacility> get _facilities {
     // If there is a selected site, pull facilities from the site. Otherwise
     // list all facilities in the floor manager.
+    final List<FloorFacility> facilities;
     if (widget._widgetController._selectedSite == null ||
         widget._widgetController._listAllFacilities) {
-      return widget._widgetController._floorManager?.facilities ??
+      facilities =
+          widget._widgetController._floorManager?.facilities ??
           <FloorFacility>[];
     } else {
-      return widget._widgetController._selectedSite!.facilities;
+      facilities = widget._widgetController._selectedSite!.facilities;
     }
+
+    // Return list sorted alphabetically by facility name.
+    return List.from(
+      facilities,
+    )..sort((facility1, facility2) => facility1.name.compareTo(facility2.name));
   }
 
   // Mutable facility list for filtering and sorting.
-  var _filterdFacilities = <FloorFacility>[];
+  var _filteredFacilities = <FloorFacility>[];
 
   @override
   void initState() {
@@ -61,9 +68,7 @@ class _FacilitySelectorState extends State<_FacilitySelector> {
         widget._widgetController._selectedFacilityNotifier.value;
 
     // Create a mutable list from the facilities list for filtering and sorting.
-    _filterdFacilities = List.from(
-      _facilities,
-    )..sort((facility1, facility2) => facility1.name.compareTo(facility2.name));
+    _filteredFacilities = List.from(_facilities);
 
     // Listen for a change in the selected facility from the widget controller.
     widget._widgetController._selectedFacilityNotifier.addListener(
@@ -88,9 +93,7 @@ class _FacilitySelectorState extends State<_FacilitySelector> {
     );
 
     // Create a mutable list from the facilities list for filtering and sorting.
-    _filterdFacilities = List.from(
-      _facilities,
-    )..sort((facility1, facility2) => facility1.name.compareTo(facility2.name));
+    _filteredFacilities = List.from(_facilities);
   }
 
   @override
@@ -131,9 +134,9 @@ class _FacilitySelectorState extends State<_FacilitySelector> {
           ),
           Expanded(
             child: ListView.builder(
-              itemCount: _filterdFacilities.length,
+              itemCount: _filteredFacilities.length,
               itemBuilder: (context, index) {
-                final facility = _filterdFacilities[index];
+                final facility = _filteredFacilities[index];
                 return ListTile(
                   title: facility == _selectedFacility
                       ? Text(
@@ -162,7 +165,7 @@ class _FacilitySelectorState extends State<_FacilitySelector> {
   }
 
   // Function called when the search text is changed to filter the
-  // facilites in the list by name.
+  // facilities in the list by name.
   void _filterFacilitiesByName(String filterText) {
     final List<FloorFacility> tmpFacilities;
 
@@ -177,11 +180,8 @@ class _FacilitySelectorState extends State<_FacilitySelector> {
       }).toList();
     }
 
-    // Sort alphabetically.
-    tmpFacilities.sort((site1, site2) => site1.name.compareTo(site2.name));
-
     setState(() {
-      _filterdFacilities = tmpFacilities;
+      _filteredFacilities = tmpFacilities;
     });
   }
 

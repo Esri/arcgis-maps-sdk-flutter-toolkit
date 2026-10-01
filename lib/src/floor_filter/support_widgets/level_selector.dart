@@ -18,7 +18,7 @@ part of '../../../arcgis_maps_toolkit.dart';
 
 /// A widget for selecting a floor level in the selected facility.
 /// - floorFilterController: the [FloorFilterController] for this widget.
-/// - maxHeight: the maximum height of this widget provided by the parent.'.
+/// - maxHeight: the maximum height of this widget provided by the parent.
 class _LevelSelector extends StatefulWidget {
   const _LevelSelector({
     required FloorFilterController floorFilterController,
@@ -38,11 +38,11 @@ class _LevelSelectorState extends State<_LevelSelector> {
   // All levels for the current facility.
   var _facilityLevels = <FloorLevel>[];
 
-  // Currenlty selected level.
+  // Currently selected level.
   FloorLevel? _selectedLevel;
 
   // Flag indicating whether the expanded or collapsed view is showing.
-  bool _expandedView = true;
+  var _expandedView = true;
 
   @override
   void initState() {
@@ -176,15 +176,12 @@ class _LevelSelectorState extends State<_LevelSelector> {
                             onPressed: () =>
                                 widget._widgetController._selectLevel(level),
                             style: buttonStyle,
-                            child: level == _selectedLevel
-                                ? Text(
-                                    level.shortName,
-                                    style: selectedLevelTextStyle,
-                                  )
-                                : Text(
-                                    level.shortName,
-                                    style: unselectedLevelTextStyle,
-                                  ),
+                            child: Text(
+                              level.shortName,
+                              style: level == _selectedLevel
+                                  ? selectedLevelTextStyle
+                                  : unselectedLevelTextStyle,
+                            ),
                           );
                         },
                       )

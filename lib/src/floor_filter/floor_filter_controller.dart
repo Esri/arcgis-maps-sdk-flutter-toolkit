@@ -20,7 +20,7 @@ part of '../../arcgis_maps_toolkit.dart';
 /// this class by calling [FloorFilter.createController] and passing in the
 /// relevant [GeoViewController]. The controller object is used when creating
 /// the [FloorFilter] in the widget tree and provides the interface to the
-/// widget durining use.
+/// widget during use.
 class FloorFilterController {
   FloorFilterController._({required this.geoViewController});
 
@@ -46,40 +46,60 @@ class FloorFilterController {
   // Cancelable operation to ensure only one refresh call at a time.
   CancelableOperation<void>? _cancelableRefresh;
 
-  /// The siteId of the currently selected site.
+  /// The siteId of the currently selected site. Set to null to clear selection.
   String? get selectedSiteId => _selectedSite?.siteId;
-  set selectedSiteId(String selectedSiteId) {
+  set selectedSiteId(String? selectedSiteId) {
     if (_floorManager != null) {
-      final selectedSite = _floorManager!.sites.firstWhere(
-        (site) => site.siteId == selectedSiteId,
-      );
-      _selectSite(selectedSite);
+      if (selectedSiteId == null) {
+        _selectSite(null);
+      } else {
+        final selectedSite = _floorManager!.sites.firstWhere(
+          (site) => site.siteId == selectedSiteId,
+          orElse: () =>
+              throw Exception('Site with ID: $selectedSiteId cannot be found.'),
+        );
+        _selectSite(selectedSite);
+      }
     } else {
       throw StateError('This ArcGISMap or ArcGISScene has no FloorManager.');
     }
   }
 
-  /// The facilityId of the currently selected facility.
+  /// The facilityId of the currently selected facility. Set to null to clear selection.
   String? get selectedFacilityId => _selectedFacility?.facilityId;
-  set selectedFacilityId(String selectedFacilityId) {
+  set selectedFacilityId(String? selectedFacilityId) {
     if (_floorManager != null) {
-      final selectedFacility = _floorManager!.facilities.firstWhere(
-        (facility) => facility.facilityId == selectedFacilityId,
-      );
-      _selectFacility(selectedFacility);
+      if (selectedFacilityId == null) {
+        _selectFacility(null);
+      } else {
+        final selectedFacility = _floorManager!.facilities.firstWhere(
+          (facility) => facility.facilityId == selectedFacilityId,
+          orElse: () => throw Exception(
+            'Facility with ID: $selectedFacilityId cannot be found.',
+          ),
+        );
+        _selectFacility(selectedFacility);
+      }
     } else {
       throw StateError('This ArcGISMap or ArcGISScene has no FloorManager.');
     }
   }
 
-  /// The levelId of the currently selected level.
+  /// The levelId of the currently selected level. Set to null to clear selection.
   String? get selectedLevelId => _selectedLevel?.levelId;
-  set selectedLevelId(String selectedLevelId) {
+  set selectedLevelId(String? selectedLevelId) {
     if (_floorManager != null) {
-      final selectedLevel = _floorManager!.levels.firstWhere(
-        (level) => level.levelId == selectedLevelId,
-      );
-      _selectLevel(selectedLevel);
+      if (selectedLevelId == null) {
+        _selectLevel(null);
+      } else {
+        final selectedLevel = _floorManager!.levels.firstWhere(
+          (level) => level.levelId == selectedLevelId,
+          orElse: () => throw Exception(
+            'Level with ID: $selectedLevelId cannot be found.',
+          ),
+        );
+        _selectLevel(selectedLevel);
+      }
     } else {
       throw StateError('This ArcGISMap or ArcGISScene has no FloorManager.');
     }
@@ -101,7 +121,7 @@ class FloorFilterController {
 
   // Function that does the work of refreshing. Called by the public refresh() function.
   Future<FloorManager?> _refresh() async {
-    // Seting the selected Site/Facility/Level to null
+    // Setting the selected Site/Facility/Level to null
     _selectSite(null, notifySelectionChanged: false);
     _selectFacility(null, notifySelectionChanged: false);
     _selectLevel(null, notifySelectionChanged: false);
@@ -121,12 +141,13 @@ class FloorFilterController {
         geoModel = localSceneViewController.arcGISScene;
     }
 
-    // Obtain and load the FloorManager for this GeoView.
-    if (geoModel != null) {
-      await geoModel.load();
-      floorManager = geoModel.floorManager;
-      await floorManager?.load();
-    }
+    // Return early if no GeoModel was found.
+    if (geoModel == null) return null;
+
+    // Obtain and load the FloorManager for this GeoModel.
+    await geoModel.load();
+    floorManager = geoModel.floorManager;
+    await floorManager?.load();
 
     return floorManager;
   }
@@ -147,7 +168,7 @@ class FloorFilterController {
   // Internal notifier for updates to the floor manager.
   final _floorManagerNotifier = ValueNotifier<FloorManager?>(null);
 
-  // Function to set the selected site and handle actions related to the change.
+  // Funciton to set the selected site and handle actions related to the change.
   // The notifySelectionChanged parameter states whether the public
   // onSelectedChanged stream should be notified. The internal onSiteChanged
   // notification will always set if the site changed.
@@ -209,12 +230,7 @@ class FloorFilterController {
     _selectedLevelNotifier.value = level;
 
     // Update the visible levels
-    if (level != null) {
-      _showLevelsWithVerticalOrder(level.verticalOrder);
-    } else {
-      // Default to the 0th level.
-      _showLevelsWithVerticalOrder(0);
-    }
+    _showLevelsWithVerticalOrder(level?.verticalOrder ?? 0);
 
     if (notifySelectionChanged) {
       _onSelectedChangedController.add(null);
@@ -242,7 +258,7 @@ class FloorFilterController {
   }
 
   // Function to set the visibility of layers that have the specified
-  // verticalOrder. This will span all facilities. Facilites that do not have
+  // verticalOrder. This will span all facilities. Facilities that do not have
   // a level with this verticalOrder will not show any floor.
   void _showLevelsWithVerticalOrder(int verticalOrder) {
     if (_floorManager == null) return;
