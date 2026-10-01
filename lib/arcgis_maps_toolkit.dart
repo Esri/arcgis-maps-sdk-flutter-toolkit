@@ -21,6 +21,7 @@
 /// * [BasemapGallery]: A widget that displays a collection of basemaps, either from ArcGIS Online, a user-defined portal, or an array of custom basemap gallery items.
 /// * [BuildingExplorer]: A widget that enables a user to explore a building scene layer building model in a local scene view.
 /// * [Compass]: A widget that visualizes the current rotation of the map or scene and allows the user to reset the rotation to north by tapping on it.
+/// * [FloorFilter]: A widget that explores and selects Site, Facility, and Level of a floor aware GeoModel.
 /// * [OverviewMap]: A small inset map displaying a representation of the current viewpoint of the target map or scene.
 /// * [PopupView]: A widget that will display a pop-up for an individual feature. This includes showing the feature's title, attributes, custom description, media, and attachments.
 library;
@@ -32,6 +33,7 @@ import 'dart:math' as math;
 import 'dart:typed_data';
 
 import 'package:arcgis_maps/arcgis_maps.dart';
+import 'package:async/async.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
@@ -64,6 +66,13 @@ part 'src/building_explorer/support_widgets/zoom_to_building_control.dart';
 // Compass Widget
 part 'src/compass/compass.dart';
 part 'src/compass/compass_needle_painter.dart';
+// Floor Filter Widget
+part 'src/floor_filter/floor_filter.dart';
+part 'src/floor_filter/floor_filter_controller.dart';
+part 'src/floor_filter/support_widgets/facility_selector.dart';
+part 'src/floor_filter/support_widgets/level_selector.dart';
+part 'src/floor_filter/support_widgets/site_and_facility_selector_navigator.dart';
+part 'src/floor_filter/support_widgets/site_selector.dart';
 // Overview Map Widget
 part 'src/overview_map/overview_map.dart';
 // Popup Widget
