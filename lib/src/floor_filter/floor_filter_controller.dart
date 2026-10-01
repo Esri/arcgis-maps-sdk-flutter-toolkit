@@ -137,12 +137,13 @@ class FloorFilterController {
         geoModel = localSceneViewController.arcGISScene;
     }
 
-    // Obtain and load the FloorManager for this GeoView.
-    if (geoModel != null) {
-      await geoModel.load();
-      floorManager = geoModel.floorManager;
-      await floorManager?.load();
-    }
+    // Return early if no GeoModel was found.
+    if (geoModel == null) return null;
+
+    // Obtain and load the FloorManager for this GeoModel.
+    await geoModel.load();
+    floorManager = geoModel.floorManager;
+    await floorManager?.load();
 
     return floorManager;
   }
