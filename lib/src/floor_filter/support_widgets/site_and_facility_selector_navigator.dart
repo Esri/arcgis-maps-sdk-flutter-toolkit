@@ -31,7 +31,7 @@ class _SiteAndFacilitySelectorNavigator extends StatefulWidget {
   final FloorFilterController _widgetController;
   final VoidCallback? onClose;
 
-  // Static properties and funcitons for navigation.
+  // Static properties and functions for navigation.
   static const _siteSelectorRoute = '/';
   static const _facilitySelectorRoute = '/facilities';
   static void showFacilitySelector(BuildContext context) {
