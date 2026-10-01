@@ -245,12 +245,7 @@ class FloorFilterController {
     _selectedLevelNotifier.value = level;
 
     // Update the visible levels
-    if (level != null) {
-      _showLevelsWithVerticalOrder(level.verticalOrder);
-    } else {
-      // Default to the 0th level.
-      _showLevelsWithVerticalOrder(0);
-    }
+    _showLevelsWithVerticalOrder(level?.verticalOrder ?? 0);
 
     if (notifySelectionChanged) {
       _onSelectedChangedController.add(null);
