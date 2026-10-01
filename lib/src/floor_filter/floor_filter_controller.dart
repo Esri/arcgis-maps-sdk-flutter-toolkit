@@ -42,47 +42,60 @@ class FloorFilterController {
   // Cancelable operation to ensure only one refresh call at a time.
   CancelableOperation<void>? _cancelableRefresh;
 
-  /// The siteId of the currently selected site.
+  /// The siteId of the currently selected site. Set to null to clear selection.
   String? get selectedSiteId => _selectedSite?.siteId;
-  set selectedSiteId(String selectedSiteId) {
+  set selectedSiteId(String? selectedSiteId) {
     if (_floorManager != null) {
-      final selectedSite = _floorManager!.sites.firstWhere(
-        (site) => site.siteId == selectedSiteId,
-        orElse: () =>
-            throw Exception('Site with ID: $selectedSiteId cannot be found.'),
-      );
-      _selectSite(selectedSite);
+      if (selectedSiteId == null) {
+        _selectSite(null);
+      } else {
+        final selectedSite = _floorManager!.sites.firstWhere(
+          (site) => site.siteId == selectedSiteId,
+          orElse: () =>
+              throw Exception('Site with ID: $selectedSiteId cannot be found.'),
+        );
+        _selectSite(selectedSite);
+      }
     } else {
       throw StateError('This ArcGISMap or ArcGISScene has no FloorManager.');
     }
   }
 
-  /// The facilityId of the currently selected facility.
+  /// The facilityId of the currently selected facility. Set to null to clear selection.
   String? get selectedFacilityId => _selectedFacility?.facilityId;
-  set selectedFacilityId(String selectedFacilityId) {
+  set selectedFacilityId(String? selectedFacilityId) {
     if (_floorManager != null) {
-      final selectedFacility = _floorManager!.facilities.firstWhere(
-        (facility) => facility.facilityId == selectedFacilityId,
-        orElse: () => throw Exception(
-          'Facility with ID: $selectedFacilityId cannot be found.',
-        ),
-      );
-      _selectFacility(selectedFacility);
+      if (selectedFacilityId == null) {
+        _selectFacility(null);
+      } else {
+        final selectedFacility = _floorManager!.facilities.firstWhere(
+          (facility) => facility.facilityId == selectedFacilityId,
+          orElse: () => throw Exception(
+            'Facility with ID: $selectedFacilityId cannot be found.',
+          ),
+        );
+        _selectFacility(selectedFacility);
+      }
     } else {
       throw StateError('This ArcGISMap or ArcGISScene has no FloorManager.');
     }
   }
 
-  /// The levelId of the currently selected level.
+  /// The levelId of the currently selected level. Set to null to clear selection.
   String? get selectedLevelId => _selectedLevel?.levelId;
-  set selectedLevelId(String selectedLevelId) {
+  set selectedLevelId(String? selectedLevelId) {
     if (_floorManager != null) {
-      final selectedLevel = _floorManager!.levels.firstWhere(
-        (level) => level.levelId == selectedLevelId,
-        orElse: () =>
-            throw Exception('Level with ID: $selectedLevelId cannot be found.'),
-      );
-      _selectLevel(selectedLevel);
+      if (selectedLevelId == null) {
+        _selectLevel(null);
+      } else {
+        final selectedLevel = _floorManager!.levels.firstWhere(
+          (level) => level.levelId == selectedLevelId,
+          orElse: () => throw Exception(
+            'Level with ID: $selectedLevelId cannot be found.',
+          ),
+        );
+        _selectLevel(selectedLevel);
+      }
     } else {
       throw StateError('This ArcGISMap or ArcGISScene has no FloorManager.');
     }
