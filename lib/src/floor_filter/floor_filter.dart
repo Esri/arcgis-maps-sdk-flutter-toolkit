@@ -45,8 +45,6 @@ class FloorFilter extends StatefulWidget {
 
 class _FloorFilterState extends State<FloorFilter> {
   FloorManager? _floorManager;
-  double get _maxWidgetHeight =>
-      widget.maxHeight ?? MediaQuery.sizeOf(context).height * 0.8;
 
   @override
   void initState() {
@@ -95,18 +93,20 @@ class _FloorFilterState extends State<FloorFilter> {
       return const SizedBox.shrink();
     }
 
-    // Constants for widget dimensions.
+    // Values for widget dimensions.
+    final maxWidgetHeight =
+        widget.maxHeight ?? MediaQuery.sizeOf(context).height * 0.8;
     const widgetWidth = 50.0;
     const decorationExtra = 22.0;
 
-    // The height of the level selector is the height of the widget (_maxWidgetHeight)
+    // The height of the level selector is the height of the widget (maxWidgetHeight)
     // minus the height of the IconButton (widgetWidth) and the extra padding
     // and border heights (decorationExtra).
     final levelSelectorMaxHeight =
-        _maxWidgetHeight - widgetWidth - decorationExtra;
+        maxWidgetHeight - widgetWidth - decorationExtra;
 
     return ConstrainedBox(
-      constraints: BoxConstraints(maxHeight: _maxWidgetHeight),
+      constraints: BoxConstraints(maxHeight: maxWidgetHeight),
       child: Container(
         width: widgetWidth,
         padding: const EdgeInsets.all(5),

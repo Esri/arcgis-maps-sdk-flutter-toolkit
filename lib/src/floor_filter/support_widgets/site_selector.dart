@@ -39,11 +39,15 @@ class _SiteSelectorState extends State<_SiteSelector> {
   FloorSite? _selectedSite;
 
   // Site list from the floor manager.
-  List<FloorSite> get _sites =>
-      widget._widgetController._floorManager?.sites ?? <FloorSite>[];
+  List<FloorSite> get _sites {
+    // Return the sites sorted alphabetically.
+    return List.from(
+      widget._widgetController._floorManager?.sites ?? <FloorSite>[],
+    )..sort((site1, site2) => site1.name.compareTo(site2.name));
+  }
 
-  // Mutable site list for filtering and sorting.
-  var _filterdSites = <FloorSite>[];
+  // Mutable site list for filtering.
+  var _filteredSites = <FloorSite>[];
 
   @override
   void initState() {
@@ -53,8 +57,7 @@ class _SiteSelectorState extends State<_SiteSelector> {
       _onSelectedSiteChanged,
     );
 
-    _filterdSites = List.from(_sites)
-      ..sort((site1, site2) => site1.name.compareTo(site2.name));
+    _filteredSites = List.from(_sites);
   }
 
   @override
@@ -74,8 +77,7 @@ class _SiteSelectorState extends State<_SiteSelector> {
     );
 
     // Refresh filtered sites list.
-    _filterdSites = List.from(_sites)
-      ..sort((site1, site2) => site1.name.compareTo(site2.name));
+    _filteredSites = List.from(_sites);
   }
 
   @override
@@ -123,9 +125,9 @@ class _SiteSelectorState extends State<_SiteSelector> {
           ),
           Expanded(
             child: ListView.builder(
-              itemCount: _filterdSites.length,
+              itemCount: _filteredSites.length,
               itemBuilder: (context, index) {
-                final site = _filterdSites[index];
+                final site = _filteredSites[index];
                 return ListTile(
                   title: site == _selectedSite
                       ? Text(
@@ -133,13 +135,13 @@ class _SiteSelectorState extends State<_SiteSelector> {
                           style: const TextStyle(fontWeight: .w800),
                         )
                       : Text(site.name),
-                  onTap: () => _onSiteSelected(site),
+                  onTap: () => _onSiteSelected(site: site, context: context),
                 );
               },
             ),
           ),
           ElevatedButton(
-            onPressed: _onAllSites,
+            onPressed: () => _onAllSites(context),
             child: const Text('All Sites'),
           ),
         ],
@@ -163,16 +165,13 @@ class _SiteSelectorState extends State<_SiteSelector> {
       }).toList();
     }
 
-    // Sort alphabetically.
-    tmpSites.sort((site1, site2) => site1.name.compareTo(site2.name));
-
     setState(() {
-      _filterdSites = tmpSites;
+      _filteredSites = tmpSites;
     });
   }
 
   // Function to handle when a site is selected from the list.
-  void _onSiteSelected(FloorSite? site) {
+  void _onSiteSelected({required BuildContext context, FloorSite? site}) {
     // Set the selected site on the controller.
     widget._widgetController._selectSite(site);
 
@@ -184,7 +183,7 @@ class _SiteSelectorState extends State<_SiteSelector> {
   }
 
   // Function to handle when the All Sites button is tapped.
-  void _onAllSites() {
+  void _onAllSites(BuildContext context) {
     // Set the selected site on the controller.
     widget._widgetController._listAllFacilities = true;
 
