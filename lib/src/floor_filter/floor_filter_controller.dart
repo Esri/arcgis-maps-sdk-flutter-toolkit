@@ -48,6 +48,8 @@ class FloorFilterController {
     if (_floorManager != null) {
       final selectedSite = _floorManager!.sites.firstWhere(
         (site) => site.siteId == selectedSiteId,
+        orElse: () =>
+            throw Exception('Site with ID: $selectedSiteId cannot be found.'),
       );
       _selectSite(selectedSite);
     } else {
@@ -61,6 +63,9 @@ class FloorFilterController {
     if (_floorManager != null) {
       final selectedFacility = _floorManager!.facilities.firstWhere(
         (facility) => facility.facilityId == selectedFacilityId,
+        orElse: () => throw Exception(
+          'Facility with ID: $selectedFacilityId cannot be found.',
+        ),
       );
       _selectFacility(selectedFacility);
     } else {
@@ -74,6 +79,8 @@ class FloorFilterController {
     if (_floorManager != null) {
       final selectedLevel = _floorManager!.levels.firstWhere(
         (level) => level.levelId == selectedLevelId,
+        orElse: () =>
+            throw Exception('Level with ID: $selectedLevelId cannot be found.'),
       );
       _selectLevel(selectedLevel);
     } else {
