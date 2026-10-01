@@ -35,7 +35,7 @@ class _FacilitySelector extends StatefulWidget {
 }
 
 class _FacilitySelectorState extends State<_FacilitySelector> {
-  // The currenlty selected facility.
+  // The currently selected facility.
   FloorFacility? _selectedFacility;
 
   // Facility list from the floor manager.
@@ -162,7 +162,7 @@ class _FacilitySelectorState extends State<_FacilitySelector> {
   }
 
   // Function called when the search text is changed to filter the
-  // facilites in the list by name.
+  // facilities in the list by name.
   void _filterFacilitiesByName(String filterText) {
     final List<FloorFacility> tmpFacilities;
 

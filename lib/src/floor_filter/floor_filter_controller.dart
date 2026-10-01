@@ -20,7 +20,7 @@ part of '../../arcgis_maps_toolkit.dart';
 /// this class by calling [FloorFilter.createController] and passing in the
 /// relevant [GeoViewController]. The controller object is used when creating
 /// the [FloorFilter] in the widget tree and provides the interface to the
-/// widget durining use.
+/// widget during use.
 class FloorFilterController {
   FloorFilterController._({required this.geoViewController});
 
@@ -97,7 +97,7 @@ class FloorFilterController {
 
   // Function that does the work of refreshing. Called by the public refresh() function.
   Future<FloorManager?> _refresh() async {
-    // Seting the selected Site/Facility/Level to null
+    // Setting the selected Site/Facility/Level to null
     _selectSite(null, notifySelectionChanged: false);
     _selectFacility(null, notifySelectionChanged: false);
     _selectLevel(null, notifySelectionChanged: false);
@@ -143,7 +143,7 @@ class FloorFilterController {
   // Internal notifier for updates to the floor manager.
   final _floorManagerNotifier = ValueNotifier<FloorManager?>(null);
 
-  // Funciton to set the selected site and handle actions related to the change.
+  // Function to set the selected site and handle actions related to the change.
   // The notifySelectionChanged parameter states whether the public
   // onSelectedChanged stream should be notified. The internal onSiteChanged
   // notification will always set if the site changed.
@@ -165,7 +165,7 @@ class FloorFilterController {
     }
   }
 
-  // Funciton to set the selected facility and handle actions related to the change.
+  // Function to set the selected facility and handle actions related to the change.
   // The notifySelectionChanged parameter states whether the public
   // onSelectedChanged stream should be notified. The internal onFacilityChanged
   // notification will always set if the facility changed.
@@ -210,11 +210,11 @@ class FloorFilterController {
           .firstOrNull;
     }
 
-    // Select the defualt level or null.
+    // Select the default level or null.
     _selectLevel(defaultLevel, notifySelectionChanged: notifySelectionChanged);
   }
 
-  // Funciton to set the selected level and handle actions related to the change.
+  // Function to set the selected level and handle actions related to the change.
   // The notifySelectionChanged parameter states whether the public
   // onSelectedChanged stream should be notified. The internal onLevelChanged
   // notification will always set if the level changed.
@@ -238,7 +238,7 @@ class FloorFilterController {
   }
 
   // Function to set the visibility of layers that have the specified
-  // verticalOrder. This will span all facilities. Facilites that do not have
+  // verticalOrder. This will span all facilities. Facilities that do not have
   // a level with this verticalOrder will not show any floor.
   void _showLevelsWithVerticalOrder(int verticalOrder) {
     if (_floorManager == null) return;
@@ -250,7 +250,7 @@ class FloorFilterController {
     }
   }
 
-  // Funciton to zoom the GeoView to the site extent.
+  // Function to zoom the GeoView to the site extent.
   void _zoomToSite(FloorSite site) {
     final geometry = site.geometry;
     if (geometry != null) {
@@ -258,7 +258,7 @@ class FloorFilterController {
     }
   }
 
-  // Funciton to zoom the GeoView to the facility extent.
+  // Function to zoom the GeoView to the facility extent.
   void _zoomToFacility(FloorFacility facility) {
     final geometry = facility.geometry;
     if (geometry != null) {

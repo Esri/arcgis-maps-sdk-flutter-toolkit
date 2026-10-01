@@ -38,7 +38,7 @@ class _LevelSelectorState extends State<_LevelSelector> {
   // All levels for the current facility.
   var _facilityLevels = <FloorLevel>[];
 
-  // Currenlty selected level.
+  // Currently selected level.
   FloorLevel? _selectedLevel;
 
   // Flag indicating whether the expanded or collapsed view is showing.
