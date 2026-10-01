@@ -180,9 +180,6 @@ class _FacilitySelectorState extends State<_FacilitySelector> {
       }).toList();
     }
 
-    // Sort alphabetically.
-    tmpFacilities.sort((site1, site2) => site1.name.compareTo(site2.name));
-
     setState(() {
       _filteredFacilities = tmpFacilities;
     });
