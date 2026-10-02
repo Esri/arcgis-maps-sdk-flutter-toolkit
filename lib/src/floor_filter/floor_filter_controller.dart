@@ -43,8 +43,8 @@ class FloorFilterController {
   // The currently selected level.
   FloorLevel? get _selectedLevel => _selectedLevelNotifier.value;
 
-  final _defaultFacilitiesMinScale = 1500.0;
-  final _defaultSitesMinScale = 4300.0;
+  static const _defaultFacilitiesMinScale = 1500.0;
+  static const _defaultSitesMinScale = 4300.0;
   var _facilitiesLayerMinScale = 0.0;
   var _sitesLayerMinScale = 0.0;
 
