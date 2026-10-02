@@ -156,8 +156,8 @@ class FloorFilterController {
 
     // Set min scale for facility and site layers autoselect.
     if (floorManager == null) {
-      _facilitiesLayerMinScale = 1500.0;
-      _sitesLayerMinScale = 4300.0;
+      _facilitiesLayerMinScale = _defaultFacilitiesMinScale;
+      _sitesLayerMinScale = _defaultSitesMinScale;
     } else {
       final facilityLayer = floorManager.facilityLayer;
       _facilitiesLayerMinScale =
