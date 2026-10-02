@@ -94,7 +94,7 @@ class _FloorFilterState extends State<FloorFilter> {
       _onFloorManagerChanged,
     );
 
-    // Refresh subcriptions
+    // Refresh subscriptions.
     _onViewpointChangedSubscription?.cancel().ignore();
     _onNavigationChangedSubscription?.cancel().ignore();
 
