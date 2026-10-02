@@ -375,9 +375,9 @@ class FloorFilterController {
     _autoSelectFacility(currentViewpoint);
   }
 
-  bool _autoSelectFacility(Viewpoint viewpoint) {
+  void _autoSelectFacility(Viewpoint viewpoint) {
     // If no floor manager or facilities layer, return with false.
-    if (_floorManager?.facilityLayer == null) return false;
+    if (_floorManager?.facilityLayer == null) return;
 
     // Determine if a facility can be autoselected.
     final FloorFacility? selectedFacility;
@@ -411,14 +411,11 @@ class FloorFilterController {
       default:
       // Do nothing.
     }
-
-    // Return whether a facility was found.
-    return selectedFacility != null;
   }
 
-  bool _autoSelectSite(Viewpoint viewpoint) {
+  void _autoSelectSite(Viewpoint viewpoint) {
     // If no floor manager or facilities layer, return with false.
-    if (_floorManager?.siteLayer == null) return false;
+    if (_floorManager?.siteLayer == null) return;
 
     // Determine if a site can be auto selected.
     final FloorSite? selectedSite;
@@ -450,8 +447,5 @@ class FloorFilterController {
       default:
       // Do nothing.
     }
-
-    // Return whether a facility was found.
-    return selectedSite != null;
   }
 }
