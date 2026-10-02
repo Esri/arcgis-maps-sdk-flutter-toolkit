@@ -283,7 +283,7 @@ class FloorFilterController {
           .firstOrNull;
     }
 
-    // Select the defualt level or null.
+    // Select the default level or null.
     _selectLevel(defaultLevel, notifySelectionChanged: notifySelectionChanged);
   }
 
