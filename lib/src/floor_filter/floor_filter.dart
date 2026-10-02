@@ -72,17 +72,9 @@ class _FloorFilterState extends State<FloorFilter> {
     // Listen for navigation and viewpoint changes in the GeoView.
     final geoViewController = widget.floorFilterController.geoViewController;
     _onNavigationChangedSubscription = geoViewController.onNavigationChanged
-        .listen((isNavigating) {
-          if (isNavigating == _isNavigating) return;
-          _isNavigating = isNavigating;
-        });
+        .listen(_onNavigationChanged);
     _onViewpointChangedSubscription = geoViewController.onViewpointChanged
-        .listen((_) {
-          if (_isNavigating) {
-            // Check autoselection for the changed viewpoint.
-            widget.floorFilterController._autoSelect();
-          }
-        });
+        .listen(_onViewpointChanged);
   }
 
   @override
@@ -101,6 +93,16 @@ class _FloorFilterState extends State<FloorFilter> {
     widget.floorFilterController._floorManagerNotifier.addListener(
       _onFloorManagerChanged,
     );
+
+    // Refresh subcriptions
+    _onViewpointChangedSubscription?.cancel().ignore();
+    _onNavigationChangedSubscription?.cancel().ignore();
+
+    final geoViewController = widget.floorFilterController.geoViewController;
+    _onNavigationChangedSubscription = geoViewController.onNavigationChanged
+        .listen(_onNavigationChanged);
+    _onViewpointChangedSubscription = geoViewController.onViewpointChanged
+        .listen(_onViewpointChanged);
   }
 
   @override
@@ -177,6 +179,18 @@ class _FloorFilterState extends State<FloorFilter> {
     setState(() {
       _floorManager = widget.floorFilterController._floorManager;
     });
+  }
+
+  void _onNavigationChanged(bool isNavigating) {
+    if (isNavigating == _isNavigating) return;
+    _isNavigating = isNavigating;
+  }
+
+  void _onViewpointChanged(void _) {
+    if (_isNavigating) {
+      // Check autoselection for the changed viewpoint.
+      widget.floorFilterController._autoSelect();
+    }
   }
 
   // Function to show the bottom sheet containing the site and facility selectors.

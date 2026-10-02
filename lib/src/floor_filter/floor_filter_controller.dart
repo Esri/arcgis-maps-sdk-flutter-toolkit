@@ -28,7 +28,7 @@ class FloorFilterController {
   final GeoViewController geoViewController;
 
   /// Defines how the floor filter updates its selection as the user navigates
-  /// the connected GeoView. Default is AutomaticSelectionMode.Always.
+  /// the connected GeoView. Default is [AutomaticSelectionMode.always].
   AutomaticSelectionMode automaticSelectionMode = .always;
 
   // Flag to show all facilities or just facilities for the selected site.
@@ -161,12 +161,12 @@ class FloorFilterController {
     } else {
       final facilityLayer = floorManager.facilityLayer;
       _facilitiesLayerMinScale =
-          (facilityLayer == null || facilityLayer.minScale >= 0.0)
+          (facilityLayer == null || facilityLayer.minScale == 0.0)
           ? _defaultFacilitiesMinScale
           : facilityLayer.minScale;
 
       final siteLayer = floorManager.siteLayer;
-      _sitesLayerMinScale = (siteLayer == null || siteLayer.minScale >= 0.0)
+      _sitesLayerMinScale = (siteLayer == null || siteLayer.minScale == 0.0)
           ? _defaultSitesMinScale
           : siteLayer.minScale;
     }
@@ -190,7 +190,7 @@ class FloorFilterController {
   // Internal notifier for updates to the floor manager.
   final _floorManagerNotifier = ValueNotifier<FloorManager?>(null);
 
-  // Funciton to set the selected site and handle actions related to the change.
+  // Function to set the selected site and handle actions related to the change.
   // The notifySelectionChanged parameter states whether the public
   // onSelectedChanged stream should be notified. The internal onSiteChanged
   // notification will always set if the site changed.
@@ -201,8 +201,11 @@ class FloorFilterController {
   }) {
     if (_selectedSite == site) return;
 
-    // Clear the currently selected facility.
-    _selectFacility(null, notifySelectionChanged: false);
+    // Clear currently selected facility if site is null or facility is not
+    // part of this site.
+    if (site == null || !site.facilities.contains(_selectedFacility)) {
+      _selectFacility(null, notifySelectionChanged: false);
+    }
 
     // Notify listeners that the site changed.
     _selectedSiteNotifier.value = site;
@@ -357,6 +360,8 @@ class FloorFilterController {
   }
 
   void _autoSelect() {
+    if (automaticSelectionMode == .never) return;
+
     // Get the centerpoint of the GeoView
     final currentViewpoint = geoViewController.getCurrentViewpoint(
       .centerAndScale,
@@ -365,10 +370,9 @@ class FloorFilterController {
     // Return if there is no current viewpoint.
     if (currentViewpoint == null) return;
 
-    // Test for a facility first. If no facility, test for a site
-    if (!_autoSelectFacility(currentViewpoint)) {
-      _autoSelectSite(currentViewpoint);
-    }
+    // Check for auto selection of site and facility.
+    _autoSelectSite(currentViewpoint);
+    _autoSelectFacility(currentViewpoint);
   }
 
   bool _autoSelectFacility(Viewpoint viewpoint) {
