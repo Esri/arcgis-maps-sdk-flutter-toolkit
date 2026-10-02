@@ -188,7 +188,7 @@ class _FacilitySelectorState extends State<_FacilitySelector> {
   // Function to handle when a facility is selected from the list.
   void _onFacilitySelected(FloorFacility? facility) {
     // Set the selected facility on the controller.
-    widget._widgetController._selectFacility(facility);
+    widget._widgetController._selectFacility(facility, zoomTo: true);
 
     // If on onClose callback was set, call it.
     widget.onClose?.call();

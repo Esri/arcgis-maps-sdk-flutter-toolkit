@@ -173,7 +173,7 @@ class _SiteSelectorState extends State<_SiteSelector> {
   // Function to handle when a site is selected from the list.
   void _onSiteSelected({required BuildContext context, FloorSite? site}) {
     // Set the selected site on the controller.
-    widget._widgetController._selectSite(site);
+    widget._widgetController._selectSite(site, zoomTo: true);
 
     // Only list facilities for this site.
     widget._widgetController._listAllFacilities = false;

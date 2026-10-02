@@ -43,6 +43,11 @@ class FloorFilterController {
   // The currently selected level.
   FloorLevel? get _selectedLevel => _selectedLevelNotifier.value;
 
+  final _defaultFacilitiesMinScale = 1500.0;
+  final _defaultSitesMinScale = 4300.0;
+  var _facilitiesLayerMinScale = 0.0;
+  var _sitesLayerMinScale = 0.0;
+
   // Cancelable operation to ensure only one refresh call at a time.
   CancelableOperation<void>? _cancelableRefresh;
 
@@ -149,6 +154,23 @@ class FloorFilterController {
     floorManager = geoModel.floorManager;
     await floorManager?.load();
 
+    // Set min scale for facility and site layers autoselect.
+    if (floorManager == null) {
+      _facilitiesLayerMinScale = 1500.0;
+      _sitesLayerMinScale = 4300.0;
+    } else {
+      final facilityLayer = floorManager.facilityLayer;
+      _facilitiesLayerMinScale =
+          (facilityLayer == null || facilityLayer.minScale >= 0.0)
+          ? _defaultFacilitiesMinScale
+          : facilityLayer.minScale;
+
+      final siteLayer = floorManager.siteLayer;
+      _sitesLayerMinScale = (siteLayer == null || siteLayer.minScale >= 0.0)
+          ? _defaultSitesMinScale
+          : siteLayer.minScale;
+    }
+
     return floorManager;
   }
 
@@ -172,7 +194,11 @@ class FloorFilterController {
   // The notifySelectionChanged parameter states whether the public
   // onSelectedChanged stream should be notified. The internal onSiteChanged
   // notification will always set if the site changed.
-  void _selectSite(FloorSite? site, {bool notifySelectionChanged = true}) {
+  void _selectSite(
+    FloorSite? site, {
+    bool notifySelectionChanged = true,
+    bool zoomTo = false,
+  }) {
     if (_selectedSite == site) return;
 
     // Clear the currently selected facility.
@@ -181,7 +207,7 @@ class FloorFilterController {
     // Notify listeners that the site changed.
     _selectedSiteNotifier.value = site;
 
-    if (site != null) {
+    if (site != null && zoomTo) {
       _zoomToSite(site);
     }
 
@@ -197,13 +223,14 @@ class FloorFilterController {
   void _selectFacility(
     FloorFacility? facility, {
     bool notifySelectionChanged = true,
+    bool zoomTo = false,
   }) {
     if (_selectedFacility == facility) return;
 
     // Notify listeners that the facility changed.
     _selectedFacilityNotifier.value = facility;
 
-    if (facility != null) {
+    if (facility != null && zoomTo) {
       // Adjust viewpoint to facility extent.
       _zoomToFacility(facility);
 
@@ -334,6 +361,8 @@ class FloorFilterController {
     final currentViewpoint = geoViewController.getCurrentViewpoint(
       .centerAndScale,
     );
+
+    // Return if there is no current viewpoint.
     if (currentViewpoint == null) return;
 
     // Test for a facility first. If no facility, test for a site
@@ -348,7 +377,7 @@ class FloorFilterController {
 
     // Determine if a facility can be autoselected.
     final FloorFacility? selectedFacility;
-    if (viewpoint.targetScale > _floorManager!.siteLayer!.minScale) {
+    if (viewpoint.targetScale > _facilitiesLayerMinScale) {
       // If the viewpoint scale is greater than the min scale of the layer, no
       // selection will be made.
       selectedFacility = null;
@@ -356,10 +385,12 @@ class FloorFilterController {
       // Find if a facility intersects with the center of the viewpoint.
       selectedFacility = _floorManager!.facilities.where((facility) {
         if (facility.geometry == null) return false;
-        return GeometryEngine.intersects(
+        final intersects = GeometryEngine.intersects(
           geometry1: facility.geometry!,
           geometry2: viewpoint.targetGeometry.extent,
         );
+
+        return intersects;
       }).firstOrNull;
     }
 
@@ -387,7 +418,7 @@ class FloorFilterController {
 
     // Determine if a site can be auto selected.
     final FloorSite? selectedSite;
-    if (viewpoint.targetScale > _floorManager!.siteLayer!.minScale) {
+    if (viewpoint.targetScale > _sitesLayerMinScale) {
       // If the viewpoint scale is greater than the min scale of the layer, no
       // selection will be made.
       selectedSite = null;
