@@ -18,7 +18,7 @@ import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_toolkit_example/example_overview_map_with_local_scene.dart';
 import 'package:arcgis_maps_toolkit_example/example_overview_map_with_map.dart';
 import 'package:arcgis_maps_toolkit_example/example_overview_map_with_scene.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 void main() {
   // Supply your apiKey using the --dart-define-from-file command line argument.
