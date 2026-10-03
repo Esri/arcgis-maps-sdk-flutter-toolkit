@@ -18,7 +18,7 @@ import 'dart:async';
 
 import 'package:arcgis_maps/arcgis_maps.dart';
 import 'package:arcgis_maps_toolkit/arcgis_maps_toolkit.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 void main() {
   // Supply your apiKey using the --dart-define-from-file command line argument.
