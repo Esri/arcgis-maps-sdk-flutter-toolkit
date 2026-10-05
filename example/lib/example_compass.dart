@@ -19,7 +19,7 @@ import 'package:arcgis_maps_toolkit_example/example_compass_custom.dart';
 import 'package:arcgis_maps_toolkit_example/example_compass_local_scene.dart';
 import 'package:arcgis_maps_toolkit_example/example_compass_map.dart';
 import 'package:arcgis_maps_toolkit_example/example_compass_scene.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 void main() {
   // Supply your apiKey using the --dart-define-from-file command line argument.
