@@ -27,6 +27,10 @@ class FloorFilterController {
   /// The [GeoViewController] for the view showing the floor information.
   final GeoViewController geoViewController;
 
+  /// Defines how the floor filter updates its selection as the user navigates
+  /// the connected GeoView. Default is [AutomaticSelectionMode.always].
+  AutomaticSelectionMode automaticSelectionMode = .always;
+
   // Flag to show all facilities or just facilities for the selected site.
   var _listAllFacilities = false;
 
@@ -38,6 +42,11 @@ class FloorFilterController {
   FloorFacility? get _selectedFacility => _selectedFacilityNotifier.value;
   // The currently selected level.
   FloorLevel? get _selectedLevel => _selectedLevelNotifier.value;
+
+  static const _defaultFacilitiesMinScale = 1500.0;
+  static const _defaultSitesMinScale = 4300.0;
+  var _facilitiesLayerMinScale = 0.0;
+  var _sitesLayerMinScale = 0.0;
 
   // Cancelable operation to ensure only one refresh call at a time.
   CancelableOperation<void>? _cancelableRefresh;
@@ -145,6 +154,23 @@ class FloorFilterController {
     floorManager = geoModel.floorManager;
     await floorManager?.load();
 
+    // Set min scale for facility and site layers autoselect.
+    if (floorManager == null) {
+      _facilitiesLayerMinScale = _defaultFacilitiesMinScale;
+      _sitesLayerMinScale = _defaultSitesMinScale;
+    } else {
+      final facilityLayer = floorManager.facilityLayer;
+      _facilitiesLayerMinScale =
+          (facilityLayer == null || facilityLayer.minScale == 0.0)
+          ? _defaultFacilitiesMinScale
+          : facilityLayer.minScale;
+
+      final siteLayer = floorManager.siteLayer;
+      _sitesLayerMinScale = (siteLayer == null || siteLayer.minScale == 0.0)
+          ? _defaultSitesMinScale
+          : siteLayer.minScale;
+    }
+
     return floorManager;
   }
 
@@ -168,16 +194,23 @@ class FloorFilterController {
   // The notifySelectionChanged parameter states whether the public
   // onSelectedChanged stream should be notified. The internal onSiteChanged
   // notification will always set if the site changed.
-  void _selectSite(FloorSite? site, {bool notifySelectionChanged = true}) {
+  void _selectSite(
+    FloorSite? site, {
+    bool notifySelectionChanged = true,
+    bool zoomTo = false,
+  }) {
     if (_selectedSite == site) return;
 
-    // Clear the currently selected facility.
-    _selectFacility(null, notifySelectionChanged: false);
+    // Clear currently selected facility if site is null or facility is not
+    // part of this site.
+    if (site == null || !site.facilities.contains(_selectedFacility)) {
+      _selectFacility(null, notifySelectionChanged: false);
+    }
 
     // Notify listeners that the site changed.
     _selectedSiteNotifier.value = site;
 
-    if (site != null) {
+    if (site != null && zoomTo) {
       _zoomToSite(site);
     }
 
@@ -193,13 +226,14 @@ class FloorFilterController {
   void _selectFacility(
     FloorFacility? facility, {
     bool notifySelectionChanged = true,
+    bool zoomTo = false,
   }) {
     if (_selectedFacility == facility) return;
 
     // Notify listeners that the facility changed.
     _selectedFacilityNotifier.value = facility;
 
-    if (facility != null) {
+    if (facility != null && zoomTo) {
       // Adjust viewpoint to facility extent.
       _zoomToFacility(facility);
 
@@ -209,6 +243,24 @@ class FloorFilterController {
       // Clear the selected floor.
       _selectLevel(null, notifySelectionChanged: false);
     }
+
+    if (notifySelectionChanged) {
+      _onSelectedChangedController.add(null);
+    }
+  }
+
+  // Function to set the selected level and handle actions related to the change.
+  // The notifySelectionChanged parameter states whether the public
+  // onSelectedChanged stream should be notified. The internal onLevelChanged
+  // notification will always set if the level changed.
+  void _selectLevel(FloorLevel? level, {bool notifySelectionChanged = true}) {
+    if (_selectedLevel == level) return;
+
+    // Notify listeners that the level changed.
+    _selectedLevelNotifier.value = level;
+
+    // Update the visible levels
+    _showLevelsWithVerticalOrder(level?.verticalOrder ?? 0);
 
     if (notifySelectionChanged) {
       _onSelectedChangedController.add(null);
@@ -233,24 +285,6 @@ class FloorFilterController {
 
     // Select the default level or null.
     _selectLevel(defaultLevel, notifySelectionChanged: notifySelectionChanged);
-  }
-
-  // Function to set the selected level and handle actions related to the change.
-  // The notifySelectionChanged parameter states whether the public
-  // onSelectedChanged stream should be notified. The internal onLevelChanged
-  // notification will always set if the level changed.
-  void _selectLevel(FloorLevel? level, {bool notifySelectionChanged = true}) {
-    if (_selectedLevel == level) return;
-
-    // Notify listeners that the level changed.
-    _selectedLevelNotifier.value = level;
-
-    // Update the visible levels
-    _showLevelsWithVerticalOrder(level?.verticalOrder ?? 0);
-
-    if (notifySelectionChanged) {
-      _onSelectedChangedController.add(null);
-    }
   }
 
   // Function to set the visibility of layers that have the specified
@@ -306,10 +340,7 @@ class FloorFilterController {
     final targetExtent = builder.toGeometry();
 
     // Set the viewpoint of the map view.
-    mapViewController.setViewpointAnimated(
-      Viewpoint.fromTargetExtent(targetExtent),
-      duration: 0.5,
-    );
+    mapViewController.setViewpoint(Viewpoint.fromTargetExtent(targetExtent));
   }
 
   // Function to set the viewpoint to the extent of a facility in an ArcGISSceneView.
@@ -326,5 +357,95 @@ class FloorFilterController {
     ArcGISLocalSceneViewController localSceneViewController,
   ) {
     // TODO(kmueller-gis): zoom to extent with camera.
+  }
+
+  void _autoSelect() {
+    if (automaticSelectionMode == .never) return;
+
+    // Get the centerpoint of the GeoView
+    final currentViewpoint = geoViewController.getCurrentViewpoint(
+      .centerAndScale,
+    );
+
+    // Return if there is no current viewpoint.
+    if (currentViewpoint == null) return;
+
+    // Check for auto selection of site and facility.
+    _autoSelectSite(currentViewpoint);
+    _autoSelectFacility(currentViewpoint);
+  }
+
+  void _autoSelectFacility(Viewpoint viewpoint) {
+    // If no floor manager or facilities layer, return with false.
+    if (_floorManager?.facilityLayer == null) return;
+
+    // Determine if a facility can be autoselected.
+    final FloorFacility? selectedFacility;
+    if (viewpoint.targetScale > _facilitiesLayerMinScale) {
+      // If the viewpoint scale is greater than the min scale of the layer, no
+      // selection will be made.
+      selectedFacility = null;
+    } else {
+      // Find if a facility intersects with the center of the viewpoint.
+      selectedFacility = _floorManager!.facilities.where((facility) {
+        if (facility.geometry == null) return false;
+        final intersects = GeometryEngine.intersects(
+          geometry1: facility.geometry!,
+          geometry2: viewpoint.targetGeometry.extent,
+        );
+
+        return intersects;
+      }).firstOrNull;
+    }
+
+    // Select the facility based on the automatic selection mode.
+    switch (automaticSelectionMode) {
+      case .alwaysNonClearing:
+        // Only set the selected faciity if one is found. Do not set to null.
+        if (selectedFacility != null) {
+          _selectFacility(selectedFacility);
+        }
+      case .always:
+        // Always set the selected the facility.
+        _selectFacility(selectedFacility);
+      default:
+      // Do nothing.
+    }
+  }
+
+  void _autoSelectSite(Viewpoint viewpoint) {
+    // If no floor manager or facilities layer, return with false.
+    if (_floorManager?.siteLayer == null) return;
+
+    // Determine if a site can be auto selected.
+    final FloorSite? selectedSite;
+    if (viewpoint.targetScale > _sitesLayerMinScale) {
+      // If the viewpoint scale is greater than the min scale of the layer, no
+      // selection will be made.
+      selectedSite = null;
+    } else {
+      // Find if a site intersects with the center of the viewpoint.
+      selectedSite = _floorManager!.sites.where((site) {
+        if (site.geometry == null) return false;
+        return GeometryEngine.intersects(
+          geometry1: site.geometry!,
+          geometry2: viewpoint.targetGeometry.extent,
+        );
+      }).firstOrNull;
+    }
+
+    // Select the site based on the automatic selection mode.
+    switch (automaticSelectionMode) {
+      case .alwaysNonClearing:
+        // Only set the selected site if one is found. Do not set to null.
+        if (selectedSite != null) {
+          _selectSite(selectedSite);
+        }
+      case .always:
+        // Always set the selected the facility.
+        _selectSite(selectedSite);
+      default:
+      // Do nothing.
+    }
   }
 }

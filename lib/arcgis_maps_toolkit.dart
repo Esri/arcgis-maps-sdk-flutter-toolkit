@@ -67,6 +67,7 @@ part 'src/building_explorer/support_widgets/zoom_to_building_control.dart';
 part 'src/compass/compass.dart';
 part 'src/compass/compass_needle_painter.dart';
 // Floor Filter Widget
+part 'src/floor_filter/automatic_selection_mode.dart';
 part 'src/floor_filter/floor_filter.dart';
 part 'src/floor_filter/floor_filter_controller.dart';
 part 'src/floor_filter/support_widgets/facility_selector.dart';

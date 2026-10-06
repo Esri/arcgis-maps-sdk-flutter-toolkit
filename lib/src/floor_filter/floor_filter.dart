@@ -36,7 +36,15 @@ class FloorFilter extends StatefulWidget {
   static FloorFilterController createController(
     GeoViewController geoViewController,
   ) {
-    return FloorFilterController._(geoViewController: geoViewController);
+    // Create the widget controller with the GeoView controller.
+    final floorFilterController = FloorFilterController._(
+      geoViewController: geoViewController,
+    );
+
+    // Initialize the widget controller.
+    floorFilterController.refresh();
+
+    return floorFilterController;
   }
 
   @override
@@ -45,11 +53,13 @@ class FloorFilter extends StatefulWidget {
 
 class _FloorFilterState extends State<FloorFilter> {
   FloorManager? _floorManager;
+  var _isNavigating = false;
+  StreamSubscription<void>? _onViewpointChangedSubscription;
+  StreamSubscription<bool>? _onNavigationChangedSubscription;
 
   @override
   void initState() {
     super.initState();
-
     // Get the current floor manager from the controller.
     _floorManager = widget.floorFilterController._floorManagerNotifier.value;
 
@@ -58,6 +68,13 @@ class _FloorFilterState extends State<FloorFilter> {
     widget.floorFilterController._floorManagerNotifier.addListener(
       _onFloorManagerChanged,
     );
+
+    // Listen for navigation and viewpoint changes in the GeoView.
+    final geoViewController = widget.floorFilterController.geoViewController;
+    _onNavigationChangedSubscription = geoViewController.onNavigationChanged
+        .listen(_onNavigationChanged);
+    _onViewpointChangedSubscription = geoViewController.onViewpointChanged
+        .listen(_onViewpointChanged);
   }
 
   @override
@@ -76,6 +93,16 @@ class _FloorFilterState extends State<FloorFilter> {
     widget.floorFilterController._floorManagerNotifier.addListener(
       _onFloorManagerChanged,
     );
+
+    // Refresh subscriptions.
+    _onViewpointChangedSubscription?.cancel().ignore();
+    _onNavigationChangedSubscription?.cancel().ignore();
+
+    final geoViewController = widget.floorFilterController.geoViewController;
+    _onNavigationChangedSubscription = geoViewController.onNavigationChanged
+        .listen(_onNavigationChanged);
+    _onViewpointChangedSubscription = geoViewController.onViewpointChanged
+        .listen(_onViewpointChanged);
   }
 
   @override
@@ -83,6 +110,12 @@ class _FloorFilterState extends State<FloorFilter> {
     widget.floorFilterController._floorManagerNotifier.removeListener(
       _onFloorManagerChanged,
     );
+
+    _onViewpointChangedSubscription?.cancel().ignore();
+    _onViewpointChangedSubscription = null;
+    _onNavigationChangedSubscription?.cancel().ignore();
+    _onNavigationChangedSubscription = null;
+
     super.dispose();
   }
 
@@ -146,6 +179,18 @@ class _FloorFilterState extends State<FloorFilter> {
     setState(() {
       _floorManager = widget.floorFilterController._floorManager;
     });
+  }
+
+  void _onNavigationChanged(bool isNavigating) {
+    if (isNavigating == _isNavigating) return;
+    _isNavigating = isNavigating;
+  }
+
+  void _onViewpointChanged(void _) {
+    if (_isNavigating) {
+      // Check autoselection for the changed viewpoint.
+      widget.floorFilterController._autoSelect();
+    }
   }
 
   // Function to show the bottom sheet containing the site and facility selectors.
