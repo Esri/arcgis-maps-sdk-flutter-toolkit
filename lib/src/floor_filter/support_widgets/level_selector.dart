@@ -90,8 +90,6 @@ class _LevelSelectorState extends State<_LevelSelector> {
     );
   }
 
-  // TODO(kmueller-gis): Add didUpdateWidget override to resize the widget if height changes.
-
   @override
   void dispose() {
     widget._widgetController._selectedFacilityNotifier.removeListener(
