@@ -48,84 +48,66 @@ class FloorFilterController {
   var _facilitiesLayerMinScale = 0.0;
   var _sitesLayerMinScale = 0.0;
 
-  // Cancelable operation to ensure only one refresh call at a time.
-  CancelableOperation<void>? _cancelableRefresh;
-
   /// The siteId of the currently selected site. Set to null to clear selection.
   String? get selectedSiteId => _selectedSite?.siteId;
   set selectedSiteId(String? selectedSiteId) {
-    if (_floorManager != null) {
-      if (selectedSiteId == null) {
-        _selectSite(null);
-      } else {
-        final selectedSite = _floorManager!.sites.firstWhere(
-          (site) => site.siteId == selectedSiteId,
-          orElse: () =>
-              throw Exception('Site with ID: $selectedSiteId cannot be found.'),
-        );
-        _selectSite(selectedSite);
-      }
+    if (_floorManager?.loadStatus != .loaded) {
+      throw Exception('FloorManager does not exist or failed to load.');
+    }
+
+    if (selectedSiteId == null) {
+      _selectSite(null);
     } else {
-      throw StateError('This ArcGISMap or ArcGISScene has no FloorManager.');
+      final selectedSite = _floorManager!.sites.firstWhere(
+        (site) => site.siteId == selectedSiteId,
+        orElse: () =>
+            throw Exception('Site with ID: $selectedSiteId cannot be found.'),
+      );
+      _selectSite(selectedSite);
     }
   }
 
   /// The facilityId of the currently selected facility. Set to null to clear selection.
   String? get selectedFacilityId => _selectedFacility?.facilityId;
   set selectedFacilityId(String? selectedFacilityId) {
-    if (_floorManager != null) {
-      if (selectedFacilityId == null) {
-        _selectFacility(null);
-      } else {
-        final selectedFacility = _floorManager!.facilities.firstWhere(
-          (facility) => facility.facilityId == selectedFacilityId,
-          orElse: () => throw Exception(
-            'Facility with ID: $selectedFacilityId cannot be found.',
-          ),
-        );
-        _selectFacility(selectedFacility);
-      }
+    if (_floorManager?.loadStatus != .loaded) {
+      throw Exception('FloorManager does not exist or failed to load.');
+    }
+
+    if (selectedFacilityId == null) {
+      _selectFacility(null);
     } else {
-      throw StateError('This ArcGISMap or ArcGISScene has no FloorManager.');
+      final selectedFacility = _floorManager!.facilities.firstWhere(
+        (facility) => facility.facilityId == selectedFacilityId,
+        orElse: () => throw Exception(
+          'Facility with ID: $selectedFacilityId cannot be found.',
+        ),
+      );
+      _selectFacility(selectedFacility);
     }
   }
 
   /// The levelId of the currently selected level. Set to null to clear selection.
   String? get selectedLevelId => _selectedLevel?.levelId;
   set selectedLevelId(String? selectedLevelId) {
-    if (_floorManager != null) {
-      if (selectedLevelId == null) {
-        _selectLevel(null);
-      } else {
-        final selectedLevel = _floorManager!.levels.firstWhere(
-          (level) => level.levelId == selectedLevelId,
-          orElse: () => throw Exception(
-            'Level with ID: $selectedLevelId cannot be found.',
-          ),
-        );
-        _selectLevel(selectedLevel);
-      }
+    if (_floorManager?.loadStatus != .loaded) {
+      throw Exception('FloorManager does not exist or failed to load.');
+    }
+
+    if (selectedLevelId == null) {
+      _selectLevel(null);
     } else {
-      throw StateError('This ArcGISMap or ArcGISScene has no FloorManager.');
+      final selectedLevel = _floorManager!.levels.firstWhere(
+        (level) => level.levelId == selectedLevelId,
+        orElse: () =>
+            throw Exception('Level with ID: $selectedLevelId cannot be found.'),
+      );
+      _selectLevel(selectedLevel);
     }
   }
 
-  /// Apps will call this function when the [FloorManager] has been changed.
-  void refresh() {
-    // If there is a current refresh run in progress, cancel it.
-    _cancelableRefresh?.cancel().ignore();
-
-    // Start a new refresh operation.
-    _cancelableRefresh = CancelableOperation.fromFuture(_refresh()).then((
-      floorManager,
-    ) {
-      // Notify listeners of the updated floor manager.
-      _floorManagerNotifier.value = floorManager;
-    });
-  }
-
-  // Function that does the work of refreshing. Called by the public refresh() function.
-  Future<FloorManager?> _refresh() async {
+  /// Apps will call this function when the [FloorManager] has changed.
+  Future<void> refresh() async {
     // Setting the selected Site/Facility/Level to null
     _selectSite(null, notifySelectionChanged: false);
     _selectFacility(null, notifySelectionChanged: false);
@@ -147,7 +129,7 @@ class FloorFilterController {
     }
 
     // Return early if no GeoModel was found.
-    if (geoModel == null) return null;
+    if (geoModel == null) return;
 
     // Obtain and load the FloorManager for this GeoModel.
     await geoModel.load();
@@ -171,7 +153,7 @@ class FloorFilterController {
           : siteLayer.minScale;
     }
 
-    return floorManager;
+    _floorManagerNotifier.value = floorManager;
   }
 
   /// Notification that the Site/Facility/Floor selection has changed.
@@ -291,7 +273,7 @@ class FloorFilterController {
   // verticalOrder. This will span all facilities. Facilities that do not have
   // a level with this verticalOrder will not show any floor.
   void _showLevelsWithVerticalOrder(int verticalOrder) {
-    if (_floorManager == null) return;
+    if (_floorManager?.loadStatus != .loaded) return;
 
     for (final floorManagerLevel in _floorManager!.levels) {
       // Levels on with the verticalOrder of the selected level are set to visible.
@@ -389,8 +371,14 @@ class FloorFilterController {
       // Find if a facility intersects with the center of the viewpoint.
       selectedFacility = _floorManager!.facilities.where((facility) {
         if (facility.geometry == null) return false;
+
+        final projectedFacilityGeometry = GeometryEngine.project(
+          facility.geometry!,
+          outputSpatialReference:
+              viewpoint.targetGeometry.extent.spatialReference!,
+        );
         final intersects = GeometryEngine.intersects(
-          geometry1: facility.geometry!,
+          geometry1: projectedFacilityGeometry,
           geometry2: viewpoint.targetGeometry.extent,
         );
 

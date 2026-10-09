@@ -19,7 +19,7 @@ import 'package:arcgis_maps_toolkit_example/example_authenticator.dart';
 import 'package:arcgis_maps_toolkit_example/example_basemap_gallery.dart';
 import 'package:arcgis_maps_toolkit_example/example_building_explorer.dart';
 import 'package:arcgis_maps_toolkit_example/example_compass.dart';
-import 'package:arcgis_maps_toolkit_example/example_floor_filter_map.dart';
+import 'package:arcgis_maps_toolkit_example/example_floor_filter.dart';
 import 'package:arcgis_maps_toolkit_example/example_overview_map.dart';
 import 'package:arcgis_maps_toolkit_example/example_popup.dart';
 import 'package:material_ui/material_ui.dart';
@@ -71,7 +71,7 @@ enum ComponentExample {
   floorFilter(
     'FloorFilter',
     'Browse the sites, facilities, and levels of a floor aware GeoModel',
-    ExampleFloorFilterMap.new,
+    ExampleFloorFilter.new,
   ),
   overviewMap(
     'OverviewMap',
