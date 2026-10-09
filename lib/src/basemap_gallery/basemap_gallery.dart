@@ -241,19 +241,17 @@ final class _BasemapGalleryState extends State<BasemapGallery> {
     if (item._isBasemapLoading) return;
 
     if (item._loadBasemapError != null) {
-      unawaited(
-        showDialog<void>(
-          context: context,
-          builder: (context) => AlertDialog(
-            title: const Text('Error loading basemap.'),
-            content: Text(item._loadBasemapError.toString()),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: const Text('OK'),
-              ),
-            ],
-          ),
+      showDialog<void>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Error loading basemap.'),
+          content: Text(item._loadBasemapError.toString()),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('OK'),
+            ),
+          ],
         ),
       );
       return;
