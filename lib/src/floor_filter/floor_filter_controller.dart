@@ -215,9 +215,11 @@ class FloorFilterController {
     // Notify listeners that the facility changed.
     _selectedFacilityNotifier.value = facility;
 
-    if (facility != null && zoomTo) {
-      // Adjust viewpoint to facility extent.
-      _zoomToFacility(facility);
+    if (facility != null) {
+      if (zoomTo) {
+        // Adjust viewpoint to facility extent.
+        _zoomToFacility(facility);
+      }
 
       // Set the level to the default level.
       _selectDefaultLevel(facility, notifySelectionChanged: false);
@@ -264,15 +266,11 @@ class FloorFilterController {
   }) {
     FloorLevel? defaultLevel;
 
-    // If this is in a map view, the default level is the ground level (vertical
-    // order 0).
-    if (geoViewController is ArcGISMapViewController) {
-      // Find the default level
-      if (facility.levels.isNotEmpty) {
-        defaultLevel = facility.levels
-            .where((level) => level.verticalOrder == 0)
-            .firstOrNull;
-      }
+    // The default level is the ground level (vertical order 0).
+    if (facility.levels.isNotEmpty) {
+      defaultLevel = facility.levels
+          .where((level) => level.verticalOrder == 0)
+          .firstOrNull;
     }
 
     // Select the default level or null.
