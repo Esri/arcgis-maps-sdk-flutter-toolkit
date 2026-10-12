@@ -305,7 +305,11 @@ class FloorFilterController {
   void _zoomToSite(FloorSite site) {
     final geometry = site.geometry;
     if (geometry != null) {
-      _zoomViewToExtent(geometry.extent);
+      if (geoViewController is ArcGISMapViewController) {
+        _zoomMapToExtent(geometry.extent);
+      } else {
+        _zoomSceneToExtent(geometry.extent, 1000);
+      }
     }
   }
 
@@ -313,51 +317,47 @@ class FloorFilterController {
   void _zoomToFacility(FloorFacility facility) {
     final geometry = facility.geometry;
     if (geometry != null) {
-      _zoomViewToExtent(geometry.extent);
-    }
-  }
-
-  // Utility function to call the correct zoom function based on the type of the
-  // GeoViewController.
-  void _zoomViewToExtent(Envelope extent) {
-    switch (geoViewController) {
-      case final ArcGISMapViewController mapViewController:
-        _zoomMapToExtent(extent, mapViewController);
-      case final ArcGISSceneViewController sceneViewController:
-        _zoomSceneToExtent(extent, sceneViewController);
-      case final ArcGISLocalSceneViewController localSceneViewController:
-        _zoomLocalSceneToExtent(extent, localSceneViewController);
+      if (geoViewController is ArcGISMapViewController) {
+        _zoomMapToExtent(geometry.extent);
+      } else {
+        _zoomSceneToExtent(geometry.extent, 200);
+      }
     }
   }
 
   // Function to set the viewpoint to the extent of a facility in an ArcGISMapView.
-  void _zoomMapToExtent(
-    Envelope extent,
-    ArcGISMapViewController mapViewController,
-  ) {
+  void _zoomMapToExtent(Envelope extent) {
+    // Must be in a map view.
+    if (geoViewController is! ArcGISMapViewController) return;
+
     // Pad the extent by a factor of 1.5.
     final builder = EnvelopeBuilder.fromEnvelope(extent);
     builder.expandBy(1.5);
     final targetExtent = builder.toGeometry();
 
     // Set the viewpoint of the map view.
-    mapViewController.setViewpoint(Viewpoint.fromTargetExtent(targetExtent));
+    geoViewController.setViewpoint(Viewpoint.fromTargetExtent(targetExtent));
   }
 
   // Function to set the viewpoint to the extent of a facility in an ArcGISSceneView.
-  void _zoomSceneToExtent(
-    Envelope extent,
-    ArcGISSceneViewController sceneViewController,
-  ) {
-    // TODO(kmueller-gis): zoom to extent with camera.
-  }
+  void _zoomSceneToExtent(Envelope extent, double cameraDistance) {
+    // Must not be in a map view.
+    if (geoViewController is ArcGISMapViewController) return;
 
-  // Function to set the viewpoint to the extent of a facility in an ArcGISLocalSceneView.
-  void _zoomLocalSceneToExtent(
-    Envelope extent,
-    ArcGISLocalSceneViewController localSceneViewController,
-  ) {
-    // TODO(kmueller-gis): zoom to extent with camera.
+    final camera = Camera.withLookAtPoint(
+      lookAtPoint: extent.center,
+      distance: cameraDistance,
+      heading: 0,
+      pitch: 0,
+      roll: 0,
+    );
+
+    final viewpoint = Viewpoint.withExtentCamera(
+      targetExtent: extent,
+      camera: camera,
+    );
+
+    geoViewController.setViewpoint(viewpoint);
   }
 
   void _autoSelect() {
