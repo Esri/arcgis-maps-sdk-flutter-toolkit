@@ -42,7 +42,7 @@ class FloorFilter extends StatefulWidget {
     );
 
     // Initialize the widget controller.
-    floorFilterController.refresh();
+    floorFilterController.refresh().ignore();
 
     return floorFilterController;
   }

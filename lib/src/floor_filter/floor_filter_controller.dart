@@ -242,7 +242,13 @@ class FloorFilterController {
     _selectedLevelNotifier.value = level;
 
     // Update the visible levels
-    _showLevelsWithVerticalOrder(level?.verticalOrder ?? 0);
+    if (level?.verticalOrder != null) {
+      _showLevelsWithVerticalOrder(level!.verticalOrder);
+    } else if (geoViewController is ArcGISMapViewController) {
+      _showLevelsWithVerticalOrder(0);
+    } else {
+      _showAllLevels();
+    }
 
     if (notifySelectionChanged) {
       _onSelectedChangedController.add(null);
@@ -258,11 +264,15 @@ class FloorFilterController {
   }) {
     FloorLevel? defaultLevel;
 
-    // Find the default level
-    if (facility.levels.isNotEmpty) {
-      defaultLevel = facility.levels
-          .where((level) => level.verticalOrder == 0)
-          .firstOrNull;
+    // If this is in a map view, the default level is the ground level (vertical
+    // order 0).
+    if (geoViewController is ArcGISMapViewController) {
+      // Find the default level
+      if (facility.levels.isNotEmpty) {
+        defaultLevel = facility.levels
+            .where((level) => level.verticalOrder == 0)
+            .firstOrNull;
+      }
     }
 
     // Select the default level or null.
@@ -276,9 +286,20 @@ class FloorFilterController {
     if (_floorManager?.loadStatus != .loaded) return;
 
     for (final floorManagerLevel in _floorManager!.levels) {
-      // Levels on with the verticalOrder of the selected level are set to visible.
+      // Levels with the verticalOrder of the selected level are set to visible.
       floorManagerLevel.isVisible =
           floorManagerLevel.verticalOrder == verticalOrder;
+    }
+  }
+
+  // Function to set the visibility of all levels to true. This is only useful
+  // in a 3d view.
+  void _showAllLevels() {
+    if (_floorManager?.loadStatus != .loaded) return;
+
+    for (final floorManagerLevel in _floorManager!.levels) {
+      // All levels are set to visible.
+      floorManagerLevel.isVisible = true;
     }
   }
 
