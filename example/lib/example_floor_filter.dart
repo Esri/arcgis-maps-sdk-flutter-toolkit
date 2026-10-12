@@ -15,7 +15,6 @@
 //
 
 import 'package:arcgis_maps/arcgis_maps.dart';
-import 'package:arcgis_maps_toolkit_example/floor_filter/example_floor_filter_local_scene.dart';
 import 'package:arcgis_maps_toolkit_example/floor_filter/example_floor_filter_map.dart';
 import 'package:arcgis_maps_toolkit_example/floor_filter/example_floor_filter_scene.dart';
 import 'package:material_ui/material_ui.dart';
@@ -44,11 +43,6 @@ enum FloorFilterExample {
     'Floor Filter Scene',
     'Example of floor filter with scene.',
     ExampleFloorFilterScene.new,
-  ),
-  localScene(
-    'Floor Filter Local Scene',
-    'Example of floor filter with local scene.',
-    ExampleFloorFilterLocalScene.new,
   );
 
   const FloorFilterExample(this.title, this.subtitle, this.constructor);
