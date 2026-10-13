@@ -114,14 +114,18 @@ class FloorFilterController {
     // If there is a current refresh run in progress, cancel it.
     _cancelableRefresh?.cancel().ignore();
 
-    // Clear the floor manager since it is being reset.
-    _floorManagerNotifier.value = null;
-
     // Refresh
     final refreshOperation = CancelableOperation.fromFuture(_refresh());
     _cancelableRefresh = refreshOperation;
 
-    final floorManager = await refreshOperation.valueOrCancellation();
+    FloorManager? floorManager;
+    try {
+      floorManager = await refreshOperation.valueOrCancellation();
+    } catch (e) {
+      _floorManagerNotifier.value = null;
+      rethrow;
+    }
+
     // Update floorManager related items if this operation has not been superseded.
     if (identical(_cancelableRefresh, refreshOperation)) {
       // Set min scale for facility and site layers autoselect.
@@ -139,10 +143,10 @@ class FloorFilterController {
         _sitesLayerMinScale = (siteLayer == null || siteLayer.minScale == 0.0)
             ? _defaultSitesMinScale
             : siteLayer.minScale;
-
-        // Notify listeners of the updated floor manager unless operation was canceled.
-        _floorManagerNotifier.value = floorManager;
       }
+
+      // Notify listeners of the updated floor manager unless operation was canceled.
+      _floorManagerNotifier.value = floorManager;
     }
   }
 
@@ -153,9 +157,6 @@ class FloorFilterController {
     _selectFacility(null, notifySelectionChanged: false);
     _selectLevel(null, notifySelectionChanged: false);
     _onSelectedChangedController.add(null);
-
-    // Clear the floor manager property.
-    FloorManager? floorManager;
 
     // Obtain the GeoModel (map or scene) for this view.
     GeoModel? geoModel;
@@ -168,12 +169,9 @@ class FloorFilterController {
         geoModel = localSceneViewController.arcGISScene;
     }
 
-    // Return early if no GeoModel was found.
-    if (geoModel == null) return null;
-
     // Obtain and load the FloorManager for this GeoModel.
-    await geoModel.load();
-    floorManager = geoModel.floorManager;
+    await geoModel?.load();
+    final floorManager = geoModel?.floorManager;
     await floorManager?.load();
 
     return floorManager;
