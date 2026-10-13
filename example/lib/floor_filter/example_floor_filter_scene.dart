@@ -89,9 +89,6 @@ class _ExampleFloorFilterSceneState extends State<ExampleFloorFilterScene> {
     await scene.load();
     _sceneViewController.arcGISScene = scene;
 
-    _floorFilterController.refresh();
-    _floorFilterController.refresh();
-
     // Refresh the floor filter now that the map has been set.
     await _floorFilterController.refresh().onError((e, stackTrace) {
       if (!mounted) return;
@@ -109,6 +106,10 @@ class _ExampleFloorFilterSceneState extends State<ExampleFloorFilterScene> {
           ],
         ),
       );
+
+      // Setting automatic selection mode to non-clearing makes for better navication
+      // experience when camera is pitched.
+      _floorFilterController.automaticSelectionMode = .alwaysNonClearing;
     });
   }
 }

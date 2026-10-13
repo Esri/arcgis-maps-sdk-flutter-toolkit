@@ -180,6 +180,10 @@ class _LevelSelectorState extends State<_LevelSelector> {
                         },
                       )
                     // Only show the selected level for non-expandedView.
+                    : _selectedLevel == null &&
+                          widget._widgetController.geoViewController
+                              is ArcGISMapViewController
+                    ? const SizedBox.shrink()
                     : OutlinedButton(
                         onPressed: () =>
                             setState(() => _expandedView = !_expandedView),
