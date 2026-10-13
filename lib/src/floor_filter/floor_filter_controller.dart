@@ -450,8 +450,14 @@ class FloorFilterController {
       // Find if a site intersects with the center of the viewpoint.
       selectedSite = _floorManager!.sites.where((site) {
         if (site.geometry == null) return false;
+
+        final projectedSiteGeometry = GeometryEngine.project(
+          site.geometry!,
+          outputSpatialReference:
+              viewpoint.targetGeometry.extent.spatialReference!,
+        );
         return GeometryEngine.intersects(
-          geometry1: site.geometry!,
+          geometry1: projectedSiteGeometry,
           geometry2: viewpoint.targetGeometry.extent,
         );
       }).firstOrNull;
