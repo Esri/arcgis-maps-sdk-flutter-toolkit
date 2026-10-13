@@ -114,11 +114,14 @@ class FloorFilterController {
     // If there is a current refresh run in progress, cancel it.
     _cancelableRefresh?.cancel().ignore();
 
-    _cancelableRefresh = CancelableOperation.fromFuture(_refresh());
+    final refreshOperation = CancelableOperation.fromFuture(_refresh());
+    _cancelableRefresh = refreshOperation;
 
-    // Notify listeners of the updated floor manager.
-    final floorManager = await _cancelableRefresh?.value;
-    _floorManagerNotifier.value = floorManager;
+    // Notify listeners of the updated floor manager unless operation was canceled.
+    final floorManager = await refreshOperation.valueOrCancellation();
+    if (identical(_cancelableRefresh, refreshOperation)) {
+      _floorManagerNotifier.value = floorManager;
+    }
   }
 
   // Function to refresh state related to a FloorManager update. Called by public
