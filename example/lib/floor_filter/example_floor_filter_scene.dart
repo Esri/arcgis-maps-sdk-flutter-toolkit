@@ -108,7 +108,7 @@ class _ExampleFloorFilterSceneState extends State<ExampleFloorFilterScene> {
       );
     });
 
-    // Setting automatic selection mode to non-clearing makes for better navication
+    // Setting automatic selection mode to non-clearing makes for better navigation
     // experience when camera is pitched.
     _floorFilterController.automaticSelectionMode = .alwaysNonClearing;
   }

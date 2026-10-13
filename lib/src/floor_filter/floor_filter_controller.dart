@@ -117,10 +117,28 @@ class FloorFilterController {
     final refreshOperation = CancelableOperation.fromFuture(_refresh());
     _cancelableRefresh = refreshOperation;
 
-    // Notify listeners of the updated floor manager unless operation was canceled.
     final floorManager = await refreshOperation.valueOrCancellation();
+    // Update floorManager related items if this operation has not been superseded.
     if (identical(_cancelableRefresh, refreshOperation)) {
-      _floorManagerNotifier.value = floorManager;
+      // Set min scale for facility and site layers autoselect.
+      if (floorManager == null) {
+        _facilitiesLayerMinScale = _defaultFacilitiesMinScale;
+        _sitesLayerMinScale = _defaultSitesMinScale;
+      } else {
+        final facilityLayer = floorManager.facilityLayer;
+        _facilitiesLayerMinScale =
+            (facilityLayer == null || facilityLayer.minScale == 0.0)
+            ? _defaultFacilitiesMinScale
+            : facilityLayer.minScale;
+
+        final siteLayer = floorManager.siteLayer;
+        _sitesLayerMinScale = (siteLayer == null || siteLayer.minScale == 0.0)
+            ? _defaultSitesMinScale
+            : siteLayer.minScale;
+
+        // Notify listeners of the updated floor manager unless operation was canceled.
+        _floorManagerNotifier.value = floorManager;
+      }
     }
   }
 
@@ -154,23 +172,6 @@ class FloorFilterController {
     await geoModel.load();
     floorManager = geoModel.floorManager;
     await floorManager?.load();
-
-    // Set min scale for facility and site layers autoselect.
-    if (floorManager == null) {
-      _facilitiesLayerMinScale = _defaultFacilitiesMinScale;
-      _sitesLayerMinScale = _defaultSitesMinScale;
-    } else {
-      final facilityLayer = floorManager.facilityLayer;
-      _facilitiesLayerMinScale =
-          (facilityLayer == null || facilityLayer.minScale == 0.0)
-          ? _defaultFacilitiesMinScale
-          : facilityLayer.minScale;
-
-      final siteLayer = floorManager.siteLayer;
-      _sitesLayerMinScale = (siteLayer == null || siteLayer.minScale == 0.0)
-          ? _defaultSitesMinScale
-          : siteLayer.minScale;
-    }
 
     return floorManager;
   }
