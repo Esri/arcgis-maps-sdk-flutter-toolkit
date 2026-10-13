@@ -114,6 +114,10 @@ class FloorFilterController {
     // If there is a current refresh run in progress, cancel it.
     _cancelableRefresh?.cancel().ignore();
 
+    // Clear the floor manager since it is being reset.
+    _floorManagerNotifier.value = null;
+
+    // Refresh
     final refreshOperation = CancelableOperation.fromFuture(_refresh());
     _cancelableRefresh = refreshOperation;
 
@@ -142,8 +146,7 @@ class FloorFilterController {
     }
   }
 
-  // Function to refresh state related to a FloorManager update. Called by public
-  // refresh function.
+  // Function obtain and load the new floor manager.
   Future<FloorManager?> _refresh() async {
     // Setting the selected Site/Facility/Level to null
     _selectSite(null, notifySelectionChanged: false);
