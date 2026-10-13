@@ -79,7 +79,7 @@ class _ExampleFloorFilterSceneState extends State<ExampleFloorFilterScene> {
   Future<void> onSceneViewReady() async {
     // Single multi-level facility with no sites.
     final sceneUri = Uri.parse(
-      'https://arcgisruntime.maps.arcgis.com/home/item.html?id=3d8ff4683ab44478a022f79d4fc21d98',
+      'https://arcgisruntime.maps.arcgis.com/home/item.html?id=895e482788b04483b558af493b39b03f',
     );
 
     // Create the map from an ArcGISOnline web map.
