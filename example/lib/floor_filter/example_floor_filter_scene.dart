@@ -41,7 +41,7 @@ class ExampleFloorFilterScene extends StatefulWidget {
 }
 
 class _ExampleFloorFilterSceneState extends State<ExampleFloorFilterScene> {
-  // Create a map view controller.
+  // Create a scene view controller.
   final _sceneViewController = ArcGISSceneView.createController();
 
   // Create a controller for the FloorFilter widget.
@@ -58,12 +58,12 @@ class _ExampleFloorFilterSceneState extends State<ExampleFloorFilterScene> {
         right: false,
         child: Stack(
           children: [
-            // Add a map view to the widget tree and set a controller.
+            // Add a scene view to the widget tree and set a controller.
             ArcGISSceneView(
               controllerProvider: () => _sceneViewController,
               onSceneViewReady: onSceneViewReady,
             ),
-            // Create a floor filter and display on top of the map view in a stack.
+            // Create a floor filter and display on top of the scene view in a stack.
             // Pass the floor filter the corresponding floor filter controller.
             Positioned(
               bottom: 50,
@@ -82,14 +82,14 @@ class _ExampleFloorFilterSceneState extends State<ExampleFloorFilterScene> {
       'https://arcgisruntime.maps.arcgis.com/home/item.html?id=895e482788b04483b558af493b39b03f',
     );
 
-    // Create the map from an ArcGISOnline web map.
+    // Create the scene from an ArcGISOnline web scene.
     final scene = ArcGISScene.withUri(sceneUri)!;
 
-    // Load the map and set it on the view controller.
+    // Load the scene and set it on the view controller.
     await scene.load();
     _sceneViewController.arcGISScene = scene;
 
-    // Refresh the floor filter now that the map has been set.
+    // Refresh the floor filter now that the scene has been set.
     await _floorFilterController.refresh().onError((e, stackTrace) {
       if (!mounted) return;
 
