@@ -48,6 +48,9 @@ class FloorFilterController {
   var _facilitiesLayerMinScale = 0.0;
   var _sitesLayerMinScale = 0.0;
 
+  // Cancelable operation to ensure only one refresh call at a time.
+  CancelableOperation<FloorManager?>? _cancelableRefresh;
+
   /// The siteId of the currently selected site. Set to null to clear selection.
   String? get selectedSiteId => _selectedSite?.siteId;
   set selectedSiteId(String? selectedSiteId) {
@@ -108,6 +111,19 @@ class FloorFilterController {
 
   /// Apps will call this function when the [FloorManager] has changed.
   Future<void> refresh() async {
+    // If there is a current refresh run in progress, cancel it.
+    _cancelableRefresh?.cancel().ignore();
+
+    _cancelableRefresh = CancelableOperation.fromFuture(_refresh());
+
+    // Notify listeners of the updated floor manager.
+    final floorManager = await _cancelableRefresh?.value;
+    _floorManagerNotifier.value = floorManager;
+  }
+
+  // Function to refresh state related to a FloorManager update. Called by public
+  // refresh function.
+  Future<FloorManager?> _refresh() async {
     // Setting the selected Site/Facility/Level to null
     _selectSite(null, notifySelectionChanged: false);
     _selectFacility(null, notifySelectionChanged: false);
@@ -129,7 +145,7 @@ class FloorFilterController {
     }
 
     // Return early if no GeoModel was found.
-    if (geoModel == null) return;
+    if (geoModel == null) return null;
 
     // Obtain and load the FloorManager for this GeoModel.
     await geoModel.load();
@@ -153,7 +169,7 @@ class FloorFilterController {
           : siteLayer.minScale;
     }
 
-    _floorManagerNotifier.value = floorManager;
+    return floorManager;
   }
 
   /// Notification that the Site/Facility/Floor selection has changed.

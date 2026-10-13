@@ -79,7 +79,7 @@ class _ExampleFloorFilterSceneState extends State<ExampleFloorFilterScene> {
   Future<void> onSceneViewReady() async {
     // Single multi-level facility with no sites.
     final sceneUri = Uri.parse(
-      'https://arcgisruntime.maps.arcgis.com/home/item.html?id=895e482788b04483b558af493b39b03f',
+      'https://arcgisruntime.maps.arcgis.com/home/item.html?id=3d8ff4683ab44478a022f79d4fc21d98',
     );
 
     // Create the map from an ArcGISOnline web map.
@@ -88,6 +88,9 @@ class _ExampleFloorFilterSceneState extends State<ExampleFloorFilterScene> {
     // Load the map and set it on the view controller.
     await scene.load();
     _sceneViewController.arcGISScene = scene;
+
+    _floorFilterController.refresh();
+    _floorFilterController.refresh();
 
     // Refresh the floor filter now that the map has been set.
     await _floorFilterController.refresh().onError((e, stackTrace) {
