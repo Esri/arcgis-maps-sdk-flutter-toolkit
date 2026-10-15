@@ -56,7 +56,9 @@ class _SiteAndFacilitySelectorNavigatorState
       ),
       child: Navigator(
         key: _navigatorKey,
-        initialRoute: widget._widgetController._selectedFacility != null
+        initialRoute:
+            widget._widgetController._selectedFacility != null ||
+                widget._widgetController._floorManager!.sites.isEmpty
             ? _SiteAndFacilitySelectorNavigator._facilitySelectorRoute
             : _SiteAndFacilitySelectorNavigator._siteSelectorRoute,
         onGenerateRoute: _onGenerateRoute,
@@ -64,7 +66,14 @@ class _SiteAndFacilitySelectorNavigatorState
     );
   }
 
-  Route<void> _onGenerateRoute(RouteSettings settings) {
+  Route<void>? _onGenerateRoute(RouteSettings settings) {
+    // Prevent showing site selector if site list is empty.
+    if (settings.name !=
+            _SiteAndFacilitySelectorNavigator._facilitySelectorRoute &&
+        widget._widgetController._floorManager!.sites.isEmpty) {
+      return null;
+    }
+
     return MaterialPageRoute<void>(
       settings: settings,
       builder: (context) {

@@ -42,7 +42,7 @@ class FloorFilter extends StatefulWidget {
     );
 
     // Initialize the widget controller.
-    floorFilterController.refresh();
+    floorFilterController.refresh().ignore();
 
     return floorFilterController;
   }
@@ -121,7 +121,7 @@ class _FloorFilterState extends State<FloorFilter> {
 
   @override
   Widget build(BuildContext context) {
-    if (_floorManager == null) {
+    if (_floorManager?.loadStatus != .loaded) {
       // Do not show the widget if this map or scene has no floor manager.
       return const SizedBox.shrink();
     }

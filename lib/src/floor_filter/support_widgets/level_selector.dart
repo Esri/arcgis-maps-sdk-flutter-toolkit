@@ -36,7 +36,7 @@ class _LevelSelector extends StatefulWidget {
 
 class _LevelSelectorState extends State<_LevelSelector> {
   // All levels for the current facility.
-  var _facilityLevels = <FloorLevel>[];
+  var _facilityLevels = <_LevelListDetail>[];
 
   // Currently selected level.
   FloorLevel? _selectedLevel;
@@ -51,9 +51,7 @@ class _LevelSelectorState extends State<_LevelSelector> {
     _selectedLevel = widget._widgetController._selectedLevelNotifier.value;
 
     // Get the levels from the currently selected facility.
-    _facilityLevels =
-        widget._widgetController._selectedFacilityNotifier.value?.levels ??
-        <FloorLevel>[];
+    _facilityLevels = _refreshFacilityLevelListDetails();
 
     // Listen for any changes to the selected facility.
     widget._widgetController._selectedFacilityNotifier.addListener(
@@ -76,8 +74,7 @@ class _LevelSelectorState extends State<_LevelSelector> {
     oldWidget._widgetController._selectedFacilityNotifier.removeListener(
       _onSelectedFacilityChanged,
     );
-    _facilityLevels =
-        widget._widgetController._selectedFacility?.levels ?? <FloorLevel>[];
+    _facilityLevels = _refreshFacilityLevelListDetails();
     widget._widgetController._selectedFacilityNotifier.addListener(
       _onSelectedFacilityChanged,
     );
@@ -114,9 +111,8 @@ class _LevelSelectorState extends State<_LevelSelector> {
     final listViewMaxHeight = widget.maxHeight - padding;
 
     // Text style for selected level.
-    final selectedLevelTextStyle = DefaultTextStyle.of(
-      context,
-    ).style.apply(fontWeightDelta: 2, fontSizeFactor: 1.3);
+    final selectedLevelTextStyle = DefaultTextStyle.of(context).style
+        .apply(fontWeightDelta: 2, fontSizeFactor: 1.3);
 
     // Text style for unselected level.
     final unselectedLevelTextStyle = DefaultTextStyle.of(context).style;
@@ -169,14 +165,14 @@ class _LevelSelectorState extends State<_LevelSelector> {
                         physics: const BouncingScrollPhysics(),
                         itemCount: _facilityLevels.length,
                         itemBuilder: (context, index) {
-                          final level = _facilityLevels[index];
+                          final levelDetail = _facilityLevels[index];
                           return OutlinedButton(
-                            onPressed: () =>
-                                widget._widgetController._selectLevel(level),
+                            onPressed: () => widget._widgetController
+                                ._selectLevel(levelDetail.level),
                             style: buttonStyle,
                             child: Text(
-                              level.shortName,
-                              style: level == _selectedLevel
+                              levelDetail.shortName,
+                              style: levelDetail.level == _selectedLevel
                                   ? selectedLevelTextStyle
                                   : unselectedLevelTextStyle,
                             ),
@@ -184,27 +180,28 @@ class _LevelSelectorState extends State<_LevelSelector> {
                         },
                       )
                     // Only show the selected level for non-expandedView.
-                    : _selectedLevel != null
-                    ? OutlinedButton(
+                    : _selectedLevel == null &&
+                          widget._widgetController.geoViewController
+                              is ArcGISMapViewController
+                    ? const SizedBox.shrink()
+                    : OutlinedButton(
                         onPressed: () =>
                             setState(() => _expandedView = !_expandedView),
                         style: buttonStyle,
                         child: Text(
-                          _selectedLevel!.shortName,
+                          _selectedLevel?.shortName ?? 'All',
                           style: selectedLevelTextStyle,
                         ),
-                      )
-                    : const SizedBox.shrink(),
+                      ),
               ),
             ],
           );
   }
 
   void _onSelectedFacilityChanged() {
+    final levels = _refreshFacilityLevelListDetails();
     setState(() {
-      _facilityLevels =
-          widget._widgetController._selectedFacilityNotifier.value?.levels ??
-          <FloorLevel>[];
+      _facilityLevels = levels;
     });
   }
 
@@ -213,4 +210,37 @@ class _LevelSelectorState extends State<_LevelSelector> {
       _selectedLevel = widget._widgetController._selectedLevelNotifier.value;
     });
   }
+
+  List<_LevelListDetail> _refreshFacilityLevelListDetails() {
+    final facilityLevels =
+        widget._widgetController._selectedFacilityNotifier.value?.levels ??
+        <FloorLevel>[];
+
+    final levelDetails = <_LevelListDetail>[];
+    if (facilityLevels.isNotEmpty) {
+      if (widget._widgetController.geoViewController
+              is ArcGISLocalSceneViewController ||
+          widget._widgetController.geoViewController
+              is ArcGISSceneViewController) {
+        // Add "All" option for 3D views.
+        levelDetails.add(_LevelListDetail(level: null, shortName: 'All'));
+      }
+      for (final level in facilityLevels) {
+        levelDetails.add(_LevelListDetail.fromFloorLevel(level));
+      }
+    }
+
+    return levelDetails;
+  }
+}
+
+class _LevelListDetail {
+  _LevelListDetail({required this.level, required this.shortName});
+
+  factory _LevelListDetail.fromFloorLevel(FloorLevel level) {
+    return _LevelListDetail(level: level, shortName: level.shortName);
+  }
+
+  final FloorLevel? level;
+  final String shortName;
 }

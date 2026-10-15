@@ -49,91 +49,114 @@ class FloorFilterController {
   var _sitesLayerMinScale = 0.0;
 
   // Cancelable operation to ensure only one refresh call at a time.
-  CancelableOperation<void>? _cancelableRefresh;
+  CancelableOperation<FloorManager?>? _cancelableRefresh;
 
   /// The siteId of the currently selected site. Set to null to clear selection.
   String? get selectedSiteId => _selectedSite?.siteId;
   set selectedSiteId(String? selectedSiteId) {
-    if (_floorManager != null) {
-      if (selectedSiteId == null) {
-        _selectSite(null);
-      } else {
-        final selectedSite = _floorManager!.sites.firstWhere(
-          (site) => site.siteId == selectedSiteId,
-          orElse: () =>
-              throw Exception('Site with ID: $selectedSiteId cannot be found.'),
-        );
-        _selectSite(selectedSite);
-      }
+    if (_floorManager?.loadStatus != .loaded) {
+      throw Exception('FloorManager does not exist or failed to load.');
+    }
+
+    if (selectedSiteId == null) {
+      _selectSite(null);
     } else {
-      throw StateError('This ArcGISMap or ArcGISScene has no FloorManager.');
+      final selectedSite = _floorManager!.sites.firstWhere(
+        (site) => site.siteId == selectedSiteId,
+        orElse: () =>
+            throw Exception('Site with ID: $selectedSiteId cannot be found.'),
+      );
+      _selectSite(selectedSite);
     }
   }
 
   /// The facilityId of the currently selected facility. Set to null to clear selection.
   String? get selectedFacilityId => _selectedFacility?.facilityId;
   set selectedFacilityId(String? selectedFacilityId) {
-    if (_floorManager != null) {
-      if (selectedFacilityId == null) {
-        _selectFacility(null);
-      } else {
-        final selectedFacility = _floorManager!.facilities.firstWhere(
-          (facility) => facility.facilityId == selectedFacilityId,
-          orElse: () => throw Exception(
-            'Facility with ID: $selectedFacilityId cannot be found.',
-          ),
-        );
-        _selectFacility(selectedFacility);
-      }
+    if (_floorManager?.loadStatus != .loaded) {
+      throw Exception('FloorManager does not exist or failed to load.');
+    }
+
+    if (selectedFacilityId == null) {
+      _selectFacility(null);
     } else {
-      throw StateError('This ArcGISMap or ArcGISScene has no FloorManager.');
+      final selectedFacility = _floorManager!.facilities.firstWhere(
+        (facility) => facility.facilityId == selectedFacilityId,
+        orElse: () => throw Exception(
+          'Facility with ID: $selectedFacilityId cannot be found.',
+        ),
+      );
+      _selectFacility(selectedFacility);
     }
   }
 
   /// The levelId of the currently selected level. Set to null to clear selection.
   String? get selectedLevelId => _selectedLevel?.levelId;
   set selectedLevelId(String? selectedLevelId) {
-    if (_floorManager != null) {
-      if (selectedLevelId == null) {
-        _selectLevel(null);
-      } else {
-        final selectedLevel = _floorManager!.levels.firstWhere(
-          (level) => level.levelId == selectedLevelId,
-          orElse: () => throw Exception(
-            'Level with ID: $selectedLevelId cannot be found.',
-          ),
-        );
-        _selectLevel(selectedLevel);
-      }
+    if (_floorManager?.loadStatus != .loaded) {
+      throw Exception('FloorManager does not exist or failed to load.');
+    }
+
+    if (selectedLevelId == null) {
+      _selectLevel(null);
     } else {
-      throw StateError('This ArcGISMap or ArcGISScene has no FloorManager.');
+      final selectedLevel = _floorManager!.levels.firstWhere(
+        (level) => level.levelId == selectedLevelId,
+        orElse: () =>
+            throw Exception('Level with ID: $selectedLevelId cannot be found.'),
+      );
+      _selectLevel(selectedLevel);
     }
   }
 
-  /// Apps will call this function when the [FloorManager] has been changed.
-  void refresh() {
+  /// Apps will call this function when the [FloorManager] has changed.
+  Future<void> refresh() async {
     // If there is a current refresh run in progress, cancel it.
     _cancelableRefresh?.cancel().ignore();
 
-    // Start a new refresh operation.
-    _cancelableRefresh = CancelableOperation.fromFuture(_refresh()).then((
-      floorManager,
-    ) {
-      // Notify listeners of the updated floor manager.
+    // Refresh
+    final refreshOperation = CancelableOperation.fromFuture(_refresh());
+    _cancelableRefresh = refreshOperation;
+
+    FloorManager? floorManager;
+    try {
+      floorManager = await refreshOperation.valueOrCancellation();
+    } catch (e) {
+      _floorManagerNotifier.value = null;
+      rethrow;
+    }
+
+    // Update floorManager related items if this operation has not been superseded.
+    if (identical(_cancelableRefresh, refreshOperation)) {
+      // Set min scale for facility and site layers autoselect.
+      if (floorManager == null) {
+        _facilitiesLayerMinScale = _defaultFacilitiesMinScale;
+        _sitesLayerMinScale = _defaultSitesMinScale;
+      } else {
+        final facilityLayer = floorManager.facilityLayer;
+        _facilitiesLayerMinScale =
+            (facilityLayer == null || facilityLayer.minScale == 0.0)
+            ? _defaultFacilitiesMinScale
+            : facilityLayer.minScale;
+
+        final siteLayer = floorManager.siteLayer;
+        _sitesLayerMinScale = (siteLayer == null || siteLayer.minScale == 0.0)
+            ? _defaultSitesMinScale
+            : siteLayer.minScale;
+      }
+
+      // Notify listeners of the updated floor manager unless operation was canceled.
       _floorManagerNotifier.value = floorManager;
-    });
+    }
   }
 
-  // Function that does the work of refreshing. Called by the public refresh() function.
+  // Function to obtain and load the new floor manager.
   Future<FloorManager?> _refresh() async {
     // Setting the selected Site/Facility/Level to null
     _selectSite(null, notifySelectionChanged: false);
     _selectFacility(null, notifySelectionChanged: false);
     _selectLevel(null, notifySelectionChanged: false);
     _onSelectedChangedController.add(null);
-
-    // Clear the floor manager property.
-    FloorManager? floorManager;
 
     // Obtain the GeoModel (map or scene) for this view.
     GeoModel? geoModel;
@@ -146,30 +169,10 @@ class FloorFilterController {
         geoModel = localSceneViewController.arcGISScene;
     }
 
-    // Return early if no GeoModel was found.
-    if (geoModel == null) return null;
-
     // Obtain and load the FloorManager for this GeoModel.
-    await geoModel.load();
-    floorManager = geoModel.floorManager;
+    await geoModel?.load();
+    final floorManager = geoModel?.floorManager;
     await floorManager?.load();
-
-    // Set min scale for facility and site layers autoselect.
-    if (floorManager == null) {
-      _facilitiesLayerMinScale = _defaultFacilitiesMinScale;
-      _sitesLayerMinScale = _defaultSitesMinScale;
-    } else {
-      final facilityLayer = floorManager.facilityLayer;
-      _facilitiesLayerMinScale =
-          (facilityLayer == null || facilityLayer.minScale == 0.0)
-          ? _defaultFacilitiesMinScale
-          : facilityLayer.minScale;
-
-      final siteLayer = floorManager.siteLayer;
-      _sitesLayerMinScale = (siteLayer == null || siteLayer.minScale == 0.0)
-          ? _defaultSitesMinScale
-          : siteLayer.minScale;
-    }
 
     return floorManager;
   }
@@ -233,9 +236,11 @@ class FloorFilterController {
     // Notify listeners that the facility changed.
     _selectedFacilityNotifier.value = facility;
 
-    if (facility != null && zoomTo) {
-      // Adjust viewpoint to facility extent.
-      _zoomToFacility(facility);
+    if (facility != null) {
+      if (zoomTo) {
+        // Adjust viewpoint to facility extent.
+        _zoomToFacility(facility);
+      }
 
       // Set the level to the default level.
       _selectDefaultLevel(facility, notifySelectionChanged: false);
@@ -260,7 +265,13 @@ class FloorFilterController {
     _selectedLevelNotifier.value = level;
 
     // Update the visible levels
-    _showLevelsWithVerticalOrder(level?.verticalOrder ?? 0);
+    if (level?.verticalOrder != null) {
+      _showLevelsWithVerticalOrder(level!.verticalOrder);
+    } else if (geoViewController is ArcGISMapViewController) {
+      _showLevelsWithVerticalOrder(0);
+    } else {
+      _showAllLevels();
+    }
 
     if (notifySelectionChanged) {
       _onSelectedChangedController.add(null);
@@ -276,7 +287,7 @@ class FloorFilterController {
   }) {
     FloorLevel? defaultLevel;
 
-    // Find the default level
+    // The default level is the ground level (vertical order 0).
     if (facility.levels.isNotEmpty) {
       defaultLevel = facility.levels
           .where((level) => level.verticalOrder == 0)
@@ -291,12 +302,23 @@ class FloorFilterController {
   // verticalOrder. This will span all facilities. Facilities that do not have
   // a level with this verticalOrder will not show any floor.
   void _showLevelsWithVerticalOrder(int verticalOrder) {
-    if (_floorManager == null) return;
+    if (_floorManager?.loadStatus != .loaded) return;
 
     for (final floorManagerLevel in _floorManager!.levels) {
-      // Levels on with the verticalOrder of the selected level are set to visible.
+      // Levels with the verticalOrder of the selected level are set to visible.
       floorManagerLevel.isVisible =
           floorManagerLevel.verticalOrder == verticalOrder;
+    }
+  }
+
+  // Function to set the visibility of all levels to true. This is only useful
+  // in a 3d view.
+  void _showAllLevels() {
+    if (_floorManager?.loadStatus != .loaded) return;
+
+    for (final floorManagerLevel in _floorManager!.levels) {
+      // All levels are set to visible.
+      floorManagerLevel.isVisible = true;
     }
   }
 
@@ -304,7 +326,11 @@ class FloorFilterController {
   void _zoomToSite(FloorSite site) {
     final geometry = site.geometry;
     if (geometry != null) {
-      _zoomViewToExtent(geometry.extent);
+      if (geoViewController is ArcGISMapViewController) {
+        _zoomMapToExtent(geometry.extent);
+      } else {
+        _zoomSceneToExtent(geometry.extent, 1000);
+      }
     }
   }
 
@@ -312,51 +338,47 @@ class FloorFilterController {
   void _zoomToFacility(FloorFacility facility) {
     final geometry = facility.geometry;
     if (geometry != null) {
-      _zoomViewToExtent(geometry.extent);
-    }
-  }
-
-  // Utility function to call the correct zoom function based on the type of the
-  // GeoViewController.
-  void _zoomViewToExtent(Envelope extent) {
-    switch (geoViewController) {
-      case final ArcGISMapViewController mapViewController:
-        _zoomMapToExtent(extent, mapViewController);
-      case final ArcGISSceneViewController sceneViewController:
-        _zoomSceneToExtent(extent, sceneViewController);
-      case final ArcGISLocalSceneViewController localSceneViewController:
-        _zoomLocalSceneToExtent(extent, localSceneViewController);
+      if (geoViewController is ArcGISMapViewController) {
+        _zoomMapToExtent(geometry.extent);
+      } else {
+        _zoomSceneToExtent(geometry.extent, 200);
+      }
     }
   }
 
   // Function to set the viewpoint to the extent of a facility in an ArcGISMapView.
-  void _zoomMapToExtent(
-    Envelope extent,
-    ArcGISMapViewController mapViewController,
-  ) {
+  void _zoomMapToExtent(Envelope extent) {
+    // Must be in a map view.
+    if (geoViewController is! ArcGISMapViewController) return;
+
     // Pad the extent by a factor of 1.5.
     final builder = EnvelopeBuilder.fromEnvelope(extent);
     builder.expandBy(1.5);
     final targetExtent = builder.toGeometry();
 
     // Set the viewpoint of the map view.
-    mapViewController.setViewpoint(Viewpoint.fromTargetExtent(targetExtent));
+    geoViewController.setViewpoint(Viewpoint.fromTargetExtent(targetExtent));
   }
 
   // Function to set the viewpoint to the extent of a facility in an ArcGISSceneView.
-  void _zoomSceneToExtent(
-    Envelope extent,
-    ArcGISSceneViewController sceneViewController,
-  ) {
-    // TODO(kmueller-gis): zoom to extent with camera.
-  }
+  void _zoomSceneToExtent(Envelope extent, double cameraDistance) {
+    // Must not be in a map view.
+    if (geoViewController is ArcGISMapViewController) return;
 
-  // Function to set the viewpoint to the extent of a facility in an ArcGISLocalSceneView.
-  void _zoomLocalSceneToExtent(
-    Envelope extent,
-    ArcGISLocalSceneViewController localSceneViewController,
-  ) {
-    // TODO(kmueller-gis): zoom to extent with camera.
+    final camera = Camera.withLookAtPoint(
+      lookAtPoint: extent.center,
+      distance: cameraDistance,
+      heading: 0,
+      pitch: 45,
+      roll: 0,
+    );
+
+    final viewpoint = Viewpoint.withExtentCamera(
+      targetExtent: extent,
+      camera: camera,
+    );
+
+    geoViewController.setViewpoint(viewpoint);
   }
 
   void _autoSelect() {
@@ -389,8 +411,14 @@ class FloorFilterController {
       // Find if a facility intersects with the center of the viewpoint.
       selectedFacility = _floorManager!.facilities.where((facility) {
         if (facility.geometry == null) return false;
+
+        final projectedFacilityGeometry = GeometryEngine.project(
+          facility.geometry!,
+          outputSpatialReference:
+              viewpoint.targetGeometry.extent.spatialReference!,
+        );
         final intersects = GeometryEngine.intersects(
-          geometry1: facility.geometry!,
+          geometry1: projectedFacilityGeometry,
           geometry2: viewpoint.targetGeometry.extent,
         );
 
@@ -427,8 +455,14 @@ class FloorFilterController {
       // Find if a site intersects with the center of the viewpoint.
       selectedSite = _floorManager!.sites.where((site) {
         if (site.geometry == null) return false;
+
+        final projectedSiteGeometry = GeometryEngine.project(
+          site.geometry!,
+          outputSpatialReference:
+              viewpoint.targetGeometry.extent.spatialReference!,
+        );
         return GeometryEngine.intersects(
-          geometry1: site.geometry!,
+          geometry1: projectedSiteGeometry,
           geometry2: viewpoint.targetGeometry.extent,
         );
       }).firstOrNull;
