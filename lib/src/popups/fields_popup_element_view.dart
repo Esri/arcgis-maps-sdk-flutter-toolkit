@@ -153,9 +153,8 @@ class _FormattedValueText extends StatelessWidget {
           padding: const EdgeInsets.only(bottom: 4),
           child: Text(
             'View',
-            style: Theme.of(context).textTheme.labelMedium?.copyWith(
-              color: Theme.of(context).colorScheme.primary,
-            ),
+            style: Theme.of(context).textTheme.labelMedium
+                ?.copyWith(color: Theme.of(context).colorScheme.primary),
           ),
         ),
       );

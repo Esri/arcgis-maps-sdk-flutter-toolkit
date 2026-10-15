@@ -232,9 +232,9 @@ class _MediaDetailView extends StatelessWidget {
                                 'Failed to get the image details.',
                                 style: Theme.of(context).textTheme.bodyLarge
                                     ?.copyWith(
-                                      color: Theme.of(
-                                        context,
-                                      ).colorScheme.error,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .error,
                                     ),
                               ),
                             );

@@ -67,9 +67,8 @@ class _UtilityAssociationsPopupElementViewState
             return Center(
               child: Text(
                 'Failed to fetch utility associations filter results.',
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Theme.of(context).colorScheme.error,
-                ),
+                style: Theme.of(context).textTheme.bodySmall
+                    ?.copyWith(color: Theme.of(context).colorScheme.error),
               ),
             );
           }

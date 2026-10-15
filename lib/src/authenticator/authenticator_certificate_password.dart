@@ -76,9 +76,8 @@ class _AuthenticatorCertificatePasswordState
             children: [
               Text(
                 'Password Required',
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  color: Theme.of(context).colorScheme.primary,
-                ),
+                style: Theme.of(context).textTheme.titleLarge
+                    ?.copyWith(color: Theme.of(context).colorScheme.primary),
               ),
               // Show the name of the file that requires a password.
               Text(widget.file.name),

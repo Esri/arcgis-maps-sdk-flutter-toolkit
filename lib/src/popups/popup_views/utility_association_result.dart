@@ -44,9 +44,8 @@ class _UtilityAssociationResultWidget extends StatelessWidget {
       ),
       subtitle: Text(
         subtitle,
-        style: Theme.of(
-          context,
-        ).textTheme.bodyMedium?.copyWith(color: Colors.grey[600]),
+        style: Theme.of(context).textTheme.bodyMedium
+            ?.copyWith(color: Colors.grey[600]),
       ),
       onTap: () => _navigateToAssociationPopupPage(
         context,
