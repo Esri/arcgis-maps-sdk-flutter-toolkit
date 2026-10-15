@@ -150,7 +150,7 @@ class FloorFilterController {
     }
   }
 
-  // Function obtain and load the new floor manager.
+  // Function to obtain and load the new floor manager.
   Future<FloorManager?> _refresh() async {
     // Setting the selected Site/Facility/Level to null
     _selectSite(null, notifySelectionChanged: false);
@@ -369,7 +369,7 @@ class FloorFilterController {
       lookAtPoint: extent.center,
       distance: cameraDistance,
       heading: 0,
-      pitch: 0,
+      pitch: 45,
       roll: 0,
     );
 
