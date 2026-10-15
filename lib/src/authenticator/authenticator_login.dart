@@ -136,9 +136,8 @@ class _AuthenticatorLoginState extends State<_AuthenticatorLogin> {
             children: [
               Text(
                 'Authentication Required',
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  color: Theme.of(context).colorScheme.primary,
-                ),
+                style: Theme.of(context).textTheme.titleLarge
+                    ?.copyWith(color: Theme.of(context).colorScheme.primary),
               ),
               // Show the host that is requiring authentication.
               Text(widget.challenge.host),

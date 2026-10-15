@@ -53,9 +53,8 @@ class _AuthenticatorCertificateRequiredState
             children: [
               Text(
                 'Certificate Required',
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  color: Theme.of(context).colorScheme.primary,
-                ),
+                style: Theme.of(context).textTheme.titleLarge
+                    ?.copyWith(color: Theme.of(context).colorScheme.primary),
               ),
               // Show the server URL that is requiring authentication.
               Text(widget.challenge.host),

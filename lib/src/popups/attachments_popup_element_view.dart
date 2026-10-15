@@ -67,9 +67,8 @@ class _AttachmentsPopupElementViewState
               child: Center(
                 child: Text(
                   'Unable to load attachments.',
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    color: Theme.of(context).colorScheme.error,
-                  ),
+                  style: Theme.of(context).textTheme.bodyLarge
+                      ?.copyWith(color: Theme.of(context).colorScheme.error),
                 ),
               ),
             );
@@ -84,9 +83,9 @@ class _AttachmentsPopupElementViewState
                   Theme.of(context).expansionTileTheme.backgroundColor ??
                   Colors.transparent,
               collapsedBackgroundColor:
-                  Theme.of(
-                    context,
-                  ).expansionTileTheme.collapsedBackgroundColor ??
+                  Theme.of(context)
+                      .expansionTileTheme
+                      .collapsedBackgroundColor ??
                   Colors.transparent,
               collapsedShape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
@@ -231,18 +230,16 @@ class _PopupAttachmentViewInGalleryState
               fit: BoxFit.scaleDown,
               child: Text(
                 attachment.name,
-                style: Theme.of(
-                  context,
-                ).textTheme.labelSmall?.copyWith(color: Colors.black),
+                style: Theme.of(context).textTheme.labelSmall
+                    ?.copyWith(color: Colors.black),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
             ),
             Text(
               attachment.size.toSizeString,
-              style: Theme.of(
-                context,
-              ).textTheme.labelSmall?.copyWith(color: Colors.grey),
+              style: Theme.of(context).textTheme.labelSmall
+                  ?.copyWith(color: Colors.grey),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
@@ -318,15 +315,13 @@ class _PopupAttachmentViewInListState
       ),
       title: Text(
         widget.popupAttachment.name,
-        style: Theme.of(
-          context,
-        ).textTheme.labelSmall?.copyWith(color: Colors.black),
+        style: Theme.of(context).textTheme.labelSmall
+            ?.copyWith(color: Colors.black),
       ),
       subtitle: Text(
         widget.popupAttachment.size.toSizeString,
-        style: Theme.of(
-          context,
-        ).textTheme.labelSmall?.copyWith(color: Colors.grey),
+        style: Theme.of(context).textTheme.labelSmall
+            ?.copyWith(color: Colors.grey),
       ),
       trailing: filePath == null
           ? (downloadFuture == null

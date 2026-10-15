@@ -52,9 +52,8 @@ class _AuthenticatorTrustState extends State<_AuthenticatorTrust> {
             children: [
               Text(
                 'Untrusted Host',
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  color: Theme.of(context).colorScheme.primary,
-                ),
+                style: Theme.of(context).textTheme.titleLarge
+                    ?.copyWith(color: Theme.of(context).colorScheme.primary),
               ),
               // Show the server URL that is requiring authentication.
               Text(widget.challenge.host),
