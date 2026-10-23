@@ -16,7 +16,7 @@ android {
 
     defaultConfig {
         applicationId = "com.esri.arcgis_maps_toolkit_example"
-        minSdk = 28
+        minSdk = 29
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
