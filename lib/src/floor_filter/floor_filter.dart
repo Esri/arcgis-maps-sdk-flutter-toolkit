@@ -16,23 +16,78 @@
 
 part of '../../arcgis_maps_toolkit.dart';
 
-/// A widget for filtering map content by floor.
+/// A widget for selecting a site, facility, and floor in a floor-aware map or
+/// scene.
+///
+/// The widget is displayed only when the associated [GeoModel] has a loaded
+/// [FloorManager].
+///
+/// ## Usage
+/// Create the floor filter controller for the map or scene view, then place
+/// both widgets in a [Stack]. Refresh the floor filter after assigning the
+/// floor-aware [GeoModel] to its view controller.
+///
+/// ```dart
+///   final _mapViewController = ArcGISMapView.createController();
+///   late final _floorFilterController = FloorFilter.createController(
+///     _mapViewController,
+///   );
+///
+///   @override
+///   Widget build(BuildContext context) {
+///     return Stack(
+///       children: [
+///         ArcGISMapView(
+///           controllerProvider: () => _mapViewController,
+///           onMapViewReady: _onMapViewReady,
+///         ),
+///         Positioned(
+///           bottom: 16,
+///           left: 16,
+///           child: FloorFilter(
+///             floorFilterController: _floorFilterController,
+///           ),
+///         ),
+///       ],
+///     );
+///   }
+///
+///   Future<void> _onMapViewReady() async {
+///     final map = ArcGISMap.withUri(
+///       Uri.parse(
+///         'https://arcgisruntime.maps.arcgis.com/home/item.html?id=b4b599a43a474d33946cf0df526426f5',
+///       ),
+///     )!;
+///     await map.load();
+///     _mapViewController.arcGISMap = map;
+///     await _floorFilterController.refresh();
+///   }
+/// }
+/// ```
 class FloorFilter extends StatefulWidget {
-  /// Creates a floor filter.
+  /// Creates a floor filter for the view associated with [floorFilterController].
   const FloorFilter({
     required this.floorFilterController,
     this.maxHeight,
     super.key,
   });
 
-  /// The [FloorFilterController] for the widget.
+  /// Controller associated with the map or scene view whose floor content this
+  /// widget filters.
   final FloorFilterController floorFilterController;
 
-  /// The maximum height of the widget. If not set, a default of 80% of the
-  /// screen height will be used.
+  /// Maximum height of the widget.
+  ///
+  /// If `null`, the maximum height defaults to 80% of the screen height.
   final double? maxHeight;
 
-  /// Static function used to create the [FloorFilterController] for the widget.
+  /// Creates a [FloorFilterController] for [geoViewController] and starts
+  /// loading its current GeoModel's [FloorManager].
+  ///
+  /// If a map or scene is assigned to [geoViewController] after this call,
+  /// call and await [FloorFilterController.refresh] after assigning it.
+  /// The initial refresh is not awaited; call [FloorFilterController.refresh]
+  /// explicitly when you need to await loading or handle a loading error.
   static FloorFilterController createController(
     GeoViewController geoViewController,
   ) {
