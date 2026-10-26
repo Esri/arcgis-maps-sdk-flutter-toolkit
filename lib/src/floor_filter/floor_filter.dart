@@ -54,13 +54,12 @@ class FloorFilter extends StatefulWidget {
   /// If `null`, the maximum height defaults to 80% of the screen height.
   final double? maxHeight;
 
-  /// Creates a [FloorFilterController] for [geoViewController] and starts
-  /// loading its current GeoModel's [FloorManager].
-  ///
-  /// If a map or scene is assigned to [geoViewController] after this call,
-  /// call and await [FloorFilterController.refresh] after assigning it.
-  /// The initial refresh is not awaited; call [FloorFilterController.refresh]
-  /// explicitly when you need to await loading or handle a loading error.
+  /// Creates a [FloorFilterController] associated with the provided [GeoViewController].
+  // 
+  /// If a map or scene is already assigned to the [GeoViewController] when this function is called, then the [FloorManager] on the map or scene starts loading implicitly.
+  /// To explicitly await load completion, such as to handle loading errors, call and await `FloorFilterController.refresh`.
+  /// 
+  /// Similarly, if a map or scene is assigned to the [GeoViewController] after this function is called, call and await `FloorFilterController.refresh` after assigning the map or scene.
   static FloorFilterController createController(
     GeoViewController geoViewController,
   ) {
