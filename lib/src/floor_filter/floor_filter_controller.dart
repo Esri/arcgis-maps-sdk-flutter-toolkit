@@ -60,8 +60,7 @@ class FloorFilterController {
   ///
   /// Set this to an existing site ID to select that site. Set it to `null` to
   /// clear the site and any selected facility and level. Setting a non-null ID
-  /// throws [Exception] if the [FloorManager] is not loaded or the ID is not
-  /// present in it.
+  /// throws an [ArcGISException] if the [FloorManager] is not loaded or the ID does not exist.
   String? get selectedSiteId => _selectedSite?.siteId;
   set selectedSiteId(String? selectedSiteId) {
     if (_floorManager?.loadStatus != .loaded) {
