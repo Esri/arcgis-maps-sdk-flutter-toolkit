@@ -24,9 +24,9 @@ part of '../../arcgis_maps_toolkit.dart';
 class FloorFilterController {
   FloorFilterController._({required this.geoViewController});
 
-  /// The map or scene view associated with this floor filter.
+  /// The [GeoViewController] associated with this floor filter, which represents the attached map or scene view containing a map or scene with floor information.
   ///
-  /// Assign or replace the view's GeoModel before calling [refresh].
+  /// When a [GeoModel] is assigned or replaced on the [GeoViewController], call [FloorFilterController.refresh] to fetch the floor information.
   final GeoViewController geoViewController;
 
   /// Controls whether the selected site and facility are updated as the user
