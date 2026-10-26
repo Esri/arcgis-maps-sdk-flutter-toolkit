@@ -38,7 +38,7 @@ part of '../../arcgis_maps_toolkit.dart';
 /// ```
 // For more details see the doc for [FloorFilter.createController] and [FloorFilterController.refresh].
 class FloorFilter extends StatefulWidget {
-  /// Creates a floor filter for the view associated with [floorFilterController].
+  /// Creates a floor filter for the geo view associated with the provided [FloorFilterController].
   const FloorFilter({
     required this.floorFilterController,
     this.maxHeight,
