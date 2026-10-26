@@ -104,13 +104,13 @@ class FloorFilterController {
     }
   }
 
-  /// ID of the selected level, or `null` if no level is selected.
+  /// The ID of the selected level, or `null` if no level is selected.
   ///
-  /// Set this to an existing level ID to select that level. Set it to `null` to
-  /// clear the level selection. On a map, clearing the selection shows levels
-  /// with vertical order `0`; on a scene, it shows all levels. Setting a
-  /// non-null ID throws [Exception] if the [FloorManager] is not loaded or the
-  /// ID is not present in it.
+  /// Set this to an existing level ID to select that level. Set the `id` to `null` to
+  /// clear the level selection. 
+  /// On a map, clearing the selection shows levels with vertical order `0`.
+  /// On a scene, it shows all levels. 
+  /// Setting a non-null ID throws an [ArcGISException] if the [FloorManager] is not loaded or the ID does not exist.
   String? get selectedLevelId => _selectedLevel?.levelId;
   set selectedLevelId(String? selectedLevelId) {
     if (_floorManager?.loadStatus != .loaded) {
