@@ -19,7 +19,7 @@ part of '../../arcgis_maps_toolkit.dart';
 /// Defines how the floor filter updates its site and facility selection as the
 /// user navigates the associated [FloorFilterController].
 enum AutomaticSelectionMode {
-  /// Do not update selection based on the GeoView's current viewpoint.
+  /// Never update selection based on the GeoView's current viewpoint.
   never,
 
   /// Update selection based on the current viewpoint, clearing the site or
