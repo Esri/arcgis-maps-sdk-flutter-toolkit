@@ -81,11 +81,10 @@ class FloorFilterController {
 
   /// ID of the selected facility, or `null` if no facility is selected.
   ///
-  /// Set this to an existing facility ID to select that facility. If it has a
-  /// level with vertical order `0`, that level is selected as well. Set it to
+  /// Set this to an existing facility ID to select that facility. If the facility has a
+  /// level with vertical order `0`, that level is also selected. Set `id` to
   /// `null` to clear the facility and selected level. Setting a non-null ID
-  /// throws [Exception] if the [FloorManager] is not loaded or the ID is not
-  /// present in it.
+  /// throws an [ArcGISException] if the [FloorManager] is not loaded or the ID does not exist.
   String? get selectedFacilityId => _selectedFacility?.facilityId;
   set selectedFacilityId(String? selectedFacilityId) {
     if (_floorManager?.loadStatus != .loaded) {
