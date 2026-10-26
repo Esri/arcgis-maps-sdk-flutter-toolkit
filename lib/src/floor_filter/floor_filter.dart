@@ -36,7 +36,7 @@ part of '../../arcgis_maps_toolkit.dart';
 /// ```dart
 ///  await floorFilterController.refresh()
 /// ```
-// For more details see the doc for [FloorFilter.createController] and [FloorFilterController.refresh].
+/// For more details see the doc for [FloorFilter.createController] and [FloorFilterController.refresh].
 class FloorFilter extends StatefulWidget {
   /// Creates a floor filter for the geo view associated with the provided [FloorFilterController].
   const FloorFilter({
@@ -45,8 +45,8 @@ class FloorFilter extends StatefulWidget {
     super.key,
   });
 
-  /// Controller associated with the map or scene view whose floor content this
-  /// widget filters.
+  /// The [FloorFilterController] for with the widget.
+  /// This controller associates the [FloorFilter] with a floor-aware map or scene.
   final FloorFilterController floorFilterController;
 
   /// Maximum height of the widget.
