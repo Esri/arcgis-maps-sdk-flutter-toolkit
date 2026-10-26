@@ -79,7 +79,7 @@ class FloorFilterController {
     }
   }
 
-  /// ID of the selected facility, or `null` if no facility is selected.
+  /// The ID of the selected facility, or `null` if no facility is selected.
   ///
   /// Set this to an existing facility ID to select that facility. If the facility has a
   /// level with vertical order `0`, that level is also selected. Set `id` to
