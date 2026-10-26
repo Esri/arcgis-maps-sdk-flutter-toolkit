@@ -56,7 +56,7 @@ class FloorFilterController {
   // Cancelable operation to ensure only one refresh call at a time.
   CancelableOperation<FloorManager?>? _cancelableRefresh;
 
-  /// ID of the selected site, or `null` if no site is selected.
+  /// The ID of the selected site, or `null` if no site is selected.
   ///
   /// Set this to an existing site ID to select that site. Set it to `null` to
   /// clear the site and any selected facility and level. Setting a non-null ID
