@@ -23,47 +23,20 @@ part of '../../arcgis_maps_toolkit.dart';
 /// [FloorManager].
 ///
 /// ## Usage
-/// Create the floor filter controller for the map or scene view, then place
-/// both widgets in a [Stack]. Refresh the floor filter after assigning the
-/// floor-aware [GeoModel] to its view controller.
+/// The widget can be inserted into a widget tree by calling the constructor and supplying a floor filter controller.
 ///
 /// ```dart
-///   final _mapViewController = ArcGISMapView.createController();
-///   late final _floorFilterController = FloorFilter.createController(
-///     _mapViewController,
-///   );
-///
-///   @override
-///   Widget build(BuildContext context) {
-///     return Stack(
-///       children: [
-///         ArcGISMapView(
-///           controllerProvider: () => _mapViewController,
-///           onMapViewReady: _onMapViewReady,
-///         ),
-///         Positioned(
-///           bottom: 16,
-///           left: 16,
-///           child: FloorFilter(
-///             floorFilterController: _floorFilterController,
-///           ),
-///         ),
-///       ],
-///     );
-///   }
-///
-///   Future<void> _onMapViewReady() async {
-///     final map = ArcGISMap.withUri(
-///       Uri.parse(
-///         'https://arcgisruntime.maps.arcgis.com/home/item.html?id=b4b599a43a474d33946cf0df526426f5',
-///       ),
-///     )!;
-///     await map.load();
-///     _mapViewController.arcGISMap = map;
-///     await _floorFilterController.refresh();
-///   }
-/// }
+/// FloorFilter(
+///   floorFilterController: () =>
+///              FloorFilter.createController(mapViewController),
+/// ),
 /// ```
+///
+/// Once a floor-aware [GeoModel] has been assigned to the [GeoViewController] attached to the [FloorFilterController], call and await refresh:
+/// ```dart
+///  await floorFilterController.refresh()
+/// ```
+// For more details see the doc for [FloorFilter.createController] and [FloorFilterController.refresh].
 class FloorFilter extends StatefulWidget {
   /// Creates a floor filter for the view associated with [floorFilterController].
   const FloorFilter({
