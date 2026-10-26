@@ -129,14 +129,13 @@ class FloorFilterController {
     }
   }
 
-  /// Loads the GeoModel currently assigned to [geoViewController] and its
-  /// [FloorManager], then updates this controller and the [FloorFilter].
+  /// Loads the [FloorManager] for the [GeoModel] associated with the currently assigned [GeoViewController] to populate the floor information.
   ///
-  /// Call this after assigning or replacing the GeoModel, or when its
-  /// [FloorManager] changes. Each refresh clears the current selection. If
-  /// another refresh starts while this one is in progress, only the latest
-  /// refresh result is applied. The returned future completes when loading
-  /// finishes and rethrows loading errors.
+  /// Call `refresh()` after assigning or replacing the [GeoModel], or when the underlying
+  /// [FloorManager] changes. 
+  /// Calling `refresh()` will clear any existing selection. 
+  /// If another `refresh()` call is made while one is already in progress, the latest refresh result is applied. 
+  /// The returned [Future] completes when loading finishes and, if unsuccessful, will re-throw any loading errors.
   Future<void> refresh() async {
     // If there is a current refresh run in progress, cancel it.
     _cancelableRefresh?.cancel().ignore();
