@@ -8,10 +8,12 @@ ArcGIS Maps SDK for Flutter Toolkit contains ready-made widgets to simplify the 
 * BasemapGallery: A widget that displays a collection of basemaps, either from ArcGIS Online, a user-defined portal, or an array of custom basemap gallery items.
 * BuildingExplorer: A widget that enables a user to explore a building scene layer building model in a local scene view.
 * Compass: A widget that visualizes the current rotation of the map or scene and allows the user to reset the rotation to north by tapping on it.
+* FloorFIlter: A widget for selecting a site, facility, and floor in a floor-aware map or scene.
 * OverviewMap: A small inset map displaying a representation of the current viewpoint of the target map or scene.
 * PopupView: A widget that will display a pop-up for an individual feature. This includes showing the feature's title, attributes, custom description, media, and attachments.
 
 ## Platform support
+
 * Use a macOS development host to deploy to iOS & Android mobile devices.
 * Use a Windows development host to deploy to Android mobile devices.
 
