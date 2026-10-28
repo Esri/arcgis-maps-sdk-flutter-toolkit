@@ -16,19 +16,24 @@
 
 part of '../../arcgis_maps_toolkit.dart';
 
-/// This class stores state for the [FloorFilter] widget. Get an instance of
-/// this class by calling [FloorFilter.createController] and passing in the
-/// relevant [GeoViewController]. The controller object is used when creating
-/// the [FloorFilter] in the widget tree and provides the interface to the
-/// widget during use.
+/// Stores selection state for a [FloorFilter] and provides access to the
+/// associated [GeoViewController].
+///
+/// Create an instance with [FloorFilter.createController], passing the
+/// controller for the map or scene that contains the floor-aware content.
 class FloorFilterController {
   FloorFilterController._({required this.geoViewController});
 
-  /// The [GeoViewController] for the view showing the floor information.
+  /// The [GeoViewController] associated with this floor filter, which represents the attached map or scene view containing a map or scene with floor information.
+  ///
+  /// When a [GeoModel] is assigned or replaced on the [GeoViewController], call [FloorFilterController.refresh] to fetch the floor information.
   final GeoViewController geoViewController;
 
-  /// Defines how the floor filter updates its selection as the user navigates
-  /// the connected GeoView. Default is [AutomaticSelectionMode.always].
+  /// Controls whether the selected site and facility are updated as the user
+  /// navigates the associated view.
+  ///
+  /// This does not disable selection changes made through the widget or the
+  /// selected ID properties. Defaults to [AutomaticSelectionMode.always].
   AutomaticSelectionMode automaticSelectionMode = .always;
 
   // Flag to show all facilities or just facilities for the selected site.
@@ -51,7 +56,11 @@ class FloorFilterController {
   // Cancelable operation to ensure only one refresh call at a time.
   CancelableOperation<FloorManager?>? _cancelableRefresh;
 
-  /// The siteId of the currently selected site. Set to null to clear selection.
+  /// The ID of the selected site, or `null` if no site is selected.
+  ///
+  /// Set this to an existing site ID to select that site. Set it to `null` to
+  /// clear the site and any selected facility and level. Setting a non-null ID
+  /// throws an [ArcGISException] if the [FloorManager] is not loaded or the ID does not exist.
   String? get selectedSiteId => _selectedSite?.siteId;
   set selectedSiteId(String? selectedSiteId) {
     if (_floorManager?.loadStatus != .loaded) {
@@ -70,7 +79,12 @@ class FloorFilterController {
     }
   }
 
-  /// The facilityId of the currently selected facility. Set to null to clear selection.
+  /// The ID of the selected facility, or `null` if no facility is selected.
+  ///
+  /// Set this to an existing facility ID to select that facility. If the facility has a
+  /// level with vertical order `0`, that level is also selected. Set `id` to
+  /// `null` to clear the facility and selected level. Setting a non-null ID
+  /// throws an [ArcGISException] if the [FloorManager] is not loaded or the ID does not exist.
   String? get selectedFacilityId => _selectedFacility?.facilityId;
   set selectedFacilityId(String? selectedFacilityId) {
     if (_floorManager?.loadStatus != .loaded) {
@@ -90,7 +104,13 @@ class FloorFilterController {
     }
   }
 
-  /// The levelId of the currently selected level. Set to null to clear selection.
+  /// The ID of the selected level, or `null` if no level is selected.
+  ///
+  /// Set this to an existing level ID to select that level. Set the `id` to `null` to
+  /// clear the level selection. 
+  /// On a map, clearing the selection shows levels with vertical order `0`.
+  /// On a scene, it shows all levels. 
+  /// Setting a non-null ID throws an [ArcGISException] if the [FloorManager] is not loaded or the ID does not exist.
   String? get selectedLevelId => _selectedLevel?.levelId;
   set selectedLevelId(String? selectedLevelId) {
     if (_floorManager?.loadStatus != .loaded) {
@@ -109,7 +129,13 @@ class FloorFilterController {
     }
   }
 
-  /// Apps will call this function when the [FloorManager] has changed.
+  /// Loads the [FloorManager] for the [GeoModel] associated with the currently assigned [GeoViewController] to populate the floor information.
+  ///
+  /// Call `refresh()` after assigning or replacing the [GeoModel], or when the underlying
+  /// [FloorManager] changes. 
+  /// Calling `refresh()` will clear any existing selection. 
+  /// If another `refresh()` call is made while one is already in progress, the latest refresh result is applied. 
+  /// The returned [Future] completes when loading finishes and, if unsuccessful, will re-throw any loading errors.
   Future<void> refresh() async {
     // If there is a current refresh run in progress, cancel it.
     _cancelableRefresh?.cancel().ignore();
@@ -177,7 +203,12 @@ class FloorFilterController {
     return floorManager;
   }
 
-  /// Notification that the Site/Facility/Floor selection has changed.
+  /// Broadcast stream that emits when the selected site, facility, or level
+  /// changes.
+  ///
+  /// Events carry no selection value; read [selectedSiteId],
+  /// [selectedFacilityId], or [selectedLevelId] to get the current selection.
+  /// A call to [refresh] also emits an event after resetting the selection.
   Stream<Null> get onSelectedChanged => _onSelectedChangedController.stream;
   final _onSelectedChangedController = StreamController<Null>.broadcast();
 

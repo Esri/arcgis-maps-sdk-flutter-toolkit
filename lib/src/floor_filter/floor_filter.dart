@@ -16,23 +16,50 @@
 
 part of '../../arcgis_maps_toolkit.dart';
 
-/// A widget for filtering map content by floor.
+/// A widget for selecting a site, facility, and floor in a floor-aware map or
+/// scene.
+///
+/// The widget is displayed only when the associated [GeoModel] has a loaded
+/// [FloorManager].
+///
+/// ## Usage
+/// The widget can be inserted into a widget tree by calling the constructor and supplying a floor filter controller.
+///
+/// ```dart
+/// FloorFilter(
+///   floorFilterController: () =>
+///              FloorFilter.createController(mapViewController),
+/// ),
+/// ```
+///
+/// Once a floor-aware [GeoModel] has been assigned to the [GeoViewController] attached to the [FloorFilterController], call and await refresh:
+/// ```dart
+///  await floorFilterController.refresh()
+/// ```
+/// For more details see the doc for [FloorFilter.createController] and [FloorFilterController.refresh].
 class FloorFilter extends StatefulWidget {
-  /// Creates a floor filter.
+  /// Creates a floor filter for the geo view associated with the provided [FloorFilterController].
   const FloorFilter({
     required this.floorFilterController,
     this.maxHeight,
     super.key,
   });
 
-  /// The [FloorFilterController] for the widget.
+  /// The [FloorFilterController] for with the widget.
+  /// This controller associates the [FloorFilter] with a floor-aware map or scene.
   final FloorFilterController floorFilterController;
 
-  /// The maximum height of the widget. If not set, a default of 80% of the
-  /// screen height will be used.
+  /// Maximum height of the widget.
+  ///
+  /// If `null`, the maximum height defaults to 80% of the screen height.
   final double? maxHeight;
 
-  /// Static function used to create the [FloorFilterController] for the widget.
+  /// Creates a [FloorFilterController] associated with the provided [GeoViewController].
+  // 
+  /// If a map or scene is already assigned to the [GeoViewController] when this function is called, then the [FloorManager] on the map or scene starts loading implicitly.
+  /// To explicitly await load completion, such as to handle loading errors, call and await `FloorFilterController.refresh`.
+  /// 
+  /// Similarly, if a map or scene is assigned to the [GeoViewController] after this function is called, call and await `FloorFilterController.refresh` after assigning the map or scene.
   static FloorFilterController createController(
     GeoViewController geoViewController,
   ) {
