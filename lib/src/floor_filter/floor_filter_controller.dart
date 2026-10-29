@@ -107,9 +107,9 @@ class FloorFilterController {
   /// The ID of the selected level, or `null` if no level is selected.
   ///
   /// Set this to an existing level ID to select that level. Set the `id` to `null` to
-  /// clear the level selection. 
+  /// clear the level selection.
   /// On a map, clearing the selection shows levels with vertical order `0`.
-  /// On a scene, it shows all levels. 
+  /// On a scene, it shows all levels.
   /// Setting a non-null ID throws an [ArcGISException] if the [FloorManager] is not loaded or the ID does not exist.
   String? get selectedLevelId => _selectedLevel?.levelId;
   set selectedLevelId(String? selectedLevelId) {
@@ -132,9 +132,9 @@ class FloorFilterController {
   /// Loads the [FloorManager] for the [GeoModel] associated with the currently assigned [GeoViewController] to populate the floor information.
   ///
   /// Call `refresh()` after assigning or replacing the [GeoModel], or when the underlying
-  /// [FloorManager] changes. 
-  /// Calling `refresh()` will clear any existing selection. 
-  /// If another `refresh()` call is made while one is already in progress, the latest refresh result is applied. 
+  /// [FloorManager] changes.
+  /// Calling `refresh()` will clear any existing selection.
+  /// If another `refresh()` call is made while one is already in progress, the latest refresh result is applied.
   /// The returned [Future] completes when loading finishes and, if unsuccessful, will re-throw any loading errors.
   Future<void> refresh() async {
     // If there is a current refresh run in progress, cancel it.

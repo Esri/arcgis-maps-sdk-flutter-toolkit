@@ -55,10 +55,10 @@ class FloorFilter extends StatefulWidget {
   final double? maxHeight;
 
   /// Creates a [FloorFilterController] associated with the provided [GeoViewController].
-  // 
+  ///
   /// If a map or scene is already assigned to the [GeoViewController] when this function is called, then the [FloorManager] on the map or scene starts loading implicitly.
   /// To explicitly await load completion, such as to handle loading errors, call and await `FloorFilterController.refresh`.
-  /// 
+  ///
   /// Similarly, if a map or scene is assigned to the [GeoViewController] after this function is called, call and await `FloorFilterController.refresh` after assigning the map or scene.
   static FloorFilterController createController(
     GeoViewController geoViewController,
