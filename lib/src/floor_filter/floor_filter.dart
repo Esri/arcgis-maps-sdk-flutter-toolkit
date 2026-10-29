@@ -185,7 +185,7 @@ class _FloorFilterState extends State<FloorFilter> {
             SizedBox.square(
               dimension: widgetWidth,
               child: IconButton.filled(
-                onPressed: _showSiteAndFacitliySelector,
+                onPressed: _showSiteAndFacilitySelector,
                 style: IconButton.styleFrom(
                   backgroundColor: Colors.white,
                   foregroundColor: Colors.black,
@@ -221,7 +221,7 @@ class _FloorFilterState extends State<FloorFilter> {
   }
 
   // Function to show the bottom sheet containing the site and facility selectors.
-  Future<void> _showSiteAndFacitliySelector() {
+  Future<void> _showSiteAndFacilitySelector() {
     return showModalBottomSheet<void>(
       context: context,
       builder: (context) {
