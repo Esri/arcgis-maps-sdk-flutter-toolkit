@@ -15,13 +15,13 @@
 //
 
 import 'package:arcgis_maps/arcgis_maps.dart';
-import 'package:arcgis_maps_toolkit_example/example_authenticator.dart';
-import 'package:arcgis_maps_toolkit_example/example_basemap_gallery.dart';
-import 'package:arcgis_maps_toolkit_example/example_building_explorer.dart';
-import 'package:arcgis_maps_toolkit_example/example_compass.dart';
-import 'package:arcgis_maps_toolkit_example/example_floor_filter.dart';
-import 'package:arcgis_maps_toolkit_example/example_overview_map.dart';
-import 'package:arcgis_maps_toolkit_example/example_popup.dart';
+import 'package:arcgis_maps_toolkit_example/authenticator/example_authenticator.dart';
+import 'package:arcgis_maps_toolkit_example/basemap_gallery/example_basemap_gallery.dart';
+import 'package:arcgis_maps_toolkit_example/building_explorer/example_building_explorer.dart';
+import 'package:arcgis_maps_toolkit_example/compass/example_compass.dart';
+import 'package:arcgis_maps_toolkit_example/floor_filter/example_floor_filter.dart';
+import 'package:arcgis_maps_toolkit_example/overview_map/example_overview_map.dart';
+import 'package:arcgis_maps_toolkit_example/popup_view/example_popup_view.dart';
 import 'package:material_ui/material_ui.dart';
 
 void main() {
