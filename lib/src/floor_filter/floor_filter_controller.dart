@@ -33,8 +33,8 @@ class FloorFilterController {
   /// navigates the associated view.
   ///
   /// This does not disable selection changes made through the widget or the
-  /// selected ID properties. Defaults to [AutomaticSelectionMode.always].
-  AutomaticSelectionMode automaticSelectionMode = .always;
+  /// selected ID properties. Defaults to [FloorFilterAutomaticSelectionMode.always].
+  FloorFilterAutomaticSelectionMode automaticSelectionMode = .always;
 
   // Flag to show all facilities or just facilities for the selected site.
   var _listAllFacilities = false;
