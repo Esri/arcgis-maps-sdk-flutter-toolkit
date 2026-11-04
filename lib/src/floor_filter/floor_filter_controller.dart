@@ -84,7 +84,7 @@ class FloorFilterController {
   /// Set this to an existing facility ID to select that facility.
   ///
   /// If the facility has a level with vertical order `0`, that level is also selected.
-  /// If the facility is selected via the "All Sites" selection mode and the facility has a site, that site is also selected.
+  /// If the facility is selected and the facility has a site, that site is also selected.
   ///
   /// Set `id` to `null` to clear the facility and selected level. Setting a non-null ID
   /// throws an [ArcGISException] if the [FloorManager] is not loaded or the ID does not exist.
