@@ -223,11 +223,12 @@ class _LevelSelectorState extends State<_LevelSelector> {
 
     final levelDetails = <_LevelListDetail>[];
     if (facilityLevels.isNotEmpty) {
-      if (widget._widgetController.geoViewController
-              is ArcGISLocalSceneViewController ||
-          widget._widgetController.geoViewController
-              is ArcGISSceneViewController) {
-        // Add "All" option for 3D views.
+      if (facilityLevels.length > 1 &&
+          (widget._widgetController.geoViewController
+                  is ArcGISLocalSceneViewController ||
+              widget._widgetController.geoViewController
+                  is ArcGISSceneViewController)) {
+        // Add "All" only for 3D facilities with multiple levels.
         levelDetails.add(_LevelListDetail(level: null, shortName: 'All'));
       }
       for (final level in facilityLevels) {
