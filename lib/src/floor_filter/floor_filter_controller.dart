@@ -265,17 +265,16 @@ class FloorFilterController {
     bool notifySelectionChanged = true,
     bool zoomTo = false,
   }) {
+    if (facility != null && zoomTo) {
+      _zoomToFacility(facility);
+    }
+
     if (_selectedFacility == facility) return;
 
     // Notify listeners that the facility changed.
     _selectedFacilityNotifier.value = facility;
 
     if (facility != null) {
-      if (zoomTo) {
-        // Adjust viewpoint to facility extent.
-        _zoomToFacility(facility);
-      }
-
       // Set the level to the default level.
       _selectDefaultLevel(facility, notifySelectionChanged: false);
 
