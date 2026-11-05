@@ -81,9 +81,12 @@ class FloorFilterController {
 
   /// The ID of the selected facility, or `null` if no facility is selected.
   ///
-  /// Set this to an existing facility ID to select that facility. If the facility has a
-  /// level with vertical order `0`, that level is also selected. Set `id` to
-  /// `null` to clear the facility and selected level. Setting a non-null ID
+  /// Set this to an existing facility ID to select that facility.
+  ///
+  /// If the facility has a level with vertical order `0`, that level is also selected.
+  /// If the facility is selected and the facility has a site, that site is also selected.
+  ///
+  /// Set `id` to `null` to clear the facility and selected level. Setting a non-null ID
   /// throws an [ArcGISException] if the [FloorManager] is not loaded or the ID does not exist.
   String? get selectedFacilityId => _selectedFacility?.facilityId;
   set selectedFacilityId(String? selectedFacilityId) {
@@ -262,19 +265,25 @@ class FloorFilterController {
     bool notifySelectionChanged = true,
     bool zoomTo = false,
   }) {
+    if (facility != null && zoomTo) {
+      _zoomToFacility(facility);
+    }
+
     if (_selectedFacility == facility) return;
 
     // Notify listeners that the facility changed.
     _selectedFacilityNotifier.value = facility;
 
     if (facility != null) {
-      if (zoomTo) {
-        // Adjust viewpoint to facility extent.
-        _zoomToFacility(facility);
-      }
-
       // Set the level to the default level.
       _selectDefaultLevel(facility, notifySelectionChanged: false);
+
+      // Update the selected site to the selected facility's site, if it has one, and if the site has not already been selected.
+      // Note that the floor model does not require a facility to have a site.
+      final site = facility.site;
+      if (site != null && site != _selectedSite) {
+        _selectSite(site, notifySelectionChanged: false);
+      }
     } else {
       // Clear the selected floor.
       _selectLevel(null, notifySelectionChanged: false);
