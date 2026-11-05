@@ -105,10 +105,14 @@ class _LevelSelectorState extends State<_LevelSelector> {
       return const SizedBox.shrink();
     }
 
-    // The maximum height of the level listing. It is the maximum height of the
-    // widget minus the height of the button.
+    // Only show collapse button when multiple levels exist.
+    final collapseEnabled =
+        (widget._widgetController._selectedFacility?.levels.length ?? 0) > 1;
+
+    // Reserve space for the collapse button only when multiple levels exist.
     const padding = 24.0;
-    final listViewMaxHeight = widget.maxHeight - padding;
+    final listViewMaxHeight =
+        widget.maxHeight - (collapseEnabled ? padding : 0);
 
     // Text style for selected level.
     final selectedLevelTextStyle = DefaultTextStyle.of(context).style
@@ -130,33 +134,34 @@ class _LevelSelectorState extends State<_LevelSelector> {
         ? const SizedBox.shrink()
         : Column(
             children: [
-              Padding(
-                padding: EdgeInsets.zero,
-                child: SizedBox(
-                  height: 24,
-                  child: OutlinedButton(
-                    onPressed: () =>
-                        setState(() => _expandedView = !_expandedView),
-                    style: OutlinedButton.styleFrom(
-                      padding: EdgeInsets.zero,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(6),
+              if (collapseEnabled)
+                Padding(
+                  padding: EdgeInsets.zero,
+                  child: SizedBox(
+                    height: 24,
+                    child: OutlinedButton(
+                      onPressed: () =>
+                          setState(() => _expandedView = !_expandedView),
+                      style: OutlinedButton.styleFrom(
+                        padding: EdgeInsets.zero,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        side: const BorderSide(color: Colors.black12),
+                        backgroundColor: Colors.white,
                       ),
-                      side: const BorderSide(color: Colors.black12),
-                      backgroundColor: Colors.white,
+                      child: _expandedView
+                          ? const Icon(Icons.expand_more_outlined, size: 18)
+                          : const Icon(Icons.expand_less_outlined, size: 18),
                     ),
-                    child: _expandedView
-                        ? const Icon(Icons.expand_more_outlined, size: 18)
-                        : const Icon(Icons.expand_less_outlined, size: 18),
                   ),
                 ),
-              ),
               ConstrainedBox(
                 constraints: BoxConstraints(
                   maxHeight: listViewMaxHeight,
                   minHeight: padding,
                 ),
-                child: _expandedView
+                child: _expandedView || !collapseEnabled
                     // Show the whole list for the expandedView.
                     ? ListView.builder(
                         shrinkWrap: true,
@@ -218,13 +223,6 @@ class _LevelSelectorState extends State<_LevelSelector> {
 
     final levelDetails = <_LevelListDetail>[];
     if (facilityLevels.isNotEmpty) {
-      if (widget._widgetController.geoViewController
-              is ArcGISLocalSceneViewController ||
-          widget._widgetController.geoViewController
-              is ArcGISSceneViewController) {
-        // Add "All" option for 3D views.
-        levelDetails.add(_LevelListDetail(level: null, shortName: 'All'));
-      }
       for (final level in facilityLevels) {
         levelDetails.add(_LevelListDetail.fromFloorLevel(level));
       }
