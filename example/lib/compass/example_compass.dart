@@ -15,9 +15,10 @@
 //
 
 import 'package:arcgis_maps/arcgis_maps.dart';
-import 'package:arcgis_maps_toolkit_example/example_overview_map_with_local_scene.dart';
-import 'package:arcgis_maps_toolkit_example/example_overview_map_with_map.dart';
-import 'package:arcgis_maps_toolkit_example/example_overview_map_with_scene.dart';
+import 'package:arcgis_maps_toolkit_example/compass/example_compass_custom.dart';
+import 'package:arcgis_maps_toolkit_example/compass/example_compass_local_scene.dart';
+import 'package:arcgis_maps_toolkit_example/compass/example_compass_map.dart';
+import 'package:arcgis_maps_toolkit_example/compass/example_compass_scene.dart';
 import 'package:material_ui/material_ui.dart';
 
 void main() {
@@ -38,29 +39,34 @@ void main() {
         colorScheme: colorScheme,
         appBarTheme: AppBarTheme(backgroundColor: colorScheme.inversePrimary),
       ),
-      home: const ExampleOverviewMap(),
+      home: const ExampleCompass(),
     ),
   );
 }
 
-enum OverviewMapExample {
-  overviewMapWithMap(
-    'Overview Map with map',
-    'Example of overview map with map.',
-    ExampleOverviewMapWithMap.new,
+enum CompassExample {
+  compassMap(
+    'Compass Map',
+    'Example of compass used with a map. Default styling.',
+    ExampleCompassMap.new,
   ),
-  overviewMapWithScene(
-    'Overview Map with scene',
-    'Example of overview map with scene.',
-    ExampleOverviewMapWithScene.new,
+  compassScene(
+    'Compass Scene',
+    'Example of compass used with a scene. Default styling.',
+    ExampleCompassScene.new,
   ),
-  overviewMapWithLocalScene(
-    'Overview Map with local scene',
-    'Example of overview map with local scene.',
-    ExampleOverviewMapWithLocalScene.new,
+  compassLocalScene(
+    'Compass Local Scene',
+    'Example of compass used with a local scene. Default styling.',
+    ExampleCompassLocalScene.new,
+  ),
+  compassCustom(
+    'Compass Custom',
+    'Example of compass used with a map with custom styling.',
+    ExampleCompassCustom.new,
   );
 
-  const OverviewMapExample(this.title, this.subtitle, this.constructor);
+  const CompassExample(this.title, this.subtitle, this.constructor);
 
   final String title;
   final String subtitle;
@@ -82,18 +88,18 @@ enum OverviewMapExample {
   }
 }
 
-class ExampleOverviewMap extends StatelessWidget {
-  const ExampleOverviewMap({super.key});
+class ExampleCompass extends StatelessWidget {
+  const ExampleCompass({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('OverviewMap')),
+      appBar: AppBar(title: const Text('Compass')),
       body: ListView.builder(
         padding: const EdgeInsets.all(10),
-        itemCount: OverviewMapExample.values.length,
+        itemCount: CompassExample.values.length,
         itemBuilder: (context, index) =>
-            OverviewMapExample.values[index].buildCard(context),
+            CompassExample.values[index].buildCard(context),
       ),
     );
   }
