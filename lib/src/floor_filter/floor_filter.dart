@@ -148,11 +148,6 @@ class _FloorFilterState extends State<FloorFilter> {
 
   @override
   Widget build(BuildContext context) {
-    if (_floorManager?.loadStatus != .loaded) {
-      // Do not show the widget if this map or scene has no floor manager.
-      return const SizedBox.shrink();
-    }
-
     // Values for widget dimensions.
     final maxWidgetHeight =
         widget.maxHeight ?? MediaQuery.sizeOf(context).height * 0.8;
@@ -185,7 +180,10 @@ class _FloorFilterState extends State<FloorFilter> {
             SizedBox.square(
               dimension: widgetWidth,
               child: IconButton.filled(
-                onPressed: _showSiteAndFacilitySelector,
+                // Disable the widget's button if this map or scene does not have a valid floor manager.
+                onPressed: (_floorManager?.loadStatus != .loaded)
+                    ? null
+                    : _showSiteAndFacilitySelector,
                 style: IconButton.styleFrom(
                   backgroundColor: Colors.white,
                   foregroundColor: Colors.black,
