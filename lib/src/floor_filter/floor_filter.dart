@@ -180,6 +180,7 @@ class _FloorFilterState extends State<FloorFilter> {
             SizedBox.square(
               dimension: widgetWidth,
               child: IconButton.filled(
+                // Disable the widget's button if this map or scene does not have a valid floor manager.
                 onPressed: (_floorManager?.loadStatus != .loaded)
                     ? null
                     : _showSiteAndFacilitySelector,
