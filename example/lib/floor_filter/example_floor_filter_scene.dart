@@ -51,6 +51,8 @@ class _ExampleFloorFilterSceneState extends State<ExampleFloorFilterScene> {
 
   @override
   Widget build(BuildContext context) {
+    final floorFilterMaxHeight = MediaQuery.sizeOf(context).height * 0.7;
+
     return Scaffold(
       appBar: AppBar(title: const Text('Floor Filter Scene')),
       body: SafeArea(
@@ -68,7 +70,10 @@ class _ExampleFloorFilterSceneState extends State<ExampleFloorFilterScene> {
             Positioned(
               bottom: 50,
               left: 20,
-              child: FloorFilter(floorFilterController: _floorFilterController),
+              child: FloorFilter(
+                floorFilterController: _floorFilterController,
+                maxHeight: floorFilterMaxHeight,
+              ),
             ),
           ],
         ),

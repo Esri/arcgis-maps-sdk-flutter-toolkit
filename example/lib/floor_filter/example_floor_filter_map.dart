@@ -50,11 +50,11 @@ class _ExampleFloorFilterMapState extends State<ExampleFloorFilterMap> {
 
   @override
   Widget build(BuildContext context) {
+    final floorFilterMaxHeight = MediaQuery.sizeOf(context).height * 0.7;
+
     return Scaffold(
       appBar: AppBar(title: const Text('Floor Filter Map')),
       body: SafeArea(
-        left: false,
-        right: false,
         child: Stack(
           children: [
             // Add a map view to the widget tree and set a controller.
@@ -67,7 +67,10 @@ class _ExampleFloorFilterMapState extends State<ExampleFloorFilterMap> {
             Positioned(
               bottom: 50,
               left: 20,
-              child: FloorFilter(floorFilterController: _floorFilterController),
+              child: FloorFilter(
+                floorFilterController: _floorFilterController,
+                maxHeight: floorFilterMaxHeight,
+              ),
             ),
           ],
         ),
