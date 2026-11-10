@@ -221,16 +221,19 @@ class _FloorFilterState extends State<FloorFilter> {
   // Function to show the bottom sheet containing the site and facility selectors.
   Future<void> _showSiteAndFacilitySelector() {
     return showModalBottomSheet<void>(
+      isScrollControlled: true,
       context: context,
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       builder: (context) {
         return SafeArea(
-          top: false,
           left: false,
           right: false,
-          child: _SiteAndFacilitySelectorNavigator(
-            floorFilterController: widget.floorFilterController,
-            onClose: () => Navigator.pop(context),
+          child: FractionallySizedBox(
+            heightFactor: 0.9,
+            child: _SiteAndFacilitySelectorNavigator(
+              floorFilterController: widget.floorFilterController,
+              onClose: () => Navigator.pop(context),
+            ),
           ),
         );
       },
