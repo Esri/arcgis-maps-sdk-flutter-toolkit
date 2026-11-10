@@ -108,6 +108,7 @@ class _FacilitySelectorState extends State<_FacilitySelector> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: const Text('Facilities'),
         actions: [
@@ -124,6 +125,8 @@ class _FacilitySelectorState extends State<_FacilitySelector> {
           Padding(
             padding: const EdgeInsets.all(8),
             child: TextField(
+              onTapOutside: (event) =>
+                  FocusManager.instance.primaryFocus?.unfocus(),
               onChanged: _filterFacilitiesByName,
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
