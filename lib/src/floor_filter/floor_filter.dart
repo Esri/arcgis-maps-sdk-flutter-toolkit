@@ -222,10 +222,16 @@ class _FloorFilterState extends State<FloorFilter> {
   Future<void> _showSiteAndFacilitySelector() {
     return showModalBottomSheet<void>(
       context: context,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       builder: (context) {
-        return _SiteAndFacilitySelectorNavigator(
-          floorFilterController: widget.floorFilterController,
-          onClose: () => Navigator.pop(context),
+        return SafeArea(
+          top: false,
+          left: false,
+          right: false,
+          child: _SiteAndFacilitySelectorNavigator(
+            floorFilterController: widget.floorFilterController,
+            onClose: () => Navigator.pop(context),
+          ),
         );
       },
     );
