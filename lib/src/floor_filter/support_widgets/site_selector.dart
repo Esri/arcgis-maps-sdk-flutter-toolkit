@@ -98,6 +98,7 @@ class _SiteSelectorState extends State<_SiteSelector> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: const Text('Sites'),
         automaticallyImplyLeading: false,
@@ -115,6 +116,8 @@ class _SiteSelectorState extends State<_SiteSelector> {
           Padding(
             padding: const EdgeInsets.all(8),
             child: TextField(
+              onTapOutside: (event) =>
+                  FocusManager.instance.primaryFocus?.unfocus(),
               onChanged: _filterSitesByName,
               decoration: const InputDecoration(
                 border: OutlineInputBorder(),
