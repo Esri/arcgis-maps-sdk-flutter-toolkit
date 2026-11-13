@@ -1,6 +1,15 @@
 ## 0.0.0+0 # version will be set during export in ci/stamp_toolkit.sh
 
 ### New widget
+* `FloorFilter`: A widget for selecting a site, facility, and floor in a floor-aware map or scene.
+
+### Enhancement to Compass
+
+* Updated the “return to north” logic of the Compass widget for `SceneView` and `LocalSceneView` to focus on the center of the view when returning to north.
+
+## 300.1.0+5042
+
+### New widget
 * `BasemapGallery`: A widget that displays a collection of basemaps, either from ArcGIS Online, a user-defined portal, or an array of custom basemap gallery items.
 
 ### Enhancement to PopupView
