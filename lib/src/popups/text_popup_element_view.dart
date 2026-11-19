@@ -62,7 +62,7 @@ class _TextPopupElementViewState extends State<_TextPopupElementView> {
           ),
         )
         .ignore();
-    _controller.setBackgroundColor(Colors.transparent).ignore();
+    _controller.setBackgroundColor(Colors.white).ignore();
     _controller.loadHtmlString(_buildHTML(widget.textElement.text)).ignore();
 
     super.initState();

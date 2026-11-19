@@ -39,7 +39,7 @@ part of '../../arcgis_maps_toolkit.dart';
 ///
 /// The [PopupView] contains:
 /// * A header section with title defined in the [Popup].
-/// * A body, built using a [Column] and combination of [Card] and [ExpansionTile] widgets, consisting of different types of
+/// * A body, built using a [CustomScrollView] and combination of [Card] and [ExpansionTile] widgets, consisting of different types of
 /// pop-up elements, including text (HTML), fields, media, attachments, and utility network associations.
 ///
 /// A pop-up is usually obtained from an identify result and then a [PopupView] can be created to wrap the pop-up and display its contents in a sized widget, such as a [Dialog] or a [Container]:
@@ -209,8 +209,9 @@ class _PopupStateInternal extends State<_PopupViewInternal> {
       ),
       child: Column(
         children: [
-          _UtilityAssociationHeader(title: widget.popup.title),
-          const Divider(),
+          //fixme
+          // _UtilityAssociationHeader(title: widget.popup.title),
+          // const Divider(),
           Expanded(
             child: FutureBuilder(
               // Evaluate the pop-up expressions asynchronously,
@@ -271,42 +272,63 @@ class _PopupStateInternal extends State<_PopupViewInternal> {
 
   /// A list view of different pop-up elements displayed in their respective views.
   Widget _buildElementsView() {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-      child: Column(
-        spacing: 8,
-        children: widget.popup.evaluatedElements.isNotEmpty
-            ? widget.popup.evaluatedElements.map((element) {
-                if (element is FieldsPopupElement) {
-                  return _FieldsPopupElementView(
-                    fieldsElement: element,
-                    isExpanded: true,
-                  );
-                } else if (element is AttachmentsPopupElement) {
-                  return _AttachmentsPopupElementView(
-                    attachmentsElement: element,
-                    isExpanded: true,
-                  );
-                } else if (element is MediaPopupElement) {
-                  return _MediaPopupElementView(
-                    mediaElement: element,
-                    isExpanded: true,
-                  );
-                } else if (element is TextPopupElement) {
-                  return _TextPopupElementView(textElement: element);
-                } else if (element is UtilityAssociationsPopupElement) {
-                  return _UtilityAssociationsPopupElementView(
-                    geoElement: widget.popup.geoElement,
-                    popupElement: element,
-                    popupTitle: widget.popup.title,
-                    isExpanded: true,
-                  );
-                } else {
-                  return const Text('Element not supported');
-                }
-              }).toList()
-            : [const Text('No pop-up elements available.')],
-      ),
+    final elements = widget.popup.evaluatedElements;
+    return CustomScrollView(
+      slivers: [
+        SliverPersistentHeader(
+          pinned: true,
+          delegate: _SliverAppBarDelegate(
+            minHeight: 60,
+            maxHeight: 60,
+            child: ColoredBox(
+              color: Colors.white,
+              child: _UtilityAssociationHeader(title: widget.popup.title),
+            ),
+          ),
+        ),
+        SliverPadding(
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+          sliver: SliverList.separated(
+            itemCount: elements.isEmpty ? 1 : elements.length,
+            separatorBuilder: (context, index) => const SizedBox(height: 8),
+            itemBuilder: (context, index) {
+              if (elements.isEmpty) {
+                return const Center(
+                  child: Text('No pop-up elements available.'),
+                );
+              }
+              final element = elements[index];
+              if (element is FieldsPopupElement) {
+                return _FieldsPopupElementView(
+                  fieldsElement: element,
+                  isExpanded: true,
+                );
+              } else if (element is AttachmentsPopupElement) {
+                return _AttachmentsPopupElementView(
+                  attachmentsElement: element,
+                  isExpanded: true,
+                );
+              } else if (element is MediaPopupElement) {
+                return _MediaPopupElementView(
+                  mediaElement: element,
+                  isExpanded: true,
+                );
+              } else if (element is TextPopupElement) {
+                return _TextPopupElementView(textElement: element);
+              } else if (element is UtilityAssociationsPopupElement) {
+                return _UtilityAssociationsPopupElementView(
+                  geoElement: widget.popup.geoElement,
+                  popupElement: element,
+                  popupTitle: widget.popup.title,
+                  isExpanded: true,
+                );
+              } else {
+                return const Text('Element not supported');
+              }
+            },
+          ),
+        ),
+      ],
     );
   }
 }
@@ -314,4 +336,38 @@ class _PopupStateInternal extends State<_PopupViewInternal> {
 // Generate a unique key for the PopupView based on the GeoElement's objectId.
 String _getPopupViewKey(GeoElement geoElement) {
   return 'PopupView_${geoElement.attributes['objectId'] ?? '0'}';
+}
+
+class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
+  const _SliverAppBarDelegate({
+    required this.minHeight,
+    required this.maxHeight,
+    required this.child,
+  });
+
+  final double minHeight;
+  final double maxHeight;
+  final Widget child;
+
+  @override
+  double get minExtent => minHeight;
+
+  @override
+  double get maxExtent => maxHeight;
+
+  @override
+  Widget build(
+    BuildContext context,
+    double shrinkOffset,
+    bool overlapsContent,
+  ) {
+    return SizedBox.expand(child: child);
+  }
+
+  @override
+  bool shouldRebuild(covariant _SliverAppBarDelegate oldDelegate) {
+    return maxHeight != oldDelegate.maxHeight ||
+        minHeight != oldDelegate.minHeight ||
+        child != oldDelegate.child;
+  }
 }
