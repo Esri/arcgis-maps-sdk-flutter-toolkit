@@ -166,9 +166,13 @@ class _FloorFilterState extends State<FloorFilter> {
         width: widgetWidth,
         padding: const EdgeInsets.all(5),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: Theme.of(context).scaffoldBackgroundColor,
           borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.black12),
+          border: Border.all(
+            color:
+                Theme.of(context).buttonTheme.colorScheme?.outline ??
+                Colors.black12,
+          ),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -185,8 +189,11 @@ class _FloorFilterState extends State<FloorFilter> {
                     ? null
                     : _showSiteAndFacilitySelector,
                 style: IconButton.styleFrom(
-                  backgroundColor: Colors.white,
-                  foregroundColor: Colors.black,
+                  backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                  foregroundColor: Theme.of(context)
+                      .textTheme
+                      .bodyMedium
+                      ?.color,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(8),
                   ),

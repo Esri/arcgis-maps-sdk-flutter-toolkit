@@ -125,8 +125,8 @@ class _LevelSelectorState extends State<_LevelSelector> {
     final buttonStyle = OutlinedButton.styleFrom(
       padding: EdgeInsets.zero,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
-      side: const BorderSide(color: Colors.white),
-      backgroundColor: Colors.white,
+      side: BorderSide(color: Theme.of(context).scaffoldBackgroundColor),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
     );
 
     return listViewMaxHeight < padding
@@ -147,8 +147,16 @@ class _LevelSelectorState extends State<_LevelSelector> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(6),
                         ),
-                        side: const BorderSide(color: Colors.black12),
-                        backgroundColor: Colors.white,
+                        side: BorderSide(
+                          color:
+                              Theme.of(context)
+                                  .buttonTheme
+                                  .colorScheme
+                                  ?.outline ??
+                              Colors.black12,
+                        ),
+                        backgroundColor: Theme.of(context)
+                            .scaffoldBackgroundColor,
                       ),
                       child: _expandedView
                           ? const Icon(Icons.expand_more_outlined, size: 18)
