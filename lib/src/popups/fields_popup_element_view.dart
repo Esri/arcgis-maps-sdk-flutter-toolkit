@@ -148,7 +148,7 @@ class _FormattedValueText extends StatelessWidget {
     try {
       final uri = Uri.parse(value);
       return GestureDetector(
-        onTap: () async => _launchUri(context, uri),
+        onTap: () => _launchUri(context, uri),
         child: Padding(
           padding: const EdgeInsets.only(bottom: 4),
           child: Text(

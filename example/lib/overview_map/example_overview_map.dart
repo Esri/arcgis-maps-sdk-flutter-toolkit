@@ -43,7 +43,11 @@ void main() {
   );
 }
 
-enum OverviewMapExample {
+enum OverviewMapExample(
+  final String title,
+  final String subtitle,
+  final Widget Function({Key? key}) constructor,
+) {
   overviewMapWithMap(
     'Overview Map with map',
     'Example of overview map with map.',
@@ -59,12 +63,6 @@ enum OverviewMapExample {
     'Example of overview map with local scene.',
     ExampleOverviewMapWithLocalScene.new,
   );
-
-  const OverviewMapExample(this.title, this.subtitle, this.constructor);
-
-  final String title;
-  final String subtitle;
-  final Widget Function({Key? key}) constructor;
 
   Card buildCard(BuildContext context) {
     return Card(
