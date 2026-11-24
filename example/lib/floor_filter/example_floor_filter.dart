@@ -33,7 +33,11 @@ void main() {
   runApp(const MaterialApp(home: ExampleFloorFilter()));
 }
 
-enum FloorFilterExample {
+enum FloorFilterExample(
+  final String title,
+  final String subtitle,
+  final Widget Function({Key? key}) constructor,
+) {
   map(
     'Floor Filter Map',
     'Example of floor filter with map.',
@@ -44,12 +48,6 @@ enum FloorFilterExample {
     'Example of floor filter with scene.',
     ExampleFloorFilterScene.new,
   );
-
-  const FloorFilterExample(this.title, this.subtitle, this.constructor);
-
-  final String title;
-  final String subtitle;
-  final Widget Function({Key? key}) constructor;
 
   Card buildCard(BuildContext context) {
     return Card(

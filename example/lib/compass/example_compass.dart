@@ -44,7 +44,11 @@ void main() {
   );
 }
 
-enum CompassExample {
+enum CompassExample(
+  final String title,
+  final String subtitle,
+  final Widget Function({Key? key}) constructor,
+) {
   compassMap(
     'Compass Map',
     'Example of compass used with a map. Default styling.',
@@ -65,12 +69,6 @@ enum CompassExample {
     'Example of compass used with a map with custom styling.',
     ExampleCompassCustom.new,
   );
-
-  const CompassExample(this.title, this.subtitle, this.constructor);
-
-  final String title;
-  final String subtitle;
-  final Widget Function({Key? key}) constructor;
 
   Card buildCard(BuildContext context) {
     return Card(
